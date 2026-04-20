@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -532,16 +528,10 @@ bool spmd_el3_invoke_partition_info_get(
 	}
 
 	/* Save the non-secure context before entering SPMC */
-<<<<<<< HEAD
-	cm_el1_sysregs_context_save(NON_SECURE);
-#if SPMD_SPM_AT_SEL2
-	cm_el2_sysregs_context_save(NON_SECURE);
-=======
 #if SPMD_SPM_AT_SEL2
 	cm_el2_sysregs_context_save(NON_SECURE);
 #else
 	cm_el1_sysregs_context_save(NON_SECURE);
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 	spmd_build_ffa_info_get_regs(ctx, target_uuid, start_index, tag);
@@ -559,16 +549,10 @@ bool spmd_el3_invoke_partition_info_get(
 
 	assert(is_ffa_error(retval) || is_ffa_success(retval));
 
-<<<<<<< HEAD
-	cm_el1_sysregs_context_restore(NON_SECURE);
-#if SPMD_SPM_AT_SEL2
-	cm_el2_sysregs_context_restore(NON_SECURE);
-=======
 #if SPMD_SPM_AT_SEL2
 	cm_el2_sysregs_context_restore(NON_SECURE);
 #else
 	cm_el1_sysregs_context_restore(NON_SECURE);
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 	cm_set_next_eret_context(NON_SECURE);
 	return true;
@@ -685,16 +669,10 @@ bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
 	}
 
 	/* Save the non-secure context before entering SPMC */
-<<<<<<< HEAD
-	cm_el1_sysregs_context_save(NON_SECURE);
-#if SPMD_SPM_AT_SEL2
-	cm_el2_sysregs_context_save(NON_SECURE);
-=======
 #if SPMD_SPM_AT_SEL2
 	cm_el2_sysregs_context_save(NON_SECURE);
 #else
 	cm_el1_sysregs_context_save(NON_SECURE);
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 	/*
@@ -732,16 +710,10 @@ bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
 				ffa_endpoint_destination(x1)));
 	}
 
-<<<<<<< HEAD
-	cm_el1_sysregs_context_restore(NON_SECURE);
-#if SPMD_SPM_AT_SEL2
-	cm_el2_sysregs_context_restore(NON_SECURE);
-=======
 #if SPMD_SPM_AT_SEL2
 	cm_el2_sysregs_context_restore(NON_SECURE);
 #else
 	cm_el1_sysregs_context_restore(NON_SECURE);
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 	cm_set_next_eret_context(NON_SECURE);
 
@@ -751,13 +723,8 @@ bool spmd_el3_ffa_msg_direct_req(uint64_t x1,
 #endif
 }
 
-<<<<<<< HEAD
-bool is_spmd_logical_sp_info_regs_req_in_progress(
-		spmd_spm_core_context_t *ctx)
-=======
 bool
 is_spmd_logical_sp_info_regs_req_in_progress(const spmd_spm_core_context_t *ctx)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 #if ENABLE_SPMD_LP
 	return ((ctx->spmd_lp_sync_req_ongoing & SPMD_LP_FFA_INFO_GET_REG_ONGOING)
@@ -767,12 +734,7 @@ is_spmd_logical_sp_info_regs_req_in_progress(const spmd_spm_core_context_t *ctx)
 #endif
 }
 
-<<<<<<< HEAD
-bool is_spmd_logical_sp_dir_req_in_progress(
-		spmd_spm_core_context_t *ctx)
-=======
 bool is_spmd_logical_sp_dir_req_in_progress(const spmd_spm_core_context_t *ctx)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 #if ENABLE_SPMD_LP
 	return ((ctx->spmd_lp_sync_req_ongoing & SPMD_LP_FFA_DIR_REQ_ONGOING)

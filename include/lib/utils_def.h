@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  * Copyright (c) 2020, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause

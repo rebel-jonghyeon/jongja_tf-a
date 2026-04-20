@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2023-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -26,44 +22,28 @@ int nv_counter_test(void)
 
 	status = plat_rse_comms_init();
 	if (status != PSA_SUCCESS) {
-<<<<<<< HEAD
-		printf("Failed to initialize RSS communication channel - psa_status = %d\n", status);
-=======
 		printf("Failed to initialize RSE communication channel - psa_status = %d\n", status);
->>>>>>> upstream_import/upstream_v2_14_1
 		return -1;
 	}
 
 	for (id = 0; id < 3; id++) {
 		status = rse_platform_nv_counter_read(id, sizeof(old_val), (uint8_t *)&old_val);
 		if (status != PSA_SUCCESS) {
-<<<<<<< HEAD
-			printf("Failed during first id=(%d) rss_platform_nv_counter_read - psa_status = %d\n",
-=======
 			printf("Failed during first id=(%d) rse_platform_nv_counter_read - psa_status = %d\n",
->>>>>>> upstream_import/upstream_v2_14_1
 				       id, status);
 			return -1;
 		}
 
 		status = rse_platform_nv_counter_increment(id);
 		if (status != PSA_SUCCESS) {
-<<<<<<< HEAD
-			printf("Failed during id=(%d) rss_platform_nv_counter_increment - psa_status = %d\n",
-=======
 			printf("Failed during id=(%d) rse_platform_nv_counter_increment - psa_status = %d\n",
->>>>>>> upstream_import/upstream_v2_14_1
 					id, status);
 			return -1;
 		}
 
 		status = rse_platform_nv_counter_read(id, sizeof(new_val), (uint8_t *)&new_val);
 		if (status != PSA_SUCCESS) {
-<<<<<<< HEAD
-			printf("Failed during second id=(%d) rss_platform_nv_counter_read - psa_status = %d\n",
-=======
 			printf("Failed during second id=(%d) rse_platform_nv_counter_read - psa_status = %d\n",
->>>>>>> upstream_import/upstream_v2_14_1
 					id, status);
 			return -1;
 		}

@@ -10,87 +10,10 @@ The following source trees were used:
 - `TFTF v2.14-rc0`_
 
 Please see the Runtime Instrumentation :ref:`Testing Methodology
-<<<<<<< HEAD
-<Runtime Instrumentation Methodology>` page for more details.
-
-Procedure
----------
-
-#. Build TFTF with runtime instrumentation enabled:
-
-    .. code:: shell
-
-        make CROSS_COMPILE=aarch64-none-elf- PLAT=n1sdp \
-            TESTS=runtime-instrumentation all
-
-#. Build TF-A with the following build options:
-
-    .. code:: shell
-
-        make CROSS_COMPILE=aarch64-none-elf- PLAT=n1sdp \
-            ENABLE_RUNTIME_INSTRUMENTATION=1 fiptool all
-
-#. Fetch the SCP firmware images:
-
-    .. code:: shell
-
-        curl --fail --connect-timeout 5 --retry 5 \
-            -sLS -o build/n1sdp/release/scp_rom.bin \
-            https://downloads.trustedfirmware.org/tf-a/css_scp_2.12.0/n1sdp/release/n1sdp-bl1.bin
-        curl --fail --connect-timeout 5 \
-            --retry 5 -sLS -o build/n1sdp/release/scp_ram.bin \
-            https://downloads.trustedfirmware.org/tf-a/css_scp_2.12.0/n1sdp/release/n1sdp-bl2.bin
-
-#. Fetch the MCP firmware images:
-
-    .. code:: shell
-
-        curl --fail --connect-timeout 5 --retry 5 \
-            -sLS -o build/n1sdp/release/mcp_rom.bin \
-            https://downloads.trustedfirmware.org/tf-a/css_scp_2.12.0/n1sdp/release/n1sdp-mcp-bl1.bin
-        curl --fail --connect-timeout 5 --retry 5 \
-            -sLS -o build/n1sdp/release/mcp_ram.bin \
-            https://downloads.trustedfirmware.org/tf-a/css_scp_2.12.0/n1sdp/release/n1sdp-mcp-bl2.bin
-
-#. Using the fiptool, create a new FIP package and append the SCP ram image onto
-   it.
-
-    .. code:: shell
-
-        ./tools/fiptool/fiptool create --blob \
-                uuid=cfacc2c4-15e8-4668-82be-430a38fad705,file=build/n1sdp/release/bl1.bin \
-                --scp-fw build/n1sdp/release/scp_ram.bin build/n1sdp/release/scp_fw.bin
-
-#. Append the MCP image to the FIP.
-
-    .. code:: shell
-
-        ./tools/fiptool/fiptool create \
-            --blob uuid=54464222-a4cf-4bf8-b1b6-cee7dade539e,file=build/n1sdp/release/mcp_ram.bin \
-            build/n1sdp/release/mcp_fw.bin
-
-#. Then, add TFTF as the Non-Secure workload in the FIP image:
-
-    .. code:: shell
-
-        make CROSS_COMPILE=aarch64-none-elf- PLAT=n1sdp \
-            ENABLE_RUNTIME_INSTRUMENTATION=1 SCP_BL2=/dev/null \
-            BL33=<path/to/tftf.bin>  fip
-
-#. Load the following images onto the development board: ``fip.bin``,
-   ``scp_rom.bin``, ``scp_ram.bin``, ``mcp_rom.bin``, and ``mcp_ram.bin``.
-
-.. note::
-
-    These instructions presume you have a complete firmware stack. The N1SDP
-    `user guide`_ provides a detailed explanation on how to get setup from
-    scratch.
-=======
 <Runtime Instrumentation Methodology>` page for more details. The tests were ran
 using the
 `tf-psci-lava-instr/n1sdp-runtime-instrumentation,n1sdp-runtime-instrumentation:n1sdp-fip.tftf-firmware`
 configuration in CI.
->>>>>>> upstream_import/upstream_v2_14_1
 
 Results
 -------

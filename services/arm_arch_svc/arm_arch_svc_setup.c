@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2018-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2018-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,12 +7,6 @@
 #include <common/debug.h>
 #include <common/runtime_svc.h>
 #include <lib/cpus/errata.h>
-<<<<<<< HEAD
-#include <lib/cpus/wa_cve_2017_5715.h>
-#include <lib/cpus/wa_cve_2018_3639.h>
-#include <lib/cpus/wa_cve_2022_23960.h>
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 #include <lib/smccc.h>
 #include <services/arm_arch_svc.h>
 #include <smccc_helpers.h>
@@ -108,7 +98,6 @@ static int32_t smccc_arch_features(u_register_t arg1)
 
 		return 0; /* ERRATA_APPLIES || ERRATA_MISSING */
 #endif
-#endif /* __aarch64__ */
 
 #if ARCH_FEATURE_AVAILABILITY
 	case SMCCC_ARCH_FEATURE_AVAILABILITY | (SMC_64 << FUNCID_CC_SHIFT):
@@ -289,15 +278,10 @@ static uintptr_t arm_arch_svc_smc_handler(uint32_t smc_fid,
 	case SMCCC_ARCH_FEATURES:
 		SMC_RET1(handle, smccc_arch_features(x1));
 	case SMCCC_ARCH_SOC_ID:
-<<<<<<< HEAD
-		SMC_RET1(handle, smccc_arch_id(x1));
-#ifdef __aarch64__
-=======
 	case SMCCC_ARCH_SOC_ID | (SMC_64 << FUNCID_CC_SHIFT):
 		return smccc_arch_id(x1, handle, (smc_fid
 				& (SMC_64 << FUNCID_CC_SHIFT)));
 #if __aarch64__
->>>>>>> upstream_import/upstream_v2_14_1
 #if WORKAROUND_CVE_2017_5715
 	case SMCCC_ARCH_WORKAROUND_1:
 		/*
@@ -326,9 +310,6 @@ static uintptr_t arm_arch_svc_smc_handler(uint32_t smc_fid,
 		 */
 		SMC_RET0(handle);
 #endif
-<<<<<<< HEAD
-#endif /* __aarch64__ */
-=======
 #if WORKAROUND_CVE_2024_7881
 	case SMCCC_ARCH_WORKAROUND_4:
 		/*
@@ -344,7 +325,6 @@ static uintptr_t arm_arch_svc_smc_handler(uint32_t smc_fid,
 	case SMCCC_ARCH_FEATURE_AVAILABILITY | (SMC_64 << FUNCID_CC_SHIFT):
 		return smccc_arch_feature_availability(x1, handle, flags);
 #endif /* ARCH_FEATURE_AVAILABILITY */
->>>>>>> upstream_import/upstream_v2_14_1
 	default:
 		WARN("Unimplemented Arm Architecture Service Call: 0x%x \n",
 			smc_fid);

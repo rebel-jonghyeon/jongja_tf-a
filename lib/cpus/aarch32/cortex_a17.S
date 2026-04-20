@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -109,11 +105,6 @@ func check_errata_cve_2017_5715
 endfunc check_errata_cve_2017_5715
 
 add_erratum_entry cortex_a17, CVE(2017, 5715), WORKAROUND_CVE_2017_5715
-<<<<<<< HEAD
-
-errata_report_shim cortex_a17
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 func cortex_a17_reset_func
 	mov	r5, lr

@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, ARM Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2023-2025, ARM Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -19,10 +15,6 @@
 #define SPMD_PARTITION_PROPERTIES FFA_PARTITION_DIRECT_REQ_SEND
 
 #define SPMD_LP_MAX_SUPPORTED_SP 10
-<<<<<<< HEAD
-static void fvp_get_partition_info(void)
-{
-=======
 
 static void fvp_get_partition_info(void)
 {
@@ -42,7 +34,6 @@ static void fvp_get_partition_info(void)
 	 */
 	return;
 
->>>>>>> upstream_import/upstream_v2_14_1
 	struct ffa_value ret = { 0 };
 	uint32_t target_uuid[4] = { 0 };
 	static struct ffa_partition_info_v1_1

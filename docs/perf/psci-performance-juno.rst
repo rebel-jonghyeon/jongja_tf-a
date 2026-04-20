@@ -36,41 +36,9 @@ The following source trees and binaries were used:
 
 Please see the Runtime Instrumentation :ref:`Testing Methodology
 <Runtime Instrumentation Methodology>`
-<<<<<<< HEAD
-page for more details.
-
-Procedure
----------
-
-#. Build TFTF with runtime instrumentation enabled:
-
-    .. code:: shell
-
-        make CROSS_COMPILE=aarch64-none-elf- PLAT=juno \
-            TESTS=runtime-instrumentation all
-
-#. Fetch Juno's SCP binary from TF-A's archive:
-
-    .. code:: shell
-
-        curl --fail --connect-timeout 5 --retry 5 -sLS -o scp_bl2.bin \
-            https://downloads.trustedfirmware.org/tf-a/css_scp_2.12.0/juno/release/juno-bl2.bin
-
-#. Build TF-A with the following build options:
-
-    .. code:: shell
-
-        make CROSS_COMPILE=aarch64-none-elf- PLAT=juno \
-            BL33="/path/to/tftf.bin" SCP_BL2="scp_bl2.bin" \
-            ENABLE_RUNTIME_INSTRUMENTATION=1 fiptool all fip
-
-#. Load the following images onto the development board: ``fip.bin``,
-   ``scp_bl2.bin``.
-=======
 page for more details. The tests were ran using the
 `tf-psci-lava-instr/juno-enable-runtime-instr,juno-instrumentation:juno-tftf`
 configuration in CI.
->>>>>>> upstream_import/upstream_v2_14_1
 
 Results
 -------
@@ -535,9 +503,5 @@ effects, given that these measurements are at the nano-second level.
 
 .. _Juno R1 platform: https://developer.arm.com/documentation/100122/latest/
 .. _TF master as of 31/01/2017: https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/tree/?id=c38b36d
-<<<<<<< HEAD
-.. _v2.9-rc0: https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/tree/?h=v2.9-rc0
-=======
 .. _TF-A v2.14-rc0: https://git.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/refs/tags/v2.14-rc0
 .. _TFTF v2.14-rc0: https://git.trustedfirmware.org/plugins/gitiles/TF-A/tf-a-tests/+/refs/tags/v2.14-rc0
->>>>>>> upstream_import/upstream_v2_14_1

@@ -311,10 +311,7 @@ static bool direct_msg_validate_lp_resp(uint16_t origin_id, uint16_t lp_id,
 					void *handle)
 {
 	/* Retrieve populated Direct Response Arguments. */
-<<<<<<< HEAD
-=======
 	uint64_t smc_fid = SMC_GET_GP(handle, CTX_GPREG_X0);
->>>>>>> upstream_import/upstream_v2_14_1
 	uint64_t x1 = SMC_GET_GP(handle, CTX_GPREG_X1);
 	uint64_t x2 = SMC_GET_GP(handle, CTX_GPREG_X2);
 	uint16_t src_id = ffa_endpoint_source(x1);
@@ -334,12 +331,8 @@ static bool direct_msg_validate_lp_resp(uint16_t origin_id, uint16_t lp_id,
 		return false;
 	}
 
-<<<<<<< HEAD
-	if (!direct_msg_validate_arg2(x2)) {
-=======
 	if ((smc_fid != FFA_MSG_SEND_DIRECT_RESP2_SMC64) &&
 			!direct_msg_validate_arg2(x2)) {
->>>>>>> upstream_import/upstream_v2_14_1
 		ERROR("Invalid EL3 LP message encoding.\n");
 		return false;
 	}
@@ -347,8 +340,6 @@ static bool direct_msg_validate_lp_resp(uint16_t origin_id, uint16_t lp_id,
 }
 
 /*******************************************************************************
-<<<<<<< HEAD
-=======
  * Helper function to check that partition can receive direct msg or not.
  ******************************************************************************/
 static bool direct_msg_receivable(uint32_t properties, uint16_t dir_req_fnum)
@@ -376,7 +367,6 @@ uint32_t get_partition_ffa_version(bool secure_origin)
 }
 
 /*******************************************************************************
->>>>>>> upstream_import/upstream_v2_14_1
  * Handle direct request messages and route to the appropriate destination.
  ******************************************************************************/
 static uint64_t direct_req_smc_handler(uint32_t smc_fid,
@@ -422,26 +412,15 @@ static uint64_t direct_req_smc_handler(uint32_t smc_fid,
 					FFA_ERROR_INVALID_PARAMETER);
 	}
 
-	/* Validate Sender is either the current SP or from the normal world. */
-	if ((secure_origin && src_id != spmc_get_current_sp_ctx()->sp_id) ||
-		(!secure_origin && !ffa_is_normal_world_id(src_id))) {
-		ERROR("Invalid direct request source ID (0x%x).\n", src_id);
-		return spmc_ffa_error_return(handle,
-					FFA_ERROR_INVALID_PARAMETER);
-	}
-
 	el3_lp_descs = get_el3_lp_array();
 
 	/* Check if the request is destined for a Logical Partition. */
 	for (unsigned int i = 0U; i < MAX_EL3_LP_DESCS_COUNT; i++) {
 		if (el3_lp_descs[i].sp_id == dst_id) {
-<<<<<<< HEAD
-=======
 			if (!direct_msg_receivable(el3_lp_descs[i].properties, dir_req_funcid)) {
 				return spmc_ffa_error_return(handle, FFA_ERROR_DENIED);
 			}
 
->>>>>>> upstream_import/upstream_v2_14_1
 			uint64_t ret = el3_lp_descs[i].direct_req(
 						smc_fid, secure_origin, x1, x2,
 						x3, x4, cookie, handle, flags);
@@ -508,15 +487,12 @@ static uint64_t direct_req_smc_handler(uint32_t smc_fid,
 	sp->ec[idx].rt_state = RT_STATE_RUNNING;
 	sp->ec[idx].rt_model = RT_MODEL_DIR_REQ;
 	sp->ec[idx].dir_req_origin_id = src_id;
-<<<<<<< HEAD
-=======
 	sp->ec[idx].dir_req_funcid = dir_req_funcid;
 
 	if (sp->runtime_el == S_EL0) {
 		spin_unlock(&sp->rt_state_lock);
 	}
 
->>>>>>> upstream_import/upstream_v2_14_1
 	return spmc_smc_return(smc_fid, secure_origin, x1, x2, x3, x4,
 			       handle, cookie, flags, dst_id, sp->ffa_version);
 }
@@ -611,20 +587,12 @@ static uint64_t direct_resp_smc_handler(uint32_t smc_fid,
 		return spmc_ffa_error_return(handle, FFA_ERROR_DENIED);
 	}
 
-	if (sp->ec[idx].dir_req_origin_id != dst_id) {
-		WARN("Invalid direct resp partition ID 0x%x != 0x%x on core%u.\n",
-		     dst_id, sp->ec[idx].dir_req_origin_id, idx);
-		return spmc_ffa_error_return(handle, FFA_ERROR_DENIED);
-	}
-
 	/* Update the state of the SP execution context. */
 	sp->ec[idx].rt_state = RT_STATE_WAITING;
 
 	/* Clear the ongoing direct request ID. */
 	sp->ec[idx].dir_req_origin_id = INV_SP_ID;
 
-<<<<<<< HEAD
-=======
 	/* Clear the ongoing direct request message version. */
 	sp->ec[idx].dir_req_funcid = 0U;
 
@@ -632,7 +600,6 @@ static uint64_t direct_resp_smc_handler(uint32_t smc_fid,
 		spin_unlock(&sp->rt_state_lock);
 	}
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/*
 	 * If the receiver is not the SPMC then forward the response to the
 	 * Normal world.

@@ -1532,13 +1532,8 @@ int intel_fcs_mac_verify_update_finalize(uint32_t smc_fid, uint32_t trans_id,
 			return INTEL_SIP_SMC_STATUS_REJECTED;
 		}
 
-<<<<<<< HEAD
-		memcpy((uint8_t *) &payload[i], (uint8_t *) mac_offset,
-		src_size - data_size);
-=======
 		memcpy_s(&payload[i], (src_size - data_size) / MBOX_WORD_BYTE,
 			(void *) mac_offset, (src_size - data_size) / MBOX_WORD_BYTE);
->>>>>>> upstream_import/upstream_v2_14_1
 
 		i += (src_size - data_size) / MBOX_WORD_BYTE;
 	}
@@ -1682,13 +1677,8 @@ int intel_fcs_mac_verify_smmu_update_finalize(uint32_t session_id,
 			return INTEL_SIP_SMC_STATUS_REJECTED;
 		}
 
-<<<<<<< HEAD
-		memcpy((uint8_t *) &payload[i], (uint8_t *) mac_offset,
-		src_size - data_size);
-=======
 		memcpy_s(&payload[i], (src_size - data_size) / MBOX_WORD_BYTE,
 			(void *) mac_offset, (src_size - data_size) / MBOX_WORD_BYTE);
->>>>>>> upstream_import/upstream_v2_14_1
 
 		memset((void *) dst_addr, 0, *dst_size);
 
@@ -1791,13 +1781,8 @@ int intel_fcs_ecdsa_hash_sign_finalize(uint32_t smc_fid, uint32_t trans_id,
 		return INTEL_SIP_SMC_STATUS_REJECTED;
 	}
 
-<<<<<<< HEAD
-	memcpy((uint8_t *) &payload[i], (uint8_t *) hash_data_addr,
-			src_size);
-=======
 	memcpy_s(&payload[i], src_size / MBOX_WORD_BYTE,
 		(void *) hash_data_addr, src_size / MBOX_WORD_BYTE);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	i += src_size / MBOX_WORD_BYTE;
 
@@ -1908,13 +1893,8 @@ int intel_fcs_ecdsa_hash_sig_verify_finalize(uint32_t smc_fid, uint32_t trans_id
 		return INTEL_SIP_SMC_STATUS_REJECTED;
 	}
 
-<<<<<<< HEAD
-	memcpy((uint8_t *) &payload[i],
-			(uint8_t *) hash_sig_pubkey_addr, src_size);
-=======
 	memcpy_s(&payload[i], src_size / MBOX_WORD_BYTE,
 		(void *) hash_sig_pubkey_addr, src_size / MBOX_WORD_BYTE);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	i += (src_size / MBOX_WORD_BYTE);
 
@@ -2284,13 +2264,8 @@ int intel_fcs_ecdsa_sha2_data_sig_verify_update_finalize(uint32_t smc_fid, uint3
 			return INTEL_SIP_SMC_STATUS_REJECTED;
 		}
 
-<<<<<<< HEAD
-		memcpy((uint8_t *) &payload[i], (uint8_t *) sig_pubkey_offset,
-			src_size - data_size);
-=======
 		memcpy_s(&payload[i], (src_size - data_size) / MBOX_WORD_BYTE,
 			(void *) sig_pubkey_offset, (src_size - data_size) / MBOX_WORD_BYTE);
->>>>>>> upstream_import/upstream_v2_14_1
 
 		i += (src_size - data_size) / MBOX_WORD_BYTE;
 	}
@@ -2432,13 +2407,8 @@ int intel_fcs_ecdsa_sha2_data_sig_verify_smmu_update_finalize(uint32_t session_i
 			return INTEL_SIP_SMC_STATUS_REJECTED;
 		}
 
-<<<<<<< HEAD
-		memcpy((uint8_t *) &payload[i], (uint8_t *) sig_pubkey_offset,
-			src_size - data_size);
-=======
 		memcpy_s(&payload[i], (src_size - data_size) / MBOX_WORD_BYTE,
 			(void *) sig_pubkey_offset, (src_size - data_size) / MBOX_WORD_BYTE);
->>>>>>> upstream_import/upstream_v2_14_1
 
 		memset((void *) dst_addr, 0, *dst_size);
 
@@ -2576,7 +2546,6 @@ int intel_fcs_ecdh_request_finalize(uint32_t smc_fid, uint32_t trans_id,
 		return INTEL_SIP_SMC_STATUS_REJECTED;
 	}
 
-
 	if (fcs_ecdh_request_param.session_id != session_id ||
 		fcs_ecdh_request_param.context_id != context_id) {
 		return INTEL_SIP_SMC_STATUS_REJECTED;
@@ -2588,16 +2557,9 @@ int intel_fcs_ecdh_request_finalize(uint32_t smc_fid, uint32_t trans_id,
 	}
 
 	dst_size_check = *dst_size;
-<<<<<<< HEAD
-	if ((dst_size_check > FCS_MAX_DATA_SIZE ||
-		dst_size_check < FCS_MIN_DATA_SIZE) ||
-		(src_size > FCS_MAX_DATA_SIZE ||
-		src_size < FCS_MIN_DATA_SIZE)) {
-=======
 
 	if ((dst_size_check > FCS_MAX_DATA_SIZE || dst_size_check < FCS_MIN_DATA_SIZE) ||
 	    (src_size > FCS_MAX_DATA_SIZE || src_size < FCS_MIN_DATA_SIZE)) {
->>>>>>> upstream_import/upstream_v2_14_1
 		return INTEL_SIP_SMC_STATUS_REJECTED;
 	}
 
@@ -2630,12 +2592,8 @@ int intel_fcs_ecdh_request_finalize(uint32_t smc_fid, uint32_t trans_id,
 		return INTEL_SIP_SMC_STATUS_REJECTED;
 	}
 
-<<<<<<< HEAD
-	memcpy((uint8_t *) &payload[i], (uint8_t *) pubkey, src_size);
-=======
 	memcpy_s(&payload[i], src_size / MBOX_WORD_BYTE,
 		(void *) pubkey, src_size / MBOX_WORD_BYTE);
->>>>>>> upstream_import/upstream_v2_14_1
 	i += src_size / MBOX_WORD_BYTE;
 
 	status = (smc_fid == ALTERA_SIP_SMC_ASYNC_FCS_ECDH_REQUEST_FINALIZE) ?
@@ -2841,16 +2799,10 @@ int intel_fcs_aes_crypt_update_finalize(uint32_t smc_fid, uint32_t trans_id,
 			return INTEL_SIP_SMC_STATUS_REJECTED;
 		}
 
-<<<<<<< HEAD
-		memcpy((uint8_t *) &fcs_aes_crypt_payload[i],
-			(uint8_t *) fcs_aes_init_payload.crypto_param,
-			fcs_aes_init_payload.param_size);
-=======
 		memcpy_s(&fcs_aes_crypt_payload[i],
 			fcs_aes_init_payload.param_size / MBOX_WORD_BYTE,
 			(void *) fcs_aes_init_payload.crypto_param,
 			fcs_aes_init_payload.param_size / MBOX_WORD_BYTE);
->>>>>>> upstream_import/upstream_v2_14_1
 
 		i += fcs_aes_init_payload.param_size / MBOX_WORD_BYTE;
 	}

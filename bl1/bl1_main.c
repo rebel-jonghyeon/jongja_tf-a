@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,11 +20,8 @@
 #include <drivers/console.h>
 #include <lib/bootmarker_capture.h>
 #include <lib/cpus/errata.h>
-<<<<<<< HEAD
-=======
 #include <lib/el3_runtime/context_mgmt.h>
 #include <lib/extensions/pauth.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <lib/pmf/pmf.h>
 #include <lib/utils.h>
 #include <plat/common/platform.h>
@@ -36,13 +29,6 @@
 #include <tools_share/uuid.h>
 
 #include "bl1_private.h"
-
-#include <lib/sic/sic.h>
-
-#if USE_GPT
-#include <drivers/arm/pl330.h>
-#include "drivers/partition/partition_simple.h"
-#endif
 
 static void bl1_load_bl2(void);
 
@@ -52,34 +38,8 @@ uint64_t bl1_apiakey[2];
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_REGISTER_SERVICE(bl_svc, PMF_RT_INSTR_SVC_ID,
-<<<<<<< HEAD
-						 BL_TOTAL_IDS, PMF_DUMP_ENABLE)
-#endif
-
-/*******************************************************************************
- * Helper utility to calculate the BL2 memory layout taking into consideration
- * the BL1 RW data assuming that it is at the top of the memory layout.
- ******************************************************************************/
-void bl1_calc_bl2_mem_layout(const meminfo_t *bl1_mem_layout,
-							 meminfo_t *bl2_mem_layout)
-{
-	assert(bl1_mem_layout);
-	assert(bl2_mem_layout);
-
-	/*
-	 * Remove BL1 RW data from the scope of memory visible to BL2.
-	 * This is assuming BL1 RW data is at the top of bl1_mem_layout.
-	 */
-	assert(BL1_RW_BASE > (uint64_t)bl1_mem_layout->total_base);
-	bl2_mem_layout->total_base = bl1_mem_layout->total_base;
-	bl2_mem_layout->total_size = BL1_RW_BASE - bl1_mem_layout->total_base;
-
-	flush_dcache_range((uintptr_t)bl2_mem_layout, sizeof(meminfo_t));
-}
-=======
 		BL_TOTAL_IDS, PMF_DUMP_ENABLE)
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * Setup function for BL1.
@@ -107,10 +67,6 @@ void __no_pauth bl1_main(void)
 #if !BL2_RUNS_AT_EL3
 	/* Init per-world context registers. */
 	cm_manage_extensions_per_world();
-#endif
-
-#if ENABLE_RUNTIME_INSTRUMENTATION
-	PMF_CAPTURE_TIMESTAMP(bl_svc, BL1_ENTRY, PMF_CACHE_MAINT);
 #endif
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
@@ -150,7 +106,7 @@ void __no_pauth bl1_main(void)
 	 * maximum.
 	 */
 	if (val != 0)
-		assert(CACHE_WRITEBACK_GRANULE == (uint32_t)SIZE_FROM_LOG2_WORDS(val));
+		assert(CACHE_WRITEBACK_GRANULE == SIZE_FROM_LOG2_WORDS(val));
 	else
 		assert(CACHE_WRITEBACK_GRANULE <= MAX_CACHE_LINE_SIZE);
 #endif /* ENABLE_ASSERTIONS */
@@ -176,13 +132,10 @@ void __no_pauth bl1_main(void)
 	 * We currently interpret any image id other than
 	 * BL2_IMAGE_ID as the start of firmware update.
 	 */
-	BOOT_LOG(CP0, SBOOT_N, 17);
-
-	if (image_id == BL2_IMAGE_ID) {
+	if (image_id == BL2_IMAGE_ID)
 		bl1_load_bl2();
-	} else {
+	else
 		NOTICE("BL1-FWU: *******FWU Process Started*******\n");
-	}
 
 	/* Teardown the measured boot driver */
 	bl1_plat_mboot_finish();
@@ -209,7 +162,7 @@ void __no_pauth bl1_main(void)
  * TODO: Add support for alternative image load mechanism e.g using virtio/elf
  * loader etc.
  ******************************************************************************/
-static void __unused bl1_load_bl2(void)
+static void bl1_load_bl2(void)
 {
 	image_desc_t *desc;
 	image_info_t *info;
@@ -217,7 +170,7 @@ static void __unused bl1_load_bl2(void)
 
 	/* Get the image descriptor */
 	desc = bl1_plat_get_image_desc(BL2_IMAGE_ID);
-	assert(desc);
+	assert(desc != NULL);
 
 	/* Get the image info */
 	info = &desc->image_info;
@@ -229,15 +182,10 @@ static void __unused bl1_load_bl2(void)
 		plat_error_handler(err);
 	}
 
-	/* TODO: Review this modification later */
-	if ((info->h.attr & IMAGE_ATTRIB_SKIP_LOADING) == 0U) {
-		err = load_auth_image(BL2_IMAGE_ID, info);
-		if (err != 0) {
-			ERROR("Failed to load BL2 firmware.\n");
-			plat_error_handler(err);
-		}
-	} else {
-		INFO("BL1: Skip loading image id %u\n", desc->image_id);
+	err = load_auth_image(BL2_IMAGE_ID, info);
+	if (err != 0) {
+		ERROR("Failed to load BL2 firmware.\n");
+		plat_error_handler(err);
 	}
 
 	/* Allow platform to handle image information. */
@@ -277,18 +225,19 @@ void print_debug_loop_message(void)
  * Top level handler for servicing BL1 SMCs.
  ******************************************************************************/
 u_register_t bl1_smc_handler(unsigned int smc_fid,
-							 u_register_t x1,
-							 u_register_t x2,
-							 u_register_t x3,
-							 u_register_t x4,
-							 void *cookie,
-							 void *handle,
-							 unsigned int flags)
+	u_register_t x1,
+	u_register_t x2,
+	u_register_t x3,
+	u_register_t x4,
+	void *cookie,
+	void *handle,
+	unsigned int flags)
 {
 	/* BL1 Service UUID */
 	DEFINE_SVC_UUID2(bl1_svc_uid,
-					 U(0xd46739fd), 0xcb72, 0x9a4d, 0xb5, 0x75,
-					 0x67, 0x15, 0xd6, 0xf4, 0xbb, 0x4a);
+		U(0xd46739fd), 0xcb72, 0x9a4d, 0xb5, 0x75,
+		0x67, 0x15, 0xd6, 0xf4, 0xbb, 0x4a);
+
 
 #if TRUSTED_BOARD_BOOT
 	/*
@@ -322,13 +271,13 @@ u_register_t bl1_smc_handler(unsigned int smc_fid,
  * compliance when invoking bl1_smc_handler.
  ******************************************************************************/
 u_register_t bl1_smc_wrapper(uint32_t smc_fid,
-							 void *cookie,
-							 void *handle,
-							 unsigned int flags)
+	void *cookie,
+	void *handle,
+	unsigned int flags)
 {
 	u_register_t x1, x2, x3, x4;
 
-	assert(handle);
+	assert(handle != NULL);
 
 	get_smc_params_from_ctx(handle, x1, x2, x3, x4);
 	return bl1_smc_handler(smc_fid, x1, x2, x3, x4, cookie, handle, flags);

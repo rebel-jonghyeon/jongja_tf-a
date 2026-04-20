@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,10 +9,7 @@
 #include <common/bl_common.h>
 #include <cortex_a720.h>
 #include <cpu_macros.S>
-<<<<<<< HEAD
-=======
 #include <dsu_macros.S>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <plat_macros.S>
 #include "wa_cve_2022_23960_bhb_vector.S"
 
@@ -30,23 +23,6 @@
 #error "Cortex A720 supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
 #endif
 
-<<<<<<< HEAD
-#if WORKAROUND_CVE_2022_23960
-        wa_cve_2022_23960_bhb_vector_table CORTEX_A720_BHB_LOOP_COUNT, cortex_a720
-#endif /* WORKAROUND_CVE_2022_23960 */
-
-workaround_reset_start cortex_a720, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-#if IMAGE_BL31
-	/*
-	 * The Cortex A720 generic vectors are overridden to apply errata
-	 * mitigation on exception entry from lower ELs.
-	 */
-	override_vector_table wa_cve_vbar_cortex_a720
-#endif /* IMAGE_BL31 */
-workaround_reset_end cortex_a720, CVE(2022, 23960)
-
-check_erratum_chosen cortex_a720, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-=======
 cpu_reset_prologue cortex_a720
 
 .global check_erratum_cortex_a720_3699561
@@ -122,17 +98,13 @@ workaround_reset_start cortex_a720, ERRATUM(3711910), ERRATA_A720_3711910
 workaround_reset_end cortex_a720, ERRATUM(3711910)
 
 check_erratum_ls cortex_a720, ERRATUM(3711910), CPU_REV(0, 2)
->>>>>>> upstream_import/upstream_v2_14_1
 
 cpu_reset_func_start cortex_a720
 	/* Disable speculative loads */
 	msr	SSBS, xzr
-<<<<<<< HEAD
-=======
 	apply_erratum cortex_a720, ERRATUM(3456091), ERRATA_A720_3456091
 
 	enable_mpmm
->>>>>>> upstream_import/upstream_v2_14_1
 cpu_reset_func_end cortex_a720
 
 	/* ----------------------------------------------------
@@ -150,11 +122,6 @@ func cortex_a720_core_pwr_dwn
 	ret
 endfunc cortex_a720_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_a720
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides Cortex A720-specific
 	 * register information for crash reporting.

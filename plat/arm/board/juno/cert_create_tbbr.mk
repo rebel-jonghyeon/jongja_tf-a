@@ -8,17 +8,10 @@ PLAT_DEF_OID := 1
 
 ifeq (${PLAT_DEF_OID},1)
   ifeq (${ETHOSN_NPU_DRIVER},1)
-<<<<<<< HEAD
-    $(eval $(call add_define, PLAT_DEF_OID))
-    $(eval $(call add_define, PDEF_CERTS))
-    $(eval $(call add_define, PDEF_EXTS))
-    $(eval $(call add_define, PDEF_KEYS))
-=======
     CRTTOOL_DEFINES += PLAT_DEF_OID
     CRTTOOL_DEFINES += PDEF_CERTS
     CRTTOOL_DEFINES += PDEF_EXTS
     CRTTOOL_DEFINES += PDEF_KEYS
->>>>>>> upstream_import/upstream_v2_14_1
 
     CRTTOOL_INCLUDE_DIRS		+=	${PLAT_DIR}/certificate/include \
 						../../include/drivers/arm

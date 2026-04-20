@@ -4,19 +4,14 @@ STM32MP2
 STM32MP2 is a microprocessor designed by STMicroelectronics
 based on Arm Cortex-A35.
 
-<<<<<<< HEAD
-=======
 More information can be found on `STM32MP2 Series`_ page.
 
->>>>>>> upstream_import/upstream_v2_14_1
 For TF-A common configuration of STM32 MPUs, please check
 :ref:`STM32 MPUs` page.
 
 STM32MP2 Versions
 -----------------
 
-<<<<<<< HEAD
-=======
 Here are the variants for STM32MP2:
 - STM32MP21
 - STM32MP23
@@ -54,7 +49,6 @@ Each line comes with a security option (cryptography & secure boot) and a Cortex
 
 STM32MP25 Versions
 ~~~~~~~~~~~~~~~~~~
->>>>>>> upstream_import/upstream_v2_14_1
 The STM32MP25 series is available in 4 different lines which are pin-to-pin compatible:
 
 - STM32MP257: Dual Cortex-A35 cores, Cortex-M33 core - 3x Ethernet (2+1 switch) - 3x CAN FD – H264 - 3D GPU – AI / NN - LVDS
@@ -64,13 +58,6 @@ The STM32MP25 series is available in 4 different lines which are pin-to-pin comp
 
 Each line comes with a security option (cryptography & secure boot) and a Cortex-A frequency option:
 
-<<<<<<< HEAD
-- A      Basic + Cortex-A35 @ 1GHz
-- C      Secure Boot + HW Crypto + Cortex-A35 @ 1GHz
-- D      Basic + Cortex-A35 @ 1.5GHz
-- F      Secure Boot + HW Crypto + Cortex-A35 @ 1.5GHz
-
-=======
 - A      Basic + Cortex-A35 @ 1.2GHz
 - C      Secure Boot + HW Crypto + Cortex-A35 @ 1.2GHz
 - D      Basic + Cortex-A35 @ 1.5GHz
@@ -78,7 +65,6 @@ Each line comes with a security option (cryptography & secure boot) and a Cortex
 
 The `STM32MP2 part number codification`_ page gives more information about part numbers.
 
->>>>>>> upstream_import/upstream_v2_14_1
 Memory mapping
 --------------
 
@@ -121,13 +107,10 @@ Dedicated STM32MP2 build flags:
 
 - | ``STM32MP_DDR_FIP_IO_STORAGE``: to store DDR firmware in FIP.
   | Default: 1
-<<<<<<< HEAD
-=======
 - | ``STM32MP21``: to select STM32MP21 variant configuration.
   | Default: 0
 - | ``STM32MP23``: to select STM32MP23 variant configuration.
   | Default: 0
->>>>>>> upstream_import/upstream_v2_14_1
 - | ``STM32MP25``: to select STM32MP25 variant configuration.
   | Default: 1
 
@@ -143,12 +126,8 @@ To compile the correct DDR driver, one flag must be set among:
 
 Boot with FIP
 ~~~~~~~~~~~~~
-<<<<<<< HEAD
-You need to build BL2, BL31, BL32 (OP-TEE) and BL33 (U-Boot) before building FIP binary.
-=======
 You need to build BL2, BL31, BL32 (OP-TEE) and BL33 (U-Boot) and retrieve
 DDR PHY firmware before building FIP binary.
->>>>>>> upstream_import/upstream_v2_14_1
 
 U-Boot
 ______
@@ -169,11 +148,6 @@ ______
         ARCH=arm PLATFORM=stm32mp2 \
         CFG_EMBED_DTB_SOURCE_FILE=stm32mp257f-ev1.dts
 
-<<<<<<< HEAD
-TF-A BL2 & BL31
-_______________
-To build TF-A BL2 with its STM32 header and BL31 for SD-card boot:
-=======
 DDR PHY firmware
 ________________
 DDR PHY firmware files may not be delivered inside TF-A repository, especially
@@ -192,7 +166,6 @@ line when building FIP.
 TF-A BL2
 ________
 To build TF-A BL2 with its STM32 header for SD-card boot:
->>>>>>> upstream_import/upstream_v2_14_1
 
 .. code:: bash
 
@@ -218,12 +191,8 @@ ___
         BL32_EXTRA1=<optee_directory>/tee-pager_v2.bin
         fip
 
-<<<<<<< HEAD
-*Copyright (c) 2023, STMicroelectronics - All Rights Reserved*
-=======
 .. _STM32MP2 Series: https://www.st.com/en/microcontrollers-microprocessors/stm32mp2-series.html
 .. _STM32MP2 part number codification: https://wiki.st.com/stm32mpu/wiki/STM32MP25_microprocessor#Part_number_codification
 .. _STMicroelectronics DDR PHY github: https://github.com/STMicroelectronics/stm32-ddr-phy-binary
 
 *Copyright (c) 2023-2025, STMicroelectronics - All Rights Reserved*
->>>>>>> upstream_import/upstream_v2_14_1

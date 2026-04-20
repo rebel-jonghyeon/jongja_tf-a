@@ -76,8 +76,6 @@ void versal_net_ipi_config_table_init(void);
 #define IPI4_TRIG_BIT		(1 << 6)
 #define IPI5_REG_BASE		(0xEB380000U)
 #define IPI5_TRIG_BIT		(1 << 7)
-<<<<<<< HEAD
-=======
 #define PMC_NOBUF_REG_BASE	(0xEB390000U)
 #define PMC_NOBUF_TRIG_BIT	(1 << 8)
 #define IPI6_NOBUF_95_REG_BASE	(0xEB3A0000U)
@@ -94,6 +92,5 @@ void versal_net_ipi_config_table_init(void);
 #define IPI5_NOBUF_TRIG_BIT	(1 << 14)
 #define IPI6_NOBUF_101_REG_BASE	(0xEB3B5000U)
 #define IPI6_NOBUF_101_TRIG_BIT	(1 << 15)
->>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* PLAT_IPI_H */

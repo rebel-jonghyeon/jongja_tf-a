@@ -14,10 +14,7 @@
 
 #include "cadence_qspi.h"
 #include "socfpga_plat_def.h"
-<<<<<<< HEAD
-=======
 #include "wdt/watchdog.h"
->>>>>>> upstream_import/upstream_v2_14_1
 
 #define LESS(a, b)   (((a) < (b)) ? (a) : (b))
 #define MORE(a, b)   (((a) > (b)) ? (a) : (b))

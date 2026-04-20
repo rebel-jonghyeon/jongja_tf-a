@@ -72,15 +72,9 @@ const mmap_region_t plat_arm_mmap[] = {
 #ifdef PLAT_ARM_MEM_PROT_ADDR
 	ARM_V2M_MAP_MEM_PROTECT,
 #endif
-<<<<<<< HEAD:plat/arm/css/sgi/sgi_plat_v2.c
-	CSS_SGI_MAP_DEVICE,
-	SOC_PLATFORM_PERIPH_MAP_DEVICE,
-	SOC_SYSTEM_PERIPH_MAP_DEVICE,
-=======
 	NRD_CSS_PERIPH_MMAP(0),
 	NRD_ROS_PLATFORM_PERIPH_MMAP,
 	NRD_ROS_SYSTEM_PERIPH_MMAP,
->>>>>>> upstream_import/upstream_v2_14_1:plat/arm/board/neoverse_rd/common/nrd_plat2.c
 #if SPM_MM || (SPMC_AT_EL3 && SPMC_AT_EL3_SEL0_SP)
 	ARM_SPM_BUF_EL3_MMAP,
 #endif
@@ -96,11 +90,7 @@ const mmap_region_t plat_arm_secure_partition_mmap[] = {
 	ARM_SP_IMAGE_MMAP,
 	ARM_SP_IMAGE_NS_BUF_MMAP,
 #if ENABLE_FEAT_RAS && FFH_SUPPORT
-<<<<<<< HEAD:plat/arm/css/sgi/sgi_plat_v2.c
-	CSS_SGI_SP_CPER_BUF_MMAP,
-=======
 	NRD_CSS_SP_CPER_BUF_MMAP,
->>>>>>> upstream_import/upstream_v2_14_1:plat/arm/board/neoverse_rd/common/nrd_plat2.c
 #endif
 	ARM_SP_IMAGE_RW_MMAP,
 	ARM_SPM_BUF_EL0_MMAP,

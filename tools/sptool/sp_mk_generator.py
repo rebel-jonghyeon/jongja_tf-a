@@ -1,9 +1,5 @@
 #!/usr/bin/python3
-<<<<<<< HEAD
-# Copyright (c) 2020-2023, Arm Limited. All rights reserved.
-=======
 # Copyright (c) 2020-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
@@ -160,14 +156,6 @@ def get_uuid(sp_layout, sp, args :dict):
 def get_load_address(sp_layout, sp, args :dict):
     ''' Helper to fetch load-address from pm file listed in sp_layout.json'''
     with open(get_sp_manifest_full_path(sp_layout[sp], args), "r") as pm_f:
-<<<<<<< HEAD
-        load_address_lines = [l for l in pm_f if 'load-address' in l]
-    assert(len(load_address_lines) == 1)
-    load_address_parsed = re.search("(0x[0-9a-f]+)", load_address_lines[0])
-    return load_address_parsed.group(0)
-
-
-=======
         load_address_lines = [l for l in pm_f if re.search(r'load-address[^-]', l)]
 
     if len(load_address_lines) != 1:
@@ -176,7 +164,6 @@ def get_load_address(sp_layout, sp, args :dict):
     load_address_parsed = re.search("(0x[0-9a-f]+)", load_address_lines[0])
     return load_address_parsed.group(0)
 
->>>>>>> upstream_import/upstream_v2_14_1
 @SpSetupActions.sp_action(global_action=True)
 def check_max_sps(sp_layout, _, args :dict):
     ''' Check validate the maximum number of SPs is respected. '''
@@ -338,12 +325,8 @@ def gen_fconf_fragment(sp_layout, sp, args: dict):
         else:
             load_address = get_load_address(sp_layout, sp, args)
 
-<<<<<<< HEAD
-        f.write(
-=======
         if load_address is not None:
             f.write(
->>>>>>> upstream_import/upstream_v2_14_1
 f'''\
 {sp} {{
     uuid = "{uuid}";
@@ -352,12 +335,9 @@ f'''\
 }};
 
 ''')
-<<<<<<< HEAD
-=======
         else:
             print("Warning: No load-address was found in the SP manifest.")
 
->>>>>>> upstream_import/upstream_v2_14_1
     return args
 
 def init_sp_actions(sys):

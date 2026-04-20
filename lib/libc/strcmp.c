@@ -33,11 +33,7 @@
  */
 
 /*
-<<<<<<< HEAD
- * Portions copyright (c) 2018, Arm Limited and Contributors.
-=======
  * Portions copyright (c) 2018-2025, Arm Limited and Contributors.
->>>>>>> upstream_import/upstream_v2_14_1
  * All rights reserved.
  */
 

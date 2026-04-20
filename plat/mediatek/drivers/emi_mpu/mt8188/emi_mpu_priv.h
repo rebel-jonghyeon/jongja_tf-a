@@ -53,12 +53,6 @@
 #define EMI_MPU_DGROUP_NUM		(EMI_MPU_DOMAIN_NUM / 8)
 
 /* APU EMI MPU Setting */
-<<<<<<< HEAD
-#define APUSYS_SEC_BUF_EMI_REGION	(21)
-#define APUSYS_SEC_BUF_PA		(0x55000000)
-#define APUSYS_SEC_BUF_SZ		(0x100000)
-
-=======
 #define APUSYS_SEC_BUF_PA		(0x55000000)
 #define APUSYS_SEC_BUF_SZ		(0x100000)
 
@@ -77,5 +71,4 @@ enum region_ids {
 
 	ALL_DEFAULT_REGION_ID = 31,
 };
->>>>>>> upstream_import/upstream_v2_14_1
 #endif

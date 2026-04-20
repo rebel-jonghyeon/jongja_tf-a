@@ -13,13 +13,9 @@
 #include <common/debug.h>
 #include <common/fdt_fixup.h>
 #include <common/fdt_wrappers.h>
-<<<<<<< HEAD
-#include <lib/mmio.h>
-=======
 #include <drivers/generic_delay_timer.h>
 #include <lib/mmio.h>
 #include <lib/xlat_tables/xlat_tables_v2.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <libfdt.h>
 #include <plat/arm/common/plat_arm.h>
 #include <plat/common/platform.h>
@@ -97,12 +93,6 @@ static inline void reset_cntvct_el0_to_zero(void)
 void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 				u_register_t arg2, u_register_t arg3)
 {
-<<<<<<< HEAD
-	uint64_t tfa_handoff_addr;
-
-	setup_console();
-
-=======
 	(void)arg0;
 	(void)arg1;
 	(void)arg2;
@@ -120,7 +110,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 
 	setup_console();
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/* Initialize the platform config for future decision making */
 	zynqmp_config_setup();
 
@@ -141,11 +130,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	SET_PARAM_HEAD(&bl33_image_ep_info, PARAM_EP, VERSION_1, 0);
 	SET_SECURITY_STATE(bl33_image_ep_info.h.attr, NON_SECURE);
 
-<<<<<<< HEAD
-	tfa_handoff_addr = mmio_read_32(PMU_GLOBAL_GEN_STORAGE6);
-=======
 	tfa_handoff_addr = (uint64_t)mmio_read_32(PMU_GLOBAL_GEN_STORAGE6);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	if (zynqmp_get_bootmode() == ZYNQMP_BOOTMODE_JTAG) {
 		bl31_set_default_config();
@@ -274,9 +259,5 @@ void bl31_plat_arch_setup(void)
 	custom_mmap_add();
 
 	setup_page_tables(bl_regions, plat_get_mmap());
-<<<<<<< HEAD
-	enable_mmu_el3(0);
-=======
 	enable_mmu(0);
->>>>>>> upstream_import/upstream_v2_14_1
 }

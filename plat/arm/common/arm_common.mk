@@ -130,13 +130,6 @@ ifeq (${ARM_LINUX_KERNEL_AS_BL33},1)
   endif
 endif
 
-<<<<<<< HEAD
-# Use an implementation of SHA-256 with a smaller memory footprint but reduced
-# speed.
-$(eval $(call add_define,MBEDTLS_SHA256_SMALLER))
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 # Add the build options to pack Trusted OS Extra1 and Trusted OS Extra2 images
 # in the FIP if the platform requires.
 ifneq ($(BL32_EXTRA1),)
@@ -326,8 +319,6 @@ BL31_SOURCES		+=	plat/arm/common/arm_bl31_setup.c		\
 				plat/arm/common/arm_topology.c			\
 				plat/common/plat_psci_common.c
 
-<<<<<<< HEAD
-=======
 ifeq (${PLAT_ARM_ACS_SMC_HANDLER},1)
 BL31_SOURCES		+=	plat/arm/common/plat_acs_smc_handler.c		\
 				${VENDOR_EL3_SRCS}
@@ -341,7 +332,6 @@ BL2_SOURCES += plat/arm/common/arm_transfer_list.c
 BL31_SOURCES += plat/arm/common/arm_transfer_list.c
 endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 ifneq ($(filter 1,${ENABLE_PMF} ${ETHOSN_NPU_DRIVER}),)
 ARM_SVC_HANDLER_SRCS :=
 
@@ -381,15 +371,6 @@ BL31_SOURCES		+=	plat/arm/common/fconf/fconf_sdei_getter.c
 endif
 endif
 
-<<<<<<< HEAD
-# RAS sources
-ifeq (${ENABLE_FEAT_RAS}-${HANDLE_EA_EL3_FIRST_NS},1-1)
-BL31_SOURCES		+=	lib/extensions/ras/std_err_record.c		\
-				lib/extensions/ras/ras_common.c
-endif
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 # Pointer Authentication sources
 ifeq ($(BRANCH_PROTECTION),$(filter $(BRANCH_PROTECTION),1 2 3 5))
 PLAT_BL_COMMON_SOURCES	+=	plat/arm/common/aarch64/arm_pauth.c

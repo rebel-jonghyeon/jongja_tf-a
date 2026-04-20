@@ -103,10 +103,7 @@ struct transfer_list_header *secure_tl __unused;
 void arm_bl2_early_platform_setup(u_register_t arg0, u_register_t arg1,
 				  u_register_t arg2, u_register_t arg3)
 {
-<<<<<<< HEAD
-=======
 	struct transfer_list_entry *te __unused;
->>>>>>> upstream_import/upstream_v2_14_1
 	int __maybe_unused ret;
 
 	/* Initialize the console to provide early debug support */
@@ -132,14 +129,6 @@ void arm_bl2_early_platform_setup(u_register_t arg0, u_register_t arg1,
 
 	/* Load partition table */
 #if ARM_GPT_SUPPORT
-<<<<<<< HEAD
-	ret = gpt_partition_init();
-	if (ret != 0) {
-		ERROR("GPT partition initialisation failed!\n");
-		panic();
-	}
-
-=======
 	plat_setup_log_gpt_corrupted(&arm_log_gpt_corruption);
 
 	ret = gpt_partition_init();
@@ -153,7 +142,6 @@ void arm_bl2_early_platform_setup(u_register_t arg0, u_register_t arg1,
 						   plat_log_gpt_ptr->gpt_corrupted_info);
 #endif	/* TRANSFER_LIST */
 
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* ARM_GPT_SUPPORT */
 }
 
@@ -378,8 +366,6 @@ int arm_bl2_plat_handle_post_image_load(unsigned int image_id)
 
 	return arm_bl2_handle_post_image_load(image_id);
 }
-<<<<<<< HEAD
-=======
 
 void arm_bl2_setup_next_ep_info(bl_mem_params_node_t *next_param_node)
 {
@@ -399,4 +385,3 @@ void arm_bl2_setup_next_ep_info(bl_mem_params_node_t *next_param_node)
 	arm_transfer_list_populate_ep_info(next_param_node, secure_tl);
 #endif
 }
->>>>>>> upstream_import/upstream_v2_14_1

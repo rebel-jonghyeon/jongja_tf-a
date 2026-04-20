@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2018-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2018-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -35,12 +31,7 @@ cpu_reset_prologue cortex_a77
 workaround_reset_start cortex_a77, ERRATUM(1508412), ERRATA_A77_1508412
 	/* move cpu revision in again and compare against r0p0 */
 	mov	x0, x7
-<<<<<<< HEAD
-	mov	x1, #CPU_REV(0, 0)
-	bl	cpu_rev_var_ls
-=======
 	cpu_rev_var_ls	CPU_REV(0, 0)
->>>>>>> upstream_import/upstream_v2_14_1
 	cbz	x0, 1f
 
 	ldr	x0, =0x0
@@ -152,8 +143,6 @@ workaround_reset_end cortex_a77, CVE(2022, 23960)
 
 check_erratum_chosen cortex_a77, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 
-<<<<<<< HEAD
-=======
 /* Disable hardware page aggregation. Enables mitigation for `CVE-2024-5660` */
 workaround_reset_start cortex_a77, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
 	sysreg_bit_set CORTEX_A77_CPUECTLR_EL1, BIT(46)
@@ -161,7 +150,6 @@ workaround_reset_end cortex_a77, CVE(2024, 5660)
 
 check_erratum_ls cortex_a77, CVE(2024, 5660), CPU_REV(1, 1)
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/* -------------------------------------------------
 	 * The CPU Ops reset function for Cortex-A77. Must follow AAPCS.
 	 * -------------------------------------------------
@@ -187,10 +175,6 @@ func cortex_a77_core_pwr_dwn
 	ret
 endfunc cortex_a77_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_a77
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides Cortex-A77 specific
 	 * register information for crash reporting.

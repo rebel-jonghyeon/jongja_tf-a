@@ -8,14 +8,6 @@
 #define PLAT_DT_UART_H
 
 #define DT_UART_DCC_COMPAT	"arm,dcc"
-<<<<<<< HEAD
-
-#if defined(PLAT_zynqmp)
-#define DT_UART_COMPAT	"xlnx,zynqmp-uart"
-#else
-#define DT_UART_COMPAT	"arm,pl011"
-#endif
-=======
 #define DT_UART_CAD_COMPAT	"xlnx,zynqmp-uart"
 #define DT_UART_PL011_COMPAT	"arm,pl011"
 
@@ -34,17 +26,12 @@ typedef struct console_hd {
 	uint32_t console_scope;
 	uint8_t console_type;
 } console_holder;
->>>>>>> upstream_import/upstream_v2_14_1
 
 typedef struct dt_uart_info_s {
 	char compatible[30];
 	uintptr_t base;
 	uint32_t baud_rate;
-<<<<<<< HEAD
-	int32_t status;
-=======
 	uint8_t console_type;
->>>>>>> upstream_import/upstream_v2_14_1
 } dt_uart_info_t;
 
 void setup_console(void);

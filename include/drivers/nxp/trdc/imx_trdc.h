@@ -5,11 +5,7 @@
  */
 
 #ifndef IMX_TRDC_H
-<<<<<<< HEAD
-#define IMX_XRDC_H
-=======
 #define IMX_TRDC_H
->>>>>>> upstream_import/upstream_v2_14_1
 
 #define MBC_BLK_ALL	U(255)
 #define MRC_REG_ALL	U(16)

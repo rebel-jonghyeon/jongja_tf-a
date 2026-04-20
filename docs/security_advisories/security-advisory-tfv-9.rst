@@ -79,11 +79,6 @@ revisions of Cortex-A73 and Cortex-A75 that implements FEAT_CSV2).
 +----------------------+
 | Cortex-A715          |
 +----------------------+
-<<<<<<< HEAD
-| Cortex-A720          |
-+----------------------+
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 | Neoverse-N1          |
 +----------------------+
 | Neoverse-N2          |

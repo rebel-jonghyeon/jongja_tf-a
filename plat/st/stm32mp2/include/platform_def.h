@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (c) 2023-2025, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,10 +8,7 @@
 #define PLATFORM_DEF_H
 
 #include <arch.h>
-<<<<<<< HEAD
-=======
 #include <drivers/arm/gic_common.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <lib/utils_def.h>
 #include <plat/common/common_def.h>
 
@@ -40,15 +33,9 @@
 #define PLATFORM_CORE_COUNT		U(2)
 #define PLATFORM_MAX_CPUS_PER_CLUSTER	U(2)
 
-<<<<<<< HEAD
-#define PLAT_MAX_PWR_LVL		U(5)
-#define PLAT_MAX_CPU_SUSPEND_PWR_LVL	U(5)
-#define PLAT_NUM_PWR_DOMAINS		U(7)
-=======
 #define PLAT_MAX_PWR_LVL		U(1)
 #define PLAT_MIN_SUSPEND_PWR_LVL	U(2)
 #define PLAT_NUM_PWR_DOMAINS		U(6)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* Local power state for power domains in Run state. */
 #define STM32MP_LOCAL_STATE_RUN		U(0)
@@ -75,8 +62,6 @@
 #define BL2_LIMIT			(STM32MP_BL2_BASE + \
 					 STM32MP_BL2_SIZE)
 
-<<<<<<< HEAD
-=======
 #define BL2_RO_BASE			STM32MP_BL2_RO_BASE
 #define BL2_RO_LIMIT			(STM32MP_BL2_RO_BASE + \
 					 STM32MP_BL2_RO_SIZE)
@@ -98,20 +83,16 @@
 
 #define BL31_PROGBITS_LIMIT		(BL31_BASE + STM32MP_BL31_SIZE)
 
->>>>>>> upstream_import/upstream_v2_14_1
 /*******************************************************************************
  * BL33 specific defines.
  ******************************************************************************/
 #define BL33_BASE			STM32MP_BL33_BASE
 
-<<<<<<< HEAD
-=======
 #if STM32MP_DDR_FIP_IO_STORAGE
 #define DWL_DDR_BUFFER_BASE		STM32MP_SYSRAM_BASE
 #define DWL_DDR_BUFFER_SIZE		U(0x0000A000)
 #endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 /*******************************************************************************
  * Platform specific page table and MMU setup constants
  ******************************************************************************/
@@ -130,8 +111,6 @@
 #define CACHE_WRITEBACK_SHIFT		6
 #define CACHE_WRITEBACK_GRANULE		(U(1) << CACHE_WRITEBACK_SHIFT)
 
-<<<<<<< HEAD
-=======
 /*
  * Secure Interrupt: based on the standard ARM mapping
  */
@@ -187,5 +166,4 @@
 		       GIC_HIGHEST_SEC_PRIORITY,	\
 		       (grp), GIC_INTR_CFG_EDGE)
 
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* PLATFORM_DEF_H */

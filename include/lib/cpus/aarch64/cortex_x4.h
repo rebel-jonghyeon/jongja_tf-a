@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2022-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,12 +9,6 @@
 
 #define CORTEX_X4_MIDR					U(0x410FD821)
 
-<<<<<<< HEAD
-/* Cortex X4 loop count for CVE-2022-23960 mitigation */
-#define CORTEX_X4_BHB_LOOP_COUNT			U(132)
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 /*******************************************************************************
  * CPU Extended Control register specific definitions
  ******************************************************************************/
@@ -30,8 +20,6 @@
 #define CORTEX_X4_CPUPWRCTLR_EL1			S3_0_C15_C2_7
 #define CORTEX_X4_CPUPWRCTLR_EL1_CORE_PWRDN_BIT		U(1)
 
-<<<<<<< HEAD
-=======
 /*******************************************************************************
  * CPU Auxiliary control register specific definitions
  ******************************************************************************/
@@ -64,5 +52,4 @@ static inline long check_erratum_cortex_x4_2726228(long cpu_rev)
 long check_erratum_cortex_x4_3701758(long cpu_rev);
 #endif /* __ASSEMBLER__ */
 
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* CORTEX_X4_H */

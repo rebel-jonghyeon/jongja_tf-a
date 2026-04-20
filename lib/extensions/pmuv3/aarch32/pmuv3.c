@@ -25,13 +25,6 @@ static u_register_t mtpmu_disable_el3(u_register_t sdcr)
 	return sdcr;
 }
 
-<<<<<<< HEAD
-/*
- * Applies to all PMU versions. Name is PMUv3 for compatibility with aarch64 and
- * to not clash with platforms which reuse the PMU name
- */
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 void pmuv3_init_el3(void)
 {
 	u_register_t sdcr = read_sdcr();

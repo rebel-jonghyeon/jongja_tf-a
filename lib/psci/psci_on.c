@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2022, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -229,9 +225,5 @@ void psci_cpu_on_finish(unsigned int cpu_idx, const psci_power_state_t *state_in
 
 	/* Populate the mpidr field within the cpu node array */
 	/* This needs to be done only once */
-<<<<<<< HEAD
-	psci_cpu_pd_nodes[cpu_idx].mpidr = read_mpidr() & MPIDR_AFFINITY_MASK;
-=======
 	PER_CPU_BY_INDEX(psci_cpu_pd_nodes, cpu_idx)->mpidr = read_mpidr() & MPIDR_AFFINITY_MASK;
->>>>>>> upstream_import/upstream_v2_14_1
 }

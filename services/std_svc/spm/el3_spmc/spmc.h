@@ -140,8 +140,6 @@ struct sp_exec_ctx {
 
 	/* Track the source partition ID to validate a direct response. */
 	uint16_t dir_req_origin_id;
-<<<<<<< HEAD
-=======
 
 	/* Track direct message function id to validate a direct response. */
 	uint16_t dir_req_funcid;
@@ -149,7 +147,6 @@ struct sp_exec_ctx {
 
 struct ffa_uuid {
 	uint32_t uuid[4];
->>>>>>> upstream_import/upstream_v2_14_1
 };
 
 /*

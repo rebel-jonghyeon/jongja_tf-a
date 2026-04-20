@@ -7,10 +7,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <common/debug.h>
-<<<<<<< HEAD
-=======
 #include <drivers/delay_timer.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include "ddr.h"
 #include <lib/mmio.h>
 #include "socfpga_handoff.h"
@@ -344,8 +341,6 @@ int ddr_init(void)
 	NOTICE("DDR init successfully\n");
 	return status;
 }
-<<<<<<< HEAD
-=======
 
 int ddr_config_scrubber(phys_addr_t umctl2_base, enum ddr_type umctl2_type)
 {
@@ -486,4 +481,3 @@ int poll_idle_status(uint32_t addr, uint32_t mask, uint32_t match, uint32_t dela
 	}
 	return -ETIMEDOUT;
 }
->>>>>>> upstream_import/upstream_v2_14_1

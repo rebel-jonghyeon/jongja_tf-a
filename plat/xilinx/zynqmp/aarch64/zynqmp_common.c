@@ -11,20 +11,10 @@
 #include <common/debug.h>
 #include <lib/mmio.h>
 #include <lib/smccc.h>
-<<<<<<< HEAD
-#include <lib/xlat_tables/xlat_tables.h>
-#include <plat/common/platform.h>
-#include <services/arm_arch_svc.h>
-
-#include <plat_ipi.h>
-#include <plat_private.h>
-#include <plat_startup.h>
-=======
 #include <lib/xlat_tables/xlat_tables_v2.h>
 #include <plat/common/platform.h>
 #include <plat_arm.h>
 #include <services/arm_arch_svc.h>
->>>>>>> upstream_import/upstream_v2_14_1
 
 #include <plat_ipi.h>
 #include <plat_pm_common.h>
@@ -40,15 +30,9 @@
  * configure_mmu_elx() will give the available subset of that,
  */
 const mmap_region_t plat_zynqmp_mmap[] = {
-<<<<<<< HEAD
-	{ DEVICE0_BASE, DEVICE0_BASE, DEVICE0_SIZE, MT_DEVICE | MT_RW | MT_SECURE },
-	{ DEVICE1_BASE, DEVICE1_BASE, DEVICE1_SIZE, MT_DEVICE | MT_RW | MT_SECURE },
-	{ CRF_APB_BASE, CRF_APB_BASE, CRF_APB_SIZE, MT_DEVICE | MT_RW | MT_SECURE },
-=======
 	MAP_REGION_FLAT(DEVICE0_BASE, DEVICE0_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(DEVICE1_BASE, DEVICE1_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(CRF_APB_BASE, CRF_APB_SIZE, MT_DEVICE | MT_RW | MT_SECURE),
->>>>>>> upstream_import/upstream_v2_14_1
 	{0}
 };
 
@@ -255,11 +239,7 @@ static char *zynqmp_get_silicon_idcode_name(void)
 	size_t i, j, len;
 	const char *name = "EG/EV";
 
-<<<<<<< HEAD
-	if (pm_get_chipid(chipid) != PM_RET_SUCCESS) {
-=======
 	if (pm_get_chipid(chipid, SECURE) != PM_RET_SUCCESS) {
->>>>>>> upstream_import/upstream_v2_14_1
 		return "XCZUUNKN";
 	}
 

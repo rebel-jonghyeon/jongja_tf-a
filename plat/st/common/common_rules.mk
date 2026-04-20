@@ -55,19 +55,11 @@ ${BUILD_PLAT}/$(PLAT)-%.o: ${BUILD_PLAT}/fdts/%-bl2.dtb $(STM32_BINARY_MAPPING) 
 $(eval $(call MAKE_LD,${STM32_TF_LINKERFILE},$(STM32_LD_FILE),bl2))
 
 tf-a-%.elf: $(PLAT)-%.o ${STM32_TF_LINKERFILE}
-<<<<<<< HEAD
-	@echo "  LDS     $<"
-ifneq ($(findstring gcc,$(notdir $(LD))),)
-	${Q}${LD} -o $@ $(subst --,-Wl$(comma)--,${STM32_TF_ELF_LDFLAGS}) -nostartfiles -Wl,-Map=$(@:.elf=.map) -Wl,-dT ${STM32_TF_LINKERFILE} $<
-else
-	${Q}${LD} -o $@ ${STM32_TF_ELF_LDFLAGS} -Map=$(@:.elf=.map) --script ${STM32_TF_LINKERFILE} $<
-=======
 	$(s)echo "  LDS     $<"
 ifeq ($($(ARCH)-ld-id),gnu-gcc)
 	$(q)$($(ARCH)-ld) -o $@ $(subst --,-Wl$(comma)--,${STM32_TF_ELF_LDFLAGS}) -nostartfiles -static -Wl,--build-id=none -Wl,-Map=$(@:.elf=.map) -Wl,-dT ${STM32_TF_LINKERFILE} $<
 else
 	$(q)$($(ARCH)-ld) -o $@ ${STM32_TF_ELF_LDFLAGS} -static --build-id=none -Map=$(@:.elf=.map) --script ${STM32_TF_LINKERFILE} $<
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 tf-a-%.bin: tf-a-%.elf
@@ -77,17 +69,12 @@ tf-a-%.bin: tf-a-%.elf
 	$(s)echo
 
 tf-a-%.stm32: tf-a-%.bin ${STM32_DEPS}
-<<<<<<< HEAD
-	@echo
-	@echo "Generate $@"
-=======
 	$(s)echo
 	$(s)echo "Generate $@"
 ifeq ($($(ARCH)-ld-id),llvm-lld)
 	$(eval LOADADDR = 0x$(shell cat $(@:.stm32=.map) | grep '\.data$$' | awk '{print $$1}'))
 	$(eval ENTRY = 0x$(shell cat $(@:.stm32=.map) | grep "__BL2_IMAGE_START" | awk '{print $$1}'))
 else
->>>>>>> upstream_import/upstream_v2_14_1
 	$(eval LOADADDR = $(shell cat $(@:.stm32=.map) | grep '^RAM' | awk '{print $$2}'))
 	$(eval ENTRY = $(shell cat $(@:.stm32=.map) | grep "__BL2_IMAGE_START" | awk '{print $$1}'))
 endif

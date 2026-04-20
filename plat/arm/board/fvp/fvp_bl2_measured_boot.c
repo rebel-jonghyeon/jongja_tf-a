@@ -7,10 +7,6 @@
 #include <stdint.h>
 
 #include <common/tbbr/tbbr_img_def.h>
-<<<<<<< HEAD
-#include <drivers/measured_boot/event_log/event_log.h>
-#include <drivers/measured_boot/rss/rss_measured_boot.h>
-=======
 #if TRANSFER_LIST
 #include <tpm_event_log.h>
 #endif
@@ -18,7 +14,6 @@
 #include <drivers/measured_boot/metadata.h>
 #include <event_measure.h>
 #include <event_print.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #if defined(ARM_COT_cca)
 #include <tools_share/cca_oid.h>
 #else
@@ -73,47 +68,6 @@ const event_log_metadata_t fvp_event_log_metadata[] = {
 	{ EVLOG_INVALID_ID, NULL, (unsigned int)(-1) }	/* Terminator */
 };
 
-<<<<<<< HEAD
-/* FVP table with platform specific image IDs and metadata. Intentionally not a
- * const struct, some members might set by bootloaders during trusted boot.
- */
-struct rss_mboot_metadata fvp_rss_mboot_metadata[] = {
-	{
-		.id = BL31_IMAGE_ID,
-		.slot = U(9),
-		.signer_id_size = SIGNER_ID_MIN_SIZE,
-		.sw_type = RSS_MBOOT_BL31_STRING,
-		.pk_oid = BL31_IMAGE_KEY_OID,
-		.lock_measurement = true },
-	{
-		.id = HW_CONFIG_ID,
-		.slot = U(10),
-		.signer_id_size = SIGNER_ID_MIN_SIZE,
-		.sw_type = RSS_MBOOT_HW_CONFIG_STRING,
-		.pk_oid = HW_CONFIG_KEY_OID,
-		.lock_measurement = true },
-	{
-		.id = SOC_FW_CONFIG_ID,
-		.slot = U(11),
-		.signer_id_size = SIGNER_ID_MIN_SIZE,
-		.sw_type = RSS_MBOOT_SOC_FW_CONFIG_STRING,
-		.pk_oid = SOC_FW_CONFIG_KEY_OID,
-		.lock_measurement = true },
-#if ENABLE_RME
-	{
-		.id = RMM_IMAGE_ID,
-		.slot = U(12),
-		.signer_id_size = SIGNER_ID_MIN_SIZE,
-		.sw_type = RSS_MBOOT_RMM_STRING,
-		.pk_oid = RMM_IMAGE_KEY_OID,
-		.lock_measurement = true },
-#endif /* ENABLE_RME */
-	{
-		.id = RSS_MBOOT_INVALID_ID }
-};
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 void bl2_plat_mboot_init(void)
 {
 	uint8_t *event_log_start;
@@ -152,18 +106,12 @@ void bl2_plat_mboot_init(void)
 		(uint8_t *)((uintptr_t)event_log_base + event_log_max_size);
 #endif
 
-<<<<<<< HEAD
-	event_log_init((uint8_t *)event_log_start, event_log_finish);
-
-	rss_measured_boot_init(fvp_rss_mboot_metadata);
-=======
 	rc = event_log_init_and_reg(event_log_start, event_log_finish,
 				    &crypto_hash_info);
 	if (rc < 0) {
 		ERROR("Failed to initialize event log (%d).\n", rc);
 		panic();
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 int plat_mboot_measure_critical_data(unsigned int critical_data_id,

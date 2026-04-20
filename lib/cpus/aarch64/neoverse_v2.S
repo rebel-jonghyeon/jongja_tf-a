@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2021-2026, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -29,14 +25,6 @@
 #error "Neoverse V2 supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
 #endif
 
-<<<<<<< HEAD
-workaround_reset_start neoverse_v2, ERRATUM(2331132), ERRATA_V2_2331132
-	sysreg_bitfield_insert NEOVERSE_V2_CPUECTLR2_EL1, NEOVERSE_V2_CPUECTLR2_EL1_PF_MODE_CNSRV, \
-		NEOVERSE_V2_CPUECTLR2_EL1_PF_MODE_LSB, NEOVERSE_V2_CPUECTLR2_EL1_PF_MODE_WIDTH
-workaround_reset_end neoverse_v2, ERRATUM(2331132)
-
-check_erratum_ls neoverse_v2, ERRATUM(2331132), CPU_REV(0, 2)
-=======
 .global check_erratum_neoverse_v2_3701771
 
 cpu_reset_prologue neoverse_v2
@@ -64,7 +52,6 @@ workaround_reset_start neoverse_v2, ERRATUM(2662553), ERRATA_V2_2662553
 workaround_reset_end neoverse_v2, ERRATUM(2662553)
 
 check_erratum_ls neoverse_v2, ERRATUM(2662553), CPU_REV(0, 1)
->>>>>>> upstream_import/upstream_v2_14_1
 
 workaround_reset_start neoverse_v2, ERRATUM(2719105), ERRATA_V2_2719105
 	sysreg_bit_set NEOVERSE_V2_CPUACTLR2_EL1, NEOVERSE_V2_CPUACTLR2_EL1_BIT_0
@@ -92,8 +79,6 @@ workaround_runtime_end neoverse_v2, ERRATUM(2801372), ERRATA_V2_2801372
 
 check_erratum_ls neoverse_v2, ERRATUM(2801372), CPU_REV(0, 1)
 
-<<<<<<< HEAD
-=======
 workaround_reset_start neoverse_v2, ERRATUM(3442699), ERRATA_V2_3442699
 	sysreg_bit_set NEOVERSE_V2_CPUACTLR_EL1, NEOVERSE_V2_CPUACTLR_EL1_BIT_36
 workaround_reset_end neoverse_v2, ERRATUM(3442699)
@@ -122,7 +107,6 @@ workaround_reset_end neoverse_v2, ERRATUM(4302968)
 
 check_erratum_ls neoverse_v2, ERRATUM(4302968), CPU_REV(0, 2)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start neoverse_v2, CVE(2022,23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
 	/*
@@ -133,9 +117,6 @@ workaround_reset_start neoverse_v2, CVE(2022,23960), WORKAROUND_CVE_2022_23960
 #endif /* IMAGE_BL31 */
 workaround_reset_end neoverse_v2, CVE(2022,23960)
 
-<<<<<<< HEAD
-check_erratum_chosen neoverse_v2, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-=======
 check_erratum_ls neoverse_v2, CVE(2022, 23960), CPU_REV(0, 0)
 
 /* Disable hardware page aggregation. Enables mitigation for `CVE-2024-5660` */
@@ -144,7 +125,6 @@ workaround_reset_start neoverse_v2, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
 workaround_reset_end neoverse_v2, CVE(2024, 5660)
 
 check_erratum_ls neoverse_v2, CVE(2024, 5660), CPU_REV(0, 2)
->>>>>>> upstream_import/upstream_v2_14_1
 
 #if WORKAROUND_CVE_2022_23960
 	wa_cve_2022_23960_bhb_vector_table NEOVERSE_V2_BHB_LOOP_COUNT, neoverse_v2
@@ -204,18 +184,13 @@ endfunc neoverse_v2_core_pwr_dwn
 cpu_reset_func_start neoverse_v2
 	/* Disable speculative loads */
 	msr	SSBS, xzr
-cpu_reset_func_end neoverse_v2
 
-<<<<<<< HEAD
-errata_report_shim neoverse_v2
-=======
 #if NEOVERSE_Vx_EXTERNAL_LLC
 	/* Some systems may have External LLC, core needs to be made aware */
 	sysreg_bit_set NEOVERSE_V2_CPUECTLR_EL1, NEOVERSE_V2_CPUECTLR_EL1_EXTLLC_BIT
 #endif
 cpu_reset_func_end neoverse_v2
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides Neoverse V2-
 	 * specific register information for crash

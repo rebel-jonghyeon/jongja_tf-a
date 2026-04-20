@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  * Copyright (c) 2020-2022, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -302,11 +298,6 @@ func denver_cluster_pwr_dwn
 	ret
 endfunc denver_cluster_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim denver
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides Denver specific
 	 * register information for crash reporting.
@@ -330,12 +321,6 @@ endfunc denver_cpu_reg_dump
 .macro	denver_cpu_ops_wa midr
 	declare_cpu_ops denver, \midr, \
 		denver_reset_func, \
-<<<<<<< HEAD
-		check_erratum_denver_5715, \
-		CPU_NO_EXTRA2_FUNC, \
-		CPU_NO_EXTRA3_FUNC, \
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 		denver_core_pwr_dwn, \
 		denver_cluster_pwr_dwn
 .endm

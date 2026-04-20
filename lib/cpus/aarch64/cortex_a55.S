@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,37 +20,12 @@
 	.globl cortex_a55_reset_func
 	.globl cortex_a55_core_pwr_dwn
 
-<<<<<<< HEAD
-/* ERRATA_DSU_798953:
- * The errata is defined in dsu_helpers.S but applies to cortex_a55
- * as well. Henceforth creating symbolic names to the already existing errata
- * workaround functions to get them registered under the Errata Framework.
- */
-.equ check_erratum_cortex_a55_798953, check_errata_dsu_798953
-.equ erratum_cortex_a55_798953_wa, errata_dsu_798953_wa
-add_erratum_entry cortex_a55, ERRATUM(798953), ERRATA_DSU_798953, APPLY_AT_RESET
-
-/* ERRATA_DSU_936184:
- * The errata is defined in dsu_helpers.S but applies to cortex_a55
- * as well. Henceforth creating symbolic names to the already existing errata
- * workaround functions to get them registered under the Errata Framework.
- */
-.equ check_erratum_cortex_a55_936184, check_errata_dsu_936184
-.equ erratum_cortex_a55_936184_wa, errata_dsu_936184_wa
-add_erratum_entry cortex_a55, ERRATUM(936184), ERRATA_DSU_936184, APPLY_AT_RESET
-
-workaround_reset_start cortex_a55, ERRATUM(768277), ERRATA_A55_768277
-	sysreg_bit_set CORTEX_A55_CPUACTLR_EL1, CORTEX_A55_CPUACTLR_EL1_DISABLE_DUAL_ISSUE
-workaround_reset_end cortex_a55, ERRATUM(768277)
-
-=======
 cpu_reset_prologue cortex_a55
 
 workaround_reset_start cortex_a55, ERRATUM(768277), ERRATA_A55_768277
 	sysreg_bit_set CORTEX_A55_CPUACTLR_EL1, CORTEX_A55_CPUACTLR_EL1_DISABLE_DUAL_ISSUE
 workaround_reset_end cortex_a55, ERRATUM(768277)
 
->>>>>>> upstream_import/upstream_v2_14_1
 check_erratum_ls cortex_a55, ERRATUM(768277), CPU_REV(0, 0)
 
 workaround_reset_start cortex_a55, ERRATUM(778703), ERRATA_A55_778703
@@ -82,20 +53,6 @@ workaround_reset_end cortex_a55, ERRATUM(798797)
 
 check_erratum_ls cortex_a55, ERRATUM(798797), CPU_REV(0, 0)
 
-<<<<<<< HEAD
-workaround_reset_start cortex_a55, ERRATUM(846532), ERRATA_A55_846532
-	sysreg_bit_set CORTEX_A55_CPUACTLR_EL1, CORTEX_A55_CPUACTLR_EL1_DISABLE_DUAL_ISSUE
-workaround_reset_end cortex_a55, ERRATUM(846532)
-
-check_erratum_ls cortex_a55, ERRATUM(846532), CPU_REV(0, 1)
-
-workaround_reset_start cortex_a55, ERRATUM(903758), ERRATA_A55_903758
-	sysreg_bit_set CORTEX_A55_CPUACTLR_EL1, CORTEX_A55_CPUACTLR_EL1_DISABLE_L1_PAGEWALKS
-workaround_reset_end cortex_a55, ERRATUM(903758)
-
-check_erratum_ls cortex_a55, ERRATUM(903758), CPU_REV(0, 1)
-
-=======
 workaround_reset_start cortex_a55, ERRATUM(798953), ERRATA_DSU_798953
 	errata_dsu_798953_wa_impl
 workaround_reset_end cortex_a55, ERRATUM(798953)
@@ -126,7 +83,6 @@ check_erratum_custom_start cortex_a55, ERRATUM(936184)
 	ret
 check_erratum_custom_end cortex_a55, ERRATUM(936184)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_a55, ERRATUM(1221012), ERRATA_A55_1221012
 	mov	x0, #0x0020
 	movk	x0, #0x0850, lsl #16
@@ -157,19 +113,10 @@ check_erratum_ls cortex_a55, ERRATUM(1221012), CPU_REV(1, 0)
 check_erratum_chosen cortex_a55, ERRATUM(1530923), ERRATA_A55_1530923
 
 /* erratum has no workaround in the cpu. Generic code must take care */
-<<<<<<< HEAD
-add_erratum_entry cortex_a55, ERRATUM(1530923), ERRATA_A55_1530923, NO_APPLY_AT_RESET
-
-cpu_reset_func_start cortex_a55
-cpu_reset_func_end cortex_a55
-
-errata_report_shim cortex_a55
-=======
 add_erratum_entry cortex_a55, ERRATUM(1530923), ERRATA_A55_1530923
 
 cpu_reset_func_start cortex_a55
 cpu_reset_func_end cortex_a55
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ---------------------------------------------
 	 * HW will do the cache maintenance while powering down

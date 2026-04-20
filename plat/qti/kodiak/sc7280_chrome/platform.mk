@@ -34,13 +34,10 @@ PROGRAMMABLE_RESET_ADDRESS	:=	1
 
 RESET_TO_BL31			:=	0
 
-<<<<<<< HEAD:plat/qti/sc7280/platform.mk
-=======
 # Enable the dynamic translation tables library
 PLAT_XLAT_TABLES_DYNAMIC	:=	1
 $(eval $(call add_define,PLAT_XLAT_TABLES_DYNAMIC))
 
->>>>>>> upstream_import/upstream_v2_14_1:plat/qti/kodiak/sc7280_chrome/platform.mk
 QTI_SDI_BUILD := 0
 $(eval $(call assert_boolean,QTI_SDI_BUILD))
 $(eval $(call add_define,QTI_SDI_BUILD))

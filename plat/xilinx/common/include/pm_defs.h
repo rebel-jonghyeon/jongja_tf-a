@@ -207,31 +207,6 @@ enum pm_abort_reason {
 	ABORT_REASON_UNKNOWN,
 };
 
-<<<<<<< HEAD
-enum pm_opchar_type {
-	PM_OPCHAR_TYPE_POWER = 1,
-	PM_OPCHAR_TYPE_TEMP,
-	PM_OPCHAR_TYPE_LATENCY,
-};
-
-/*
- * Subsystem IDs
- */
-typedef enum {
-	XPM_SUBSYSID_PMC,
-	XPM_SUBSYSID_PSM,
-	XPM_SUBSYSID_APU,
-	XPM_SUBSYSID_RPU0_LOCK,
-	XPM_SUBSYSID_RPU0_0,
-	XPM_SUBSYSID_RPU0_1,
-	XPM_SUBSYSID_DDR0,
-	XPM_SUBSYSID_ME,
-	XPM_SUBSYSID_PL,
-	XPM_SUBSYSID_MAX,
-} XPm_SubsystemId;
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 /* TODO: move pm_ret_status from device specific location to common location */
 /**
  * enum pm_ret_status - enum represents the return status codes for a PM
@@ -239,11 +214,7 @@ typedef enum {
  * @PM_RET_SUCCESS: success.
  * @PM_RET_ERROR_ARGS: illegal arguments provided (deprecated).
  * @PM_RET_ERROR_NOTSUPPORTED: feature not supported  (deprecated).
-<<<<<<< HEAD
- * @PM_RET_ERROR_NOFEATURE: feature is not available.
-=======
  * @PM_RET_ERROR_IOCTL_NOT_SUPPORTED: IOCTL is not supported.
->>>>>>> upstream_import/upstream_v2_14_1
  * @PM_RET_ERROR_INVALID_CRC: invalid crc in IPI communication.
  * @PM_RET_ERROR_NOT_ENABLED: feature is not enabled.
  * @PM_RET_ERROR_INTERNAL: internal error.

@@ -5,10 +5,6 @@
 
 include common/fdt_wrappers.mk
 
-<<<<<<< HEAD
-ifeq ($(TARGET_PLATFORM), 0)
-	$(error Platform ${PLAT}$(TARGET_PLATFORM) is deprecated.)
-=======
 # TARGET_PLATFORM must be defined as a pre-requisite
 $(eval $(call assert_numerics,TARGET_PLATFORM))
 
@@ -51,7 +47,6 @@ ifneq ($(filter ${TARGET_PLATFORM}, 3),)
 ENABLE_FEAT_RNG_TRAP		:=	0
 else
 ENABLE_FEAT_RNG_TRAP		:=	1
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 CTX_INCLUDE_AARCH32_REGS	:=	0
@@ -113,76 +108,13 @@ CSS_LOAD_SCP_IMAGES	:=	1
 # Save DSU PMU registers on cluster off and restore them on cluster on
 PRESERVE_DSU_PMU_REGS		:= 1
 
-<<<<<<< HEAD
-ENABLE_FEAT_RAS		:=	1
-
-SDEI_SUPPORT		:=	0
-
-EL3_EXCEPTION_HANDLING	:=	0
-
-HANDLE_EA_EL3_FIRST_NS	:=	0
-
-# System coherency is managed in hardware
-HW_ASSISTED_COHERENCY	:=	1
-
-# When building for systems with hardware-assisted coherency, there's no need to
-# use USE_COHERENT_MEM. Require that USE_COHERENT_MEM must be set to 0 too.
-USE_COHERENT_MEM	:=	0
-
-GIC_ENABLE_V4_EXTN	:=      1
-
-# GIC-600 configuration
-GICV3_SUPPORT_GIC600	:=	1
-
-# Enable SVE
-ENABLE_SVE_FOR_NS	:=	2
-ENABLE_SVE_FOR_SWD	:=	1
-
-# enable trace buffer control registers access to NS by default
-ENABLE_TRBE_FOR_NS              := 1
-
-# enable trace system registers access to NS by default
-ENABLE_SYS_REG_TRACE_FOR_NS     := 1
-
-# enable trace filter control registers access to NS by default
-ENABLE_TRF_FOR_NS               := 1
-
-# Include GICv3 driver files
-include drivers/arm/gic/v3/gicv3.mk
-
-ENT_GIC_SOURCES		:=	${GICV3_SOURCES}		\
-				plat/common/plat_gicv3.c	\
-				plat/arm/common/arm_gicv3.c
-
-override NEED_BL2U	:=	no
-
-override ARM_PLAT_MT	:=	1
-=======
 PLAT_MHU		:= MHUv3
->>>>>>> upstream_import/upstream_v2_14_1
 
 TC_BASE	=	plat/arm/board/tc
 
 PLAT_INCLUDES		+=	-I${TC_BASE}/include/ \
 				-I${TC_BASE}/fdts/
 
-<<<<<<< HEAD
-# CPU libraries for TARGET_PLATFORM=1
-ifeq (${TARGET_PLATFORM}, 1)
-TC_CPU_SOURCES	+=	lib/cpus/aarch64/cortex_a510.S \
-			lib/cpus/aarch64/cortex_a715.S \
-			lib/cpus/aarch64/cortex_x3.S
-endif
-
-# CPU libraries for TARGET_PLATFORM=2
-ifeq (${TARGET_PLATFORM}, 2)
-TC_CPU_SOURCES	+=	lib/cpus/aarch64/cortex_a520.S \
-			lib/cpus/aarch64/cortex_a720.S \
-			lib/cpus/aarch64/cortex_x4.S
-endif
-
-INTERCONNECT_SOURCES	:=	${TC_BASE}/tc_interconnect.c
-=======
 # CPU libraries for TARGET_PLATFORM=3
 ifeq (${TARGET_PLATFORM}, 3)
 ERRATA_A520_2938996	:=	1
@@ -203,7 +135,6 @@ TC_CPU_SOURCES	+=	lib/cpus/aarch64/c1_pro.S \
 endif
 
 INTERCONNECT_SOURCES	:=	plat/arm/common/arm_ni.c
->>>>>>> upstream_import/upstream_v2_14_1
 
 PLAT_BL_COMMON_SOURCES	+=	${TC_BASE}/tc_plat.c	\
 				${TC_BASE}/include/tc_helpers.S

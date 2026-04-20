@@ -39,13 +39,6 @@ $(eval $(call add_define,SPMC_OPTEE))
 add-lib-optee 		:= 	yes
 endif
 
-<<<<<<< HEAD
-ifeq (${TRANSFER_LIST},1)
-include lib/transfer_list/transfer_list.mk
-endif
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 ifeq ($(NEED_BL32),yes)
 $(eval $(call add_define,QEMU_LOAD_BL32))
 endif
@@ -126,12 +119,7 @@ ifneq ($(filter 1,${MEASURED_BOOT} ${TRUSTED_BOARD_BOOT}),)
     include drivers/auth/mbedtls/mbedtls_crypto.mk
 endif
 
-<<<<<<< HEAD
-BL2_SOURCES		+=	${FDT_WRAPPERS_SOURCES}					\
-				common/uuid.c
-=======
 BL2_SOURCES		+=	common/uuid.c
->>>>>>> upstream_import/upstream_v2_14_1
 
 ifeq ($(add-lib-optee),yes)
 BL2_SOURCES		+=	lib/optee/optee_utils.c

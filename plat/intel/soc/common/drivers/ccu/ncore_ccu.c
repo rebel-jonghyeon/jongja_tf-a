@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2024, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,19 +12,12 @@
 #include <platform_def.h>
 
 #include "ncore_ccu.h"
-<<<<<<< HEAD
-=======
 #include "socfpga_mailbox.h"
->>>>>>> upstream_import/upstream_v2_14_1
 #include "socfpga_plat_def.h"
 #include "socfpga_system_manager.h"
 
 uint32_t poll_active_bit(uint32_t dir);
 
-<<<<<<< HEAD
-#define SMMU_DMI			1
-
-=======
 #define SMMU_DMI					1
 #define CCU_DMI0_DMIUSMCMCR				SOCFPGA_CCU_NOC_REG_BASE + 0x7340
 #define CCU_DMI0_DMIUSMCMAR				SOCFPGA_CCU_NOC_REG_BASE + 0x7344
@@ -527,7 +517,6 @@ uint32_t init_ncore_ccu(void)
 	return 0;
 }
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 static coh_ss_id_t subsystem_id;
 void get_subsystem_id(void)
@@ -540,6 +529,7 @@ void get_subsystem_id(void)
 	subsystem_id.num_directory = directory;
 	subsystem_id.num_coh_agent = coh_agent;
 }
+
 uint32_t directory_init(void)
 {
 	uint32_t dir_sf_mtn, dir_sf_en;
@@ -562,6 +552,7 @@ uint32_t directory_init(void)
 	}
 	return 0;
 }
+
 uint32_t coherent_agent_intfc_init(void)
 {
 	uint32_t dir, ca, ca_id, ca_type, ca_snoop_en;
@@ -576,15 +567,12 @@ uint32_t coherent_agent_intfc_init(void)
 			ca_type = CACHING_AGENT_TYPE(ca_id);
 			if (ca_type == ACE_W_DVM || ca_type == ACE_L_W_DVM)
 				mmio_setbits_32(NCORE_CCU_CSR(NCORE_CSADSER0),
-<<<<<<< HEAD
-				BIT(ca));
-=======
 						BIT(ca));
->>>>>>> upstream_import/upstream_v2_14_1
 		}
 	}
 	return 0;
 }
+
 uint32_t poll_active_bit(uint32_t dir)
 {
 	uint32_t timeout = 80000;
@@ -596,6 +584,7 @@ uint32_t poll_active_bit(uint32_t dir)
 	}
 	return -1;
 }
+
 void bypass_ocram_firewall(void)
 {
 	mmio_clrbits_32(COH_CPU0_BYPASS_REG(NCORE_FW_OCRAM_BLK_CGF1),
@@ -607,6 +596,7 @@ void bypass_ocram_firewall(void)
 	mmio_clrbits_32(COH_CPU0_BYPASS_REG(NCORE_FW_OCRAM_BLK_CGF4),
 			OCRAM_PRIVILEGED_MASK | OCRAM_SECURE_MASK);
 }
+
 void ncore_enable_ocram_firewall(void)
 {
 	mmio_setbits_32(COH_CPU0_BYPASS_REG(NCORE_FW_OCRAM_BLK_CGF1),
@@ -618,11 +608,8 @@ void ncore_enable_ocram_firewall(void)
 	mmio_setbits_32(COH_CPU0_BYPASS_REG(NCORE_FW_OCRAM_BLK_CGF4),
 			OCRAM_PRIVILEGED_MASK | OCRAM_SECURE_MASK);
 }
-<<<<<<< HEAD
-=======
 
 #if PLATFORM_MODEL != PLAT_SOCFPGA_AGILEX5
->>>>>>> upstream_import/upstream_v2_14_1
 uint32_t init_ncore_ccu(void)
 {
 	uint32_t status;
@@ -632,10 +619,7 @@ uint32_t init_ncore_ccu(void)
 	bypass_ocram_firewall();
 	return status;
 }
-<<<<<<< HEAD
-=======
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 void setup_smmu_stream_id(void)
 {
@@ -654,18 +638,10 @@ void setup_smmu_stream_id(void)
 	mmio_write_32(SOCFPGA_SYSMGR(IO_TBU_STREAM_ID_AX_REG_2_TSN0), TSN0);
 	mmio_write_32(SOCFPGA_SYSMGR(IO_TBU_STREAM_ID_AX_REG_2_TSN1), TSN1);
 	mmio_write_32(SOCFPGA_SYSMGR(IO_TBU_STREAM_ID_AX_REG_2_TSN2), TSN2);
-<<<<<<< HEAD
-
-	/* Enabled Stream ctrl register for Agilex5 */
-	mmio_write_32(SOCFPGA_SYSMGR(DMA_TBU_STREAM_CTRL_REG_0_DMA0), ENABLE_STREAMID);
-	mmio_write_32(SOCFPGA_SYSMGR(DMA_TBU_STREAM_CTRL_REG_0_DMA1), ENABLE_STREAMID);
-	mmio_write_32(SOCFPGA_SYSMGR(SDM_TBU_STREAM_CTRL_REG_1_SDM), ENABLE_STREAMID_SECURE_TX);
-=======
 	/* Enabled Stream ctrl register for Agilex5 */
 	mmio_write_32(SOCFPGA_SYSMGR(DMA_TBU_STREAM_CTRL_REG_0_DMA0), ENABLE_STREAMID);
 	mmio_write_32(SOCFPGA_SYSMGR(DMA_TBU_STREAM_CTRL_REG_0_DMA1), ENABLE_STREAMID);
 	mmio_write_32(SOCFPGA_SYSMGR(SDM_TBU_STREAM_CTRL_REG_1_SDM), ENABLE_STREAMID);
->>>>>>> upstream_import/upstream_v2_14_1
 	mmio_write_32(SOCFPGA_SYSMGR(IO_TBU_STREAM_CTRL_REG_2_USB2), ENABLE_STREAMID);
 	mmio_write_32(SOCFPGA_SYSMGR(IO_TBU_STREAM_CTRL_REG_2_USB3), ENABLE_STREAMID);
 	mmio_write_32(SOCFPGA_SYSMGR(IO_TBU_STREAM_CTRL_REG_2_SDMMC), ENABLE_STREAMID);
@@ -675,8 +651,6 @@ void setup_smmu_stream_id(void)
 	mmio_write_32(SOCFPGA_SYSMGR(TSN_TBU_STREAM_CTRL_REG_3_TSN1), ENABLE_STREAMID);
 	mmio_write_32(SOCFPGA_SYSMGR(TSN_TBU_STREAM_CTRL_REG_3_TSN2), ENABLE_STREAMID);
 }
-<<<<<<< HEAD
-=======
 
 #if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX5
 /* TODO: Temp added this here*/
@@ -735,4 +709,3 @@ int flush_l3_dcache(void)
 	return ret;
 }
 #endif
->>>>>>> upstream_import/upstream_v2_14_1

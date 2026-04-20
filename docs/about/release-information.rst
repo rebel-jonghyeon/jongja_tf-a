@@ -67,8 +67,6 @@ depending on project requirement and partner feedback.
 | v2.9            | 4th week of May '23       | 2nd week of May '23          |
 +-----------------+---------------------------+------------------------------+
 | v2.10           | 4th week of Nov '23       | 2nd week of Nov '23          |
-<<<<<<< HEAD
-=======
 +-----------------+---------------------------+------------------------------+
 | v2.11           | 4th week of May '24       | 2nd week of May '24          |
 +-----------------+---------------------------+------------------------------+
@@ -79,7 +77,6 @@ depending on project requirement and partner feedback.
 | v2.14           | 4th week of Nov '25       | 2nd week of Nov '25          |
 +-----------------+---------------------------+------------------------------+
 | v2.15           | 4th week of May '26       | 2nd week of May '26          |
->>>>>>> upstream_import/upstream_v2_14_1
 +-----------------+---------------------------+------------------------------+
 
 Removal of Deprecated Interfaces
@@ -94,11 +91,7 @@ after which it will be removed.
 |                                | Date        | after   |                                                         |
 |                                |             | Release |                                                         |
 +================================+=============+=========+=========================================================+
-<<<<<<< HEAD
-| STM32MP15_OPTEE_RSV_SHM        |     2.10    |   3.0   | OP-TEE manages its own memory on STM32MP15              |
-=======
 |                                |             |         |                                                         |
->>>>>>> upstream_import/upstream_v2_14_1
 +--------------------------------+-------------+---------+---------------------------------------------------------+
 
 Removal of Deprecated Drivers
@@ -113,13 +106,7 @@ after which it will be removed.
 |                                | Date        | after   |                                                         |
 |                                |             | Release |                                                         |
 +================================+=============+=========+=========================================================+
-<<<<<<< HEAD
-| CryptoCell-712                 |     2.9     |   2.10  | No longer maintained.                                   |
-+--------------------------------+-------------+---------+---------------------------------------------------------+
-| CryptoCell-713                 |     2.9     |   2.10  | No longer maintained.                                   |
-=======
 | None at this time.             |             |         |                                                         |
->>>>>>> upstream_import/upstream_v2_14_1
 +--------------------------------+-------------+---------+---------------------------------------------------------+
 
 Build Options deprecated/removed

@@ -40,16 +40,7 @@ void sme_enable_per_world(per_world_context_t *per_world_ctx)
 
 void sme_init_el3(void)
 {
-<<<<<<< HEAD
-	u_register_t cptr_el3 = read_cptr_el3();
 	u_register_t smcr_el3;
-
-	/* Set CPTR_EL3.ESM bit so we can access SMCR_EL3 without trapping. */
-	write_cptr_el3(cptr_el3 | ESM_BIT);
-	isb();
-=======
-	u_register_t smcr_el3;
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/*
 	 * Set the max LEN value and FA64 bit. This register is set up per_world
@@ -57,11 +48,7 @@ void sme_init_el3(void)
 	 * using SMCR_EL2 and SMCR_EL1.
 	 */
 	smcr_el3 = SMCR_ELX_LEN_MAX;
-<<<<<<< HEAD
-	if (read_feat_sme_fa64_id_field() != 0U) {
-=======
 	if (is_feat_sme_fa64_present()) {
->>>>>>> upstream_import/upstream_v2_14_1
 		VERBOSE("[SME] FA64 enabled\n");
 		smcr_el3 |= SMCR_ELX_FA64_BIT;
 	}
@@ -77,18 +64,6 @@ void sme_init_el3(void)
 		smcr_el3 |= SMCR_ELX_EZT0_BIT;
 	}
 	write_smcr_el3(smcr_el3);
-<<<<<<< HEAD
-=======
-}
->>>>>>> upstream_import/upstream_v2_14_1
-
-void sme_init_el2_unused(void)
-{
-	/*
-	 * CPTR_EL2.TCPAC: Set to zero so that Non-secure EL1 accesses to the
-	 *  CPACR_EL1 or CPACR from both Execution states do not trap to EL2.
-	 */
-	write_cptr_el2(read_cptr_el2() & ~CPTR_EL2_TCPAC_BIT);
 }
 
 void sme_init_el2_unused(void)
@@ -122,9 +97,5 @@ void sme_disable_per_world(per_world_context_t *per_world_ctx)
 	reg = per_world_ctx->ctx_cptr_el3;
 	reg &= ~ESM_BIT;	/* Trap SME */
 	reg &= ~CPTR_EZ_BIT;	/* Trap SVE */
-<<<<<<< HEAD
-	reg |= TFP_BIT;		/* Trap FPU/SIMD */
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	per_world_ctx->ctx_cptr_el3 = reg;
 }

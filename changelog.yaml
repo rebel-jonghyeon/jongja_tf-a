@@ -233,8 +233,6 @@ subsections:
           - title: Corstone-1000
             scope: corstone-1000
 
-<<<<<<< HEAD
-=======
             deprecated:
               - corstone1000
 
@@ -248,7 +246,6 @@ subsections:
               - title: RD-Aspen
                 scope: rdaspen
 
->>>>>>> upstream_import/upstream_v2_14_1
       - title: Aspeed
         scope: aspeed
 
@@ -430,12 +427,9 @@ subsections:
               - title: i.MX 8
                 scope: imx8
 
-<<<<<<< HEAD
-=======
               - title: i.MX 8ULP
                 scope: imx8ulp
 
->>>>>>> upstream_import/upstream_v2_14_1
               - title: i.MX 9
                 scope: imx9
 
@@ -443,15 +437,12 @@ subsections:
                   - title: i.MX93
                     scope: imx93
 
-<<<<<<< HEAD
-=======
                   - title: i.MX94
                     scope: imx94
 
                   - title: i.MX95
                     scope: imx95
 
->>>>>>> upstream_import/upstream_v2_14_1
           - title: Layerscape
             scope: layerscape
 
@@ -672,8 +663,6 @@ subsections:
           - title: STM32MP2
             scope: stm32mp2
 
-<<<<<<< HEAD
-=======
             subsections:
               - title: STM32MP21
                 scope: stm32mp21
@@ -684,7 +673,6 @@ subsections:
               - title: STM32MP25
                 scope: stm32mp25
 
->>>>>>> upstream_import/upstream_v2_14_1
       - title: Texas Instruments
         scope: ti
 
@@ -725,13 +713,6 @@ subsections:
             deprecated:
               - plat/zynqmp
               - plat/xilinx/zynqmp
-
-      - title: Nuvoton
-        scope: nuvoton
-
-        subsections:
-          - title: npcm845x
-            scope: npcm845x
 
   - title: Bootloader Images
     scope: bl
@@ -819,8 +800,6 @@ subsections:
 
         deprecated:
           - errata_abi
-<<<<<<< HEAD
-=======
 
       - title: ChromeOS
         scope: cros
@@ -849,7 +828,6 @@ subsections:
 
           - title: TSP
             scope: tspd
->>>>>>> upstream_import/upstream_v2_14_1
 
   - title: Libraries
     scope: lib
@@ -945,12 +923,9 @@ subsections:
       - title: Firmware Handoff
         scope: handoff
 
-<<<<<<< HEAD
-=======
       - title: Exception Handling Framework (EHF)
         scope: ehf
 
->>>>>>> upstream_import/upstream_v2_14_1
   - title: Drivers
 
     subsections:
@@ -1247,15 +1222,12 @@ subsections:
           - title: TRDC
             scope: imx-trdc
 
-<<<<<<< HEAD
-=======
           - title: Clock
             scope: nxp-clk
 
           - title: uSDHC
             scope: nxp-mmc
 
->>>>>>> upstream_import/upstream_v2_14_1
       - title: Renesas
         scope: renesas-drivers
 
@@ -1442,9 +1414,6 @@ subsections:
                   - title: STM32MP25
                     scope: stm32mp25-fdts
 
-          - title: STM32MP2
-            scope: stm32mp2-fdts
-
       - title: PIE
         scope: pie
 
@@ -1555,12 +1524,9 @@ subsections:
       - title: Certificate Creation Tool
         scope: cert-create
 
-<<<<<<< HEAD
-=======
       - title: Firmware Encryption Tool
         scope: encrypt-fw
 
->>>>>>> upstream_import/upstream_v2_14_1
       - title: Memory Mapping Tool
         scope: memmap
 

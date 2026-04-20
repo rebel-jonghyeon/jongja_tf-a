@@ -248,11 +248,7 @@ static int k3_validate_power_state(unsigned int power_state, psci_power_state_t 
 	return PSCI_E_SUCCESS;
 }
 
-<<<<<<< HEAD
-static void k3_pwr_domain_suspend(const psci_power_state_t *target_state)
-=======
 static void k3_pwr_domain_suspend_to_mode(const psci_power_state_t *target_state, uint8_t mode)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	unsigned int core, proc_id;
 
@@ -337,11 +333,8 @@ int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 		k3_plat_psci_ops.pwr_domain_suspend = NULL;
 		k3_plat_psci_ops.pwr_domain_suspend_finish = NULL;
 		k3_plat_psci_ops.get_sys_suspend_power_state = NULL;
-<<<<<<< HEAD
-=======
 	} else if (fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED) {
 		k3_plat_psci_ops.pwr_domain_suspend = k3_pwr_domain_suspend_dm_managed;
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	*psci_ops = &k3_plat_psci_ops;

@@ -1,11 +1,7 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2019-2023, ARM Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2019-2025, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
  * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -427,8 +423,6 @@ static int is_out_of_sec_range(uint64_t reg_addr)
 		return 0;
 #else
 	switch (reg_addr) {
-<<<<<<< HEAD
-=======
 
 	case(0xF8011104):	/* ECCCTRL2 */
 	case(0xFFD12028):	/* SDMMCGRP_CTRL */
@@ -473,40 +467,7 @@ static int is_out_of_sec_range(uint64_t reg_addr)
 	case(SOCFPGA_ECC_QSPI(INTSTAT)):		/* ECC_QSPI_INTSTAT */
 	case(SOCFPGA_ECC_QSPI(INTTEST)):		/* ECC_QSPI_INTMODE */
 		return 0;
->>>>>>> upstream_import/upstream_v2_14_1
 
-	case(0xF8011104):	/* ECCCTRL2 */
-	case(0xFFD12028):	/* SDMMCGRP_CTRL */
-	case(0xFFD120C4):	/* NOC_IDLEREQ_SET */
-	case(0xFFD120C8):	/* NOC_IDLEREQ_CLR */
-	case(0xFFD120D0):	/* NOC_IDLEACK */
-
-
-	case(SOCFPGA_MEMCTRL(ECCCTRL1)):	/* ECCCTRL1 */
-	case(SOCFPGA_MEMCTRL(ERRINTEN)):	/* ERRINTEN */
-	case(SOCFPGA_MEMCTRL(ERRINTENS)):	/* ERRINTENS */
-	case(SOCFPGA_MEMCTRL(ERRINTENR)):	/* ERRINTENR */
-	case(SOCFPGA_MEMCTRL(INTMODE)):	/* INTMODE */
-	case(SOCFPGA_MEMCTRL(INTSTAT)):	/* INTSTAT */
-	case(SOCFPGA_MEMCTRL(DIAGINTTEST)):	/* DIAGINTTEST */
-	case(SOCFPGA_MEMCTRL(DERRADDRA)):	/* DERRADDRA */
-
-	case(SOCFPGA_SYSMGR(EMAC_0)):	/* EMAC0 */
-	case(SOCFPGA_SYSMGR(EMAC_1)):	/* EMAC1 */
-	case(SOCFPGA_SYSMGR(EMAC_2)):	/* EMAC2 */
-	case(SOCFPGA_SYSMGR(ECC_INTMASK_VALUE)):	/* ECC_INT_MASK_VALUE */
-	case(SOCFPGA_SYSMGR(ECC_INTMASK_SET)):	/* ECC_INT_MASK_SET */
-	case(SOCFPGA_SYSMGR(ECC_INTMASK_CLR)):	/* ECC_INT_MASK_CLEAR */
-	case(SOCFPGA_SYSMGR(ECC_INTMASK_SERR)):	/* ECC_INTSTATUS_SERR */
-	case(SOCFPGA_SYSMGR(ECC_INTMASK_DERR)):	/* ECC_INTSTATUS_DERR */
-	case(SOCFPGA_SYSMGR(NOC_TIMEOUT)):	/* NOC_TIMEOUT */
-	case(SOCFPGA_SYSMGR(NOC_IDLESTATUS)):	/* NOC_IDLESTATUS */
-	case(SOCFPGA_SYSMGR(BOOT_SCRATCH_COLD_0)):	/* BOOT_SCRATCH_COLD0 */
-	case(SOCFPGA_SYSMGR(BOOT_SCRATCH_COLD_1)):	/* BOOT_SCRATCH_COLD1 */
-	case(SOCFPGA_SYSMGR(BOOT_SCRATCH_COLD_8)):	/* BOOT_SCRATCH_COLD8 */
-	case(SOCFPGA_SYSMGR(BOOT_SCRATCH_COLD_9)):	/* BOOT_SCRATCH_COLD9 */
-		return 0;
-#endif
 	default:
 		break;
 	}
@@ -570,10 +531,6 @@ static uint32_t intel_rsu_status(uint64_t *respbuf, unsigned int respbuf_sz)
 	return INTEL_SIP_SMC_STATUS_OK;
 }
 
-<<<<<<< HEAD
-uint32_t intel_rsu_update(uint64_t update_address)
-{
-=======
 static uint32_t intel_rsu_get_device_info(uint32_t *respbuf,
 					  unsigned int respbuf_sz)
 {
@@ -586,7 +543,6 @@ static uint32_t intel_rsu_get_device_info(uint32_t *respbuf,
 
 uint32_t intel_rsu_update(uint64_t update_address)
 {
->>>>>>> upstream_import/upstream_v2_14_1
 	if (update_address > SIZE_MAX) {
 		return INTEL_SIP_SMC_STATUS_REJECTED;
 	}
@@ -797,23 +753,15 @@ uint32_t intel_hps_set_bridges(uint64_t enable, uint64_t mask)
 }
 
 /* SDM SEU Error services */
-<<<<<<< HEAD
-static uint32_t intel_sdm_seu_err_read(uint64_t *respbuf, unsigned int respbuf_sz)
-{
-	if (mailbox_seu_err_status((uint32_t *)respbuf, respbuf_sz) < 0) {
-=======
 static uint32_t intel_sdm_seu_err_read(uint32_t *respbuf, unsigned int respbuf_sz)
 {
 	if (mailbox_seu_err_status(respbuf, respbuf_sz) < 0) {
->>>>>>> upstream_import/upstream_v2_14_1
 		return INTEL_SIP_SMC_SEU_ERR_READ_ERROR;
 	}
 
 	return INTEL_SIP_SMC_STATUS_OK;
 }
 
-<<<<<<< HEAD
-=======
 /* SDM SAFE SEU Error inject services */
 static uint32_t intel_sdm_safe_inject_seu_err(uint32_t *command, uint32_t len)
 {
@@ -1962,7 +1910,6 @@ static uintptr_t sip_smc_handler_v3(uint32_t smc_fid,
 }
 #endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 /*
  * This function is responsible for handling all SiP calls from the NS world
  */
@@ -1979,13 +1926,9 @@ uintptr_t sip_smc_handler_v1(uint32_t smc_fid,
 	uint32_t retval = 0, completed_addr[3];
 	uint32_t retval2 = 0;
 	uint32_t mbox_error = 0;
-<<<<<<< HEAD
-	uint64_t retval64, rsu_respbuf[9], seu_respbuf[3];
-=======
 	uint32_t err_states = 0;
 	uint64_t retval64, rsu_respbuf[9];
 	uint32_t seu_respbuf[3];
->>>>>>> upstream_import/upstream_v2_14_1
 	int status = INTEL_SIP_SMC_STATUS_OK;
 	int mbox_status;
 	unsigned int len_in_resp = 0;
@@ -2521,8 +2464,6 @@ uintptr_t sip_smc_handler_v1(uint32_t smc_fid,
 			SMC_RET3(handle, seu_respbuf[0], seu_respbuf[1], seu_respbuf[2]);
 		}
 
-<<<<<<< HEAD
-=======
 	case INTEL_SIP_SMC_SAFE_INJECT_SEU_ERR:
 		status = intel_sdm_safe_inject_seu_err((uint32_t *)&x1, (uint32_t)x2);
 		SMC_RET1(handle, status);
@@ -2537,7 +2478,6 @@ uintptr_t sip_smc_handler_v1(uint32_t smc_fid,
 		SMC_RET1(handle, INTEL_SIP_SMC_STATUS_OK);
 #endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 	default:
 		return socfpga_sip_handler(smc_fid, x1, x2, x3, x4,
 			cookie, handle, flags);

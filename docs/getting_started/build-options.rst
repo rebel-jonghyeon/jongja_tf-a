@@ -98,13 +98,10 @@ Common build options
 -  ``BL32_KEY``: This option is used when ``GENERATE_COT=1``. It specifies a
    file that contains the BL32 private key in PEM format or a PKCS11 URI. If
    ``SAVE_KEYS=1``, only a file is accepted and it will be used to save the key.
-<<<<<<< HEAD
-=======
 
 -  ``RMM``: This is an optional build option used when ``ENABLE_RME`` is set.
    It specifies the path to RMM binary for the ``fip`` target. If the RMM option
    is not specified, TF-A builds the TRP to load and run at R-EL2.
->>>>>>> upstream_import/upstream_v2_14_1
 
 -  ``BL33``: Path to BL33 image in the host file system. This is mandatory for
    ``fip`` target in case TF-A BL2 is used.
@@ -237,11 +234,7 @@ Common build options
 
 -  ``DISABLE_MTPMU``: Numeric option to disable ``FEAT_MTPMU`` (Multi Threaded
    PMU). ``FEAT_MTPMU`` is an optional feature available on Armv8.6 onwards.
-<<<<<<< HEAD
-   This flag can take values 0 to 2, to align with the ``FEATURE_DETECTION``
-=======
    This flag can take values 0 to 2, to align with the ``ENABLE_FEAT``
->>>>>>> upstream_import/upstream_v2_14_1
    mechanism. Default is ``0``.
 
 -  ``DYN_DISABLE_AUTH``: Provides the capability to dynamically disable Trusted
@@ -422,13 +415,6 @@ Common build options
    This flag can take values 0 to 2, to align with the ``ENABLE_FEAT``
    mechanism. Default value is ``0``.
 
--  ``ENABLE_FEAT_MTE_PERM``: Numeric value to enable support for
-   ``FEAT_MTE_PERM``, which introduces Allocation tag access permission to
-   memory region attributes. ``FEAT_MTE_PERM`` is a optional architectural
-   feature available from v8.9 and upwards.  This flag can take the values 0 to
-   2, to align  with the ``FEATURE_DETECTION`` mechanism. Default value is
-   ``0``.
-
 -  ``ENABLE_FEAT_PAN``: Numeric value to enable the ``FEAT_PAN`` (Privileged
    Access Never) extension. ``FEAT_PAN`` adds a bit to PSTATE, generating a
    permission fault for any privileged data access from EL1/EL2 to virtual
@@ -519,8 +505,6 @@ Common build options
    exclusive, so the ``ENABLE_FEAT`` mechanism is currently not supported.
    Default value is ``0``.
 
-<<<<<<< HEAD
-=======
 -  ``ENABLE_FEAT_THE``: Numeric value to enable support for FEAT_THE
    (Translation Hardening Extension) at EL2 and below, setting the bit
    SCR_EL3.RCWMASKEn in EL3 to allow access to RCWMASK_EL1 and RCWSMASK_EL1
@@ -552,7 +536,6 @@ Common build options
    the libc) is desired a platform can pass `-flto -ffat-lto-objects` as long as
    GCC >= 14 is in use.  Default is 0.
 
->>>>>>> upstream_import/upstream_v2_14_1
 -  ``ENABLE_FEAT_MPAM``: Numeric value to enable lower ELs to use MPAM
    feature. MPAM is an optional Armv8.4 extension that enables various memory
    system components and resources to define partitions; software running at
@@ -567,8 +550,6 @@ Common build options
    defaults to ``2`` since MPAM is enabled by default for NS world only.
    The flag is automatically disabled when the target
    architecture is AArch32.
-<<<<<<< HEAD
-=======
 
 -  ``ENABLE_FEAT_MPAM_PE_BW_CTRL``: This option enables Armv9.3 MPAM
    PE-side bandwidth controls and disables traps to EL3/EL2 (when
@@ -589,7 +570,6 @@ Common build options
    registers from non-secure world. This flag can take the values 0 to 2, to
    align  with the ``ENABLE_FEAT`` mechanism.
    Default value is ``0``.
->>>>>>> upstream_import/upstream_v2_14_1
 
 -  ``ENABLE_MPMM``: Boolean option to enable support for the Maximum Power
    Mitigation Mechanism supported by certain Arm cores, which allows the SoC
@@ -617,32 +597,6 @@ Common build options
    instrumented. Enabling this option enables the ``ENABLE_PMF`` build option
    as well. Default is 0.
 
-<<<<<<< HEAD
--  ``ENABLE_SME_FOR_NS``: Numeric value to enable Scalable Matrix Extension
-   (SME), SVE, and FPU/SIMD for the non-secure world only. These features share
-   registers so are enabled together. Using this option without
-   ENABLE_SME_FOR_SWD=1 will cause SME, SVE, and FPU/SIMD instructions in secure
-   world to trap to EL3. Requires ``ENABLE_SVE_FOR_NS`` to be set as SME is a
-   superset of SVE. SME is an optional architectural feature for AArch64
-   and TF-A support is experimental. At this time, this build option cannot be
-   used on systems that have SPD=spmd/SPM_MM and atempting to build with this
-   option will fail. This flag can take the values 0 to 2, to align with the
-   ``FEATURE_DETECTION`` mechanism. Default is 0.
-
--  ``ENABLE_SME2_FOR_NS``: Numeric value to enable Scalable Matrix Extension
-   version 2 (SME2) for the non-secure world only. SME2 is an optional
-   architectural feature for AArch64 and TF-A support is experimental.
-   This should be set along with ENABLE_SME_FOR_NS=1, if not, the default SME
-   accesses will still be trapped. This flag can take the values 0 to 2, to
-   align with the ``FEATURE_DETECTION`` mechanism. Default is 0.
-
--  ``ENABLE_SME_FOR_SWD``: Boolean option to enable the Scalable Matrix
-   Extension for secure world. Used along with SVE and FPU/SIMD.
-   ENABLE_SME_FOR_NS and ENABLE_SVE_FOR_SWD must also be set to use this.
-   This is experimental. Default is 0.
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 -  ``ENABLE_SPE_FOR_NS`` : Numeric value to enable Statistical Profiling
    extensions. This is an optional architectural feature for AArch64.
    This flag can take the values 0 to 2, to align with the ``ENABLE_FEAT``
@@ -738,47 +692,6 @@ Common build options
    This feature is intended for testing purposes only, and is advisable to keep
    disabled for production images.
 
-<<<<<<< HEAD
--  ``FEATURE_DETECTION``: Boolean option to enable the architectural features
-   detection mechanism. It detects whether the Architectural features enabled
-   through feature specific build flags are supported by the PE or not by
-   validating them either at boot phase or at runtime based on the value
-   possessed by the feature flag (0 to 2) and report error messages at an early
-   stage. This flag will also enable errata ordering checking for ``DEBUG``
-   builds.
-
-   This prevents and benefits us from EL3 runtime exceptions during context save
-   and restore routines guarded by these build flags. Henceforth validating them
-   before their usage provides more control on the actions taken under them.
-
-   The mechanism permits the build flags to take values 0, 1 or 2 and
-   evaluates them accordingly.
-
-   Lets consider ``ENABLE_FEAT_HCX``, build flag for ``FEAT_HCX`` as an example:
-
-   ::
-
-     ENABLE_FEAT_HCX = 0: Feature disabled statically at compile time.
-     ENABLE_FEAT_HCX = 1: Feature Enabled and the flag is validated at boottime.
-     ENABLE_FEAT_HCX = 2: Feature Enabled and the flag is validated at runtime.
-
-   In the above example, if the feature build flag, ``ENABLE_FEAT_HCX`` set to
-   0, feature is disabled statically during compilation. If it is defined as 1,
-   feature is validated, wherein FEAT_HCX is detected at boot time. In case not
-   implemented by the PE, a hard panic is generated. Finally, if the flag is set
-   to 2, feature is validated at runtime.
-
-   Note that the entire implementation is divided into two phases, wherein as
-   as part of phase-1 we are supporting the values 0,1. Value 2 is currently not
-   supported and is planned to be handled explicilty in phase-2 implementation.
-
-   FEATURE_DETECTION macro is disabled by default, and is currently an
-   experimental procedure. Platforms can explicitly make use of this by
-   mechanism, by enabling it to validate whether they have set their build flags
-   properly at an early phase.
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 -  ``FIP_NAME``: This is an optional build option which specifies the FIP
    filename for the ``fip`` target. Default is ``fip.bin``.
 
@@ -863,13 +776,10 @@ Common build options
    invert this behavior. Lower addresses will be printed at the top and higher
    addresses at the bottom.
 
-<<<<<<< HEAD
-=======
 -  ``INIT_UNUSED_NS_EL2``: This build flag guards code that disables EL2
    safely in scenario where NS-EL2 is present but unused. This flag is set to 0
    by default. Platforms without NS-EL2 in use must enable this flag.
 
->>>>>>> upstream_import/upstream_v2_14_1
 -  ``KEY_ALG``: This build flag enables the user to select the algorithm to be
    used for generating the PKCS keys and subsequent signing of the certificate.
    It accepts 5 values: ``rsa``, ``rsa_1_5``, ``ecdsa``, ``ecdsa-brainpool-regular``
@@ -960,13 +870,6 @@ Common build options
 
    This option defaults to 0.
 
--  ``MARCH_DIRECTIVE``: used to pass a -march option from the platform build
-   options to the compiler. An example usage:
-
-   .. code:: make
-
-      MARCH_DIRECTIVE := -march=armv8.5-a
-
 -  ``NON_TRUSTED_WORLD_KEY``: This option is used when ``GENERATE_COT=1``. It
    specifies a file that contains the Non-Trusted World private key in PEM
    format or a PKCS11 URI. If ``SAVE_KEYS=1``, only a file is accepted and it
@@ -981,10 +884,6 @@ Common build options
    and restore) or 1 (do save and restore). 0 is the default. An SPD may set
    this to 1 if it wants the timer registers to be saved and restored. This
    option has been deprecated since it breaks Linux preemption model.
-
--  ``OPTEE_SP_FW_CONFIG``: DTC build flag to include OP-TEE as SP in
-   tb_fw_config device tree. This flag is defined only when
-   ``ARM_SPMC_MANIFEST_DTS`` manifest file name contains pattern optee_sp.
 
 -  ``OVERRIDE_LIBC``: This option allows platforms to override the default libc
    for the BL image. It can be either 0 (include) or 1 (remove). The default
@@ -1043,14 +942,11 @@ Common build options
 -  ``PSCI_OS_INIT_MODE``: Boolean flag to enable support for optional PSCI
    OS-initiated mode. This option defaults to 0.
 
-<<<<<<< HEAD
-=======
 -  ``ARCH_FEATURE_AVAILABILITY``: Boolean flag to enable support for the
    optional SMCCC_ARCH_FEATURE_AVAILABILITY call. This option implicitly
    interacts with IMPDEF_SYSREG_TRAP and software emulation. This option
    defaults to 0.
 
->>>>>>> upstream_import/upstream_v2_14_1
 -  ``ENABLE_FEAT_RAS``: Boolean flag to enable Armv8.2 RAS features. RAS features
    are an optional extension for pre-Armv8.2 CPUs, but are mandatory for Armv8.2
    or later CPUs. This flag can take the values 0 or 1. The default value is 0.
@@ -1068,8 +964,6 @@ Common build options
    instead of the BL1 entrypoint. It can take the value 0 (CPU reset to BL1
    entrypoint) or 1 (CPU reset to SP_MIN entrypoint). The default value is 0.
 
-<<<<<<< HEAD
-=======
 -  ``RME_GPT_BITLOCK_BLOCK``: This defines the block size (in number of 512MB
 -  blocks) covered by a single bit of the bitlock structure during RME GPT
 -  operations. The lower the block size, the better opportunity for
@@ -1085,7 +979,6 @@ Common build options
    values 0, 2, 32 and 512. Setting this value to 0 disables use of Contigious
    descriptors. Default value is 512.
 
->>>>>>> upstream_import/upstream_v2_14_1
 -  ``ROT_KEY``: This option is used when ``GENERATE_COT=1``. It specifies a
    file that contains the ROT private key in PEM format or a PKCS11 URI and
    enforces public key hash generation. If ``SAVE_KEYS=1``, only a file is
@@ -1171,10 +1064,6 @@ Common build options
    ``SPMC_AT_EL3`` is enabled. The default value if ``0`` (disabled). This
    option cannot be enabled (``1``) when (``SPMC_AT_EL3``) is disabled.
 
--  ``SPMC_AT_EL3_SEL0_SP`` : Boolean option to enable SEL0 SP load support when
-   ``SPMC_AT_EL3`` is enabled. The default value if ``0`` (disabled). This
-   option cannot be enabled (``1``) when (``SPMC_AT_EL3``) is disabled.
-
 -  ``SPMC_OPTEE`` : This boolean option is used jointly with the SPM
    Dispatcher option (``SPD=spmd``) and with ``SPMD_SPM_AT_SEL2=0`` to
    indicate that the SPMC at S-EL1 is OP-TEE and an OP-TEE specific loading
@@ -1188,12 +1077,6 @@ Common build options
    state or at EL3 if ``SPMC_AT_EL3`` is enabled. The latter configurations
    support pre-Armv8.4 platforms (aka not implementing the ``FEAT_SEL2``
    extension).
-
--  ``ENABLE_SPMD_LP`` : This boolean option is used jointly with the SPM
-   Dispatcher option (``SPD=spmd``). When enabled (1) it indicates support
-   for logical partitions in EL3, managed by the SPMD as defined in the FF-A
-   1.2 specification. This flag is disabled by default. This flag must not be
-   used if ``SPMC_AT_EL3`` is enabled. This is an experimental feature.
 
 -  ``SPM_MM`` : Boolean option to enable the Management Mode (MM)-based Secure
    Partition Manager (SPM) implementation. The default value is ``0``
@@ -1219,11 +1102,6 @@ Common build options
    of 2048 which should be suitable for most configurations, the
    hardware will limit the effective VL to the maximum physically supported
    VL.
-
--  ``TRANSFER_LIST``: Setting this to ``1`` enables support for Firmware
-   Handoff using Transfer List defined in `Firmware Handoff specification`_.
-   This defaults to ``0``. Please note that this is an experimental feature
-   based on Firmware Handoff specification v0.9.
 
 -  ``TRNG_SUPPORT``: Setting this to ``1`` enables support for True
    Random Number Generator Interface to BL31 image. This defaults to ``0``.
@@ -1469,27 +1347,13 @@ Common build options
   errata mitigation for platforms with a non-arm interconnect using the errata
   ABI. By default its disabled (``0``).
 
-<<<<<<< HEAD
-- ``PSA_CRYPTO``: Boolean option for enabling MbedTLS PSA crypto APIs support.
-  The platform will use PSA compliant Crypto APIs during authentication and
-  image measurement process by enabling this option. It uses APIs defined as
-  per the `PSA Crypto API specification`_. This feature is only supported if
-  using MbedTLS 3.x version. By default it is disabled (``0``), and this is an
-  experimental feature.
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 - ``ENABLE_CONSOLE_GETC``: Boolean option to enable `getc()` feature in console
   driver(s). By default it is disabled (``0``) because it constitutes an attack
   vector into TF-A by potentially allowing an attacker to inject arbitrary data.
   This option should only be enabled on a need basis if there is a use case for
   reading characters from the console.
 
-<<<<<<< HEAD
-GICv3 driver options
-=======
 GIC driver options
->>>>>>> upstream_import/upstream_v2_14_1
 --------------------
 
 The generic GIC driver can be included with the ``USE_GIC_DRIVER`` option. It is
@@ -1758,8 +1622,5 @@ Firmware update options
 .. _Clang: https://clang.llvm.org/docs/DiagnosticsReference.html
 .. _Firmware Handoff specification: https://github.com/FirmwareHandoff/firmware_handoff/releases/tag/v0.9
 .. _PSA Crypto API specification: https://armmbed.github.io/mbed-crypto/html/
-<<<<<<< HEAD
-=======
 .. _Platform Initialization specification: https://uefi.org/specs/PI/1.8/index.html
 .. _TF-A public mailing list: https://lists.trustedfirmware.org/mailman3/lists/tf-a.lists.trustedfirmware.org/
->>>>>>> upstream_import/upstream_v2_14_1

@@ -12,24 +12,10 @@ OUTPUT_ARCH(PLATFORM_LINKER_ARCH)
 ENTRY(bl2_entrypoint)
 
 MEMORY {
-    RAM0 (rwx) : ORIGIN = 0x14000000, LENGTH = 0x100000
     RAM (rwx): ORIGIN = BL2_BASE, LENGTH = BL2_LIMIT - BL2_BASE
 }
 
 SECTIONS {
-<<<<<<< HEAD
-
-    .smmu_reserved : {
-        . = ORIGIN(RAM0);
-        *(.smmu_reserved.st.*)
-        *(.smmu_reserved.cd.*)
-        *(.smmu_reserved.single_cd.*)
-        . = ORIGIN(RAM0) + LENGTH(RAM0);
-    } >RAM0
-
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
     RAM_REGION_START = ORIGIN(RAM);
     RAM_REGION_LENGTH = LENGTH(RAM);
     . = BL2_BASE;

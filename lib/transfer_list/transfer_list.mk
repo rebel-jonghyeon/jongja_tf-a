@@ -1,29 +1,11 @@
 #
-<<<<<<< HEAD
-# Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
-=======
 # Copyright (c) 2023-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
 ifeq (${TRANSFER_LIST},1)
 
-<<<<<<< HEAD
-ifeq (${ARCH},aarch32)
-$(eval $(call add_define,TRANSFER_LIST_AARCH32))
-endif
-
-TRANSFER_LIST_SOURCES	+=	$(addprefix lib/transfer_list/,	\
-				transfer_list.c)
-
-BL31_SOURCES	+=	$(TRANSFER_LIST_SOURCES)
-BL2_SOURCES	+=	$(TRANSFER_LIST_SOURCES)
-
-endif	# TRANSFER_LIST
-
-=======
 # Default path if not set externally
 LIBTL_PATH	?=	contrib/libtl
 
@@ -45,4 +27,3 @@ endif
 $(eval $(call MAKE_LIB,tl))
 
 endif	# TRANSFER_LIST
->>>>>>> upstream_import/upstream_v2_14_1

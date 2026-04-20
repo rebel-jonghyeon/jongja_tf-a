@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD:tools/fiptool/plat_fiptool/st/stm32mp1/plat_def_uuid_config.c
- * Copyright (c) 2022-2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (c) 2022-2024, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1:tools/fiptool/plat_fiptool/st/plat_def_uuid_config.c
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */

@@ -75,24 +75,9 @@ CRTTOOL_LDFLAGS += -lssl -lcrypto
 
 .PHONY: all clean realclean --openssl
 
-<<<<<<< HEAD
-all: --openssl ${BINARY}
-
-${BINARY}: ${OBJECTS} Makefile
-	@echo "  HOSTLD  $@"
-	@echo 'const char build_msg[] = "Built : "__TIME__", "__DATE__; \
-                const char platform_msg[] = "${PLAT_MSG}";' | \
-                ${HOSTCC} -c ${HOSTCCFLAGS} -xc - -o src/build_msg.o
-	${Q}${HOSTCC} src/build_msg.o ${OBJECTS} ${LIB_DIR} ${LIB} -o $@
-
-%.o: %.c
-	@echo "  HOSTCC  $<"
-	${Q}${HOSTCC} -c ${HOSTCCFLAGS} ${INC_DIR} $< -o $@
-=======
 $(eval $(call MAKE_TOOL,$(BUILD_PLAT)/tools,cert_create,CRTTOOL))
 
 all: --openssl
->>>>>>> upstream_import/upstream_v2_14_1
 
 --openssl:
 ifeq ($(DEBUG),1)

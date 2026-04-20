@@ -1,9 +1,5 @@
 #
-<<<<<<< HEAD
-# Copyright (c) 2022-2023, Arm Limited. All rights reserved.
-=======
 # Copyright (c) 2022-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -12,41 +8,25 @@
 # and enables them based on the configured architecture version.
 
 # This file follows the following format:
-<<<<<<< HEAD
-#   - Enable mandatory feature if applicable to an Arch Version.
-=======
 #   - Enable mandatory feature if not updated, as applicable to an Arch Version.
->>>>>>> upstream_import/upstream_v2_14_1
 #   - By default disable any mandatory features if they have not been defined yet.
 #   - Disable or enable any optional feature this would be enabled/disabled if needed by platform.
 
 #
 ################################################################################
-<<<<<<< HEAD
-# Enable Mandatory features based on Arch versions.
-=======
 # Enable Mandatory features if not updated yet, based on Arch versions.
->>>>>>> upstream_import/upstream_v2_14_1
 ################################################################################
 #
 
 # Enable the features which are mandatory from ARCH version 8.1 and upwards.
 ifeq "8.1" "$(word 1, $(sort 8.1 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
-<<<<<<< HEAD
-ENABLE_FEAT_PAN				:=	1
-ENABLE_FEAT_VHE				:=	1
-=======
 armv8-1-a-feats         := ENABLE_FEAT_PAN ENABLE_FEAT_VHE
 
 FEAT_LIST               := ${armv8-1-a-feats}
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 # Enable the features which are mandatory from ARCH version 8.2 and upwards.
 ifeq "8.2" "$(word 1, $(sort 8.2 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
-<<<<<<< HEAD
-ENABLE_FEAT_RAS				:=	1
-=======
 armv8-2-a-feats         := ENABLE_FEAT_RAS
 # 8.1 Compliant
 armv8-2-a-feats         += ${armv8-1-a-feats}
@@ -60,72 +40,36 @@ ifeq "8.3" "$(word 1, $(sort 8.3 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
 armv8-3-a-feats         += ${armv8-2-a-feats}
 
 FEAT_LIST               := ${armv8-3-a-feats}
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 # Enable the features which are mandatory from ARCH version 8.4 and upwards.
 ifeq "8.4" "$(word 1, $(sort 8.4 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
-<<<<<<< HEAD
-ENABLE_FEAT_SEL2			:=	1
-ENABLE_TRF_FOR_NS			:=	1
-ENABLE_FEAT_DIT				:=	1
-=======
 armv8-4-a-feats         := ENABLE_FEAT_SEL2 ENABLE_TRF_FOR_NS ENABLE_FEAT_DIT
 # 8.3 Compliant
 armv8-4-a-feats         += ${armv8-3-a-feats}
 
 FEAT_LIST               := ${armv8-4-a-feats}
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 # Enable the features which are mandatory from ARCH version 8.5 and upwards.
 ifeq "8.5" "$(word 1, $(sort 8.5 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
-<<<<<<< HEAD
-ENABLE_FEAT_RNG				:=	1
-ENABLE_FEAT_SB				:=	1
-
-# Enable Memory tagging, Branch Target Identification for aarch64 only.
-ifeq ($(ARCH), aarch64)
-	mem_tag_arch_support		:= 	yes
-endif #(ARCH=aarch64)
-
-=======
 armv8-5-a-feats         := ENABLE_FEAT_RNG ENABLE_FEAT_SB
 # 8.4 Compliant
 armv8-5-a-feats         += ${armv8-4-a-feats}
 
 FEAT_LIST               := ${armv8-5-a-feats}
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 # Enable the features which are mandatory from ARCH version 8.6 and upwards.
 ifeq "8.6" "$(word 1, $(sort 8.6 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
-<<<<<<< HEAD
-ENABLE_FEAT_ECV				:=	1
-ENABLE_FEAT_FGT				:=	1
-=======
 armv8-6-a-feats         := ENABLE_FEAT_ECV ENABLE_FEAT_FGT
 # 8.5 Compliant
 armv8-6-a-feats         += ${armv8-5-a-feats}
 FEAT_LIST               := ${armv8-6-a-feats}
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 # Enable the features which are mandatory from ARCH version 8.7 and upwards.
 ifeq "8.7" "$(word 1, $(sort 8.7 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
-<<<<<<< HEAD
-ENABLE_FEAT_HCX				:=	1
-endif
-
-# Enable the features which are mandatory from ARCH version 8.9 and upwards.
-ifeq "8.9" "$(word 1, $(sort 8.9 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
-ENABLE_FEAT_TCR2			:=	1
-endif
-
-#
-################################################################################
-# Set mandatory features by default to zero.
-=======
 armv8-7-a-feats         := ENABLE_FEAT_HCX
 # 8.6 Compliant
 armv8-7-a-feats         += ${armv8-6-a-feats}
@@ -184,7 +128,6 @@ $(eval $(call default_ones, ${sort ${FEAT_LIST}}))
 #
 ################################################################################
 # Set mandatory features by default to zero, if they are not already updated.
->>>>>>> upstream_import/upstream_v2_14_1
 ################################################################################
 #
 
@@ -213,14 +156,11 @@ ENABLE_FEAT_RAS			?=	0
 # direct setting. Use BRANCH_PROTECTION to enable PAUTH.
 ENABLE_PAUTH			?=	0
 
-<<<<<<< HEAD
-=======
 # FEAT_PAUTH_LR is an optional architectural feature, so this flag must be set
 # manually in addition to the BRANCH_PROTECTION flag which is used for other
 # branch protection and pointer authentication features.
 ENABLE_FEAT_PAUTH_LR		?=	0
 
->>>>>>> upstream_import/upstream_v2_14_1
 # Include pointer authentication (ARMv8.3-PAuth) registers in cpu context. This
 # must be set to 1 if the platform wants to use this feature in the Secure
 # world. It is not necessary for use in the Non-secure world.
@@ -275,8 +215,6 @@ ENABLE_FEAT_FGT			?=	0
 ENABLE_FEAT_HCX			?=	0
 
 #----
-<<<<<<< HEAD
-=======
 # 8.8
 #----
 
@@ -285,19 +223,15 @@ ENABLE_FEAT_HCX			?=	0
 ENABLE_FEAT_MOPS		?=	0
 
 #----
->>>>>>> upstream_import/upstream_v2_14_1
 # 8.9
 #----
 
 # Flag to enable access to TCR2 (FEAT_TCR2).
 ENABLE_FEAT_TCR2		?=	0
 
-<<<<<<< HEAD
-=======
 # Flag to enable access to SCTLR2 (FEAT_SCTLR2).
 ENABLE_FEAT_SCTLR2		?=	0
 
->>>>>>> upstream_import/upstream_v2_14_1
 #
 ################################################################################
 # Optional Features defaulted to 0 or 2, if they are not enabled from
@@ -309,11 +243,6 @@ ENABLE_FEAT_SCTLR2		?=	0
 # 8.0
 #----
 
-<<<<<<< HEAD
-# Flag to enable CSV2_2 extension.
-ENABLE_FEAT_CSV2_2			?=	0
-
-=======
 # Flag to enable support for clrbhb instruction.
 ENABLE_FEAT_CLRBHB			?=	0
 
@@ -324,7 +253,6 @@ ENABLE_FEAT_CSV2_2			?=	0
 # SCXTNUM_ELx register.
 ENABLE_FEAT_CSV2_3			?=	0
 
->>>>>>> upstream_import/upstream_v2_14_1
 # By default, disable access of trace system registers from NS lower
 # ELs  i.e. NS-EL2, or NS-EL1 if NS-EL2 implemented but unused if
 # system register trace is implemented. This feature is available if
@@ -367,12 +295,7 @@ endif
 # Feature flags for supporting Activity monitor extensions.
 ENABLE_FEAT_AMU				?=	0
 ENABLE_AMU_AUXILIARY_COUNTERS		?=	0
-<<<<<<< HEAD
-ENABLE_AMU_FCONF			?=	0
-AMU_RESTRICT_COUNTERS			?=	0
-=======
 AMU_RESTRICT_COUNTERS			?=	1
->>>>>>> upstream_import/upstream_v2_14_1
 
 # Build option to enable MPAM for lower ELs.
 # Enabling it by default
@@ -399,16 +322,9 @@ CTX_INCLUDE_NEVE_REGS			?=	0
 # registers, by setting SCR_EL3.TRNDR.
 ENABLE_FEAT_RNG_TRAP			?=	0
 
-<<<<<<< HEAD
-# Include Memory Tagging Extension registers in cpu context. This must be set
-# to 1 if the platform wants to use this feature in the Secure world and MTE is
-# enabled at ELX.
-CTX_INCLUDE_MTE_REGS			?=	0
-=======
 # Enable FEAT_MTE2. This must be set to 1 if the platform wants
 # to use this feature and is enabled at ELX.
 ENABLE_FEAT_MTE2		        ?=	0
->>>>>>> upstream_import/upstream_v2_14_1
 
 #----
 # 8.6
@@ -429,8 +345,6 @@ TWED_DELAY				?=	0
 # Disable MTPMU if FEAT_MTPMU is supported.
 DISABLE_MTPMU				?=	0
 
-<<<<<<< HEAD
-=======
 # Flag to enable FEAT_FGT2 (Fine Granular Traps 2)
 ENABLE_FEAT_FGT2			?=	0
 
@@ -444,17 +358,10 @@ ENABLE_FEAT_LS64_ACCDATA		?=	0
 # Flag to enable FEAT_THE (Translation Hardening Extension)
 ENABLE_FEAT_THE				?=	0
 
->>>>>>> upstream_import/upstream_v2_14_1
 #----
 # 8.9
 #----
 
-<<<<<<< HEAD
-# Flag to enable NoTagAccess memory region attribute for stage 2 of translation.
-ENABLE_FEAT_MTE_PERM			?=	0
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 # Flag to enable access to Stage 2 Permission Indirection (FEAT_S2PIE).
 ENABLE_FEAT_S2PIE			?=	0
 
@@ -467,8 +374,6 @@ ENABLE_FEAT_S2POE			?=	0
 # Flag to enable access to Stage 1 Permission Overlay (FEAT_S1POE).
 ENABLE_FEAT_S1POE			?=	0
 
-<<<<<<< HEAD
-=======
 # Flag to enable access to Arm v8.9 Debug extension
 ENABLE_FEAT_DEBUGV8P9			?=	0
 
@@ -478,17 +383,10 @@ ENABLE_FEAT_AIE				?=	0
 # PFAR extension using the PFAR system registers
 ENABLE_FEAT_PFAR			?=	0
 
->>>>>>> upstream_import/upstream_v2_14_1
 #----
 # 9.0
 #----
 
-<<<<<<< HEAD
-# Flag to enable Realm Management Extension (FEAT_RME).
-ENABLE_RME				?=	0
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 # Scalable Matrix Extension for non-secure world.
 ENABLE_SME_FOR_NS			?=	0
 
@@ -514,12 +412,9 @@ endif
 # 9.2
 #----
 
-<<<<<<< HEAD
-=======
 # Flag to enable Realm Management Extension (FEAT_RME).
 ENABLE_RME				?=	0
 
->>>>>>> upstream_import/upstream_v2_14_1
 # Scalable Matrix Extension version 2 for non-secure world.
 ENABLE_SME2_FOR_NS			?=	0
 
@@ -531,8 +426,6 @@ ENABLE_SME_FOR_SWD			?=	0
 # if FEAT_BRBE is implemented.
 ENABLE_BRBE_FOR_NS			?=	0
 
-<<<<<<< HEAD
-=======
 # Flag to enable Floating point exception Mode Register Feature (FEAT_FPMR)
 ENABLE_FEAT_FPMR			?=	0
 
@@ -554,15 +447,10 @@ ENABLE_FEAT_MPAM_PE_BW_CTRL		?=	0
 # Flag to enable Exception-based Event Profiling (FEAT_EBEP)
 ENABLE_FEAT_EBEP			?=	0
 
->>>>>>> upstream_import/upstream_v2_14_1
 #----
 #9.4
 #----
 
-<<<<<<< HEAD
-# Flag to enable access to Guarded Control Stack (FEAT_GCS).
-ENABLE_FEAT_GCS				?=	0
-=======
 # Flag to enable FEAT_RME_GDI
 ENABLE_FEAT_RME_GDI			?=	0
 
@@ -582,4 +470,3 @@ ENABLE_FEAT_CPA2			?=	0
 
 # Flag to enable trapping of ID registers to EL3
 ENABLE_FEAT_IDTE3                       ?=      0
->>>>>>> upstream_import/upstream_v2_14_1

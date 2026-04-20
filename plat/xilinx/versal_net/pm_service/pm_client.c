@@ -284,11 +284,8 @@ enum pm_device_node_idx irq_to_pm_node_idx(uint32_t irq)
  *                       taken depend on the state system is suspending to.
  * @proc: processor which need to suspend.
  * @state: desired suspend state.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  */
 void pm_client_suspend(const struct pm_proc *proc, uint32_t state, uint32_t flag)
@@ -374,37 +371,3 @@ void pm_client_wakeup(const struct pm_proc *proc)
 
 	pm_client_lock_release();
 }
-<<<<<<< HEAD
-
-/**
- * pm_client_abort_suspend() - Client-specific abort-suspend actions.
- *
- * This function should contain any PU-specific actions
- * required for aborting a prior suspend request.
- *
- */
-void pm_client_abort_suspend(void)
-{
-	uint32_t cpu_id = plat_my_core_pos();
-	uintptr_t val;
-
-	/* Enable interrupts at processor level (for current cpu) */
-	gicv3_cpuif_enable(plat_my_core_pos());
-
-	pm_client_lock_get();
-
-	/* Clear powerdown request */
-	val = read_cpu_pwrctrl_val();
-	val &= ~CORE_PWRDN_EN_BIT_MASK;
-	write_cpu_pwrctrl_val(val);
-
-	isb();
-
-	/* Disabled power down interrupt */
-	mmio_write_32(APU_PCIL_CORE_X_IDS_POWER_REG(cpu_id),
-			APU_PCIL_CORE_X_IDS_POWER_MASK);
-
-	pm_client_lock_release();
-}
-=======
->>>>>>> upstream_import/upstream_v2_14_1

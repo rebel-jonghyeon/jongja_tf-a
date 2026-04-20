@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -21,11 +17,7 @@
 #if ENABLE_FEAT_AMU
 #if __aarch64__
 void amu_enable(cpu_context_t *ctx);
-<<<<<<< HEAD
-void amu_init_el3(void);
-=======
 void amu_init_el3(unsigned int core_pos);
->>>>>>> upstream_import/upstream_v2_14_1
 void amu_init_el2_unused(void);
 void amu_enable_per_world(per_world_context_t *per_world_ctx);
 #else
@@ -37,11 +29,7 @@ void amu_enable(bool el2_unused);
 void amu_enable(cpu_context_t *ctx)
 {
 }
-<<<<<<< HEAD
-void amu_init_el3(void)
-=======
 void amu_init_el3(unsigned int core_pos)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 }
 void amu_init_el2_unused(void)

@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -233,10 +229,6 @@ vector_entry sync_exception_aarch64
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
-<<<<<<< HEAD
-	unmask_async_ea
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	handle_sync_exception
 end_vector_entry sync_exception_aarch64
 
@@ -244,10 +236,6 @@ vector_entry irq_aarch64
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
-<<<<<<< HEAD
-	unmask_async_ea
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_interrupt_exception
 end_vector_entry irq_aarch64
 
@@ -255,10 +243,6 @@ vector_entry fiq_aarch64
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
-<<<<<<< HEAD
-	unmask_async_ea
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	b 	handle_interrupt_exception
 end_vector_entry fiq_aarch64
 
@@ -271,10 +255,6 @@ vector_entry serror_aarch64
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
-<<<<<<< HEAD
-	unmask_async_ea
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_lower_el_async_ea
 #else
 	b	report_unhandled_exception
@@ -295,10 +275,6 @@ vector_entry sync_exception_aarch32
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
-<<<<<<< HEAD
-	unmask_async_ea
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	handle_sync_exception
 end_vector_entry sync_exception_aarch32
 
@@ -306,10 +282,6 @@ vector_entry irq_aarch32
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
-<<<<<<< HEAD
-	unmask_async_ea
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_interrupt_exception
 end_vector_entry irq_aarch32
 
@@ -317,10 +289,6 @@ vector_entry fiq_aarch32
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
-<<<<<<< HEAD
-	unmask_async_ea
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_interrupt_exception
 end_vector_entry fiq_aarch32
 
@@ -333,10 +301,6 @@ vector_entry serror_aarch32
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
-<<<<<<< HEAD
-	unmask_async_ea
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_lower_el_async_ea
 #else
 	b	report_unhandled_exception
@@ -568,14 +532,6 @@ func handle_interrupt_exception
 	 */
 	bl	prepare_el3_entry
 
-<<<<<<< HEAD
-#if ENABLE_PAUTH
-	/* Load and program APIAKey firmware key */
-	bl	pauth_load_bl31_apiakey
-#endif
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* Save the EL3 system registers needed to return from this exception */
 	mrs	x0, spsr_el3
 	mrs	x1, elr_el3

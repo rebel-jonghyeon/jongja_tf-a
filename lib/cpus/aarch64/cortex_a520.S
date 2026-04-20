@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,16 +9,11 @@
 #include <common/bl_common.h>
 #include <cortex_a520.h>
 #include <cpu_macros.S>
-<<<<<<< HEAD
-#include <plat_macros.S>
-
-=======
 #include <dsu_macros.S>
 #include <plat_macros.S>
 
 .global check_erratum_cortex_a520_2938996
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* Hardware handled coherency */
 #if HW_ASSISTED_COHERENCY == 0
 #error "Cortex A520 must be compiled with HW_ASSISTED_COHERENCY enabled"
@@ -33,8 +24,6 @@
 #error "Cortex A520 supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
 #endif
 
-<<<<<<< HEAD
-=======
 cpu_reset_prologue cortex_a520
 
 workaround_reset_start cortex_a520, ERRATUM(2630792), ERRATA_A520_2630792
@@ -62,7 +51,6 @@ add_erratum_entry cortex_a520, ERRATUM(2938996), ERRATA_A520_2938996
 
 check_erratum_ls cortex_a520, ERRATUM(2938996), CPU_REV(0, 1)
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ----------------------------------------------------
 	 * HW will do the cache maintenance while powering down
 	 * ----------------------------------------------------
@@ -77,18 +65,10 @@ func cortex_a520_core_pwr_dwn
 	ret
 endfunc cortex_a520_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_a520
-
-cpu_reset_func_start cortex_a520
-	/* Disable speculative loads */
-	msr	SSBS, xzr
-=======
 cpu_reset_func_start cortex_a520
 	/* Disable speculative loads */
 	msr	SSBS, xzr
 	enable_mpmm
->>>>>>> upstream_import/upstream_v2_14_1
 cpu_reset_func_end cortex_a520
 
 	/* ---------------------------------------------

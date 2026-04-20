@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2014-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2014-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -35,12 +31,8 @@ func qemu_max_cluster_pwr_dwn
 	b	dcsw_op_all
 endfunc qemu_max_cluster_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim qemu_max
-=======
 cpu_reset_func_start qemu_max
 cpu_reset_func_end qemu_max
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ---------------------------------------------
 	 * This function provides cpu specific

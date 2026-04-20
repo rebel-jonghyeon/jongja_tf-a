@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2022-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -23,40 +20,6 @@
 #include "combophy.h"
 #include "sdmmc/sdmmc.h"
 
-<<<<<<< HEAD
-/* Temp assigned handoff data, need to remove when SDM up and run. */
-void config_nand(handoff *hoff_ptr)
-{
-	/* This is hardcoded input value for Combo PHY and SD host controller. */
-	hoff_ptr->peripheral_pwr_gate_array = 0x40;
-
-}
-
-/* DFI configuration */
-int dfi_select(handoff *hoff_ptr)
-{
-	uint32_t data = 0;
-
-	/* Temp assigned handoff data, need to remove when SDM up and run. */
-	handoff reverse_handoff_ptr;
-
-	/* Temp assigned handoff data, need to remove when SDM up and run. */
-	config_nand(&reverse_handoff_ptr);
-
-	if (((reverse_handoff_ptr.peripheral_pwr_gate_array) & PERIPHERAL_SDMMC_MASK) == 0U) {
-		ERROR("SDMMC/NAND is not set properly\n");
-		return -ENXIO;
-	}
-
-	mmio_setbits_32(SOCFPGA_SYSMGR(DFI_INTF),
-		(((reverse_handoff_ptr.peripheral_pwr_gate_array) &
-		PERIPHERAL_SDMMC_MASK) >> PERIPHERAL_SDMMC_OFFSET));
-	data = mmio_read_32(SOCFPGA_SYSMGR(DFI_INTF));
-	if ((data & DFI_INTF_MASK) != (((reverse_handoff_ptr.peripheral_pwr_gate_array) &
-		PERIPHERAL_SDMMC_MASK) >> PERIPHERAL_SDMMC_OFFSET)) {
-		ERROR("DFI is not set properly\n");
-		return -ENXIO;
-=======
 /* DFI configuration */
 int dfi_select(handoff *hoff_ptr)
 {
@@ -98,7 +61,6 @@ int dfi_select(handoff *hoff_ptr)
 		NOTICE("DFI interface selected successfully to %s\n",
 			(reg & DFI_INTF_MASK) == DFI_CTRL_SEL_HPNFC ?
 			"NAND" : "SDEMMC");
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	return 0;
@@ -115,8 +77,4 @@ int combo_phy_init(handoff *hoff_ptr)
 	}
 
 	return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> upstream_import/upstream_v2_14_1

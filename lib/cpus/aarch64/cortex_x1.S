@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Google LLC. All rights reserved.
-=======
  * Copyright (c) 2022-2024, Google LLC. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -27,28 +23,6 @@
 	wa_cve_2022_23960_bhb_vector_table CORTEX_X1_BHB_LOOP_COUNT, cortex_x1
 #endif /* WORKAROUND_CVE_2022_23960 */
 
-<<<<<<< HEAD
-workaround_reset_start cortex_x1, ERRATUM(1688305), ERRATA_X1_1688305
-	sysreg_bit_set CORTEX_X1_ACTLR2_EL1, BIT(1)
-workaround_reset_end cortex_x1, ERRATUM(1688305)
-
-check_erratum_ls cortex_x1, ERRATUM(1688305), CPU_REV(1, 0)
-
-workaround_reset_start cortex_x1, ERRATUM(1821534), ERRATA_X1_1821534
-	sysreg_bit_set CORTEX_X1_ACTLR2_EL1, BIT(2)
-workaround_reset_end cortex_x1, ERRATUM(1821534)
-
-check_erratum_ls cortex_x1, ERRATUM(1821534), CPU_REV(1, 0)
-
-workaround_reset_start cortex_x1, ERRATUM(1827429), ERRATA_X1_1827429
-	sysreg_bit_set CORTEX_X1_CPUECTLR_EL1, BIT(53)
-workaround_reset_end cortex_x1, ERRATUM(1827429)
-
-check_erratum_ls cortex_x1, ERRATUM(1827429), CPU_REV(1, 0)
-
-check_erratum_chosen cortex_x1, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-
-=======
 cpu_reset_prologue cortex_x1
 
 workaround_reset_start cortex_x1, ERRATUM(1688305), ERRATA_X1_1688305
@@ -71,7 +45,6 @@ check_erratum_ls cortex_x1, ERRATUM(1827429), CPU_REV(1, 0)
 
 check_erratum_chosen cortex_x1, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_x1, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
 	/*
@@ -82,8 +55,6 @@ workaround_reset_start cortex_x1, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #endif /* IMAGE_BL31 */
 workaround_reset_end cortex_x1, CVE(2022, 23960)
 
-<<<<<<< HEAD
-=======
 /* Disable hardware page aggregation. Enables mitigation for `CVE-2024-5660` */
 workaround_reset_start cortex_x1, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
 	sysreg_bit_set CORTEX_X1_CPUECTLR_EL1, BIT(46)
@@ -91,7 +62,6 @@ workaround_reset_end cortex_x1, CVE(2024, 5660)
 
 check_erratum_ls cortex_x1, CVE(2024, 5660), CPU_REV(1, 2)
 
->>>>>>> upstream_import/upstream_v2_14_1
 cpu_reset_func_start cortex_x1
 cpu_reset_func_end cortex_x1
 
@@ -105,11 +75,6 @@ func cortex_x1_core_pwr_dwn
 	ret
 endfunc cortex_x1_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_x1
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
        /* ---------------------------------------------
 	* This function provides Cortex X1 specific
 	* register information for crash reporting.

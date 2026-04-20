@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2022-2024, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -34,27 +30,17 @@
 
 /*
  * First undef previous definitions from tbbr_oid.h.
-<<<<<<< HEAD
- * CCA ROTPK authenticates BL31 and its configuration image in
-=======
  * CCA ROTPK authenticates BL31, SCP_BL2 and its configuration image in
->>>>>>> upstream_import/upstream_v2_14_1
  * CCA CoT.
  **/
 #undef BL31_IMAGE_KEY_OID
 #undef SOC_FW_CONFIG_KEY_OID
 #undef HW_CONFIG_KEY_OID
-<<<<<<< HEAD
-#define BL31_IMAGE_KEY_OID			ZERO_OID
-#define SOC_FW_CONFIG_KEY_OID			ZERO_OID
-#define HW_CONFIG_KEY_OID			ZERO_OID
-=======
 #undef SCP_BL2_IMAGE_KEY_OID
 #define BL31_IMAGE_KEY_OID			ZERO_OID
 #define SOC_FW_CONFIG_KEY_OID			ZERO_OID
 #define HW_CONFIG_KEY_OID			ZERO_OID
 #define SCP_BL2_IMAGE_KEY_OID			ZERO_OID
->>>>>>> upstream_import/upstream_v2_14_1
 #define RMM_IMAGE_KEY_OID			ZERO_OID
 
 #endif /* CCA_OID_H */

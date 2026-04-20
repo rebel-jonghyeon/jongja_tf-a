@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2019-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2019-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -33,8 +29,6 @@ cpu_reset_prologue cortex_a76ae
 
 check_erratum_chosen cortex_a76ae, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 
-<<<<<<< HEAD
-=======
 workaround_reset_start cortex_a76ae, ERRATUM(1931427), ERRATA_A76AE_1931427
 	sysreg_bit_set CORTEX_A76AE_CPUACTLR2_EL1, BIT(2)
 workaround_reset_end cortex_a76ae, ERRATUM(1931427)
@@ -90,7 +84,6 @@ workaround_runtime_end cortex_a76ae, ERRATUM(2753838)
 
 check_erratum_ls cortex_a76ae, ERRATUM(2753838), CPU_REV(1, 1)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_a76ae, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
 	/*
@@ -104,11 +97,6 @@ workaround_reset_end cortex_a76ae, CVE(2022, 23960)
 
 cpu_reset_func_start cortex_a76ae
 cpu_reset_func_end cortex_a76ae
-<<<<<<< HEAD
-
-errata_report_shim cortex_a76ae
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ----------------------------------------------------
 	 * HW will do the cache maintenance while powering down
@@ -116,10 +104,7 @@ errata_report_shim cortex_a76ae
 	 */
 func cortex_a76ae_core_pwr_dwn
 	sysreg_bit_set CORTEX_A76AE_CPUPWRCTLR_EL1, CORTEX_A76AE_CORE_PWRDN_EN_MASK
-<<<<<<< HEAD
-=======
 	apply_erratum cortex_a76ae, ERRATUM(2753838), ERRATA_A76AE_2753838
->>>>>>> upstream_import/upstream_v2_14_1
 	isb
 	ret
 endfunc cortex_a76ae_core_pwr_dwn

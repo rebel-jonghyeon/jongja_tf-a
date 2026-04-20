@@ -8,11 +8,7 @@
 
 #include <plat_private.h>
 
-<<<<<<< HEAD
-int32_t plat_core_pos_by_mpidr(u_register_t mpidr)
-=======
 int plat_core_pos_by_mpidr(u_register_t mpidr)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	int ret = -1;
 

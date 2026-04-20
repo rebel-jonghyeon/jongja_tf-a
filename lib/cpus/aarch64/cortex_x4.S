@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2022-2026, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,11 +9,6 @@
 #include <common/bl_common.h>
 #include <cortex_x4.h>
 #include <cpu_macros.S>
-<<<<<<< HEAD
-#include <plat_macros.S>
-#include "wa_cve_2022_23960_bhb_vector.S"
-
-=======
 #include "wa_cve_2022_23960_bhb_vector.S"
 
 #include <dsu_macros.S>
@@ -25,7 +16,6 @@
 
 #include <plat_macros.S>
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* Hardware handled coherency */
 #if HW_ASSISTED_COHERENCY == 0
 #error "Cortex X4 must be compiled with HW_ASSISTED_COHERENCY enabled"
@@ -36,23 +26,6 @@
 #error "Cortex X4 supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
 #endif
 
-<<<<<<< HEAD
-#if WORKAROUND_CVE_2022_23960
-        wa_cve_2022_23960_bhb_vector_table CORTEX_X4_BHB_LOOP_COUNT, cortex_x4
-#endif /* WORKAROUND_CVE_2022_23960 */
-
-workaround_reset_start cortex_x4, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-#if IMAGE_BL31
-	/*
-	 * The Cortex X4 generic vectors are overridden to apply errata
-	 * mitigation on exception entry from lower ELs.
-	 */
-	override_vector_table wa_cve_vbar_cortex_x4
-#endif /* IMAGE_BL31 */
-workaround_reset_end cortex_x4, CVE(2022, 23960)
-
-check_erratum_chosen cortex_x4, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-=======
 cpu_reset_prologue cortex_x4
 
 .global check_erratum_cortex_x4_2726228
@@ -193,15 +166,11 @@ func cortex_x4_impl_defined_el3_handler
 	b	wa_cve_2025_0647_do_cpp_wa
 endfunc cortex_x4_impl_defined_el3_handler
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 cpu_reset_func_start cortex_x4
 	/* Disable speculative loads */
 	msr	SSBS, xzr
-<<<<<<< HEAD
-=======
 	enable_mpmm
->>>>>>> upstream_import/upstream_v2_14_1
 cpu_reset_func_end cortex_x4
 
 	/* ----------------------------------------------------
@@ -214,21 +183,13 @@ func cortex_x4_core_pwr_dwn
 	 * ---------------------------------------------------
 	 */
 	sysreg_bit_set CORTEX_X4_CPUPWRCTLR_EL1, CORTEX_X4_CPUPWRCTLR_EL1_CORE_PWRDN_BIT
-<<<<<<< HEAD
-=======
 
 	apply_erratum cortex_x4, ERRATUM(2740089), ERRATA_X4_2740089
 
->>>>>>> upstream_import/upstream_v2_14_1
 	isb
 	ret
 endfunc cortex_x4_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_x4
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides Cortex X4-specific
 	 * register information for crash reporting.
@@ -248,11 +209,6 @@ func cortex_x4_cpu_reg_dump
 	ret
 endfunc cortex_x4_cpu_reg_dump
 
-<<<<<<< HEAD
-declare_cpu_ops cortex_x4, CORTEX_X4_MIDR, \
-	cortex_x4_reset_func, \
-	cortex_x4_core_pwr_dwn
-=======
 #if WORKAROUND_CVE_2025_0647
 declare_cpu_ops_eh cortex_x4, CORTEX_X4_MIDR, \
 	cortex_x4_reset_func, \
@@ -264,4 +220,3 @@ declare_cpu_ops cortex_x4, CORTEX_X4_MIDR, \
 	cortex_x4_core_pwr_dwn
 #endif
 
->>>>>>> upstream_import/upstream_v2_14_1

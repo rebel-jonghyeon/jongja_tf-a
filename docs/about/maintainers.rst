@@ -55,13 +55,10 @@ Maintainers
 :|G|: `ManishVB-Arm`_
 :|M|: Yann Gautier <yann.gautier@st.com>
 :|G|: `Yann-lms`_
-<<<<<<< HEAD
-=======
 :|M|: Govindraj Raja <govindraj.raja@arm.com>
 :|G|: `govindraj-arm`_
 
 .. _lts maintainers:
->>>>>>> upstream_import/upstream_v2_14_1
 
 LTS Maintainers
 ---------------
@@ -225,17 +222,10 @@ JTAG DCC console driver
 ^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Michal Simek <michal.simek@amd.com>
 :|G|: `michalsimek`_
-<<<<<<< HEAD
-:|M|: Amit Nagal <amit.nagal@amd.com>
-:|G|: `amit-nagal`_
-:|M|: Akshay Belsare <akshay.belsare@amd.com>
-:|G|: `Akshay-Belsare`_
-=======
 :|M|: Akshay Belsare <akshay.belsare@amd.com>
 :|G|: `Akshay-Belsare`_
 :|M|: Maheedhar Sai Bollapalli <maheedharsai.bollapalli@amd.com>
 :|G|: `maheedhar-bollapalli`_
->>>>>>> upstream_import/upstream_v2_14_1
 :|F|: drivers/arm/dcc/
 :|F|: include/drivers/arm/dcc.h
 
@@ -497,8 +487,6 @@ Firmware Handoff Library (Transfer List)
 :|F|: lib/transfer_list
 :|F|: include/lib/transfer_list.h
 
-<<<<<<< HEAD
-=======
 Context Management
 ^^^^^^^^^^^^^^^^^^
 :|M|: Jayanth Dodderi Chidanand <jayanthdodderi.chidanand@arm.com>
@@ -549,7 +537,6 @@ Per-CPU Framework
 :|F|: lib/per_cpu
 :|F|: docs/components/numa-per-cpu.rst
 
->>>>>>> upstream_import/upstream_v2_14_1
 Platform Ports
 ~~~~~~~~~~~~~~
 
@@ -631,13 +618,8 @@ Arm Rich IoT Platform ports
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
 :|G|: `abdellatif-elkhlifi`_
-<<<<<<< HEAD
-:|M|: Xueliang Zhong <xueliang.zhong@arm.com>
-:|G|: `xueliang-zhong-arm`_
-=======
 :|M|: Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
 :|G|: `hugues-kambampiana-arm`_
->>>>>>> upstream_import/upstream_v2_14_1
 :|F|: plat/arm/board/corstone700
 :|F|: plat/arm/board/a5ds
 :|F|: plat/arm/board/corstone1000
@@ -662,8 +644,6 @@ Arm Total Compute platform port
 :|G|: `o-tarhunakov`_
 :|F|: plat/arm/board/tc
 
-<<<<<<< HEAD
-=======
 Arm Automotive RD platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Diego Sueiro <diego.sueiro@arm.com>
@@ -677,7 +657,6 @@ Arm Automotive RD platform port
 :|G|: `Ahmed-Azeem`_
 :|F|: plat/arm/board/automotive_rd/rdaspen
 
->>>>>>> upstream_import/upstream_v2_14_1
 Aspeed platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Chia-Wei Wang <chiawei_wang@aspeedtech.com>
@@ -741,10 +720,6 @@ Nuvoton npcm845x platform port
 :|M|: Avi Fishman <avi.fishman@nuvoton.com>
 :|G|: `avifishman`_
 :|F|: docs/plat/npcm845x.rst
-<<<<<<< HEAD
-:|F|: drivers/nuvoton/
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 :|F|: include/drivers/nuvoton/
 :|F|: include/plat/nuvoton/
 :|F|: plat/nuvoton/
@@ -785,8 +760,6 @@ NXP i.MX8M platform port
 :|F|: docs/plat/imx8m.rst
 :|F|: plat/imx/imx8m/
 
-<<<<<<< HEAD
-=======
 NXP i.MX8ULP platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Jacky Bai <ping.bai@nxp.com>
@@ -794,18 +767,14 @@ NXP i.MX8ULP platform port
 :|F|: docs/plat/imx8ulp.rst
 :|F|: plat/imx/imx8ulp/
 
->>>>>>> upstream_import/upstream_v2_14_1
 NXP i.MX9 platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Jacky Bai <ping.bai@nxp.com>
 :|G|: `JackyBai`_
 :|F|: docs/plat/imx9.rst
 :|F|: plat/imx/imx93/
-<<<<<<< HEAD
-=======
 :|F|: plat/imx/imx9/imx94/
 :|F|: plat/imx/imx9/imx95/
->>>>>>> upstream_import/upstream_v2_14_1
 
 NXP QorIQ Layerscape common code for platform ports
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -897,11 +866,7 @@ QTI MSM8916 platform port
 :|G|: `stephan-gh`_
 :|M|: Nikita Travkin <nikita@trvn.ru>
 :|G|: `TravMurav`_
-<<<<<<< HEAD
-:|F|: docs/plat/qti-msm8916.rst
-=======
 :|F|: docs/plat/qti/msm8916.rst
->>>>>>> upstream_import/upstream_v2_14_1
 :|F|: plat/qti/mdm9607/
 :|F|: plat/qti/msm8909/
 :|F|: plat/qti/msm8916/
@@ -966,11 +931,8 @@ STMicroelectronics platform ports
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Yann Gautier <yann.gautier@st.com>
 :|G|: `Yann-lms`_
-<<<<<<< HEAD
-=======
 :|M|: Maxime Méré <maxime.mere@foss.st.com>
 :|G|: `meremST`_
->>>>>>> upstream_import/upstream_v2_14_1
 :|F|: docs/plat/st/*
 :|F|: docs/plat/stm32mp1.rst
 :|F|: drivers/st/
@@ -1007,18 +969,11 @@ AMD-Xilinx platform port
 ^^^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Michal Simek <michal.simek@amd.com>
 :|G|: `michalsimek`_
-<<<<<<< HEAD
-:|M|: Amit Nagal <amit.nagal@amd.com>
-:|G|: `amit-nagal`_
-:|M|: Akshay Belsare <akshay.belsare@amd.com>
-:|G|: `Akshay-Belsare`_
-=======
 :|M|: Akshay Belsare <akshay.belsare@amd.com>
 :|G|: `Akshay-Belsare`_
 :|M|: Maheedhar Sai Bollapalli <maheedharsai.bollapalli@amd.com>
 :|G|: `maheedhar-bollapalli`_
 :|F|: docs/plat/amd\*
->>>>>>> upstream_import/upstream_v2_14_1
 :|F|: docs/plat/xilinx\*
 :|F|: plat/amd/
 :|F|: plat/xilinx/
@@ -1178,8 +1133,6 @@ Conventional Changelog Extensions
 .. _jwerner-chromium: https://github.com/jwerner-chromium
 .. _kostapr: https://github.com/kostapr
 .. _lachitp: https://github.com/lachitp
-<<<<<<< HEAD
-=======
 .. _laurenw-arm: https://github.com/laurenw-arm
 .. _leon-chen-mtk: https://github.com/leon-chen-mtk
 .. _linyidi: https://github.com/linyidi
@@ -1191,7 +1144,6 @@ Conventional Changelog Extensions
 .. _marcbonnici: https://github.com/marcbonnici
 .. _marcone: https://github.com/marcone
 .. _mardyk01: https://github.com/mardyk01
->>>>>>> upstream_import/upstream_v2_14_1
 .. _marex: https://github.com/marex
 .. _masahir0y: https://github.com/masahir0y
 .. _masahisak: https://github.com/masahisak
@@ -1228,50 +1180,6 @@ Conventional Changelog Extensions
 .. _thomas-arm: https://github.com/thomas-arm
 .. _TonyXie06: https://github.com/TonyXie06
 .. _TravMurav: https://github.com/TravMurav
-<<<<<<< HEAD
-.. _vwadekar: https://github.com/vwadekar
-.. _Yann-lms: https://github.com/Yann-lms
-.. _manish-pandey-arm: https://github.com/manish-pandey-arm
-.. _mardyk01: https://github.com/mardyk01
-.. _odeprez: https://github.com/odeprez
-.. _bipinravi-arm: https://github.com/bipinravi-arm
-.. _joannafarley-arm: https://github.com/joannafarley-arm
-.. _ManishVB-Arm: https://github.com/ManishVB-Arm
-.. _max-shvetsov: https://github.com/max-shvetsov
-.. _javieralso-arm: https://github.com/javieralso-arm
-.. _laurenw-arm: https://github.com/laurenw-arm
-.. _J-Alves: https://github.com/J-Alves
-.. _madhukar-Arm: https://github.com/madhukar-Arm
-.. _raghuncstate: https://github.com/raghuncstate
-.. _CJKay: https://github.com/cjkay
-.. _nmenon: https://github.com/nmenon
-.. _anukou: https://github.com/anukou
-.. _chandnich: https://github.com/chandnich
-.. _abdellatif-elkhlifi: https://github.com/abdellatif-elkhlifi
-.. _vishnu-banavath: https://github.com/vishnu-banavath
-.. _vijayenthiran-arm: https://github.com/vijayenthiran-arm
-.. _arugan02: https://github.com/arugan02
-.. _uarif1: https://github.com/uarif1
-.. _pangupta: https://github.com/pangupta
-.. _JiafeiPan: https://github.com/JiafeiPan
-.. _arve-android: https://github.com/arve-android
-.. _marcone: https://github.com/marcone
-.. _marcbonnici: https://github.com/marcbonnici
-.. _jayanthchidanand-arm: https://github.com/jayanthchidanand-arm
-.. _bytefire: https://github.com/bytefire
-.. _rupsin01: https://github.com/rupsin01
-.. _jimmy-brisson: https://github.com/theotherjimmy
-.. _ChiaweiW: https://github.com/chiaweiw
-.. _Neal-liu: https://github.com/neal-liu
-.. _amit-nagal: https://github.com/amit-nagal
-.. _Akshay-Belsare: https://github.com/Akshay-Belsare
-.. _hilamirandakuzi1: https://github.com/hilamirandakuzi1
-.. _rutigl: https://github.com/rutigl
-.. _avifishman: https://github.com/avifishman
-.. _xueliang-zhong-arm: https://github.com/xueliang-zhong-arm
-.. _raymo200915: https://github.com/raymo200915
-.. _harrisonmutai-arm: https://github.com/harrisonmutai-arm
-=======
 .. _uarif1: https://github.com/uarif1
 .. _vijayenthiran-arm: https://github.com/vijayenthiran-arm
 .. _artkopotev: https://github.com/artkopotev
@@ -1282,4 +1190,3 @@ Conventional Changelog Extensions
 --------------
 
 *Copyright (c) 2019-2025, Arm Limited and Contributors. All rights reserved.*
->>>>>>> upstream_import/upstream_v2_14_1

@@ -1,18 +1,11 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, MediaTek Inc. All rights reserved.
-=======
  * Copyright (c) 2023-2024, MediaTek Inc. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-<<<<<<< HEAD
-=======
 #include <errno.h>
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* TF-A system header */
 #include <common/debug.h>
 #include <drivers/delay_timer.h>
@@ -23,9 +16,6 @@
 #include "apusys.h"
 #include "apusys_rv.h"
 #include "apusys_rv_mbox_mpu.h"
-<<<<<<< HEAD
-#include "emi_mpu.h"
-=======
 #include "apusys_rv_pwr_ctrl.h"
 #include "apusys_rv_sec_info.h"
 #ifdef CONFIG_MTK_APUSYS_SEC_CTRL
@@ -39,7 +29,6 @@
 #ifdef CONFIG_MTK_APUSYS_RV_APUMMU_SUPPORT
 #include "apusys_ammu.h"
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 static spinlock_t apusys_rv_lock;
 
@@ -62,23 +51,8 @@ void apusys_rv_mbox_mpu_init(void)
 
 int apusys_kernel_apusys_rv_setup_reviser(void)
 {
-<<<<<<< HEAD
-	static bool apusys_rv_setup_reviser_called;
-
 	spin_lock(&apusys_rv_lock);
 
-	if (apusys_rv_setup_reviser_called) {
-		WARN(MODULE_TAG "%s: already initialized\n", __func__);
-		spin_unlock(&apusys_rv_lock);
-		return -1;
-	}
-
-	apusys_rv_setup_reviser_called = true;
-
-=======
-	spin_lock(&apusys_rv_lock);
-
->>>>>>> upstream_import/upstream_v2_14_1
 	mmio_write_32(USERFW_CTXT, CFG_4GB_SEL_EN | CFG_4GB_SEL);
 	mmio_write_32(SECUREFW_CTXT, CFG_4GB_SEL_EN | CFG_4GB_SEL);
 
@@ -104,23 +78,8 @@ int apusys_kernel_apusys_rv_setup_reviser(void)
 
 int apusys_kernel_apusys_rv_reset_mp(void)
 {
-<<<<<<< HEAD
-	static bool apusys_rv_reset_mp_called;
-
 	spin_lock(&apusys_rv_lock);
 
-	if (apusys_rv_reset_mp_called) {
-		WARN(MODULE_TAG "%s: already initialized\n", __func__);
-		spin_unlock(&apusys_rv_lock);
-		return -1;
-	}
-
-	apusys_rv_reset_mp_called = true;
-
-=======
-	spin_lock(&apusys_rv_lock);
-
->>>>>>> upstream_import/upstream_v2_14_1
 	mmio_write_32(MD32_SYS_CTRL, MD32_SYS_CTRL_RST);
 
 	dsb();
@@ -141,73 +100,29 @@ int apusys_kernel_apusys_rv_reset_mp(void)
 
 int apusys_kernel_apusys_rv_setup_boot(void)
 {
-<<<<<<< HEAD
-	static bool apusys_rv_setup_boot_called;
-
 	spin_lock(&apusys_rv_lock);
 
-	if (apusys_rv_setup_boot_called) {
-		WARN(MODULE_TAG "%s: already initialized\n", __func__);
-		spin_unlock(&apusys_rv_lock);
-		return -1;
-	}
-
-	apusys_rv_setup_boot_called = true;
-
-=======
-	spin_lock(&apusys_rv_lock);
-
->>>>>>> upstream_import/upstream_v2_14_1
 	mmio_write_32(MD32_BOOT_CTRL, APU_SEC_FW_IOVA);
 
 	mmio_write_32(MD32_PRE_DEFINE, (PREDEFINE_CACHE_TCM << PREDEF_1G_OFS) |
 		      (PREDEFINE_CACHE << PREDEF_2G_OFS) | (PREDEFINE_CACHE << PREDEF_3G_OFS) |
 		      (PREDEFINE_CACHE << PREDEF_4G_OFS));
 
-<<<<<<< HEAD
-=======
 	apusys_infra_dcm_setup();
 
->>>>>>> upstream_import/upstream_v2_14_1
 	spin_unlock(&apusys_rv_lock);
 	return 0;
 }
 
 int apusys_kernel_apusys_rv_start_mp(void)
 {
-<<<<<<< HEAD
-	static bool apusys_rv_start_mp_called;
-
-	spin_lock(&apusys_rv_lock);
-
-	if (apusys_rv_start_mp_called) {
-		WARN(MODULE_TAG "%s: already initialized\n", __func__);
-		spin_unlock(&apusys_rv_lock);
-		return -1;
-	}
-
-	apusys_rv_start_mp_called = true;
-
-	mmio_write_32(MD32_RUNSTALL, MD32_RUN);
-
-=======
 	spin_lock(&apusys_rv_lock);
 	mmio_write_32(MD32_RUNSTALL, MD32_RUN);
->>>>>>> upstream_import/upstream_v2_14_1
 	spin_unlock(&apusys_rv_lock);
 
 	return 0;
 }
 
-<<<<<<< HEAD
-static bool watch_dog_is_timeout(void)
-{
-	if (mmio_read_32(WDT_INT) != WDT_INT_W1C) {
-		ERROR(MODULE_TAG "%s: WDT does not timeout\n", __func__);
-		return false;
-	}
-	return true;
-=======
 static int hw_sema2_release(uint32_t timeout)
 {
 #ifdef CONFIG_MTK_APUSYS_RV_COREDUMP_WA_SUPPORT
@@ -238,35 +153,10 @@ static int hw_sema2_acquire(uint32_t timeout)
 #else
 	return 0;
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 int apusys_kernel_apusys_rv_stop_mp(void)
 {
-<<<<<<< HEAD
-	static bool apusys_rv_stop_mp_called;
-
-	spin_lock(&apusys_rv_lock);
-
-	if (apusys_rv_stop_mp_called) {
-		WARN(MODULE_TAG "%s: already initialized\n", __func__);
-		spin_unlock(&apusys_rv_lock);
-		return -1;
-	}
-
-	if (watch_dog_is_timeout() == false) {
-		spin_unlock(&apusys_rv_lock);
-		return -1;
-	}
-
-	apusys_rv_stop_mp_called = true;
-
-	mmio_write_32(MD32_RUNSTALL, MD32_STALL);
-
-	spin_unlock(&apusys_rv_lock);
-
-	return 0;
-=======
 	int ret;
 
 	ret = hw_sema2_acquire(HW_SEM_TIMEOUT);
@@ -280,30 +170,10 @@ int apusys_kernel_apusys_rv_stop_mp(void)
 	ret = hw_sema2_release(HW_SEM_TIMEOUT);
 
 	return ret;
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 int apusys_kernel_apusys_rv_setup_sec_mem(void)
 {
-<<<<<<< HEAD
-	static bool apusys_rv_setup_sec_mem_called;
-	int ret;
-
-	spin_lock(&apusys_rv_lock);
-
-	if (apusys_rv_setup_sec_mem_called) {
-		WARN(MODULE_TAG "%s: already initialized\n", __func__);
-		spin_unlock(&apusys_rv_lock);
-		return -1;
-	}
-
-	apusys_rv_setup_sec_mem_called = true;
-
-	ret = set_apu_emi_mpu_region();
-	if (ret != 0) {
-		ERROR(MODULE_TAG "%s: set emimpu protection failed\n", __func__);
-	}
-=======
 	int ret = 0;
 
 	spin_lock(&apusys_rv_lock);
@@ -311,7 +181,6 @@ int apusys_kernel_apusys_rv_setup_sec_mem(void)
 	ret = apusys_plat_setup_sec_mem();
 	if (ret != 0)
 		ERROR(MODULE_TAG "%s: set emimpu protection failed\n", __func__);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	spin_unlock(&apusys_rv_lock);
 	return ret;
@@ -319,68 +188,41 @@ int apusys_kernel_apusys_rv_setup_sec_mem(void)
 
 int apusys_kernel_apusys_rv_disable_wdt_isr(void)
 {
-<<<<<<< HEAD
-=======
 	int ret;
 
 	ret = hw_sema2_acquire(0);
 	if (ret)
 		return ret;
 
->>>>>>> upstream_import/upstream_v2_14_1
 	spin_lock(&apusys_rv_lock);
 	mmio_clrbits_32(WDT_CTRL0, WDT_EN);
 	spin_unlock(&apusys_rv_lock);
 
-<<<<<<< HEAD
-	return 0;
-=======
 	ret = hw_sema2_release(0);
 
 	return ret;
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 int apusys_kernel_apusys_rv_clear_wdt_isr(void)
 {
-<<<<<<< HEAD
-=======
 	int ret;
 
 	ret = hw_sema2_acquire(HW_SEM_TIMEOUT);
 	if (ret)
 		return ret;
 
->>>>>>> upstream_import/upstream_v2_14_1
 	spin_lock(&apusys_rv_lock);
 	mmio_clrbits_32(UP_INT_EN2, DBG_APB_EN);
 	mmio_write_32(WDT_INT, WDT_INT_W1C);
 	spin_unlock(&apusys_rv_lock);
 
-<<<<<<< HEAD
-	return 0;
-=======
 	ret = hw_sema2_release(HW_SEM_TIMEOUT);
 
 	return ret;
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 int apusys_kernel_apusys_rv_cg_gating(void)
 {
-<<<<<<< HEAD
-	spin_lock(&apusys_rv_lock);
-
-	if (watch_dog_is_timeout() == false) {
-		spin_unlock(&apusys_rv_lock);
-		return -1;
-	}
-
-	mmio_write_32(MD32_CLK_CTRL, MD32_CLK_DIS);
-	spin_unlock(&apusys_rv_lock);
-
-	return 0;
-=======
 	int ret;
 
 	ret = hw_sema2_acquire(HW_SEM_TIMEOUT);
@@ -394,23 +236,10 @@ int apusys_kernel_apusys_rv_cg_gating(void)
 	ret = hw_sema2_release(HW_SEM_TIMEOUT);
 
 	return ret;
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 int apusys_kernel_apusys_rv_cg_ungating(void)
 {
-<<<<<<< HEAD
-	spin_lock(&apusys_rv_lock);
-
-	if (watch_dog_is_timeout() == false) {
-		spin_unlock(&apusys_rv_lock);
-		return -1;
-	}
-
-	mmio_write_32(MD32_CLK_CTRL, MD32_CLK_EN);
-	spin_unlock(&apusys_rv_lock);
-
-=======
 	int ret;
 
 	ret = hw_sema2_acquire(HW_SEM_TIMEOUT);
@@ -666,6 +495,5 @@ int apusys_rv_setup_ce_bin(void)
 #else
 	WARN("Not support CE on this platform\n");
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 	return 0;
 }

@@ -13,11 +13,6 @@
 #include <lib/per_cpu/per_cpu_macros.S>
 #include <platform_def.h>
 
-<<<<<<< HEAD
-	.global	el1_sysregs_context_save
-	.global	el1_sysregs_context_restore
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 #if CTX_INCLUDE_FPREGS
 	.global	fpregs_context_save
 	.global	fpregs_context_restore
@@ -36,206 +31,6 @@
 	.global	restore_gp_pmcr_pauth_regs
 	.global	el3_exit
 
-<<<<<<< HEAD
-
-/* ------------------------------------------------------------------
- * The following function strictly follows the AArch64 PCS to use
- * x9-x17 (temporary caller-saved registers) to save EL1 system
- * register context. It assumes that 'x0' is pointing to a
- * 'el1_sys_regs' structure where the register context will be saved.
- * ------------------------------------------------------------------
- */
-func el1_sysregs_context_save
-
-	mrs	x9, spsr_el1
-	mrs	x10, elr_el1
-	stp	x9, x10, [x0, #CTX_SPSR_EL1]
-
-#if !ERRATA_SPECULATIVE_AT
-	mrs	x15, sctlr_el1
-	mrs	x16, tcr_el1
-	stp	x15, x16, [x0, #CTX_SCTLR_EL1]
-#endif /* ERRATA_SPECULATIVE_AT */
-
-	mrs	x17, cpacr_el1
-	mrs	x9, csselr_el1
-	stp	x17, x9, [x0, #CTX_CPACR_EL1]
-
-	mrs	x10, sp_el1
-	mrs	x11, esr_el1
-	stp	x10, x11, [x0, #CTX_SP_EL1]
-
-	mrs	x12, ttbr0_el1
-	mrs	x13, ttbr1_el1
-	stp	x12, x13, [x0, #CTX_TTBR0_EL1]
-
-	mrs	x14, mair_el1
-	mrs	x15, amair_el1
-	stp	x14, x15, [x0, #CTX_MAIR_EL1]
-
-	mrs	x16, actlr_el1
-	mrs	x17, tpidr_el1
-	stp	x16, x17, [x0, #CTX_ACTLR_EL1]
-
-	mrs	x9, tpidr_el0
-	mrs	x10, tpidrro_el0
-	stp	x9, x10, [x0, #CTX_TPIDR_EL0]
-
-	mrs	x13, par_el1
-	mrs	x14, far_el1
-	stp	x13, x14, [x0, #CTX_PAR_EL1]
-
-	mrs	x15, afsr0_el1
-	mrs	x16, afsr1_el1
-	stp	x15, x16, [x0, #CTX_AFSR0_EL1]
-
-	mrs	x17, contextidr_el1
-	mrs	x9, vbar_el1
-	stp	x17, x9, [x0, #CTX_CONTEXTIDR_EL1]
-
-	/* Save AArch32 system registers if the build has instructed so */
-#if CTX_INCLUDE_AARCH32_REGS
-	mrs	x11, spsr_abt
-	mrs	x12, spsr_und
-	stp	x11, x12, [x0, #CTX_SPSR_ABT]
-
-	mrs	x13, spsr_irq
-	mrs	x14, spsr_fiq
-	stp	x13, x14, [x0, #CTX_SPSR_IRQ]
-
-	mrs	x15, dacr32_el2
-	mrs	x16, ifsr32_el2
-	stp	x15, x16, [x0, #CTX_DACR32_EL2]
-#endif /* CTX_INCLUDE_AARCH32_REGS */
-
-	/* Save NS timer registers if the build has instructed so */
-#if NS_TIMER_SWITCH
-	mrs	x10, cntp_ctl_el0
-	mrs	x11, cntp_cval_el0
-	stp	x10, x11, [x0, #CTX_CNTP_CTL_EL0]
-
-	mrs	x12, cntv_ctl_el0
-	mrs	x13, cntv_cval_el0
-	stp	x12, x13, [x0, #CTX_CNTV_CTL_EL0]
-
-	mrs	x14, cntkctl_el1
-	str	x14, [x0, #CTX_CNTKCTL_EL1]
-#endif /* NS_TIMER_SWITCH */
-
-	/* Save MTE system registers if the build has instructed so */
-#if CTX_INCLUDE_MTE_REGS
-	mrs	x15, TFSRE0_EL1
-	mrs	x16, TFSR_EL1
-	stp	x15, x16, [x0, #CTX_TFSRE0_EL1]
-
-	mrs	x9, RGSR_EL1
-	mrs	x10, GCR_EL1
-	stp	x9, x10, [x0, #CTX_RGSR_EL1]
-#endif /* CTX_INCLUDE_MTE_REGS */
-
-	ret
-endfunc el1_sysregs_context_save
-
-/* ------------------------------------------------------------------
- * The following function strictly follows the AArch64 PCS to use
- * x9-x17 (temporary caller-saved registers) to restore EL1 system
- * register context.  It assumes that 'x0' is pointing to a
- * 'el1_sys_regs' structure from where the register context will be
- * restored
- * ------------------------------------------------------------------
- */
-func el1_sysregs_context_restore
-
-	ldp	x9, x10, [x0, #CTX_SPSR_EL1]
-	msr	spsr_el1, x9
-	msr	elr_el1, x10
-
-#if !ERRATA_SPECULATIVE_AT
-	ldp	x15, x16, [x0, #CTX_SCTLR_EL1]
-	msr	sctlr_el1, x15
-	msr	tcr_el1, x16
-#endif /* ERRATA_SPECULATIVE_AT */
-
-	ldp	x17, x9, [x0, #CTX_CPACR_EL1]
-	msr	cpacr_el1, x17
-	msr	csselr_el1, x9
-
-	ldp	x10, x11, [x0, #CTX_SP_EL1]
-	msr	sp_el1, x10
-	msr	esr_el1, x11
-
-	ldp	x12, x13, [x0, #CTX_TTBR0_EL1]
-	msr	ttbr0_el1, x12
-	msr	ttbr1_el1, x13
-
-	ldp	x14, x15, [x0, #CTX_MAIR_EL1]
-	msr	mair_el1, x14
-	msr	amair_el1, x15
-
-	ldp 	x16, x17, [x0, #CTX_ACTLR_EL1]
-	msr	actlr_el1, x16
-	msr	tpidr_el1, x17
-
-	ldp	x9, x10, [x0, #CTX_TPIDR_EL0]
-	msr	tpidr_el0, x9
-	msr	tpidrro_el0, x10
-
-	ldp	x13, x14, [x0, #CTX_PAR_EL1]
-	msr	par_el1, x13
-	msr	far_el1, x14
-
-	ldp	x15, x16, [x0, #CTX_AFSR0_EL1]
-	msr	afsr0_el1, x15
-	msr	afsr1_el1, x16
-
-	ldp	x17, x9, [x0, #CTX_CONTEXTIDR_EL1]
-	msr	contextidr_el1, x17
-	msr	vbar_el1, x9
-
-	/* Restore AArch32 system registers if the build has instructed so */
-#if CTX_INCLUDE_AARCH32_REGS
-	ldp	x11, x12, [x0, #CTX_SPSR_ABT]
-	msr	spsr_abt, x11
-	msr	spsr_und, x12
-
-	ldp	x13, x14, [x0, #CTX_SPSR_IRQ]
-	msr	spsr_irq, x13
-	msr	spsr_fiq, x14
-
-	ldp	x15, x16, [x0, #CTX_DACR32_EL2]
-	msr	dacr32_el2, x15
-	msr	ifsr32_el2, x16
-#endif /* CTX_INCLUDE_AARCH32_REGS */
-
-	/* Restore NS timer registers if the build has instructed so */
-#if NS_TIMER_SWITCH
-	ldp	x10, x11, [x0, #CTX_CNTP_CTL_EL0]
-	msr	cntp_ctl_el0, x10
-	msr	cntp_cval_el0, x11
-
-	ldp	x12, x13, [x0, #CTX_CNTV_CTL_EL0]
-	msr	cntv_ctl_el0, x12
-	msr	cntv_cval_el0, x13
-
-	ldr	x14, [x0, #CTX_CNTKCTL_EL1]
-	msr	cntkctl_el1, x14
-#endif /* NS_TIMER_SWITCH */
-
-	/* Restore MTE system registers if the build has instructed so */
-#if CTX_INCLUDE_MTE_REGS
-	ldp	x11, x12, [x0, #CTX_TFSRE0_EL1]
-	msr	TFSRE0_EL1, x11
-	msr	TFSR_EL1, x12
-
-	ldp	x13, x14, [x0, #CTX_RGSR_EL1]
-	msr	RGSR_EL1, x13
-	msr	GCR_EL1, x14
-#endif /* CTX_INCLUDE_MTE_REGS */
-
-	/* No explict ISB required here as ERET covers it */
-	ret
-endfunc el1_sysregs_context_restore
-=======
 /* Following macros will be used if any of CTX_INCLUDE_FPREGS or CTX_INCLUDE_SVE_REGS is enabled */
 #if CTX_INCLUDE_FPREGS || CTX_INCLUDE_SVE_REGS
 .macro fpregs_state_save base:req hold:req
@@ -265,7 +60,6 @@ endfunc el1_sysregs_context_restore
 .endm
 
 #endif /* CTX_INCLUDE_FPREGS || CTX_INCLUDE_SVE_REGS */
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* ------------------------------------------------------------------
  * The following function follows the aapcs_64 strictly to use
@@ -516,12 +310,7 @@ endfunc sve_context_restore
 
 	.macro	restore_mpam3_el3
 #if ENABLE_FEAT_MPAM
-<<<<<<< HEAD
-#if ENABLE_FEAT_MPAM == 2
-
-=======
 #if ENABLE_FEAT_MPAM >= 2
->>>>>>> upstream_import/upstream_v2_14_1
 	mrs x8, id_aa64pfr0_el1
 	lsr x8, x8, #(ID_AA64PFR0_MPAM_SHIFT)
 	and x8, x8, #(ID_AA64PFR0_MPAM_MASK)
@@ -535,17 +324,11 @@ endfunc sve_context_restore
 	 * Restore MPAM3_EL3 register as per context state
 	 * Currently we only enable MPAM for NS world and trap to EL3
 	 * for MPAM access in lower ELs of Secure and Realm world
-<<<<<<< HEAD
-	 * -----------------------------------------------------------
-	 */
-	ldr	x17, [sp, #CTX_EL3STATE_OFFSET + CTX_MPAM3_EL3]
-=======
 	 * x9 holds address of the per_world context
 	 * -----------------------------------------------------------
 	 */
 
 	ldr	x17, [x9, #CTX_MPAM3_EL3]
->>>>>>> upstream_import/upstream_v2_14_1
 	msr	S3_6_C10_C5_0, x17 /* mpam3_el3 */
 
 no_mpam:
@@ -769,11 +552,8 @@ func save_and_update_ptw_el1_sys_regs
 	ret
 endfunc save_and_update_ptw_el1_sys_regs
 
-<<<<<<< HEAD
-=======
 #endif /* ERRATA_SPECULATIVE_AT */
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* -----------------------------------------------------------------
 * The below macro returns the address of the per_world context for
 * the security state, retrieved through "get_security_state" macro.
@@ -785,11 +565,7 @@ endfunc save_and_update_ptw_el1_sys_regs
 .macro get_per_world_context _reg:req
 	ldr 	x10, [sp, #CTX_EL3STATE_OFFSET + CTX_SCR_EL3]
 	get_security_state x9, x10
-<<<<<<< HEAD
-	mov_imm	x10, (CTX_GLOBAL_EL3STATE_END - CTX_CPTR_EL3)
-=======
 	mov_imm	x10, (CTX_PERWORLD_EL3STATE_END - CTX_CPTR_EL3)
->>>>>>> upstream_import/upstream_v2_14_1
 	mul	x9, x9, x10
 	adrp	x10, per_world_context
 	add	x10, x10, :lo12:per_world_context
@@ -823,14 +599,7 @@ func el3_exit
 
 	/* ----------------------------------------------------------
 	 * Restore CPTR_EL3.
-<<<<<<< HEAD
-	 * ZCR is only restored if SVE is supported and enabled.
-	 * Synchronization is required before zcr_el3 is addressed.
-	 * ----------------------------------------------------------
-	 */
-=======
 	 * ---------------------------------------------------------- */
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* The address of the per_world context is stored in x9 */
 	get_per_world_context x9
@@ -839,20 +608,8 @@ func el3_exit
 	msr	cptr_el3, x19
 
 #if IMAGE_BL31
-<<<<<<< HEAD
-	ands	x19, x19, #CPTR_EZ_BIT
-	beq	sve_not_enabled
-
-	isb
-	msr	S3_6_C1_C2_0, x20 /* zcr_el3 */
-sve_not_enabled:
-
 	restore_mpam3_el3
 
-=======
-	restore_mpam3_el3
-
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* IMAGE_BL31 */
 
 #if IMAGE_BL31 && DYNAMIC_WORKAROUND_CVE_2018_3639

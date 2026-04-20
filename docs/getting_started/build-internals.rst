@@ -19,8 +19,6 @@ depends on certain options to be enabled or disabled.
   ``HANDLE_EA_EL3_FIRST_NS`` is set. Currently only NS world routes EA to EL3 but
   in future when Secure/Realm wants to use FFH then they can introduce new macros
   which will enable this option implicitly.
-<<<<<<< HEAD
-=======
 
 -  ``OPTEE_SP_FW_CONFIG``: DTC build flag to include OP-TEE as SP in
    tb_fw_config device tree. This flag is defined only when
@@ -29,4 +27,3 @@ depends on certain options to be enabled or disabled.
 -  ``TRUSTY_SP_FW_CONFIG``: DTC build flag to include Trusty as SP in
    tb_fw_config device tree. This flag is defined only when
    ``ARM_SPMC_MANIFEST_DTS`` manifest file name contains pattern trusty_sp.
->>>>>>> upstream_import/upstream_v2_14_1

@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 /*
-<<<<<<< HEAD
- * Copyright (C) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (C) 2023-2025, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
  */
 
@@ -101,8 +97,6 @@
 				resets = <&rcc USART2_R>;
 				status = "disabled";
 			};
-<<<<<<< HEAD
-=======
 
 			usart3: serial@400f0000 {
 				compatible = "st,stm32h7-uart";
@@ -317,7 +311,6 @@
 			oem_fip_enc_key: otp260@410 {
 				reg = <0x410 0x20>;
 			};
->>>>>>> upstream_import/upstream_v2_14_1
 		};
 
 		rcc: rcc@44200000 {
@@ -357,8 +350,6 @@
 			reg = <0x44230000 0x10000>;
 		};
 
-<<<<<<< HEAD
-=======
 		ddr: ddr@48040000 {
 			compatible = "st,stm32mp2-ddr";
 			reg = <0x48040000 0x10000>,
@@ -366,16 +357,11 @@
 			status = "okay";
 		};
 
->>>>>>> upstream_import/upstream_v2_14_1
 		pinctrl: pinctrl@44240000 {
 			#address-cells = <1>;
 			#size-cells = <1>;
 			compatible = "st,stm32mp257-pinctrl";
 			ranges = <0 0x44240000 0xa0400>;
-<<<<<<< HEAD
-			pins-are-numbered;
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 			gpioa: gpio@44240000 {
 				gpio-controller;
@@ -504,10 +490,6 @@
 			#size-cells = <1>;
 			compatible = "st,stm32mp257-z-pinctrl";
 			ranges = <0 0x46200000 0x400>;
-<<<<<<< HEAD
-			pins-are-numbered;
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 			gpioz: gpio@46200000 {
 				gpio-controller;

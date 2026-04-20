@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (c) 2017-2025, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  * Author: Ludovic Barre <ludovic.barre@st.com> for STMicroelectronics.
  */
 /dts-v1/;

@@ -1,10 +1,6 @@
 /*
  * Copyright (c) 2022, Xilinx, Inc. All rights reserved.
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
-=======
  * Copyright (c) 2022-2025, Advanced Micro Devices, Inc. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -118,19 +114,12 @@ static int32_t versal_net_validate_ns_entrypoint(uint64_t ns_entrypoint)
 }
 
 /**
-<<<<<<< HEAD
- * versal_net_system_reset() - This function sends the reset request to firmware
- *                             for the system to reset. This function does not
- *                             return.
- *
-=======
  * versal_net_system_reset_scope() - Sends the reset request to firmware for
  * the system to reset.
  * @scope : scope of reset which could be SYSTEM/SUBSYSTEM/PS-ONLY
  *
  * Return:
  *     Does not return if system resets, none if there is a failure.
->>>>>>> upstream_import/upstream_v2_14_1
  */
 static void __dead2 versal_net_system_reset_scope(uint32_t scope)
 {
@@ -166,8 +155,6 @@ static void __dead2 versal_net_system_reset_scope(uint32_t scope)
 }
 
 /**
-<<<<<<< HEAD
-=======
  * versal_net_system_reset() - This function sends the reset request to firmware
  * for the system to reset in response to SYSTEM_RESET call
  *
@@ -216,7 +203,6 @@ static int versal_net_system_reset2(int is_vendor, int reset_type, u_register_t 
 }
 
 /**
->>>>>>> upstream_import/upstream_v2_14_1
  * versal_net_pwr_domain_suspend() - This function sends request to PMC to suspend
  *                                   core.
  * @target_state: Targeted state.

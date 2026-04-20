@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,20 +11,7 @@
 #include <cpu_macros.S>
 #include <plat_macros.S>
 
-<<<<<<< HEAD
-	/* ---------------------------------------------
-	 * Disable L1 data cache and unified L2 cache
-	 * ---------------------------------------------
-	 */
-func cortex_a35_disable_dcache
-	sysreg_bit_clear sctlr_el3, SCTLR_C_BIT
-	isb
-	ret
-endfunc cortex_a35_disable_dcache
-
-=======
 cpu_reset_prologue cortex_a35
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * Disable intra-cluster coherency
 	 * ---------------------------------------------
@@ -107,11 +90,6 @@ func cortex_a35_cluster_pwr_dwn
 	b	cortex_a35_disable_smp
 endfunc cortex_a35_cluster_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_a35
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides cortex_a35 specific
 	 * register information for crash reporting.

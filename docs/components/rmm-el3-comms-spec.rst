@@ -52,13 +52,8 @@ are explained below:
   - ``RES0``: Bit 31 of the version number is reserved 0 as to maintain
     consistency with the versioning schemes used in other parts of RMM.
 
-<<<<<<< HEAD
-This document specifies the 0.2 version of Boot Interface ABI and RMM-EL3
-services specification and the 0.2 version of the Boot Manifest.
-=======
 This document specifies the 0.8 version of Boot Interface ABI and RMM-EL3
 services specification and the 0.5 version of the Boot Manifest.
->>>>>>> upstream_import/upstream_v2_14_1
 
 .. _rmm_el3_boot_interface:
 

@@ -17,10 +17,7 @@
 #include <plat/common/platform.h>
 #include <plat_arm.h>
 #include <plat_console.h>
-<<<<<<< HEAD
-=======
 #include <plat_clkfunc.h>
->>>>>>> upstream_import/upstream_v2_14_1
 
 #include <plat_fdt.h>
 #include <plat_private.h>
@@ -90,24 +87,18 @@ static void versal_net_setup_qos(void)
 void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 				u_register_t arg2, u_register_t arg3)
 {
-<<<<<<< HEAD
-=======
 	(void)arg0;
 	(void)arg1;
 	(void)arg2;
 	(void)arg3;
 
->>>>>>> upstream_import/upstream_v2_14_1
 #if !(TFA_NO_PM)
 	uint64_t tfa_handoff_addr, buff[HANDOFF_PARAMS_MAX_SIZE] = {0};
 	uint32_t payload[PAYLOAD_ARG_CNT], max_size = HANDOFF_PARAMS_MAX_SIZE;
 	enum pm_ret_status ret_status;
-<<<<<<< HEAD
-=======
 #if DEBUG
 	uint32_t boot_mode[RET_PAYLOAD_ARG_CNT] = {0};
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* !(TFA_NO_PM) */
 
 	board_detection();
@@ -130,8 +121,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 		panic();
 	}
 
-<<<<<<< HEAD
-=======
 	syscnt_freq_config_setup();
 
 	set_cnt_freq();
@@ -139,7 +128,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	/* Initialize the platform config for future decision making */
 	versal_net_config_setup();
 
->>>>>>> upstream_import/upstream_v2_14_1
 	setup_console();
 
 	NOTICE("TF-A running on %s %d.%d\n", board_name_decode(),
@@ -161,11 +149,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	SET_PARAM_HEAD(&bl33_image_ep_info, PARAM_EP, VERSION_1, 0);
 	SET_SECURITY_STATE(bl33_image_ep_info.h.attr, NON_SECURE);
 #if !(TFA_NO_PM)
-<<<<<<< HEAD
-	PM_PACK_PAYLOAD4(payload, LOADER_MODULE_ID, 1, PM_LOAD_GET_HANDOFF_PARAMS,
-=======
 	PM_PACK_PAYLOAD4(payload, LOADER_MODULE_ID, 1U, PM_LOAD_GET_HANDOFF_PARAMS,
->>>>>>> upstream_import/upstream_v2_14_1
 			 (uintptr_t)buff >> 32U, (uintptr_t)buff, max_size);
 
 	ret_status = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
@@ -176,32 +160,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 
 		xbl_ret = xbl_handover(&bl32_image_ep_info, &bl33_image_ep_info,
 				       tfa_handoff_addr);
-<<<<<<< HEAD
-		if (xbl_ret != XBL_HANDOFF_SUCCESS) {
-			ERROR("BL31: PLM to TF-A handover failed %u\n", xbl_ret);
-			panic();
-		}
-
-		INFO("BL31: PLM to TF-A handover success\n");
-
-		/*
-		 * The BL32 load address is indicated as 0x0 in the handoff
-		 * parameters, which is different from the default/user-provided
-		 * load address of 0x60000000 but the flags are correctly
-		 * configured. Consequently, in this scenario, set the PC
-		 * to the requested BL32_BASE address.
-		 */
-
-		/* TODO: Remove the following check once this is fixed from PLM */
-		if (bl32_image_ep_info.pc == 0 && bl32_image_ep_info.spsr != 0) {
-			bl32_image_ep_info.pc = (uintptr_t)BL32_BASE;
-		}
-	} else {
-		INFO("BL31: setting up default configs\n");
-
-		bl31_set_default_config();
-	}
-=======
 		if (xbl_ret == XBL_HANDOFF_SUCCESS) {
 			goto success;
 		}
@@ -223,7 +181,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 success:
 	INFO("BL31: PLM to TF-A handover success or default config is set\n");
 
->>>>>>> upstream_import/upstream_v2_14_1
 #else
 	bl31_set_default_config();
 #endif /* !(TFA_NO_PM) */
@@ -303,13 +260,7 @@ void bl31_platform_setup(void)
 {
 	prepare_dtb();
 
-<<<<<<< HEAD
-	/* Initialize the gic cpu and distributor interfaces */
-	plat_versal_net_gic_driver_init();
-	plat_versal_net_gic_init();
-=======
 	gic_set_gicr_frames(gicr_base_addrs);
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 void bl31_plat_runtime_setup(void)

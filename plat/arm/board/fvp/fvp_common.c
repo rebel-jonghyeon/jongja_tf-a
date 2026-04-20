@@ -96,11 +96,6 @@ arm_config_t arm_config;
 
 #if TRANSFER_LIST
 #ifdef FW_NS_HANDOFF_BASE
-<<<<<<< HEAD
-#define MAP_FW_NS_HANDOFF MAP_REGION_FLAT(FW_NS_HANDOFF_BASE, \
-					  FW_HANDOFF_SIZE,    \
-					  MT_MEMORY | MT_RW | MT_NS)
-=======
 #define MAP_FW_NS_HANDOFF                                             \
 	MAP_REGION_FLAT(FW_NS_HANDOFF_BASE, PLAT_ARM_FW_HANDOFF_SIZE, \
 			MT_MEMORY | MT_RW | MT_NS)
@@ -109,7 +104,6 @@ arm_config_t arm_config;
 #define MAP_EL3_FW_HANDOFF                            \
 	MAP_REGION_FLAT(PLAT_ARM_EL3_FW_HANDOFF_BASE, \
 			PLAT_ARM_FW_HANDOFF_SIZE, MT_MEMORY | MT_RW | EL3_PAS)
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 #endif
 
@@ -234,14 +228,10 @@ const mmap_region_t plat_arm_mmap[] = {
 #ifdef MAP_FW_NS_HANDOFF
 	MAP_FW_NS_HANDOFF,
 #endif
-<<<<<<< HEAD
-	{0}
-=======
 #if defined(MAP_EL3_FW_HANDOFF) && !RESET_TO_BL31
 	MAP_EL3_FW_HANDOFF,
 #endif
 	{ 0 }
->>>>>>> upstream_import/upstream_v2_14_1
 };
 
 #if defined(IMAGE_BL31) && SPM_MM

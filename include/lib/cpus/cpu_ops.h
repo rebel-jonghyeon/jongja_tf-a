@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2023-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -25,24 +21,12 @@
 
 /* The number of CPU operations allowed */
 #define CPU_MAX_PWR_DWN_OPS		2
-<<<<<<< HEAD
-/* Special constant to specify that CPU has no reset function */
-#define CPU_NO_RESET_FUNC		0
-
-#if __aarch64__
-#define CPU_NO_EXTRA1_FUNC		0
-#define CPU_NO_EXTRA2_FUNC		0
-#define CPU_NO_EXTRA3_FUNC		0
-#endif /* __aarch64__ */
-
-=======
 /*
  * value needs to be distinct from CPUPWRCTLR_EL1 likely values: its top bits
  * are RES0 and its bottom bits will be written to power down. Pick the opposite
  * with something that looks like "abandon" in the middle.
  */
 #define PABANDON_ACK			0xffaba4d4aba4d400
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*
  * Define the sizes of the fields in the cpu_ops structure. Word size is set per
@@ -55,12 +39,6 @@
 #else
 #define CPU_RESET_FUNC_SIZE	0
 #endif /* IMAGE_AT_EL3 */
-<<<<<<< HEAD
-#define CPU_EXTRA1_FUNC_SIZE	CPU_WORD_SIZE
-#define CPU_EXTRA2_FUNC_SIZE	CPU_WORD_SIZE
-#define CPU_EXTRA3_FUNC_SIZE	CPU_WORD_SIZE
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 #define CPU_E_HANDLER_FUNC_SIZE CPU_WORD_SIZE
 /* The power down core and cluster is needed only in BL31 and BL32 */
 #if defined(IMAGE_BL31) || defined(IMAGE_BL32)
@@ -73,10 +51,6 @@
 #define CPU_ERRATA_LIST_END_SIZE	CPU_WORD_SIZE
 /* Fields required to print errata status  */
 #if REPORT_ERRATA
-<<<<<<< HEAD
-#define CPU_ERRATA_FUNC_SIZE	CPU_WORD_SIZE
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 #define CPU_CPU_STR_SIZE	CPU_WORD_SIZE
 /* BL1 doesn't require mutual exclusion and printed flag. */
 #if defined(IMAGE_BL31) || defined(IMAGE_BL32)
@@ -87,10 +61,6 @@
 #define CPU_ERRATA_PRINTED_SIZE	0
 #endif /* defined(IMAGE_BL31) || defined(IMAGE_BL32) */
 #else
-<<<<<<< HEAD
-#define CPU_ERRATA_FUNC_SIZE	0
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 #define CPU_CPU_STR_SIZE	0
 #define CPU_ERRATA_LOCK_SIZE	0
 #define CPU_ERRATA_PRINTED_SIZE	0
@@ -110,26 +80,14 @@
 #define CPU_MIDR		0
 #define CPU_RESET_FUNC		CPU_MIDR + CPU_MIDR_SIZE
 #if __aarch64__
-<<<<<<< HEAD
-#define CPU_EXTRA1_FUNC		CPU_RESET_FUNC + CPU_RESET_FUNC_SIZE
-#define CPU_EXTRA2_FUNC		CPU_EXTRA1_FUNC + CPU_EXTRA1_FUNC_SIZE
-#define CPU_EXTRA3_FUNC		CPU_EXTRA2_FUNC + CPU_EXTRA2_FUNC_SIZE
-#define CPU_E_HANDLER_FUNC	CPU_EXTRA3_FUNC + CPU_EXTRA3_FUNC_SIZE
-=======
 #define CPU_E_HANDLER_FUNC	CPU_RESET_FUNC + CPU_RESET_FUNC_SIZE
->>>>>>> upstream_import/upstream_v2_14_1
 #define CPU_PWR_DWN_OPS		CPU_E_HANDLER_FUNC + CPU_E_HANDLER_FUNC_SIZE
 #else
 #define CPU_PWR_DWN_OPS		CPU_RESET_FUNC + CPU_RESET_FUNC_SIZE
 #endif /* __aarch64__ */
 #define CPU_ERRATA_LIST_START	CPU_PWR_DWN_OPS + CPU_PWR_DWN_OPS_SIZE
 #define CPU_ERRATA_LIST_END	CPU_ERRATA_LIST_START + CPU_ERRATA_LIST_START_SIZE
-<<<<<<< HEAD
-#define CPU_ERRATA_FUNC		CPU_ERRATA_LIST_END + CPU_ERRATA_LIST_END_SIZE
-#define CPU_CPU_STR		CPU_ERRATA_FUNC + CPU_ERRATA_FUNC_SIZE
-=======
 #define CPU_CPU_STR		CPU_ERRATA_LIST_END + CPU_ERRATA_LIST_END_SIZE
->>>>>>> upstream_import/upstream_v2_14_1
 #define CPU_ERRATA_LOCK		CPU_CPU_STR + CPU_CPU_STR_SIZE
 #define CPU_ERRATA_PRINTED	CPU_ERRATA_LOCK + CPU_ERRATA_LOCK_SIZE
 #if __aarch64__
@@ -149,28 +107,14 @@ struct cpu_ops {
 	void (*reset_func)(void);
 #endif /* IMAGE_AT_EL3 */
 #if __aarch64__
-<<<<<<< HEAD
-	void (*extra1_func)(void);
-	void (*extra2_func)(void);
-	void (*extra3_func)(void);
-	void (*e_handler_func)(long es);
-#endif /* __aarch64__ */
-#if (defined(IMAGE_BL31) || defined(IMAGE_BL32)) && CPU_MAX_PWR_DWN_OPS
-	void (*pwr_dwn_ops[CPU_MAX_PWR_DWN_OPS])(void);
-=======
 	void (*e_handler_func)(long es);
 #endif /* __aarch64__ */
 #if (defined(IMAGE_BL31) || defined(IMAGE_BL32)) && CPU_MAX_PWR_DWN_OPS
 	u_register_t (*pwr_dwn_ops[CPU_MAX_PWR_DWN_OPS])();
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* (defined(IMAGE_BL31) || defined(IMAGE_BL32)) && CPU_MAX_PWR_DWN_OPS */
 	void *errata_list_start;
 	void *errata_list_end;
 #if REPORT_ERRATA
-<<<<<<< HEAD
-	void (*errata_func)(void);
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	char *cpu_str;
 #if defined(IMAGE_BL31) || defined(IMAGE_BL32)
 	spinlock_t *errata_lock;
@@ -180,11 +124,7 @@ struct cpu_ops {
 #if defined(IMAGE_BL31) && CRASH_REPORTING
 	void (*reg_dump)(void);
 #endif /* defined(IMAGE_BL31) && CRASH_REPORTING */
-<<<<<<< HEAD
-} __packed;
-=======
 } __packed __aligned(CPU_WORD_SIZE);
->>>>>>> upstream_import/upstream_v2_14_1
 
 CASSERT(sizeof(struct cpu_ops) == CPU_OPS_SIZE,
 	assert_cpu_ops_asm_c_different_sizes);

@@ -57,23 +57,9 @@ ENCTOOL_LDFLAGS += -lssl -lcrypto
 
 .PHONY: all clean realclean --openssl
 
-<<<<<<< HEAD
-all: --openssl ${BINARY}
-
-${BINARY}: ${OBJECTS} Makefile
-	@echo "  HOSTLD  $@"
-	@echo 'const char build_msg[] = "Built : "__TIME__", "__DATE__;' | \
-                ${HOSTCC} -c ${HOSTCCFLAGS} -xc - -o src/build_msg.o
-	${Q}${HOSTCC} src/build_msg.o ${OBJECTS} ${LIB_DIR} ${LIB} -o $@
-
-%.o: %.c
-	@echo "  HOSTCC  $<"
-	${Q}${HOSTCC} -c ${HOSTCCFLAGS} ${INC_DIR} $< -o $@
-=======
 all: --openssl
 
 $(eval $(call MAKE_TOOL,$(BUILD_PLAT)/tools,encrypt_fw,ENCTOOL))
->>>>>>> upstream_import/upstream_v2_14_1
 
 --openssl:
 ifeq ($(DEBUG),1)

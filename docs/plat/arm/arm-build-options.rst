@@ -97,14 +97,6 @@ Arm Platform Build Options
    of the translation tables library instead of version 2. It is set to 0 by
    default, which selects version 2.
 
-<<<<<<< HEAD
--  ``ARM_CRYPTOCELL_INTEG`` : bool option to enable TF-A to invoke Arm®
-   TrustZone® CryptoCell functionality for Trusted Board Boot on capable Arm
-   platforms. If this option is specified, then the path to the CryptoCell
-   SBROM library must be specified via ``CCSBROM_LIB_PATH`` flag.
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 -  ``ARM_GPT_SUPPORT``: Enable GPT parser to get the entry address and length of
    the various partitions present in the GPT image. This support is available
    only for the BL2 component, and it is disabled by default.
@@ -145,12 +137,8 @@ Arm FVP Build Options
 ---------------------
 
 - ``FVP_TRUSTED_SRAM_SIZE``: Size (in kilobytes) of the Trusted SRAM region to
-<<<<<<< HEAD
-  utilize when building for the FVP platform. This option defaults to 256.
-=======
   utilize when building for the FVP platform. This option defaults to 256 with
   build option ENABLE_RME=0 and 384 for ENABLE_RME=1.
->>>>>>> upstream_import/upstream_v2_14_1
 
 Arm Juno Build Options
 ----------------------
@@ -161,8 +149,6 @@ Arm Juno Build Options
    AArch64 and facilitates the loading of ``SP_MIN`` and BL33 as AArch32 executable
    images.
 
-<<<<<<< HEAD
-=======
 Arm Neoverse RD Platform Build Options
 --------------------------------------
 
@@ -177,7 +163,6 @@ Arm Neoverse RD Platform Build Options
   select the appropriate platform variant for the build. The range of valid
   values is platform specific.
 
->>>>>>> upstream_import/upstream_v2_14_1
 --------------
 
 .. |FIP in a GPT image| image:: ../../resources/diagrams/FIP_in_a_GPT_image.png

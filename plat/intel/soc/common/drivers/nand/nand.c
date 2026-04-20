@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2022-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,45 +21,7 @@
 #include "agilex5_pinmux.h"
 #include "combophy/combophy.h"
 
-<<<<<<< HEAD
-/* Pinmux configuration */
-static void nand_pinmux_config(void)
-{
-	mmio_write_32(SOCFPGA_PINMUX(PIN0SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN1SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN2SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN3SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN4SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN5SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN6SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN7SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN8SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN9SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN10SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN11SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN12SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN13SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN14SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN16SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN17SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN18SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN19SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN20SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN21SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN22SEL), SOCFPGA_PINMUX_SEL_NAND);
-	mmio_write_32(SOCFPGA_PINMUX(PIN23SEL), SOCFPGA_PINMUX_SEL_NAND);
-}
-
-int nand_init(handoff *hoff_ptr)
-{
-	/* NAND pin mux configuration */
-	nand_pinmux_config();
-
-	return cdns_nand_host_init();
-}
-=======
 int nand_init(void)
 {
 	return cdns_nand_host_init();
 }
->>>>>>> upstream_import/upstream_v2_14_1

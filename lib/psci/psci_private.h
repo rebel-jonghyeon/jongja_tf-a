@@ -298,11 +298,7 @@ void psci_restore_req_local_pwr_states(unsigned int cpu_idx,
 #endif
 void psci_get_target_local_pwr_states(unsigned int cpu_idx, unsigned int end_pwrlvl,
 				      psci_power_state_t *target_state);
-<<<<<<< HEAD
-void psci_set_target_local_pwr_states(unsigned int end_pwrlvl,
-=======
 void psci_set_target_local_pwr_states(unsigned int cpu_idx, unsigned int end_pwrlvl,
->>>>>>> upstream_import/upstream_v2_14_1
 				      const psci_power_state_t *target_state);
 int psci_validate_entry_point(entry_point_info_t *ep,
 			uintptr_t entrypoint, u_register_t context_id);

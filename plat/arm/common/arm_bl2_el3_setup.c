@@ -8,11 +8,8 @@
 
 #include <drivers/generic_delay_timer.h>
 #include <drivers/partition/partition.h>
-<<<<<<< HEAD
-=======
 #include <lib/fconf/fconf.h>
 #include <lib/fconf/fconf_dyn_cfg_getter.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <plat/arm/common/plat_arm.h>
 #include <plat/common/platform.h>
 #include <platform_def.h>

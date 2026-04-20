@@ -13,14 +13,6 @@ include lib/psci/psci_lib.mk
 
 INCLUDES		+=	-Iinclude/bl32/sp_min
 
-<<<<<<< HEAD
-BL32_SOURCES		+=	bl32/sp_min/sp_min_main.c		\
-				bl32/sp_min/aarch32/entrypoint.S	\
-				common/runtime_svc.c			\
-				plat/common/aarch32/plat_sp_min_common.c\
-				services/arm_arch_svc/arm_arch_svc_setup.c	\
-				services/std_svc/std_svc_setup.c	\
-=======
 BL32_SOURCES		+=	bl32/sp_min/sp_min_main.c			\
 				bl32/sp_min/aarch32/entrypoint.S		\
 				common/runtime_svc.c				\
@@ -28,7 +20,6 @@ BL32_SOURCES		+=	bl32/sp_min/sp_min_main.c			\
 				lib/per_cpu/per_cpu.c				\
 				services/arm_arch_svc/arm_arch_svc_setup.c	\
 				services/std_svc/std_svc_setup.c		\
->>>>>>> upstream_import/upstream_v2_14_1
 				${PSCI_LIB_SOURCES}
 
 ifeq (${ENABLE_PMF}, 1)

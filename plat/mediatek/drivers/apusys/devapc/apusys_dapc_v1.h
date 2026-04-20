@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, MediaTek Inc. All rights reserved.
-=======
  * Copyright (c) 2023-2024, MediaTek Inc. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -17,10 +13,6 @@
  * STRUCTURE DEFINITION
  ******************************************************************************/
 enum apusys_apc_err_status {
-<<<<<<< HEAD
-	APUSYS_APC_OK		= 0x0,
-	APUSYS_APC_ERR_GENERIC	= 0x1,
-=======
 	APUSYS_APC_OK				= 0x0,
 	APUSYS_APC_ERR_GENERIC			= 0x1000,
 	APUSYS_APC_ERR_INVALID_CMD		= 0x1001,
@@ -30,7 +22,6 @@ enum apusys_apc_err_status {
 	APUSYS_APC_ERR_PERMISSION_NOT_SUPPORTED	= 0x1005,
 	APUSYS_APC_ERR_OUT_OF_BOUNDARY		= 0x1006,
 	APUSYS_APC_ERR_REQ_TYPE_NOT_SUPPORTED	= 0x1007,
->>>>>>> upstream_import/upstream_v2_14_1
 };
 
 enum apusys_apc_perm_type {
@@ -171,8 +162,6 @@ void dump_apusys_dapc_v1(const char *name, uintptr_t base, uint32_t reg_num, uin
 			   FORBIDDEN,     NO_PROTECTION, FORBIDDEN, FORBIDDEN, \
 			   FORBIDDEN,     FORBIDDEN,     FORBIDDEN, FORBIDDEN, \
 			   FORBIDDEN,     FORBIDDEN,     FORBIDDEN, FORBIDDEN)
-<<<<<<< HEAD
-=======
 
 #define SLAVE_FORBID_EXCEPT_D0_D11_NO_PROTECT_D3_D5_D8_SEC_RW(domain) \
 	APUSYS_APC_AO_ATTR(domain, \
@@ -279,5 +268,4 @@ void dump_apusys_dapc_v1(const char *name, uintptr_t base, uint32_t reg_num, uin
 			   FORBIDDEN,     FORBIDDEN,     FORBIDDEN,     FORBIDDEN, \
 			   FORBIDDEN,     FORBIDDEN,     NO_PROTECTION, FORBIDDEN)
 
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* APUSYS_DAPC_V1_H */

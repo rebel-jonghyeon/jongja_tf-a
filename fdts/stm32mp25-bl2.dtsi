@@ -1,9 +1,5 @@
 // SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 /*
-<<<<<<< HEAD
- * Copyright (C) 2023, STMicroelectronics - All Rights Reserved
- */
-=======
  * Copyright (C) 2023-2024, STMicroelectronics - All Rights Reserved
  */
 
@@ -41,4 +37,3 @@
 		};
 	};
 };
->>>>>>> upstream_import/upstream_v2_14_1

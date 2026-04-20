@@ -54,11 +54,8 @@ BL31_SOURCES		+=	bl31/bl31_main.c				\
 				${SPMC_SOURCES}					\
 				${SPM_SOURCES}
 
-<<<<<<< HEAD
-=======
 VENDOR_EL3_SRCS		+=	services/el3/ven_el3_svc.c
 
->>>>>>> upstream_import/upstream_v2_14_1
 ifeq (${ENABLE_PMF}, 1)
 BL31_SOURCES		+=	lib/pmf/pmf_main.c				\
 				${VENDOR_EL3_SRCS}

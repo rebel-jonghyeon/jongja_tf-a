@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -26,43 +22,18 @@ CASSERT((SVE_VECTOR_LEN % 128) == 0, assert_sve_vl_granule);
  */
 #define CONVERT_SVE_LENGTH(x)	(((x / 128) - 1))
 
-<<<<<<< HEAD
-=======
 void sve_init_el3(void)
 {
 	/* Restrict maximum SVE vector length (SVE_VECTOR_LEN+1) * 128. */
 	write_zcr_el3(ZCR_EL3_LEN_MASK & CONVERT_SVE_LENGTH(SVE_VECTOR_LEN));
 }
 
->>>>>>> upstream_import/upstream_v2_14_1
 void sve_enable_per_world(per_world_context_t *per_world_ctx)
 {
 	u_register_t cptr_el3;
 
 	/* Enable access to SVE functionality for all ELs. */
 	cptr_el3 = per_world_ctx->ctx_cptr_el3;
-<<<<<<< HEAD
-	cptr_el3 = (cptr_el3 | CPTR_EZ_BIT) & ~(TFP_BIT);
-	per_world_ctx->ctx_cptr_el3 = cptr_el3;
-
-	/* Restrict maximum SVE vector length (SVE_VECTOR_LEN+1) * 128. */
-	per_world_ctx->ctx_zcr_el3 = (ZCR_EL3_LEN_MASK & CONVERT_SVE_LENGTH(SVE_VECTOR_LEN));
-}
-
-void sve_init_el2_unused(void)
-{
-	/*
-	 * CPTR_EL2.TFP: Set to zero so that Non-secure accesses to Advanced
-	 *  SIMD and floating-point functionality from both Execution states do
-	 *  not trap to EL2.
-	 */
-	write_cptr_el2(read_cptr_el2() & ~CPTR_EL2_TFP_BIT);
-}
-
-void sve_disable_per_world(per_world_context_t *per_world_ctx)
-{
-	u_register_t reg;
-=======
 	cptr_el3 = (cptr_el3 | CPTR_EZ_BIT);
 	per_world_ctx->ctx_cptr_el3 = cptr_el3;
 }
@@ -87,14 +58,9 @@ void sve_init_el2_unused(void)
 void sve_disable_per_world(per_world_context_t *per_world_ctx)
 {
 	u_register_t reg;
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Disable SVE and FPU since they share registers. */
 	reg = per_world_ctx->ctx_cptr_el3;
 	reg &= ~CPTR_EZ_BIT;	/* Trap SVE */
-<<<<<<< HEAD
-	reg |= TFP_BIT;		/* Trap FPU/SIMD */
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	per_world_ctx->ctx_cptr_el3 = reg;
 }

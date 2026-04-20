@@ -108,11 +108,7 @@ static int32_t dcc_console_putc(int32_t ch, console_t *console)
 }
 
 #if ENABLE_CONSOLE_GETC
-<<<<<<< HEAD
-static int32_t dcc_console_getc(struct console *console)
-=======
 static int32_t dcc_console_getc(console_t *console)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	int32_t status;
 
@@ -166,10 +162,4 @@ void console_dcc_unregister(console_t *console)
 {
 	dcc_console_flush(console);
 	(void)console_unregister(console);
-}
-
-void console_dcc_unregister(void)
-{
-	dcc_console_flush(&dcc_console.console);
-	(void)console_unregister(&dcc_console.console);
 }

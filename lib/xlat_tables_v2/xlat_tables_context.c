@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2020, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -234,11 +230,6 @@ void enable_mmu_el3(unsigned int flags)
 		      tf_xlat_ctx.base_table, MAX_PHYS_ADDR,
 		      tf_xlat_ctx.va_max_address, EL3_REGIME);
 	enable_mmu_direct_el3(flags);
-}
-
-void touch_dummy_mmu_cfg_el3(void)
-{
-	touch_dummy_mmu_cfg((uint64_t *)&mmu_cfg_params, tf_xlat_ctx.base_table);
 }
 
 void enable_mmu(unsigned int flags)

@@ -10,15 +10,6 @@
 
 
 /* SiP status response */
-<<<<<<< HEAD
-#define INTEL_SIP_SMC_STATUS_OK					0
-#define INTEL_SIP_SMC_STATUS_BUSY				0x1
-#define INTEL_SIP_SMC_STATUS_REJECTED				0x2
-#define INTEL_SIP_SMC_STATUS_NO_RESPONSE			0x3
-#define INTEL_SIP_SMC_STATUS_ERROR				0x4
-#define INTEL_SIP_SMC_RSU_ERROR					0x7
-#define INTEL_SIP_SMC_SEU_ERR_READ_ERROR		0x8
-=======
 #define INTEL_SIP_SMC_STATUS_OK						0
 #define INTEL_SIP_SMC_STATUS_BUSY					0x1
 #define INTEL_SIP_SMC_STATUS_REJECTED					0x2
@@ -26,7 +17,6 @@
 #define INTEL_SIP_SMC_STATUS_ERROR					0x4
 #define INTEL_SIP_SMC_RSU_ERROR						0x7
 #define INTEL_SIP_SMC_SEU_ERR_READ_ERROR				0x8
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* SiP mailbox error code */
 #define GENERIC_RESPONSE_ERROR						0x3FF
@@ -157,14 +147,6 @@
 #define INTEL_SIP_SMC_FCS_SDM_REMAPPER_CONFIG				0xC2000201
 
 /* SEU ERR */
-<<<<<<< HEAD
-#define INTEL_SIP_SMC_SEU_ERR_STATUS				0xC2000099
-
-#define INTEL_SIP_SMC_FCS_SHA_MODE_MASK				0xF
-#define INTEL_SIP_SMC_FCS_DIGEST_SIZE_MASK			0xF
-#define INTEL_SIP_SMC_FCS_DIGEST_SIZE_OFFSET			4U
-#define INTEL_SIP_SMC_FCS_ECC_ALGO_MASK				0xF
-=======
 #define INTEL_SIP_SMC_SEU_ERR_STATUS					0xC2000099
 #define INTEL_SIP_SMC_SAFE_INJECT_SEU_ERR				0xC200009A
 
@@ -178,7 +160,6 @@
 #define INTEL_SIP_SMC_FCS_DIGEST_SIZE_MASK				0xF
 #define INTEL_SIP_SMC_FCS_DIGEST_SIZE_OFFSET				4U
 #define INTEL_SIP_SMC_FCS_ECC_ALGO_MASK					0xF
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* ECC DBE */
 #define WARM_RESET_WFI_FLAG						BIT(31)
@@ -197,21 +178,12 @@
  */
 
 /* V2: Non-mailbox function identifier */
-<<<<<<< HEAD
-#define INTEL_SIP_SMC_V2_GET_SVC_VERSION			0xC2000400
-#define INTEL_SIP_SMC_V2_REG_READ				0xC2000401
-#define INTEL_SIP_SMC_V2_REG_WRITE				0xC2000402
-#define INTEL_SIP_SMC_V2_REG_UPDATE				0xC2000403
-#define INTEL_SIP_SMC_V2_HPS_SET_BRIDGES			0xC2000404
-#define INTEL_SIP_SMC_V2_RSU_UPDATE_ADDR			0xC2000405
-=======
 #define INTEL_SIP_SMC_V2_GET_SVC_VERSION				0xC2000400
 #define INTEL_SIP_SMC_V2_REG_READ					0xC2000401
 #define INTEL_SIP_SMC_V2_REG_WRITE					0xC2000402
 #define INTEL_SIP_SMC_V2_REG_UPDATE					0xC2000403
 #define INTEL_SIP_SMC_V2_HPS_SET_BRIDGES				0xC2000404
 #define INTEL_SIP_SMC_V2_RSU_UPDATE_ADDR				0xC2000405
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* V2: Mailbox function identifier */
 #define INTEL_SIP_SMC_V2_MAILBOX_SEND_COMMAND				0xC2000420
@@ -230,11 +202,7 @@
 /*
  * Increase if there is new SMC function ID being added
  */
-<<<<<<< HEAD
-#define SIP_SVC_VERSION_MINOR					2
-=======
 #define SIP_SVC_VERSION_MINOR						1
->>>>>>> upstream_import/upstream_v2_14_1
 
 
 /* Structure Definitions */

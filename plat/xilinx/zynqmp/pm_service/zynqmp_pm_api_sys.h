@@ -152,11 +152,7 @@ enum pm_ret_status pm_clock_getstate(uint32_t clock_id,
 enum pm_ret_status pm_clock_setdivider(uint32_t clock_id,
 				       uint32_t divider, uint32_t flag);
 enum pm_ret_status pm_clock_getdivider(uint32_t clock_id,
-<<<<<<< HEAD
-				       uint32_t *divider);
-=======
 				       uint32_t *divider, uint32_t flag);
->>>>>>> upstream_import/upstream_v2_14_1
 enum pm_ret_status pm_clock_setparent(uint32_t clock_id,
 				      uint32_t parent_index, uint32_t flag);
 enum pm_ret_status pm_clock_getparent(uint32_t clock_id,

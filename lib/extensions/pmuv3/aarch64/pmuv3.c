@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2023-2024, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -25,43 +21,6 @@ static u_register_t init_mdcr_el2_hpmn(u_register_t mdcr_el2)
 	return mdcr_el2;
 }
 
-<<<<<<< HEAD
-void pmuv3_enable(cpu_context_t *ctx)
-{
-#if CTX_INCLUDE_EL2_REGS
-	u_register_t mdcr_el2;
-
-	mdcr_el2 = read_ctx_reg(get_el2_sysregs_ctx(ctx), CTX_MDCR_EL2);
-	mdcr_el2 = init_mdcr_el2_hpmn(mdcr_el2);
-	write_ctx_reg(get_el2_sysregs_ctx(ctx), CTX_MDCR_EL2, mdcr_el2);
-#endif /* CTX_INCLUDE_EL2_REGS */
-}
-
-static u_register_t mtpmu_disable_el3(u_register_t mdcr_el3)
-{
-	if (!is_feat_mtpmu_supported()) {
-		return mdcr_el3;
-	}
-
-	/*
-	 * MDCR_EL3.MTPME = 0
-	 * FEAT_MTPMU is disabled. The Effective value of PMEVTYPER<n>_EL0.MT is
-	 * zero.
-	 */
-	mdcr_el3 &= ~MDCR_MTPME_BIT;
-
-	return mdcr_el3;
-}
-
-void pmuv3_init_el3(void)
-{
-	u_register_t mdcr_el3 = read_mdcr_el3();
-
-	/* ---------------------------------------------------------------------
-	 * Initialise MDCR_EL3, setting all fields rather than relying on hw.
-	 * Some fields are architecturally UNKNOWN on reset.
-	 *
-=======
 static u_register_t mtpmu_disable_el3(u_register_t mdcr_el3)
 {
 	if (is_feat_mtpmu_supported()) {
@@ -90,7 +49,6 @@ void pmuv3_enable(cpu_context_t *ctx)
 	u_register_t mdcr_el3_val = read_ctx_reg(state, CTX_MDCR_EL3);
 
 	/* ---------------------------------------------------------------------
->>>>>>> upstream_import/upstream_v2_14_1
 	 * MDCR_EL3.MPMX: Set to zero to not affect event counters (when
 	 * SPME = 0).
 	 *
@@ -118,16 +76,6 @@ void pmuv3_enable(cpu_context_t *ctx)
 	 *   1  |  1   |    enabled   | disabled only for counters 0 to
 	 *                              MDCR_EL2.HPMN - 1. Enabled for the rest
 	 *
-<<<<<<< HEAD
-	 * MDCR_EL3.TPM: Set to zero so that EL0, EL1, and EL2 System register
-	 *  accesses to all Performance Monitors registers do not trap to EL3.
-	 */
-	mdcr_el3 = (mdcr_el3 | MDCR_SCCD_BIT | MDCR_MCCD_BIT) &
-		  ~(MDCR_MPMX_BIT | MDCR_SPME_BIT | MDCR_TPM_BIT);
-	mdcr_el3 = mtpmu_disable_el3(mdcr_el3);
-	write_mdcr_el3(mdcr_el3);
-
-=======
 	 * MDCR_EL3.EnPM2: Set to one so that various PMUv3p9 related system
 	 * register accesses do not trap to EL3.
 	 *
@@ -150,7 +98,6 @@ void pmuv3_enable(cpu_context_t *ctx)
 
 void pmuv3_init_el3(void)
 {
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------------------------------
 	 * Initialise PMCR_EL0 setting all fields rather than relying
 	 * on hw. Some fields are architecturally UNKNOWN on reset.
@@ -176,19 +123,6 @@ void pmuv3_init_el3(void)
 
 static u_register_t mtpmu_disable_el2(u_register_t mdcr_el2)
 {
-<<<<<<< HEAD
-	if (!is_feat_mtpmu_supported()) {
-		return mdcr_el2;
-	}
-
-	/*
-	 * MDCR_EL2.MTPME = 0
-	 * FEAT_MTPMU is disabled. The Effective value of PMEVTYPER<n>_EL0.MT is
-	 * zero.
-	 */
-	mdcr_el2 &= ~MDCR_EL2_MTPME;
-
-=======
 	if (is_feat_mtpmu_supported()) {
 		/*
 		 * MDCR_EL2.MTPME = 0
@@ -197,7 +131,6 @@ static u_register_t mtpmu_disable_el2(u_register_t mdcr_el2)
 		 */
 		mdcr_el2 &= ~MDCR_EL2_MTPME;
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 	return mdcr_el2;
 }
 

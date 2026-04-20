@@ -12,12 +12,7 @@
 
 #include "n5x_clock_manager.h"
 #include "n5x_system_manager.h"
-<<<<<<< HEAD
-
-
-=======
 #include "socfpga_handoff.h"
->>>>>>> upstream_import/upstream_v2_14_1
 
 uint64_t clk_get_pll_output_hz(void)
 {

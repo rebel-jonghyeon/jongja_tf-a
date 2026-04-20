@@ -18,10 +18,7 @@ SEPARATE_CODE_AND_RODATA := 1
 override RESET_TO_BL31 := 1
 PL011_GENERIC_UART := 1
 IPI_CRC_CHECK := 0
-<<<<<<< HEAD
-=======
 USE_GIC_DRIVER :=	3
->>>>>>> upstream_import/upstream_v2_14_1
 GIC_ENABLE_V4_EXTN :=  0
 GICV3_SUPPORT_GIC600 := 1
 TFA_NO_PM := 0
@@ -72,11 +69,6 @@ endif
 $(eval $(call add_define_val,VERSAL_NET_CONSOLE,VERSAL_NET_CONSOLE_ID_${VERSAL_NET_CONSOLE}))
 
 ifdef XILINX_OF_BOARD_DTB_ADDR
-<<<<<<< HEAD
-$(eval $(call add_define,XILINX_OF_BOARD_DTB_ADDR))
-endif
-
-=======
 XLNX_DT_CFG     := 1
 $(eval $(call add_define,XILINX_OF_BOARD_DTB_ADDR))
 else
@@ -101,7 +93,6 @@ endif
 # enable assert() for release/debug builds
 ENABLE_ASSERTIONS := 1
 
->>>>>>> upstream_import/upstream_v2_14_1
 PLAT_INCLUDES		:=	-Iinclude/plat/arm/common/			\
 				-Iplat/xilinx/common/include/			\
 				-Iplat/xilinx/common/ipi_mailbox_service/	\
@@ -140,10 +131,7 @@ endif
 BL31_SOURCES		+=	plat/xilinx/common/plat_fdt.c			\
 				plat/xilinx/common/plat_startup.c		\
 				plat/xilinx/common/plat_console.c		\
-<<<<<<< HEAD
-=======
 				plat/xilinx/common/plat_clkfunc.c		\
->>>>>>> upstream_import/upstream_v2_14_1
 				plat/xilinx/common/ipi.c			\
 				plat/xilinx/common/ipi_mailbox_service/ipi_mailbox_svc.c \
 				plat/xilinx/common/versal.c			\

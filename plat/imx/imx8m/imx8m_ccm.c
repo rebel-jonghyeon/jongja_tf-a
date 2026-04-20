@@ -17,18 +17,6 @@ static struct imx_uart {
 } imx8m_uart_info[] = {
 	{	/* UART 1 */
 		.ccm_reg = 0x4490,
-<<<<<<< HEAD
-		.uart_base = 0x30860000,
-	}, {	/* UART 2 */
-		.ccm_reg = 0x44a0,
-		.uart_base = 0x30890000,
-	}, {	/* UART 3 */
-		.ccm_reg = 0x44b0,
-		.uart_base = 0x30880000,
-	}, {	/* UART 4 */
-		.ccm_reg = 0x44c0,
-		.uart_base = 0x30a60000,
-=======
 		.uart_base = IMX_UART1_BASE,
 	}, {	/* UART 2 */
 		.ccm_reg = 0x44a0,
@@ -39,7 +27,6 @@ static struct imx_uart {
 	}, {	/* UART 4 */
 		.ccm_reg = 0x44c0,
 		.uart_base = IMX_UART4_BASE,
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 };
 

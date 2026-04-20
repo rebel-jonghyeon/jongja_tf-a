@@ -2460,15 +2460,6 @@ enum pm_ret_status pm_api_clock_get_num_clocks(uint32_t *nclocks)
  */
 void pm_api_clock_get_name(uint32_t clock_id, char *name)
 {
-<<<<<<< HEAD
-	if (clock_id == CLK_MAX) {
-		memcpy(name, END_OF_CLK, sizeof(END_OF_CLK) > CLK_NAME_LEN ?
-					 CLK_NAME_LEN : sizeof(END_OF_CLK));
-	} else if ((clock_id > CLK_MAX) || (!pm_clock_valid(clock_id))) {
-		memset(name, 0, CLK_NAME_LEN);
-	} else if (clock_id < CLK_MAX_OUTPUT_CLK) {
-		memcpy(name, clocks[clock_id].name, CLK_NAME_LEN);
-=======
 	uint32_t clock_id_num = clock_id;
 
 	if (clock_id_num == CLK_MAX) {
@@ -2478,7 +2469,6 @@ void pm_api_clock_get_name(uint32_t clock_id, char *name)
 		(void)memset(name, 0, CLK_NAME_LEN);
 	} else if (clock_id_num < (uint32_t)CLK_MAX_OUTPUT_CLK) {
 		(void)memcpy(name, clocks[clock_id_num].name, CLK_NAME_LEN);
->>>>>>> upstream_import/upstream_v2_14_1
 	} else {
 		(void)memcpy(name, ext_clocks[clock_id_num - (uint32_t)CLK_MAX_OUTPUT_CLK].name,
 		       CLK_NAME_LEN);
@@ -2872,11 +2862,8 @@ struct pm_pll *pm_clock_get_pll_by_related_clk(enum clock_id clock_id)
 /**
  * pm_clock_pll_enable() - "Enable" the PLL clock (lock the PLL).
  * @pll: PLL to be locked.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used to map IOCTL/linux-based PLL handling to system-level
  * EEMI APIs.
@@ -2903,11 +2890,8 @@ enum pm_ret_status pm_clock_pll_enable(struct pm_pll *pll, uint32_t flag)
 /**
  * pm_clock_pll_disable - "Disable" the PLL clock (bypass/reset the PLL).
  * @pll: PLL to be bypassed/reset.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used to map IOCTL/linux-based PLL handling to system-level
  * EEMI APIs.
@@ -2930,11 +2914,8 @@ enum pm_ret_status pm_clock_pll_disable(struct pm_pll *pll, uint32_t flag)
  * pm_clock_pll_get_state - Get state of the PLL.
  * @pll: Pointer to the target PLL structure.
  * @state: Location to store the state: 1/0 ("Enabled"/"Disabled").
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * "Enable" actually means that the PLL is locked and its bypass is deasserted,
  * "Disable" means that it is bypassed.
@@ -2975,11 +2956,8 @@ exit_label:
  * @pll: Target PLL structure.
  * @clock_id: Id of the clock.
  * @parent_index: parent index (=mux select value).
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * The whole clock-tree implementation relies on the fact that parent indexes
  * match to the multiplexer select values. This function has to rely on that
@@ -3022,11 +3000,8 @@ exit_label:
  * @pll: Target PLL structure.
  * @clock_id: Id of the clock.
  * @parent_index: parent index (=mux select value).
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to get parent index for PLL-related clock.
  *

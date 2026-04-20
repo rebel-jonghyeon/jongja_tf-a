@@ -13,10 +13,7 @@
 #include <drivers/delay_timer.h>
 #include <lib/mmio.h>
 #include <plat/common/platform.h>
-<<<<<<< HEAD
-=======
 #include <plat_pm_common.h>
->>>>>>> upstream_import/upstream_v2_14_1
 
 #include "pm_api_clock.h"
 #include "pm_api_ioctl.h"
@@ -167,11 +164,8 @@ exit_label:
  * pm_ioctl_set_tapdelay_bypass() -  Enable/Disable tap delay bypass.
  * @type: Type of tap delay to enable/disable (e.g. QSPI).
  * @value: Enable/Disable.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function enable/disable tap delay bypass.
  *
@@ -184,57 +178,9 @@ static enum pm_ret_status pm_ioctl_set_tapdelay_bypass(uint32_t type,
 {
 	enum pm_ret_status status = PM_RET_SUCCESS;
 
-<<<<<<< HEAD
-	return pm_mmio_write(IOU_TAPDLY_BYPASS, TAP_DELAY_MASK, value << type);
-}
-
-/**
- * pm_ioctl_set_sgmii_mode() -  Set SGMII mode for the GEM device.
- * @nid: Node ID of the device.
- * @value: Enable/Disable.
- *
- * This function enable/disable SGMII mode for the GEM device.
- * While enabling SGMII mode, it also ties the GEM PCS Signal
- * Detect to 1 and selects EMIO for RX clock generation.
- *
- * Return: Returns status, either success or error+reason.
- *
- */
-static enum pm_ret_status pm_ioctl_set_sgmii_mode(enum pm_node_id nid,
-						  uint32_t value)
-{
-	uint32_t val, mask, shift;
-	enum pm_ret_status ret;
-
-	if (value != PM_SGMII_DISABLE && value != PM_SGMII_ENABLE) {
-		return PM_RET_ERROR_ARGS;
-	}
-
-	switch (nid) {
-	case NODE_ETH_0:
-		shift = 0;
-		break;
-	case NODE_ETH_1:
-		shift = 1;
-		break;
-	case NODE_ETH_2:
-		shift = 2;
-		break;
-	case NODE_ETH_3:
-		shift = 3;
-		break;
-	default:
-		return PM_RET_ERROR_ARGS;
-	}
-
-	if (value == PM_SGMII_DISABLE) {
-		mask = GEM_SGMII_MASK << GEM_CLK_CTRL_OFFSET * shift;
-		ret = pm_mmio_write(IOU_GEM_CLK_CTRL, mask, 0U);
-=======
 	if ((((value != PM_TAPDELAY_BYPASS_ENABLE) &&
 	     (value != PM_TAPDELAY_BYPASS_DISABLE)) || (type >= PM_TAPDELAY_MAX))) {
 		status = PM_RET_ERROR_ARGS;
->>>>>>> upstream_import/upstream_v2_14_1
 	} else {
 		status = pm_mmio_write(IOU_TAPDLY_BYPASS, TAP_DELAY_MASK,
 				       value << type, flag);
@@ -247,11 +193,8 @@ static enum pm_ret_status pm_ioctl_set_sgmii_mode(enum pm_node_id nid,
  * pm_ioctl_sd_dll_reset() -  Reset DLL logic.
  * @nid: Node ID of the device.
  * @type: Reset type.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function resets DLL logic for the SD device.
  *
@@ -304,11 +247,8 @@ static enum pm_ret_status pm_ioctl_sd_dll_reset(enum pm_node_id nid,
  * @nid: Node ID of the device.
  * @type: Type of tap delay to set (input/output).
  * @value: Value to set fot the tap delay.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function sets input/output tap delay for the SD device.
  *
@@ -444,11 +384,8 @@ static enum pm_ret_status pm_ioctl_get_pll_frac_mode
  * pm_ioctl_set_pll_frac_data() -  Ioctl function for setting pll fraction data.
  * @pll: PLL clock id.
  * @data: fraction data.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function sets fraction data.
  * It is valid for fraction mode only.
@@ -476,11 +413,8 @@ static enum pm_ret_status pm_ioctl_set_pll_frac_data
  * pm_ioctl_get_pll_frac_data() -  Ioctl function for getting pll fraction data.
  * @pll: PLL clock id.
  * @data: fraction data.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns fraction data value.
  *
@@ -508,11 +442,8 @@ static enum pm_ret_status pm_ioctl_get_pll_frac_data
  *                        (ggs).
  * @index: GGS register index.
  * @value: Register value to be written.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function writes value to GGS register.
  *
@@ -540,11 +471,8 @@ static enum pm_ret_status pm_ioctl_write_ggs(uint32_t index,
  *                       (ggs).
  * @index: GGS register index.
  * @value: Register value.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns GGS register value.
  *
@@ -572,11 +500,8 @@ static enum pm_ret_status pm_ioctl_read_ggs(uint32_t index,
  *                         storage (pggs).
  * @index: PGGS register index.
  * @value: Register value to be written.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function writes value to PGGS register.
  *
@@ -603,11 +528,8 @@ static enum pm_ret_status pm_ioctl_write_pggs(uint32_t index,
  * pm_ioctl_afi() - Ioctl function for writing afi values.
  * @index: AFI register index.
  * @value: Register value to be written.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -653,11 +575,8 @@ static enum pm_ret_status pm_ioctl_afi(uint32_t index,
  *                        storage (pggs).
  * @index: PGGS register index.
  * @value: Register value.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns PGGS register value.
  *
@@ -683,12 +602,9 @@ static enum pm_ret_status pm_ioctl_read_pggs(uint32_t index,
 /**
  * pm_ioctl_ulpi_reset() - Ioctl function for performing ULPI reset.
  *
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
  *
->>>>>>> upstream_import/upstream_v2_14_1
  * Return: Returns status, either success or error+reason.
  *
  * This function peerforms the ULPI reset sequence for resetting
@@ -726,11 +642,8 @@ exit_label:
 /**
  * pm_ioctl_set_boot_health_status() - Ioctl for setting healthy boot status.
  * @value: Value to write.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function sets healthy bit value to indicate boot health status
  * to firmware.
@@ -752,11 +665,8 @@ static enum pm_ret_status pm_ioctl_set_boot_health_status(uint32_t value,
  * @arg1: Argument 1 to requested IOCTL call.
  * @arg2: Argument 2 to requested IOCTL call.
  * @value: Returned output value.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function calls IOCTL to firmware for device control and configuration.
  *
@@ -842,20 +752,13 @@ enum pm_ret_status pm_api_ioctl(enum pm_node_id nid,
 /**
  * tfa_ioctl_bitmask() -  API to get supported IOCTL ID mask.
  * @bit_mask: Returned bit mask of supported IOCTL IDs.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: 0 success, negative value for errors.
  *
  */
-<<<<<<< HEAD
-enum pm_ret_status tfa_ioctl_bitmask(uint32_t *bit_mask)
-=======
 enum pm_ret_status tfa_ioctl_bitmask(uint32_t *bit_mask, uint32_t flag)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	const uint8_t supported_ids[] = {
 		IOCTL_GET_RPU_OPER_MODE,

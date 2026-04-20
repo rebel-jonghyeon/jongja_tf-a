@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (c) 2023-2025, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -37,28 +33,17 @@ SECTIONS
     } >HEADER
 
     . = STM32MP_BINARY_BASE;
-<<<<<<< HEAD
-    .data . : {
-        . = ALIGN(PAGE_SIZE);
-        __DATA_START__ = .;
-        *(.data*)
-=======
     .data : {
         . = ALIGN(PAGE_SIZE);
         __DATA_START__ = .;
         FILL(0);
->>>>>>> upstream_import/upstream_v2_14_1
 
         /*
          * dtb.
          * The strongest and only alignment contraint is MMU 4K page.
          * Indeed as images below will be removed, 4K pages will be re-used.
          */
-<<<<<<< HEAD
-        . = ( STM32MP_BL2_DTB_BASE - STM32MP_BINARY_BASE );
-=======
         . = ABSOLUTE( STM32MP_BL2_DTB_BASE );
->>>>>>> upstream_import/upstream_v2_14_1
         __DTB_IMAGE_START__ = .;
         *(.dtb_image*)
         __DTB_IMAGE_END__ = .;
@@ -69,15 +54,9 @@ SECTIONS
          * Indeed as images below will be removed, 4K pages will be re-used.
          */
 #if SEPARATE_CODE_AND_RODATA
-<<<<<<< HEAD
-        . = ( STM32MP_BL2_RO_BASE - STM32MP_BINARY_BASE );
-#else
-        . = ( STM32MP_BL2_BASE - STM32MP_BINARY_BASE );
-=======
         . = ABSOLUTE( STM32MP_BL2_RO_BASE );
 #else
         . = ABSOLUTE( STM32MP_BL2_BASE );
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
         __BL2_IMAGE_START__ = .;
         *(.bl2_image*)

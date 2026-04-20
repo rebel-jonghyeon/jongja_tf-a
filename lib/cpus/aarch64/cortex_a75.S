@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -22,44 +18,6 @@
 #error "Cortex-A75 must be compiled with HW_ASSISTED_COHERENCY enabled"
 #endif
 
-<<<<<<< HEAD
-workaround_reset_start cortex_a75, ERRATUM(764081), ERRATA_A75_764081
-	sysreg_bit_set sctlr_el3, SCTLR_IESB_BIT
-workaround_reset_end cortex_a75, ERRATUM(764081)
-
-check_erratum_ls cortex_a75, ERRATUM(764081), CPU_REV(0, 0)
-
-workaround_reset_start cortex_a75, ERRATUM(790748), ERRATA_A75_790748
-	sysreg_bit_set CORTEX_A75_CPUACTLR_EL1, (1 << 13)
-workaround_reset_end cortex_a75, ERRATUM(790748)
-
-check_erratum_ls cortex_a75, ERRATUM(790748), CPU_REV(0, 0)
-
-/* ERRATA_DSU_798953 :
- * The errata is defined in dsu_helpers.S but applies to cortex_a75
- * as well. Henceforth creating symbolic names to the already existing errata
- * workaround functions to get them registered under the Errata Framework.
- */
-.equ check_erratum_cortex_a75_798953, check_errata_dsu_798953
-.equ erratum_cortex_a75_798953_wa, errata_dsu_798953_wa
-add_erratum_entry cortex_a75, ERRATUM(798953), ERRATA_DSU_798953, APPLY_AT_RESET
-
-/* ERRATA_DSU_936184 :
- * The errata is defined in dsu_helpers.S but applies to cortex_a75
- * as well. Henceforth creating symbolic names to the already existing errata
- * workaround functions to get them registered under the Errata Framework.
- */
-.equ check_erratum_cortex_a75_936184, check_errata_dsu_936184
-.equ erratum_cortex_a75_936184_wa, errata_dsu_936184_wa
-add_erratum_entry cortex_a75, ERRATUM(936184), ERRATA_DSU_936184, APPLY_AT_RESET
-
-workaround_reset_start cortex_a75, CVE(2017, 5715), WORKAROUND_CVE_2017_5715
-#if IMAGE_BL31
-	override_vector_table wa_cve_2017_5715_bpiall_vbar
-#endif /* IMAGE_BL31 */
-workaround_reset_end cortex_a75, CVE(2017, 5715)
-
-=======
 cpu_reset_prologue cortex_a75
 
 /* Erratum entry and check function for SMCCC_ARCH_WORKAROUND_3 */
@@ -103,7 +61,6 @@ workaround_reset_start cortex_a75, CVE(2017, 5715), WORKAROUND_CVE_2017_5715
 #endif /* IMAGE_BL31 */
 workaround_reset_end cortex_a75, CVE(2017, 5715)
 
->>>>>>> upstream_import/upstream_v2_14_1
 check_erratum_custom_start cortex_a75, CVE(2017, 5715)
 	cpu_check_csv2	x0, 1f
 #if WORKAROUND_CVE_2017_5715
@@ -151,36 +108,6 @@ check_erratum_custom_start cortex_a75, CVE(2022, 23960)
 	mov	x0, #ERRATA_MISSING
 	ret
 check_erratum_custom_end cortex_a75, CVE(2022, 23960)
-<<<<<<< HEAD
-
-	/* -------------------------------------------------
-	 * The CPU Ops reset function for Cortex-A75.
-	 * -------------------------------------------------
-	 */
-
-cpu_reset_func_start cortex_a75
-#if ENABLE_FEAT_AMU
-	/* Make sure accesses from EL0/EL1 and EL2 are not trapped to EL3 */
-	sysreg_bit_set actlr_el3, CORTEX_A75_ACTLR_AMEN_BIT
-	isb
-
-	/* Make sure accesses from EL0/EL1 are not trapped to EL2 */
-	sysreg_bit_set actlr_el2, CORTEX_A75_ACTLR_AMEN_BIT
-	isb
-
-	/* Enable group0 counters */
-	mov	x0, #CORTEX_A75_AMU_GROUP0_MASK
-	msr	CPUAMCNTENSET_EL0, x0
-	isb
-
-	/* Enable group1 counters */
-	mov	x0, #CORTEX_A75_AMU_GROUP1_MASK
-	msr	CPUAMCNTENSET_EL0, x0
-	/* isb included in cpu_reset_func_end macro */
-#endif
-cpu_reset_func_end cortex_a75
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* -------------------------------------------------
 	 * The CPU Ops reset function for Cortex-A75.
@@ -224,11 +151,6 @@ func cortex_a75_core_pwr_dwn
 	ret
 endfunc cortex_a75_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_a75
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides cortex_a75 specific
 	 * register information for crash reporting.
@@ -250,10 +172,4 @@ endfunc cortex_a75_cpu_reg_dump
 
 declare_cpu_ops cortex_a75, CORTEX_A75_MIDR, \
 	cortex_a75_reset_func, \
-<<<<<<< HEAD
-	check_erratum_cortex_a75_5715, \
-	CPU_NO_EXTRA2_FUNC, \
-	check_smccc_arch_workaround_3, \
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	cortex_a75_core_pwr_dwn

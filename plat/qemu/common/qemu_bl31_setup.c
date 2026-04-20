@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2015-2023, ARM Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -106,11 +102,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 
 /* Platform names have to be lowercase. */
 #ifdef PLAT_qemu_sbsa
-<<<<<<< HEAD
-	sip_svc_init();
-=======
 	sbsa_platform_init();
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 	/*

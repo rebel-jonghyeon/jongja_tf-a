@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2021-2026, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -36,8 +32,6 @@
 	wa_cve_2022_23960_bhb_vector_table CORTEX_A710_BHB_LOOP_COUNT, cortex_a710
 #endif /* WORKAROUND_CVE_2022_23960 */
 
-<<<<<<< HEAD
-=======
 cpu_reset_prologue cortex_a710
 
 workaround_reset_start cortex_a710, ERRATUM(1901946), ERRATA_A710_1901946
@@ -89,7 +83,6 @@ workaround_reset_end cortex_a710, ERRATUM(1927200)
 
 check_erratum_ls cortex_a710, ERRATUM(1927200), CPU_REV(1, 0)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_a710, ERRATUM(1987031), ERRATA_A710_1987031
 	ldr x0,=0x6
 	msr S3_6_c15_c8_0,x0
@@ -139,104 +132,6 @@ workaround_reset_start cortex_a710, ERRATUM(2017096), ERRATA_A710_2017096
 workaround_reset_end cortex_a710, ERRATUM(2017096)
 
 check_erratum_ls cortex_a710, ERRATUM(2017096), CPU_REV(2, 0)
-<<<<<<< HEAD
-
-workaround_reset_start cortex_a710, ERRATUM(2055002), ERRATA_A710_2055002
-	sysreg_bit_set	CORTEX_A710_CPUACTLR_EL1, CORTEX_A710_CPUACTLR_EL1_BIT_46
-workaround_reset_end cortex_a710, ERRATUM(2055002)
-
-check_erratum_range cortex_a710, ERRATUM(2055002), CPU_REV(1, 0), CPU_REV(2, 0)
-
-workaround_reset_start cortex_a710, ERRATUM(2058056), ERRATA_A710_2058056
-	sysreg_bitfield_insert CORTEX_A710_CPUECTLR2_EL1, CORTEX_A710_CPUECTLR2_EL1_PF_MODE_CNSRV, \
-		CPUECTLR2_EL1_PF_MODE_LSB, CPUECTLR2_EL1_PF_MODE_WIDTH
-workaround_reset_end cortex_a710, ERRATUM(2058056)
-
-check_erratum_ls cortex_a710, ERRATUM(2058056), CPU_REV(2, 1)
-
-workaround_reset_start cortex_a710, ERRATUM(2081180), ERRATA_A710_2081180
-	ldr	x0,=0x3
-	msr	S3_6_c15_c8_0,x0
-	ldr	x0,=0xF3A08002
-	msr	S3_6_c15_c8_2,x0
-	ldr	x0,=0xFFF0F7FE
-	msr	S3_6_c15_c8_3,x0
-	ldr	x0,=0x10002001003FF
-	msr	S3_6_c15_c8_1,x0
-	ldr	x0,=0x4
-	msr	S3_6_c15_c8_0,x0
-	ldr	x0,=0xBF200000
-	msr	S3_6_c15_c8_2,x0
-	ldr	x0,=0xFFEF0000
-	msr	S3_6_c15_c8_3,x0
-	ldr	x0,=0x10002001003F3
-	msr	S3_6_c15_c8_1,x0
-workaround_reset_end cortex_a710, ERRATUM(2081180)
-
-check_erratum_ls cortex_a710, ERRATUM(2081180), CPU_REV(2, 0)
-
-workaround_reset_start cortex_a710, ERRATUM(2083908), ERRATA_A710_2083908
-	sysreg_bit_set	CORTEX_A710_CPUACTLR5_EL1, CORTEX_A710_CPUACTLR5_EL1_BIT_13
-workaround_reset_end cortex_a710, ERRATUM(2083908)
-
-check_erratum_range cortex_a710, ERRATUM(2083908), CPU_REV(2, 0), CPU_REV(2, 0)
-
-workaround_reset_start cortex_a710, ERRATUM(2136059), ERRATA_A710_2136059
-	sysreg_bit_set	CORTEX_A710_CPUACTLR5_EL1, CORTEX_A710_CPUACTLR5_EL1_BIT_44
-workaround_reset_end cortex_a710, ERRATUM(2136059)
-
-check_erratum_ls cortex_a710, ERRATUM(2136059), CPU_REV(2, 0)
-
-workaround_reset_start cortex_a710, ERRATUM(2147715), ERRATA_A710_2147715
-	sysreg_bit_set	CORTEX_A710_CPUACTLR_EL1, CORTEX_A710_CPUACTLR_EL1_BIT_22
-workaround_reset_end cortex_a710, ERRATUM(2147715)
-
-check_erratum_range cortex_a710, ERRATUM(2147715), CPU_REV(2, 0), CPU_REV(2, 0)
-
-workaround_reset_start cortex_a710, ERRATUM(2216384), ERRATA_A710_2216384
-	sysreg_bit_set	CORTEX_A710_CPUACTLR5_EL1, CORTEX_A710_CPUACTLR5_EL1_BIT_17
-
-	ldr	x0,=0x5
-	msr	CORTEX_A710_CPUPSELR_EL3, x0
-	ldr	x0,=0x10F600E000
-	msr	CORTEX_A710_CPUPOR_EL3, x0
-	ldr	x0,=0x10FF80E000
-	msr	CORTEX_A710_CPUPMR_EL3, x0
-	ldr	x0,=0x80000000003FF
-	msr	CORTEX_A710_CPUPCR_EL3, x0
-workaround_reset_end cortex_a710, ERRATUM(2216384)
-
-check_erratum_ls cortex_a710, ERRATUM(2216384), CPU_REV(2, 0)
-
-workaround_reset_start cortex_a710, ERRATUM(2267065), ERRATA_A710_2267065
-	sysreg_bit_set	CORTEX_A710_CPUACTLR_EL1, CORTEX_A710_CPUACTLR_EL1_BIT_22
-workaround_reset_end cortex_a710, ERRATUM(2267065)
-
-check_erratum_ls cortex_a710, ERRATUM(2267065), CPU_REV(2, 0)
-
-workaround_reset_start cortex_a710, ERRATUM(2282622), ERRATA_A710_2282622
-	sysreg_bit_set	CORTEX_A710_CPUACTLR2_EL1, BIT(0)
-workaround_reset_end cortex_a710, ERRATUM(2282622)
-
-check_erratum_ls cortex_a710, ERRATUM(2282622), CPU_REV(2, 1)
-
-workaround_runtime_start cortex_a710, ERRATUM(2291219), ERRATA_A710_2291219
-	/* Set bit 36 in ACTLR2_EL1 */
-	sysreg_bit_set CORTEX_A710_CPUACTLR2_EL1, CORTEX_A710_CPUACTLR2_EL1_BIT_36
-workaround_runtime_end cortex_a710, ERRATUM(2291219), NO_ISB
-
-check_erratum_ls cortex_a710, ERRATUM(2291219), CPU_REV(2, 0)
-
-/*
- * ERRATA_DSU_2313941 is defined in dsu_helpers.S but applies to Cortex-A710 as
- * well. Create a symbollic link to existing errata workaround to get them
- * registered under the Errata Framework.
- */
-.equ check_erratum_cortex_a710_2313941, check_errata_dsu_2313941
-.equ erratum_cortex_a710_2313941_wa, errata_dsu_2313941_wa
-add_erratum_entry cortex_a710, ERRATUM(2313941), ERRATA_DSU_2313941, APPLY_AT_RESET
-
-=======
 
 workaround_reset_start cortex_a710, ERRATUM(2055002), ERRATA_A710_2055002
 	sysreg_bit_set	CORTEX_A710_CPUACTLR_EL1, CORTEX_A710_CPUACTLR_EL1_BIT_46
@@ -328,16 +223,12 @@ check_erratum_custom_start cortex_a710, ERRATUM(2313941)
 	ret
 check_erratum_custom_end cortex_a710, ERRATUM(2313941)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_a710, ERRATUM(2371105), ERRATA_A710_2371105
 	/* Set bit 40 in CPUACTLR2_EL1 */
 	sysreg_bit_set CORTEX_A710_CPUACTLR2_EL1, CORTEX_A710_CPUACTLR2_EL1_BIT_40
 workaround_reset_end cortex_a710, ERRATUM(2371105)
 
 check_erratum_ls cortex_a710, ERRATUM(2371105), CPU_REV(2, 0)
-<<<<<<< HEAD
-
-=======
 
 workaround_reset_start cortex_a710, ERRATUM(2742423), ERRATA_A710_2742423
 	/* Set CPUACTLR5_EL1[56:55] to 2'b01 */
@@ -347,7 +238,6 @@ workaround_reset_end cortex_a710, ERRATUM(2742423)
 
 check_erratum_ls cortex_a710, ERRATUM(2742423), CPU_REV(2, 1)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_runtime_start cortex_a710, ERRATUM(2768515), ERRATA_A710_2768515
 	/* dsb before isb of power down sequence */
 	dsb	sy
@@ -355,8 +245,6 @@ workaround_runtime_end cortex_a710, ERRATUM(2768515), NO_ISB
 
 check_erratum_ls cortex_a710, ERRATUM(2768515), CPU_REV(2, 1)
 
-<<<<<<< HEAD
-=======
 workaround_reset_start cortex_a710, ERRATUM(2778471), ERRATA_A710_2778471
 	sysreg_bit_set CORTEX_A710_CPUACTLR3_EL1, BIT(47)
 workaround_reset_end cortex_a710, ERRATUM(2778471)
@@ -373,7 +261,6 @@ add_erratum_entry cortex_a710, ERRATUM(3701772), ERRATA_A710_3701772
 
 check_erratum_ls cortex_a710, ERRATUM(3701772), CPU_REV(2, 1)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_a710, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
 	/*
@@ -385,8 +272,6 @@ workaround_reset_start cortex_a710, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 workaround_reset_end cortex_a710, CVE(2022, 23960)
 
 check_erratum_chosen cortex_a710, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-<<<<<<< HEAD
-=======
 
 /* Disable hardware page aggregation. Enables mitigation for `CVE-2024-5660` */
 workaround_reset_start cortex_a710, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
@@ -417,7 +302,6 @@ func cortex_a710_impl_defined_el3_handler
 	b	wa_cve_2025_0647_do_cpp_wa
 endfunc cortex_a710_impl_defined_el3_handler
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ----------------------------------------------------
 	 * HW will do the cache maintenance while powering down
@@ -437,20 +321,12 @@ func cortex_a710_core_pwr_dwn
 	ret
 endfunc cortex_a710_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_a710
-
-cpu_reset_func_start cortex_a710
-	/* Disable speculative loads */
-	msr	SSBS, xzr
-=======
 cpu_reset_func_start cortex_a710
 	/* Disable speculative loads */
 	msr	SSBS, xzr
 	apply_erratum cortex_a710, ERRATUM(3324338), ERRATA_A710_3324338
 
 	enable_mpmm
->>>>>>> upstream_import/upstream_v2_14_1
 cpu_reset_func_end cortex_a710
 
 	/* ---------------------------------------------

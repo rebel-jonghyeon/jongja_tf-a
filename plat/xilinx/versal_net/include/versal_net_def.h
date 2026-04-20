@@ -12,11 +12,7 @@
 #include <plat/arm/common/smccc_def.h>
 #include <plat/common/common_def.h>
 
-<<<<<<< HEAD
-#define MAX_INTR_EL3			2
-=======
 #define MAX_INTR_EL3			2U
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* List all consoles */
 #define VERSAL_NET_CONSOLE_ID_none	U(0)
@@ -27,8 +23,6 @@
 #define VERSAL_NET_CONSOLE_ID_dtb	U(4)
 
 #define CONSOLE_IS(con)	(VERSAL_NET_CONSOLE_ID_ ## con == VERSAL_NET_CONSOLE)
-<<<<<<< HEAD
-=======
 
 /* Runtime console */
 #define RT_CONSOLE_ID_pl011    1
@@ -38,7 +32,6 @@
 #define RT_CONSOLE_ID_dtb      4
 
 #define RT_CONSOLE_IS(con)     (RT_CONSOLE_ID_ ## con == CONSOLE_RUNTIME)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* List all platforms */
 #define VERSAL_NET_SILICON		U(0)
@@ -156,15 +149,6 @@
 
 #define UART_BAUDRATE	115200
 
-<<<<<<< HEAD
-#if CONSOLE_IS(pl011_1)
-#define UART_BASE		VERSAL_NET_UART1_BASE
-#else
-/* Default console is UART0 */
-#define UART_BASE            VERSAL_NET_UART0_BASE
-#endif
-
-=======
 #if CONSOLE_IS(pl011) || CONSOLE_IS(dtb)
 #define UART_BASE		VERSAL_NET_UART0_BASE
 # define UART_TYPE	CONSOLE_PL011
@@ -196,7 +180,6 @@
 #endif
 #endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* Processor core device IDs */
 #define PM_DEV_CLUSTER0_ACPU_0	(0x1810C0AFU)
 #define PM_DEV_CLUSTER0_ACPU_1	(0x1810C0B0U)

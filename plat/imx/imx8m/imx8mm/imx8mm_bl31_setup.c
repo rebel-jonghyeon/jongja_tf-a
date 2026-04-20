@@ -30,10 +30,7 @@
 #include <imx8m_ccm.h>
 #include <imx8m_csu.h>
 #include <imx8m_snvs.h>
-<<<<<<< HEAD
-=======
 #include <plat_common.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <plat_imx8.h>
 
 #define TRUSTY_PARAMS_LEN_BYTES      (4096*2)
@@ -157,13 +154,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 
 	imx_csu_init(csu_cfg);
 
-<<<<<<< HEAD
-	if (console_base == 0U) {
-		console_base = imx8m_uart_get_base();
-	}
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	console_imx_uart_register(console_base, IMX_BOOT_UART_CLK_IN_HZ,
 		IMX_CONSOLE_BAUDRATE, &console);
 	/* This console is only used for boot stage */
@@ -211,11 +201,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 #if !defined(SPD_opteed) && !defined(SPD_trusty)
 	enable_snvs_privileged_access();
 #endif
-<<<<<<< HEAD
-
-	bl31_tzc380_setup();
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 #define MAP_BL31_TOTAL										   \

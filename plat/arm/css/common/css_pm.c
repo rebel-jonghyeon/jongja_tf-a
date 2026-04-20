@@ -129,10 +129,6 @@ void css_pwr_domain_on_finish_late(const psci_power_state_t *target_state)
 static void css_power_down_common(const psci_power_state_t *target_state)
 {
 	/* Cluster is to be turned off, so disable coherency */
-<<<<<<< HEAD
-	if (CSS_CLUSTER_PWR_STATE(target_state) == ARM_LOCAL_STATE_OFF)
-		plat_arm_interconnect_exit_coherency();
-=======
 	if (CSS_CLUSTER_PWR_STATE(target_state) == ARM_LOCAL_STATE_OFF) {
 #if PRESERVE_DSU_PMU_REGS
 		cluster_off_dsu_pmu_context_save();
@@ -141,7 +137,6 @@ static void css_power_down_common(const psci_power_state_t *target_state)
 		plat_arm_interconnect_exit_coherency();
 #endif
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /*******************************************************************************

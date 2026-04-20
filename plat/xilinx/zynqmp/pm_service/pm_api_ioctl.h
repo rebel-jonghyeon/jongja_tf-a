@@ -50,12 +50,7 @@ enum pm_ret_status pm_api_ioctl(enum pm_node_id nid,
 				uint32_t ioctl_id,
 				uint32_t arg1,
 				uint32_t arg2,
-<<<<<<< HEAD
-				uint32_t *value);
-enum pm_ret_status tfa_ioctl_bitmask(uint32_t *bit_mask);
-=======
 				uint32_t *value,
 				uint32_t flag);
 enum pm_ret_status tfa_ioctl_bitmask(uint32_t *bit_mask, uint32_t flag);
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* PM_API_IOCTL_H */

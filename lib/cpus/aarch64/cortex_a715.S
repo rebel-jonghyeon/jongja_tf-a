@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -32,8 +28,6 @@
 	wa_cve_2022_23960_bhb_vector_table CORTEX_A715_BHB_LOOP_COUNT, cortex_a715
 #endif /* WORKAROUND_CVE_2022_23960 */
 
-<<<<<<< HEAD
-=======
 cpu_reset_prologue cortex_a715
 
 workaround_reset_start cortex_a715, ERRATUM(2331818), ERRATA_A715_2331818
@@ -179,7 +173,6 @@ workaround_reset_end cortex_a715, ERRATUM(3711916)
 
 check_erratum_ls cortex_a715, ERRATUM(3711916), CPU_REV(1, 3)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_a715, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
 	/*
@@ -190,21 +183,14 @@ workaround_reset_start cortex_a715, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #endif /* IMAGE_BL31 */
 workaround_reset_end cortex_a715, CVE(2022, 23960)
 
-<<<<<<< HEAD
-check_erratum_chosen cortex_a715, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-=======
 check_erratum_ls cortex_a715, CVE(2022, 23960), CPU_REV(1, 0)
->>>>>>> upstream_import/upstream_v2_14_1
 
 cpu_reset_func_start cortex_a715
 	/* Disable speculative loads */
 	msr	SSBS, xzr
-<<<<<<< HEAD
-=======
 	apply_erratum cortex_a715, ERRATUM(3456084), ERRATA_A715_3456084
 
 	enable_mpmm
->>>>>>> upstream_import/upstream_v2_14_1
 cpu_reset_func_end cortex_a715
 
 	/* ----------------------------------------------------
@@ -222,11 +208,6 @@ func cortex_a715_core_pwr_dwn
 	isb
 	ret
 endfunc cortex_a715_core_pwr_dwn
-<<<<<<< HEAD
-
-errata_report_shim cortex_a715
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ---------------------------------------------
 	 * This function provides Cortex-A715 specific

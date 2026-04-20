@@ -1,9 +1,5 @@
 #
-<<<<<<< HEAD
-# Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
-=======
 # Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
 #
 # Copyright (c) 2017-2023 Nuvoton Ltd.
 #
@@ -16,10 +12,7 @@ RESET_TO_BL31	:=	1
 SPMD_SPM_AT_SEL2	:= 0
 #temporary until the RAM size is reduced
 USE_COHERENT_MEM	:=	1
-<<<<<<< HEAD
-=======
 INIT_UNUSED_NS_EL2  := 1
->>>>>>> upstream_import/upstream_v2_14_1
 
 
 $(eval $(call add_define,RESET_TO_BL31))
@@ -29,8 +22,6 @@ ifeq (${ARCH}, aarch64)
 # Trusted DRAM (if available) or the TZC secured area of DRAM.
 # TZC secured DRAM is the default.
 
-<<<<<<< HEAD
-=======
 ARM_TSP_RAM_LOCATION	?=	dram
 
 ifeq (${ARM_TSP_RAM_LOCATION}, tsram)
@@ -44,22 +35,16 @@ $(error "Unsupported ARM_TSP_RAM_LOCATION value")
 endif
 
 # Process flags
->>>>>>> upstream_import/upstream_v2_14_1
 # Process ARM_BL31_IN_DRAM flag
 ARM_BL31_IN_DRAM	:=	0
 $(eval $(call assert_boolean,ARM_BL31_IN_DRAM))
 $(eval $(call add_define,ARM_BL31_IN_DRAM))
-<<<<<<< HEAD
-endif
-
-=======
 else
 ARM_TSP_RAM_LOCATION_ID	=	ARM_TRUSTED_SRAM_ID
 endif
 
 $(eval $(call add_define,ARM_TSP_RAM_LOCATION_ID))
 
->>>>>>> upstream_import/upstream_v2_14_1
 # For the original power-state parameter format, the State-ID can be encoded
 # according to the recommended encoding or zero. This flag determines which
 # State-ID encoding to be parsed.
@@ -216,11 +201,7 @@ BL31_SOURCES	+=lib/cpus/aarch64/cortex_a35.S \
 PLAT_BL_COMMON_SOURCES	:=	drivers/delay_timer/delay_timer.c \
 		drivers/delay_timer/generic_delay_timer.c \
 		plat/common/plat_gicv2.c \
-<<<<<<< HEAD
-		plat/arm/common/arm_gicv2.c \
-=======
 		plat/common/plat_gicv2_base.c \
->>>>>>> upstream_import/upstream_v2_14_1
 		plat/nuvoton/common/plat_nuvoton_gic.c \
 		${NPCM850_GIC_SOURCES} \
 		plat/nuvoton/npcm845x/npcm845x_common.c \
@@ -283,11 +264,7 @@ DYN_CFG_SOURCES	+=	plat/arm/common/arm_dyn_cfg.c \
 BL1_SOURCES	+=	${DYN_CFG_SOURCES}
 BL2_SOURCES	+=	${DYN_CFG_SOURCES}
 
-<<<<<<< HEAD
-ifeq (${BL2_AT_EL3},1)
-=======
 ifeq (${RESET_TO_BL2},1)
->>>>>>> upstream_import/upstream_v2_14_1
 BL2_SOURCES	+=	plat/arm/common/arm_bl2_el3_setup.c
 endif
 
@@ -334,19 +311,8 @@ BL31_SOURCES	+=	plat/arm/common/fconf/fconf_sdei_getter.c
 endif
 endif
 
-<<<<<<< HEAD
-# RAS sources
-ifeq (${RAS_EXTENSION},1)
-BL31_SOURCES	+=	lib/extensions/ras/std_err_record.c \
-		lib/extensions/ras/ras_common.c
-endif
-
-# Pointer Authentication sources
-ifeq (${ENABLE_PAUTH}, 1)
-=======
 # Pointer Authentication sources
 ifeq ($(BRANCH_PROTECTION),$(filter $(BRANCH_PROTECTION),1 2 3))
->>>>>>> upstream_import/upstream_v2_14_1
 PLAT_BL_COMMON_SOURCES	+=	plat/arm/common/aarch64/arm_pauth.c
 endif
 
@@ -358,18 +324,11 @@ endif
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
 # Include common TBB sources
-<<<<<<< HEAD
-AUTH_SOURCES	:=	drivers/auth/auth_mod.c \
-		drivers/auth/crypto_mod.c \
-		drivers/auth/img_parser_mod.c \
-		lib/fconf/fconf_tbbr_getter.c
-=======
 AUTH_MK := drivers/auth/auth.mk
 $(info Including ${AUTH_MK})
 include ${AUTH_MK}
 
 AUTH_SOURCES	+=	lib/fconf/fconf_tbbr_getter.c
->>>>>>> upstream_import/upstream_v2_14_1
 
 # Include the selected chain of trust sources.
 ifeq (${COT},tbbr)
@@ -408,15 +367,12 @@ $(info Including ${IMG_PARSER_LIB_MK})
 include ${IMG_PARSER_LIB_MK}
 endif
 
-<<<<<<< HEAD
-=======
 ifeq (${RECLAIM_INIT_CODE}, 1)
 ifeq (${ARM_XLAT_TABLES_LIB_V1}, 1)
 $(error "To reclaim init code xlat tables v2 must be used")
 endif
 endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 ifeq (${MEASURED_BOOT},1)
 MEASURED_BOOT_MK := drivers/measured_boot/measured_boot.mk
 $(info Including ${MEASURED_BOOT_MK})
@@ -433,9 +389,6 @@ BL2U_SOURCES	:=
 
 DEBUG_CONSOLE	?=	0
 $(eval $(call add_define,DEBUG_CONSOLE))
-<<<<<<< HEAD
-=======
 
 $(eval $(call add_define,ARM_TSP_RAM_LOCATION_ID))
 
->>>>>>> upstream_import/upstream_v2_14_1

@@ -252,11 +252,8 @@ uint32_t pm_get_shutdown_scope(void)
  * @latency: Requested maximum wakeup latency (not supported).
  * @state: Requested state.
  * @address: Resume address.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This is a blocking call, it will return only once PMU has responded.
  * On a wakeup, resume address will be automatically set by PMU.
@@ -298,11 +295,8 @@ enum pm_ret_status pm_self_suspend(enum pm_node_id nid,
  * @ack: Flag to specify whether acknowledge is requested.
  * @latency: Requested wakeup latency (not supported).
  * @state: Requested state (not supported).
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -334,11 +328,8 @@ enum pm_ret_status pm_req_suspend(enum pm_node_id target,
  * @set_address: Resume address presence indicator.
  *               1 resume address specified, 0 otherwise.
  * @address: Resume address.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This API function is either used to power up another APU core for SMP
  * (by PSCI) or to power up an entirely different PU or subsystem, such
@@ -380,11 +371,8 @@ enum pm_ret_status pm_req_wakeup(enum pm_node_id target,
  *                        be powered down forcefully.
  * @target: Node id of the targeted PU or subsystem.
  * @ack: Flag to specify whether acknowledge is requested.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -409,11 +397,6 @@ enum pm_ret_status pm_force_powerdown(enum pm_node_id target,
 }
 
 /**
-<<<<<<< HEAD
- * pm_abort_suspend() - PM call to announce that a prior suspend request
- *                      is to be aborted.
- * @reason: Reason for the abort.
-=======
  * pm_set_wakeup_source() - PM call to specify the wakeup source while
  *                          suspended.
  * @target: Node id of the targeted PU or subsystem.
@@ -421,41 +404,9 @@ enum pm_ret_status pm_force_powerdown(enum pm_node_id target,
  * @enable: Enable or disable the specified peripheral as wake source.
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
-<<<<<<< HEAD
- * Return: Returns status, either success or error+reason
- *
- */
-enum pm_ret_status pm_abort_suspend(enum pm_abort_reason reason)
-{
-	uint32_t payload[PAYLOAD_ARG_CNT];
-
-	/*
-	 * Do client specific abort suspend operations
-	 * (e.g. enable interrupts and clear powerdown request bit)
-	 */
-	pm_client_abort_suspend();
-	/* Send request to the PMU */
-	/* TODO: allow passing the node ID of the affected CPU */
-	PM_PACK_PAYLOAD3(payload, PM_ABORT_SUSPEND, reason,
-			 primary_proc->node_id);
-	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
-}
-
-/**
- * pm_set_wakeup_source() - PM call to specify the wakeup source while
- *                          suspended.
- * @target: Node id of the targeted PU or subsystem.
- * @wkup_node: Node id of the wakeup peripheral.
- * @enable: Enable or disable the specified peripheral as wake source.
- *
- * Return: Returns status, either success or error+reason.
- *
-=======
->>>>>>> upstream_import/upstream_v2_14_1
  */
 enum pm_ret_status pm_set_wakeup_source(enum pm_node_id target,
 					enum pm_node_id wkup_node,
@@ -473,11 +424,8 @@ enum pm_ret_status pm_set_wakeup_source(enum pm_node_id target,
  * pm_system_shutdown() - PM call to request a system shutdown or restart.
  * @type: Shutdown or restart? 0=shutdown, 1=restart, 2=setscope.
  * @subtype: Scope: 0=APU-subsystem, 1=PS, 2=system.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -507,11 +455,8 @@ enum pm_ret_status pm_system_shutdown(uint32_t type, uint32_t subtype,
  * @capabilities: Requested capabilities of the slave.
  * @qos: Quality of service (not supported).
  * @ack: Flag to specify whether acknowledge is requested.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -542,11 +487,8 @@ enum pm_ret_status pm_req_node(enum pm_node_id nid,
  * @capabilities: Requested capabilities of the slave.
  * @qos: Quality of service (not supported).
  * @ack: Flag to specify whether acknowledge is requested.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This API function is to be used for slaves a PU already has requested.
  *
@@ -579,11 +521,8 @@ enum pm_ret_status pm_set_requirement(enum pm_node_id nid,
 /**
  * pm_get_api_version() - Get version number of PMU PM firmware.
  * @version: Returns 32-bit version number of PMU Power Management Firmware.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -606,11 +545,8 @@ enum pm_ret_status pm_get_api_version(uint32_t *version, uint32_t flag)
  *            [0] - Current power state of the node
  *            [1] - Current requirements for the node (slave nodes only)
  *            [2] - Current usage status for the node (slave nodes only)
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -630,11 +566,8 @@ enum pm_ret_status pm_get_node_status(enum pm_node_id nid,
  * @address: Address to write to.
  * @mask: Mask to apply.
  * @value: Value to write.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to PM-related control registers
  * that may not be directly accessible by a particular PU.
@@ -658,11 +591,8 @@ enum pm_ret_status pm_mmio_write(uintptr_t address,
  * pm_mmio_read() - Read value from protected mmio.
  * @address: Address to write to.
  * @value: Value to write.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to PM-related control registers
  * that may not be directly accessible by a particular PU.
@@ -687,11 +617,8 @@ enum pm_ret_status pm_mmio_read(uintptr_t address, uint32_t *value, uint32_t fla
  * @address_high: higher 32-bit Linear memory space address.
  * @size: Number of 32bit words.
  * @flags: Additional flags or settings for the fpga operation.
-<<<<<<< HEAD
-=======
  * @security_flag: 0 - Call from secure source.
  *		   1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -713,11 +640,8 @@ enum pm_ret_status pm_fpga_load(uint32_t address_low,
 /**
  * pm_fpga_get_status() - Read value from fpga status register.
  * @value: Value to read.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to the xilfpga library to get
  * the fpga status.
@@ -737,11 +661,8 @@ enum pm_ret_status pm_fpga_get_status(uint32_t *value, uint32_t flag)
 /**
  * pm_get_chipid() - Read silicon ID registers.
  * @value: Buffer for return values. Must be large enough to hold 8 bytes.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns silicon ID registers.
  *
@@ -761,11 +682,8 @@ enum pm_ret_status pm_get_chipid(uint32_t *value, uint32_t flag)
  * @address_high: higher 32-bit Linear memory space address.
  * @size: Number of 32bit words.
  * @flags: Additional flags or settings for the fpga operation.
-<<<<<<< HEAD
-=======
  * @security_flag: 0 - Call from secure source.
  *		   1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to the xilsecure library to load the
  * authenticated, encrypted, and authenticated/encrypted images.
@@ -792,11 +710,8 @@ enum pm_ret_status pm_secure_rsaaes(uint32_t address_low,
  * @address_low: lower 32-bit address of the AesParams structure.
  * @address_high: higher 32-bit address of the AesParams structure.
  * @value: Returned output value.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to the xilsecure library to
  * encrypt/decrypt data blobs.
@@ -848,11 +763,8 @@ exit_label:
  * @arg1: Argument 1 to requested IOCTL call.
  * @arg2: Argument 2 to requested IOCTL call.
  * @value: Returned output value.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function calls IOCTL to firmware for device control and configuration.
  *
@@ -874,11 +786,8 @@ enum pm_ret_status pm_ioctl(enum pm_node_id nid,
  * @id: API ID to check.
  * @version: Returned supported API version.
  * @len: Number of words to be returned.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -895,11 +804,8 @@ static enum pm_ret_status fw_api_version(uint32_t id, uint32_t *version,
 /**
  * check_api_dependency() -  API to check dependent EEMI API version.
  * @id: EEMI API ID to check.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -923,14 +829,9 @@ enum pm_ret_status check_api_dependency(uint8_t id, uint32_t flag)
 			}
 
 			/* Check if fw version matches TF-A expected version */
-<<<<<<< HEAD
-			if (version != tfa_expected_ver_id[api_dep_table[i].api_id]) {
-				return PM_RET_ERROR_NOTSUPPORTED;
-=======
 			if (version_type != tfa_expected_ver_id[api_dep_table[i].api_id]) {
 				ret = PM_RET_ERROR_NOTSUPPORTED;
 				goto exit_label;
->>>>>>> upstream_import/upstream_v2_14_1
 			}
 		}
 	}
@@ -964,12 +865,8 @@ static enum pm_ret_status feature_check_tfa(uint32_t api_id, uint32_t *version,
 	case PM_GET_TRUSTZONE_VERSION:
 	case PM_SET_SUSPEND_MODE:
 		*version = TFA_API_BASE_VERSION;
-<<<<<<< HEAD
-		return PM_RET_SUCCESS;
-=======
 		ret = PM_RET_SUCCESS;
 		break;
->>>>>>> upstream_import/upstream_v2_14_1
 	default:
 		break;
 	}
@@ -1010,12 +907,8 @@ static enum pm_ret_status get_tfa_version_for_partial_apis(uint32_t api_id,
 	case PM_PLL_GET_MODE:
 	case PM_REGISTER_ACCESS:
 		*version = TFA_API_BASE_VERSION;
-<<<<<<< HEAD
-		return PM_RET_SUCCESS;
-=======
 		ret = PM_RET_SUCCESS;
 		break;
->>>>>>> upstream_import/upstream_v2_14_1
 	case PM_FEATURE_CHECK:
 		*version = FW_API_VERSION_2;
 		ret = PM_RET_SUCCESS;
@@ -1032,11 +925,8 @@ static enum pm_ret_status get_tfa_version_for_partial_apis(uint32_t api_id,
  *                           TF-A and firmware both.
  * @api_id: API ID to check.
  * @version: Returned supported API version.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -1073,11 +963,7 @@ static enum pm_ret_status feature_check_partial(uint32_t api_id,
 		} else {
 			ret = get_tfa_version_for_partial_apis(api_id, version);
 		}
-<<<<<<< HEAD
-		return get_tfa_version_for_partial_apis(api_id, version);
-=======
 		break;
->>>>>>> upstream_import/upstream_v2_14_1
 	default:
 		break;
 	}
@@ -1091,11 +977,8 @@ static enum pm_ret_status feature_check_partial(uint32_t api_id,
  * @version: Returned supported API version.
  * @bit_mask: Returned supported IOCTL id version.
  * @len: Number of bytes to be returned in bit_mask variable.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -1114,11 +997,7 @@ enum pm_ret_status pm_feature_check(uint32_t api_id, uint32_t *version,
 	}
 
 	/* Get API version implemented by firmware and TF-A both */
-<<<<<<< HEAD
-	status = feature_check_partial(api_id, version);
-=======
 	status = feature_check_partial(api_id, version, flag);
->>>>>>> upstream_import/upstream_v2_14_1
 	if (status != PM_RET_ERROR_NO_FEATURE) {
 		goto exit_label;
 	}
@@ -1135,17 +1014,6 @@ enum pm_ret_status pm_feature_check(uint32_t api_id, uint32_t *version,
 	*version = ret_payload[0];
 
 	/* Update IOCTL bit mask which are implemented in TF-A */
-<<<<<<< HEAD
-	if ((api_id == PM_IOCTL) || (api_id == PM_GET_OP_CHARACTERISTIC)) {
-		if (len < 2) {
-			return PM_RET_ERROR_ARGS;
-		}
-		bit_mask[0] = ret_payload[1];
-		bit_mask[1] = ret_payload[2];
-		if (api_id == PM_IOCTL) {
-			/* Get IOCTL's implemented by TF-A */
-			status = tfa_ioctl_bitmask(bit_mask);
-=======
 	if ((api_id == (uint32_t)PM_IOCTL) || (api_id == (uint32_t)PM_GET_OP_CHARACTERISTIC)) {
 		if (len < 2U) {
 			status = PM_RET_ERROR_ARGS;
@@ -1156,7 +1024,6 @@ enum pm_ret_status pm_feature_check(uint32_t api_id, uint32_t *version,
 		if (api_id == (uint32_t)PM_IOCTL) {
 			/* Get IOCTL's implemented by TF-A */
 			status = tfa_ioctl_bitmask(bit_mask, flag);
->>>>>>> upstream_import/upstream_v2_14_1
 		}
 	} else {
 		/* Requires for MISRA */
@@ -1299,11 +1166,8 @@ static enum pm_ret_status pm_clock_get_attributes(uint32_t clock_id,
  * pm_clock_gate() - Configure clock gate.
  * @clock_id: Id of the clock to be configured.
  * @enable: Flag 0=disable (gate the clock), !0=enable (activate the clock).
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Error if an argument is not valid or status as returned by the
  *         PM controller (PMU).
@@ -1345,11 +1209,8 @@ exit_label:
 /**
  * pm_clock_enable() - Enable the clock for given id.
  * @clock_id: Id of the clock to be enabled.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to enable the clock
  * including peripherals and PLL clocks.
@@ -1379,11 +1240,8 @@ enum pm_ret_status pm_clock_enable(uint32_t clock_id, uint32_t flag)
 /**
  * pm_clock_disable - Disable the clock for given id.
  * @clock_id: Id of the clock to be disable.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to disable the clock
  * including peripherals and PLL clocks.
@@ -1414,11 +1272,8 @@ enum pm_ret_status pm_clock_disable(uint32_t clock_id, uint32_t flag)
  * pm_clock_getstate - Get the clock state for given id.
  * @clock_id: Id of the clock to be queried.
  * @state: 1/0 (Enabled/Disabled).
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to get the state of clock
  * including peripherals and PLL clocks.
@@ -1458,11 +1313,8 @@ exit_label:
  * pm_clock_setdivider - Set the clock divider for given id.
  * @clock_id: Id of the clock.
  * @divider: divider value.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to set divider for any clock
  * to achieve desired rate.
@@ -1519,11 +1371,8 @@ exit_label:
  * pm_clock_getdivider - Get the clock divider for given id.
  * @clock_id: Id of the clock.
  * @divider: divider value.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to get divider values
  * for any clock.
@@ -1583,11 +1432,8 @@ exit_label:
  * pm_clock_setparent - Set the clock parent for given id.
  * @clock_id: Id of the clock.
  * @parent_index: Index of the parent clock into clock's parents array.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to set parent for any clock.
  *
@@ -1628,11 +1474,8 @@ exit_label:
  * pm_clock_getparent - Get the clock parent for given id.
  * @clock_id: Id of the clock.
  * @parent_index: parent index.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to get parent index
  * for any clock.
@@ -1787,11 +1630,8 @@ static enum pm_ret_status pm_pinctrl_get_pin_groups(uint32_t pin_id,
  * @arg2: Argument 2 to requested IOCTL call.
  * @arg3: Argument 3 to requested IOCTL call.
  * @data: Returned output data.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns requested data.
  *
@@ -1905,11 +1745,8 @@ enum pm_ret_status pm_secure_image(uint32_t address_low,
  *		   0 -- Configuration Register readback.
  *		   1 -- Configuration Data readback.
  * @value: Value to read.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to the xilfpga library to read
  * the PL configuration.
@@ -1937,11 +1774,8 @@ enum pm_ret_status pm_fpga_read(uint32_t reg_numframes,
  * @nid: Node id of the target PLL.
  * @param_id: ID of the PLL parameter.
  * @value: Parameter value to be set.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Setting the parameter will have physical effect once the PLL mode is set to
  * integer or fractional.
@@ -1983,11 +1817,8 @@ exit_label:
  * @nid: Node id of the target PLL.
  * @param_id: ID of the PLL parameter.
  * @value: Location to store the parameter value.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Error if an argument is not valid or status as returned by the
  *         PM controller (PMU).
@@ -2024,11 +1855,8 @@ exit_label:
  * pm_pll_set_mode() - Set the PLL mode.
  * @nid: Node id of the target PLL.
  * @mode: PLL mode to be set.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * If reset mode is set the PM controller will first bypass the PLL and then
  * assert the reset. If integer or fractional mode is set the PM controller will
@@ -2069,11 +1897,8 @@ exit_label:
  * pm_pll_get_mode() - Get the PLL mode.
  * @nid: Node id of the target PLL.
  * @mode: Location to store the mode of the PLL.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Error if an argument is not valid or status as returned by the
  *         PM controller (PMU).
@@ -2104,11 +1929,8 @@ enum pm_ret_status pm_pll_get_mode(enum pm_node_id nid, enum pm_pll_mode *mode,
  * @mask: Mask value to be used while writing value.
  * @value: Value to be written to register.
  * @out: Returned output data.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns requested data.
  *
@@ -2156,11 +1978,8 @@ exit_label:
  * @address_low: lower 32-bit Linear memory space address.
  * @address_high: higher 32-bit Linear memory space address.
  * @value: Returned output value.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *

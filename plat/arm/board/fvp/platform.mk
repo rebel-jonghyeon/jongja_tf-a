@@ -44,41 +44,6 @@ ENABLE_FEAT_TWED		:= 2
 ENABLE_FEAT_GCS			:= 2
 ENABLE_FEAT_SB			:= 2
 
-<<<<<<< HEAD
-# Size (in kilobytes) of the Trusted SRAM region to  utilize when building for
-# the FVP platform. This option defaults to 256.
-FVP_TRUSTED_SRAM_SIZE	:= 256
-
-# Macro to enable helpers for running SPM tests. Disabled by default.
-PLAT_TEST_SPM	:= 0
-
-# This is a very trickly TEMPORARY fix. Enabling ALL features exceeds BL31's
-# progbits limit. We need a way to build all useful configurations while waiting
-# on the fvp to increase its SRAM size. The problem is twofild:
-#  1. the cleanup that introduced these enables cleaned up tf-a a little too
-#     well and things that previously (incorrectly) were enabled, no longer are.
-#     A bunch of CI configs build subtly incorrectly and this combo makes it
-#     necessary to forcefully and unconditionally enable them here.
-#  2. the progbits limit is exceeded only when the tsp is involved. However,
-#     there are tsp CI configs that run on very high architecture revisions so
-#     disabling everything isn't an option.
-# The fix is to enable everything, as before. When the tsp is included, though,
-# we need to slim the size down. In that case, disable all optional features,
-# that will not be present in CI when the tsp is.
-# Similarly, DRTM support is only tested on v8.0 models. Disable everything just
-# for it.
-# TODO: make all of this unconditional (or only base the condition on
-# ARM_ARCH_* when the makefile supports it).
-ifneq (${DRTM_SUPPORT}, 1)
-ifneq (${SPD}, tspd)
-	ENABLE_FEAT_AMU			:= 2
-	ENABLE_FEAT_AMUv1p1		:= 2
-	ENABLE_FEAT_HCX			:= 2
-	ENABLE_FEAT_RNG			:= 2
-	ENABLE_FEAT_TWED		:= 2
-	ENABLE_FEAT_GCS			:= 2
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 ifeq (${ARCH}, aarch64)
 
 ifeq (${SPM_MM}, 0)
@@ -90,14 +55,8 @@ else
       ENABLE_SME_FOR_NS		:= 0
       ENABLE_SME2_FOR_NS	:= 0
 endif
-
-<<<<<<< HEAD
-# enable unconditionally for all builds
-ifeq (${ARCH}, aarch64)
-    ENABLE_BRBE_FOR_NS		:= 2
-    ENABLE_TRBE_FOR_NS		:= 2
 endif
-=======
+
       ENABLE_BRBE_FOR_NS		:= 2
       ENABLE_TRBE_FOR_NS		:= 2
       ENABLE_FEAT_D128			:= 2
@@ -108,7 +67,6 @@ endif
       ENABLE_FEAT_CPA2			:= 2
 endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 ENABLE_SYS_REG_TRACE_FOR_NS	:= 2
 ENABLE_FEAT_CSV2_2		:= 2
 ENABLE_FEAT_CSV2_3		:= 2
@@ -116,7 +74,6 @@ ENABLE_FEAT_CLRBHB		:= 2
 ENABLE_FEAT_DEBUGV8P9		:= 2
 ENABLE_FEAT_DIT			:= 2
 ENABLE_FEAT_PAN			:= 2
-ENABLE_FEAT_MTE_PERM		:= 2
 ENABLE_FEAT_VHE			:= 2
 CTX_INCLUDE_NEVE_REGS		:= 2
 ENABLE_FEAT_SEL2		:= 2
@@ -268,13 +225,7 @@ else
 					lib/cpus/aarch64/neoverse_v1.S		\
 					lib/cpus/aarch64/neoverse_e1.S		\
 					lib/cpus/aarch64/cortex_x2.S		\
-<<<<<<< HEAD
-					lib/cpus/aarch64/cortex_gelas.S		\
-					lib/cpus/aarch64/nevis.S		\
-					lib/cpus/aarch64/travis.S
-=======
 					lib/cpus/aarch64/cortex_x4.S
->>>>>>> upstream_import/upstream_v2_14_1
 	endif
 	# AArch64/AArch32 cores
 	FVP_CPU_LIBS	+=	lib/cpus/aarch64/cortex_a55.S		\
@@ -359,14 +310,10 @@ BL2_SOURCES		+=	plat/arm/board/fvp/aarch64/fvp_helpers.S	\
 				plat/arm/board/fvp/fvp_cpu_pwr.c
 
 BL31_SOURCES		+=	plat/arm/board/fvp/fvp_plat_attest_token.c	\
-<<<<<<< HEAD
-				plat/arm/board/fvp/fvp_realm_attest_key.c
-=======
 				plat/arm/board/fvp/fvp_realm_attest_key.c	\
 				plat/arm/board/fvp/fvp_el3_token_sign.c		\
 				plat/arm/board/fvp/fvp_ide_keymgmt.c		\
 				plat/arm/common/plat_rmm_mem_carveout.c
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 ifneq (${ENABLE_FEAT_RNG_TRAP},0)
@@ -471,15 +418,10 @@ FVP_TOS_FW_CONFIG	:=	${BUILD_PLAT}/fdts/${PLAT}_tsp_fw_config.dtb
 $(eval $(call TOOL_ADD_PAYLOAD,${FVP_TOS_FW_CONFIG},--tos-fw-config,${FVP_TOS_FW_CONFIG}))
 endif
 
-<<<<<<< HEAD
-ifeq (${TRANSFER_LIST}, 1)
-include lib/transfer_list/transfer_list.mk
-=======
 # Add the SOC_FW_CONFIG to FIP and specify the same to certtool
 $(eval $(call TOOL_ADD_PAYLOAD,${FVP_SOC_FW_CONFIG},--soc-fw-config,${FVP_SOC_FW_CONFIG}))
 # Add the NT_FW_CONFIG to FIP and specify the same to certtool
 $(eval $(call TOOL_ADD_PAYLOAD,${FVP_NT_FW_CONFIG},--nt-fw-config,${FVP_NT_FW_CONFIG}))
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 ifeq (${SPD},spmd)
@@ -526,19 +468,11 @@ endif
 endif
 
 ifeq (${HANDLE_EA_EL3_FIRST_NS},1)
-<<<<<<< HEAD
-ifeq (${ENABLE_FEAT_RAS},1)
-BL31_SOURCES		+=	plat/arm/board/fvp/aarch64/fvp_ras.c
-else
-BL31_SOURCES		+= 	plat/arm/board/fvp/aarch64/fvp_ea.c
-endif
-=======
     ifeq (${PLATFORM_TEST_FFH_LSP_RAS_SP},1)
         BL31_SOURCES		+=	plat/arm/board/fvp/aarch64/fvp_lsp_ras_sp.c
     endif
     BL31_SOURCES		+=	plat/arm/board/fvp/aarch64/fvp_ras.c	\
 					plat/arm/board/fvp/aarch64/fvp_ea.c
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 ifneq (${ENABLE_STACK_PROTECTOR},0)
@@ -633,10 +567,6 @@ ifeq (${PLATFORM_TEST_RAS_FFH}, 1)
     ifeq (${ENABLE_FEAT_RAS}, 0)
          $(error "PLATFORM_TEST_RAS_FFH expects ENABLE_FEAT_RAS to be 1")
     endif
-<<<<<<< HEAD
-    ifeq (${HANDLE_EA_EL3_FIRST_NS}, 0)
-         $(error "PLATFORM_TEST_RAS_FFH expects HANDLE_EA_EL3_FIRST_NS to be 1")
-=======
     ifeq (${SDEI_SUPPORT}, 0)
          $(error "PLATFORM_TEST_RAS_FFH expects SDEI_SUPPORT to be 1")
     endif
@@ -658,7 +588,6 @@ ifeq (${PLATFORM_TEST_FFH_LSP_RAS_SP}, 1)
     endif
     ifeq (${HANDLE_EA_EL3_FIRST_NS}, 0)
          $(error "PLATFORM_TEST_FFH_LSP_RAS_SP expects HANDLE_EA_EL3_FIRST_NS to be 1")
->>>>>>> upstream_import/upstream_v2_14_1
     endif
 endif
 
@@ -668,8 +597,6 @@ endif
 
 # Build macro necessary for running SPM tests on FVP platform
 $(eval $(call add_define,PLAT_TEST_SPM))
-<<<<<<< HEAD
-=======
 
 ifeq (${LFA_SUPPORT},1)
 BL31_SOURCES            +=      plat/arm/board/fvp/fvp_lfa.c
@@ -690,4 +617,3 @@ $(eval $(call TOOL_ADD_PAYLOAD,${FVP_FW_CONFIG},--fw-config,${FVP_FW_CONFIG}))
 $(eval $(call TOOL_ADD_PAYLOAD,${FVP_TB_FW_CONFIG},--tb-fw-config,${FVP_TB_FW_CONFIG}))
 endif
 endif
->>>>>>> upstream_import/upstream_v2_14_1

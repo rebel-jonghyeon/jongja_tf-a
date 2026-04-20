@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2016-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,11 +20,7 @@
 						SMCCC_VERSION_MINOR_SHIFT))
 
 #define SMCCC_MAJOR_VERSION U(1)
-<<<<<<< HEAD
-#define SMCCC_MINOR_VERSION U(4)
-=======
 #define SMCCC_MINOR_VERSION U(5)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * Bit definitions inside the function id as per the SMC calling convention

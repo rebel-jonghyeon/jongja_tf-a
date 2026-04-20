@@ -172,24 +172,9 @@ int psci_cpu_suspend_start(unsigned int idx,
 	if (psci_plat_pm_ops->pwr_domain_validate_suspend != NULL) {
 		rc = psci_plat_pm_ops->pwr_domain_validate_suspend(state_info);
 		if (rc != PSCI_E_SUCCESS) {
-<<<<<<< HEAD
-			skip_wfi = true;
-			goto exit;
-		}
-	}
-#endif
-
-	/* Update the target state in the power domain nodes */
-	psci_set_target_local_pwr_states(end_pwrlvl, state_info);
-
-#if ENABLE_PSCI_STAT
-	/* Update the last cpu for each level till end_pwrlvl */
-	psci_stats_update_pwr_down(end_pwrlvl, state_info);
-=======
 			goto suspend_exit;
 		}
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 	/* Update the target state in the power domain nodes */
@@ -216,10 +201,6 @@ int psci_cpu_suspend_start(unsigned int idx,
 	 * platform defined mailbox with the psci entrypoint,
 	 * program the power controller etc.
 	 */
-<<<<<<< HEAD
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	psci_plat_pm_ops->pwr_domain_suspend(state_info);
 
 #if ENABLE_PSCI_STAT
@@ -357,9 +338,5 @@ void psci_cpu_suspend_to_powerdown_finish(unsigned int cpu_idx, unsigned int max
 	/* This loses its meaning when not suspending, reset so it's correct for OFF */
 	psci_set_suspend_pwrlvl(PLAT_MAX_PWR_LVL);
 
-<<<<<<< HEAD
-	PUBLISH_EVENT(psci_suspend_pwrdown_finish);
-=======
 	PUBLISH_EVENT_ARG(psci_suspend_pwrdown_finish, &cpu_idx);
->>>>>>> upstream_import/upstream_v2_14_1
 }

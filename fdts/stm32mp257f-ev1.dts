@@ -1,25 +1,16 @@
 // SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 /*
-<<<<<<< HEAD
- * Copyright (C) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (C) 2023-2025, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
  */
 
 /dts-v1/;
 
-<<<<<<< HEAD
-#include "stm32mp257.dtsi"
-#include "stm32mp25xf.dtsi"
-=======
 #include <dt-bindings/clock/stm32mp25-clksrc.h>
 #include "stm32mp257.dtsi"
 #include "stm32mp25xf.dtsi"
 #include "stm32mp257f-ev1-ca35tdcid-rcc.dtsi"
 #include "stm32mp25-ddr4-2x16Gbits-2x16bits-1200MHz.dtsi"
->>>>>>> upstream_import/upstream_v2_14_1
 #include "stm32mp25-pinctrl.dtsi"
 #include "stm32mp25xxai-pinctrl.dtsi"
 
@@ -41,8 +32,6 @@
 	};
 };
 
-<<<<<<< HEAD
-=======
 &bsec {
 	board_id: board-id@3d8 {
 		reg = <0x3d8 0x4>;
@@ -204,7 +193,6 @@
 	status = "okay";
 };
 
->>>>>>> upstream_import/upstream_v2_14_1
 &usart2 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&usart2_pins_a>;

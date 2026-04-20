@@ -66,12 +66,9 @@ CTX_INCLUDE_AARCH32_REGS	:= 1
 # Include FP registers in cpu context
 CTX_INCLUDE_FPREGS		:= 0
 
-<<<<<<< HEAD
-=======
 # Include SVE registers in cpu context
 CTX_INCLUDE_SVE_REGS		:= 0
 
->>>>>>> upstream_import/upstream_v2_14_1
 # Debug build
 DEBUG				:= 0
 
@@ -109,13 +106,10 @@ ENABLE_STACK_PROTECTOR		:= 0
 # Flag to enable exception handling in EL3
 EL3_EXCEPTION_HANDLING		:= 0
 
-<<<<<<< HEAD
-=======
 # Flag to include all errata for all CPUs TF-A implements workarounds for
 # Its supposed to be used only for testing.
 ENABLE_ERRATA_ALL		:= 0
 
->>>>>>> upstream_import/upstream_v2_14_1
 # By default BL31 encryption disabled
 ENCRYPT_BL31			:= 0
 
@@ -175,8 +169,6 @@ HANDLE_EA_EL3_FIRST_NS		:= 0
 # Enable Handoff protocol using transfer lists
 TRANSFER_LIST			:= 0
 
-<<<<<<< HEAD
-=======
 # Enable HOB list to generate boot information
 HOB_LIST			:= 0
 
@@ -184,7 +176,6 @@ HOB_LIST			:= 0
 # By default, disables all SLS hardening.
 HARDEN_SLS			:= 0
 
->>>>>>> upstream_import/upstream_v2_14_1
 # Secure hash algorithm flag, accepts 3 values: sha256, sha384 and sha512.
 # The default value is sha256.
 HASH_ALG			:= sha256
@@ -232,12 +223,9 @@ PSCI_EXTENDED_STATE_ID		:= 0
 # Enable PSCI OS-initiated mode support
 PSCI_OS_INIT_MODE		:= 0
 
-<<<<<<< HEAD
-=======
 # SMCCC_ARCH_FEATURE_AVAILABILITY support
 ARCH_FEATURE_AVAILABILITY	:= 0
 
->>>>>>> upstream_import/upstream_v2_14_1
 # By default, BL1 acts as the reset handler, not BL31
 RESET_TO_BL31			:= 0
 
@@ -404,10 +392,6 @@ NR_OF_IMAGES_IN_FW_BANK		:= 1
 # Disable Firmware update support by default
 PSA_FWU_SUPPORT			:= 0
 
-<<<<<<< HEAD
-# By default, disable the mocking of RSS provided services
-PLAT_RSS_NOT_SUPPORTED		:= 0
-=======
 # Enable image description in FWU metadata by default when PSA_FWU_SUPPORT
 # is enabled.
 ifeq ($(PSA_FWU_SUPPORT),1)
@@ -415,7 +399,6 @@ PSA_FWU_METADATA_FW_STORE_DESC	:= 1
 else
 PSA_FWU_METADATA_FW_STORE_DESC	:= 0
 endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 # Dynamic Root of Trust for Measurement support
 DRTM_SUPPORT			:= 0
@@ -434,8 +417,6 @@ PSA_CRYPTO			:= 0
 # Disabled by default because it constitutes an attack vector into TF-A. It
 # should only be enabled if there is a use case for it.
 ENABLE_CONSOLE_GETC		:= 0
-<<<<<<< HEAD
-=======
 
 # Build option to disable EL2 when it is not used.
 # Most platforms switch from EL3 to NS-EL2 and hence the unused NS-EL2
@@ -480,4 +461,3 @@ SEPARATE_BL2_FIP		:=	0
 # Disable NUMA awareness for per-CPU framework by default. Platforms should
 # enable this feature by setting PLATFORM_NODE_COUNT > 1
 PLATFORM_NODE_COUNT		:= 1
->>>>>>> upstream_import/upstream_v2_14_1

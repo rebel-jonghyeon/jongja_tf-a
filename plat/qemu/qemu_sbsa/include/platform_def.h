@@ -249,11 +249,7 @@
 #define QEMU_FLASH1_SIZE		0x10000000
 
 #define PLAT_QEMU_FIP_BASE		BL1_SIZE
-<<<<<<< HEAD
-#define PLAT_QEMU_FIP_MAX_SIZE		0x00400000
-=======
 #define PLAT_QEMU_FIP_MAX_SIZE		(QEMU_FLASH0_SIZE - BL1_SIZE)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* This is map from GIC_DIST up to last CPU (255) GIC_REDISTR */
 #define DEVICE0_BASE			0x40000000

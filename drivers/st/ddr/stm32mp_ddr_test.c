@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (C) 2022-2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (C) 2022-2024, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -51,11 +47,7 @@ uintptr_t stm32mp_ddr_test_rw_access(void)
 
 	mmio_write_pattern(STM32MP_DDR_BASE, DDR_PATTERN);
 
-<<<<<<< HEAD
-	if (mmio_read_32(STM32MP_DDR_BASE) != DDR_PATTERN) {
-=======
 	if (mmio_read_pattern(STM32MP_DDR_BASE) != DDR_PATTERN) {
->>>>>>> upstream_import/upstream_v2_14_1
 		return STM32MP_DDR_BASE;
 	}
 
@@ -79,11 +71,7 @@ uintptr_t stm32mp_ddr_test_data_bus(void)
 	for (pattern = 1U; pattern != 0U; pattern <<= 1U) {
 		mmio_write_pattern(STM32MP_DDR_BASE, pattern);
 
-<<<<<<< HEAD
-		if (mmio_read_32(STM32MP_DDR_BASE) != pattern) {
-=======
 		if (mmio_read_pattern(STM32MP_DDR_BASE) != pattern) {
->>>>>>> upstream_import/upstream_v2_14_1
 			return STM32MP_DDR_BASE;
 		}
 	}
@@ -109,69 +97,39 @@ uintptr_t stm32mp_ddr_test_addr_bus(size_t size)
 	/* Write the default pattern at each of the power-of-two offsets. */
 	for (offset = sizeof(u_register_t); (offset & addressmask) != 0U;
 	     offset <<= 1U) {
-<<<<<<< HEAD
-		mmio_write_32(STM32MP_DDR_BASE + offset, DDR_PATTERN);
-	}
-
-	/* Check for address bits stuck high. */
-	mmio_write_32(STM32MP_DDR_BASE + testoffset, DDR_ANTIPATTERN);
-=======
 		mmio_write_pattern(STM32MP_DDR_BASE + offset, DDR_PATTERN);
 	}
 
 	/* Check for address bits stuck high. */
 	mmio_write_pattern(STM32MP_DDR_BASE + testoffset, DDR_ANTIPATTERN);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	for (offset = sizeof(u_register_t); (offset & addressmask) != 0U;
 	     offset <<= 1U) {
-<<<<<<< HEAD
-		if (mmio_read_32(STM32MP_DDR_BASE + offset) != DDR_PATTERN) {
-=======
 		if (mmio_read_pattern(STM32MP_DDR_BASE + offset) != DDR_PATTERN) {
->>>>>>> upstream_import/upstream_v2_14_1
 			return STM32MP_DDR_BASE + offset;
 		}
 	}
 
-<<<<<<< HEAD
-	mmio_write_32(STM32MP_DDR_BASE + testoffset, DDR_PATTERN);
-=======
 	mmio_write_pattern(STM32MP_DDR_BASE + testoffset, DDR_PATTERN);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Check for address bits stuck low or shorted. */
 	for (testoffset = sizeof(u_register_t); (testoffset & addressmask) != 0U;
 	     testoffset <<= 1U) {
-<<<<<<< HEAD
-		mmio_write_32(STM32MP_DDR_BASE + testoffset, DDR_ANTIPATTERN);
-=======
 		mmio_write_pattern(STM32MP_DDR_BASE + testoffset, DDR_ANTIPATTERN);
->>>>>>> upstream_import/upstream_v2_14_1
 
 		if (mmio_read_pattern(STM32MP_DDR_BASE) != DDR_PATTERN) {
 			return STM32MP_DDR_BASE;
 		}
 
-<<<<<<< HEAD
-		for (offset = sizeof(uint32_t); (offset & addressmask) != 0U;
-		     offset <<= 1) {
-			if ((mmio_read_32(STM32MP_DDR_BASE + offset) != DDR_PATTERN) &&
-=======
 		for (offset = sizeof(u_register_t); (offset & addressmask) != 0U;
 		     offset <<= 1U) {
 			if ((mmio_read_pattern(STM32MP_DDR_BASE + offset) != DDR_PATTERN) &&
->>>>>>> upstream_import/upstream_v2_14_1
 			    (offset != testoffset)) {
 				return STM32MP_DDR_BASE + offset;
 			}
 		}
 
-<<<<<<< HEAD
-		mmio_write_32(STM32MP_DDR_BASE + testoffset, DDR_PATTERN);
-=======
 		mmio_write_pattern(STM32MP_DDR_BASE + testoffset, DDR_PATTERN);
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	return 0UL;
@@ -186,11 +144,7 @@ uintptr_t stm32mp_ddr_test_addr_bus(size_t size)
  ******************************************************************************/
 size_t stm32mp_ddr_check_size(void)
 {
-<<<<<<< HEAD
-	size_t offset = sizeof(uint32_t);
-=======
 	size_t offset = sizeof(u_register_t);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	mmio_write_pattern(STM32MP_DDR_BASE, DDR_PATTERN);
 

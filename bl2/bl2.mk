@@ -9,7 +9,6 @@ BL2_SOURCES		+=	bl2/bl2_image_load_v2.c			\
 				bl2/${ARCH}/bl2_arch_setup.c		\
 				lib/locks/exclusive/${ARCH}/spinlock.S	\
 				plat/common/${ARCH}/platform_up_stack.S	\
-				common/tf_crc32.c		\
 				${MBEDTLS_SOURCES}
 
 ifeq (${ARCH},aarch64)
@@ -36,30 +35,13 @@ endif
 
 ifeq (${RESET_TO_BL2},1)
 # BL2 at EL3, no RME
-<<<<<<< HEAD
-BL2_SOURCES		+=	bl2/${ARCH}/bl2_el3_entrypoint.S	\
-				bl2/${ARCH}/bl2_el3_exceptions.S	\
-				bl2/${ARCH}/bl2_run_next_image.S        \
-				lib/cpus/${ARCH}/cpu_helpers.S
-=======
 BL2_SOURCES		+=	lib/cpus/${ARCH}/cpu_helpers.S
 endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 ifeq (${ENABLE_PMF},1)
 BL2_SOURCES		+=	lib/pmf/pmf_main.c
 endif
 
-<<<<<<< HEAD
-BL2_DEFAULT_LINKER_SCRIPT_SOURCE := bl2/bl2_el3.ld.S
-endif
-
-ifeq (${ENABLE_PMF},1)
-BL2_SOURCES		+=	lib/pmf/pmf_main.c
-endif
-
-BL2_SOURCES		+=	lib/sic/sic.c
-=======
 # CRYPTO_SUPPORT
 NEED_AUTH := $(if $(filter 1,$(TRUSTED_BOARD_BOOT)),1,)
 NEED_HASH := $(if $(filter 1,$(MEASURED_BOOT) $(DRTM_SUPPORT)),1,)
@@ -76,4 +58,3 @@ $(eval $(call assert_numerics,\
     $(sort \
 	CRYPTO_SUPPORT \
 )))
->>>>>>> upstream_import/upstream_v2_14_1
