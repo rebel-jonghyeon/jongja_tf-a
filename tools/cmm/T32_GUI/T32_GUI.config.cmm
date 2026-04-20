@@ -1,0 +1,71 @@
+; REBEL_Q T32 System Configuration
+
+B::
+
+GLOBAL &DIRECT_CONNECT &CL_ID
+ENTRY &DIRECT_CONNECT &CL_ID
+
+; Set DAP's IR/DR POST/PRE value for the target chiplet
+IF &DIRECT_CONNECT==1.
+(
+    SYStem.CONFIG DAPIRPRE      0.
+    SYStem.CONFIG DAPIRPOST     0.
+    SYStem.CONFIG DAPDRPRE      0.
+    SYStem.CONFIG DAPDRPOST     0.
+)
+ELSE IF &CL_ID==0.
+(
+    SYStem.CONFIG DAPIRPRE      12.
+    SYStem.CONFIG DAPIRPOST     0.
+    SYStem.CONFIG DAPDRPRE      3.
+    SYStem.CONFIG DAPDRPOST     0.
+)
+ELSE IF &CL_ID==1.
+(
+    SYStem.CONFIG DAPIRPRE      0.
+    SYStem.CONFIG DAPIRPOST     12.
+    SYStem.CONFIG DAPDRPRE      0.
+    SYStem.CONFIG DAPDRPOST     3.
+)
+ELSE IF &CL_ID==2.
+(
+    SYStem.CONFIG DAPIRPRE      8.
+    SYStem.CONFIG DAPIRPOST     4.
+    SYStem.CONFIG DAPDRPRE      2.
+    SYStem.CONFIG DAPDRPOST     1.
+)
+ELSE IF &CL_ID==3.
+(
+    SYStem.CONFIG DAPIRPRE		4.
+    SYStem.CONFIG DAPIRPOST	    8.
+    SYStem.CONFIG DAPDRPRE		1.
+    SYStem.CONFIG DAPDRPOST	    2.
+)
+ELSE
+(
+    PRINT "NOT SUPPORTED!!!"
+    ENDDO
+)
+
+; Basic setting
+SYStem.JtagClock                20MHz
+SYStem.CPU                      CORTEXA73
+
+SYStem.Option ResBreak          OFF
+SYStem.Option EnReset           OFF
+SYStem.Option TRST              OFF
+SYStem.Option.MemStatusCheck    ON
+
+; APB-AP for CA73 debug
+SYStem.CONFIG.APBAP1.Base       DP:0x00004000
+SYStem.CONFIG.COREDEBUG.Base    APB:0x00810000
+SYStem.CONFIG.CTI.Base          APB:0x00820000
+
+; AXI-AP
+SYStem.CONFIG.AXIAP1.Base       DP:0x00002000
+
+Break.CONFIG.METHOD Program Onchip
+Break.CONFIG.METHOD Read Onchip
+Break.CONFIG.METHOD Write Onchip
+
+ENDDO

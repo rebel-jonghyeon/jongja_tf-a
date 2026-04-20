@@ -1,0 +1,39 @@
+
+test_hkdf: User container for performing HKDF functions
+
+Usage:
+    hkdf-extract [core] [salt bytes] [ikm bytes]
+    hkdf-expand [core] [pkr bytes] [info bytes] [length]
+    hkdf-ext-exp [core] [salt bytes] [ikm bytes] [info bytes] [length]
+Note: Set %00 or 0 for NULL parameter
+
+Load the user container and see usage in logs:
+$ mwtest.py -c100 run test_hkdf.img
+$ cmtest log
+
+Generate a pseudorandom key of 32 bytes with SHA-256:
+cmtest cmd hkdf-extract s2hc %00 %0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b -f100
+Sending data to CMRT via SIC...
+...received 32 bytes OK
+00000000: 19 ef 24 a3 2c 71 7b 16  7f 33 a9 1d 6f 64 8b df  |..$.,q{..3..od..|
+00000010: 96 59 67 76 af db 63 77  ac 43 4c 1c 29 3c cb 04  |.Ygv..cw.CL.)<..|
+
+Derive a cryptographic key of a specified length with SHA-256:
+cmtest cmd hkdf-expand s2hc %19ef24a32c717b167f33a91d6f648bdf96596776afdb6377ac434c1c293ccb04
+%00 42 -f100
+Sending data to CMRT via SIC...
+...received 42 bytes OK
+00000000: 8d a4 e7 75 a5 63 c1 8f  71 5f 80 2a 06 3c 5a 31  |...u.c..q_.*.<Z1|
+00000010: b8 a1 1f 5c 5e e1 87 9e  c3 45 4e 5f 3c 73 8d 2d  |...\^....EN_<s.-|
+00000020: 9d 20 13 95 fa a4 b6 1a  96 c8                    |. ........|
+
+Generate a pseudorandom key and derive a cryptographic key of a specified length:
+cmtest cmd hkdf-ext-exp s2hc %00 %0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b %00 42 -f100
+Sending data to CMRT via SIC...
+...received 42 bytes OK
+00000000: 8d a4 e7 75 a5 63 c1 8f  71 5f 80 2a 06 3c 5a 31  |...u.c..q_.*.<Z1|
+00000010: b8 a1 1f 5c 5e e1 87 9e  c3 45 4e 5f 3c 73 8d 2d  |...\^....EN_<s.-|
+00000020: 9d 20 13 95 fa a4 b6 1a  96 c8                    |. ........|
+
+Unload the user container:
+$ mwtest.py -c100 unload

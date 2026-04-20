@@ -1,0 +1,20 @@
+add_library(test_rbln
+	OBJECT
+	test_rbln.c
+)
+
+target_compile_definitions(test_rbln
+	PRIVATE
+	UNITY_FIXTURE_NO_EXTRAS
+)
+
+target_link_libraries(test_rbln
+	PUBLIC
+	cli_service
+	${CMAKE_ROOT_DIR}/binaries/Replay_Lib/libreplay_service.a
+)
+
+target_include_directories(test_rbln
+	PUBLIC
+	${TEST_COMMON_INCLUDES}
+)

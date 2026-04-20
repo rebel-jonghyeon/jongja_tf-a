@@ -1,0 +1,179 @@
+
+test_aes: Showcase basic encryption and decryption using the
+          AES core via the Unified API
+
+AEAD features and use of the key derivation core in conjunction with the
+AES core are not supported in this container.
+
+Load the container and see usage in logs:
+$ mwtest.py -c100 run test_aes.img
+$ cmtest log
+<...>
+CI: First message:   encrypt|decrypt MODE KEY [IV]
+CI: Next message(s): DATA or unaligned/empty for final
+CI: MODE:   ecb|cbc|cfb|ctr
+CI: TAGLEN: Length of tag in bytes
+CI: KEY:    string or 0x.. for hex data
+CI: IV:     ascii or 0x.. for hex data
+CI: DATA:   ascii or binary
+CI:
+CI: Note: DATA is unaligned iff length % 16 != 0
+<...>
+
+Examples (relevant cmtest log output is shown below commands)
+-------------------------------------------------------------
+
+1) Encrypting
+
+$ cmtest data -f100 'encrypt cbc AAAAAAAAAAAAAAAA BBBBBBBBBBBBBBBB'
+CD: Performing cmrt_aes_init() with operation=0 mode=1 taglen=0 key=0x1028334 keylen=16 iv=0x1028344 ivlen=16
+
+$ cmtest data -f100 "CCCCCCCCCCCCCCCC" > ./ciphertext
+CI: Got request from HLOS of 16 bytes
+CD: Request from HLOS:
+CD:00000000 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 |CCCCCCCCCCCCCCCC|
+CD: updatelen = 16 finallen = 0
+CD: Doing cmrt_aes_update...
+CI: Sending response to HLOS of 16 bytes
+CD: Response to HLOS:
+CD:00000000 aa 1a 18 ff 55 61 5f 61 22 f2 87 48 65 c8 1b fc |....Ua_a"..He...|
+(note: this data is also sent to HLOS via SIC)
+
+Since the data length was aligned we need to send an empty message to
+finalize the operation.
+Otherwise the container will keep expecting more data to encrypt.
+$ cmtest data -f100 ''
+CD: updatelen = 0 finallen = 0
+CD: Doing cmrt_aes_final...
+CI: Closing AES context
+CI: Sending response to HLOS of 0 bytes
+
+2) Decrypting
+Let's decrypt the previously encrypted message.
+
+$ cmtest data -f100 'decrypt cbc AAAAAAAAAAAAAAAA BBBBBBBBBBBBBBBB'
+CD: Performing cmrt_aes_init() with operation=1 mode=1 taglen=0 key=0x1028334 keylen=16 iv=0x1028344 ivlen=16
+
+$ cmtest data -f100 ./ciphertext
+CI: Got request from HLOS of 16 bytes
+CD: Request from HLOS:
+CD:00000000 aa 1a 18 ff 55 61 5f 61 22 f2 87 48 65 c8 1b fc |....Ua_a"..He...|
+CD: updatelen = 16 finallen = 0
+CD: Doing cmrt_aes_update...
+CI: Sending response to HLOS of 16 bytes
+CD: Response to HLOS:
+CD:00000000 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 |CCCCCCCCCCCCCCCC|
+
+$ cmtest data -f100 ''
+
+Notes
+-----
+
+The container processes input in a loop. If a unified api call fails it will
+exit.
+
+Nothing special needs to be done to send more than one block. test_aes
+processes all the data you send to it. Last block is padded with zero to the
+blocksize if necessary.
+
+You can see the logs to see when cmrt_aes_update() and cmrt_aes_final() are
+called.
+
+Running some AES KATs (Known Answer Tests)
+------------------------------------------
+
+KEY = 00000000000000000000000000000000         (16 bytes hex-encoded)
+IV = 00000000000000000000000000000000
+PLAINTEXT = ffffffffffffffe00000000000000000
+CIPHERTEXT = d451b8d6e1e1a0ebb155fbbf6e7b7dc3
+
+$ cmtest data -f100 'encrypt cbc 0x00000000000000000000000000000000 0x00000000000000000000000000000000'
+$ printf 'ffffffffffffffe00000000000000000' | xxd -r -p > cleartext
+$ cmtest data -f100 ./cleartext > ./ciphertext
+...received 16 bytes OK
+00000000: d4 51 b8 d6 e1 e1 a0 eb  b1 55 fb bf 6e 7b 7d c3  |.Q.......U..n{}.|
+
+$ cmtest data -f100 'decrypt cbc 0x00000000000000000000000000000000 0x00000000000000000000000000000000'
+$ cmtest data -f100 ./ciphertext
+...received 16 bytes OK
+00000000: ff ff ff ff ff ff ff e0  00 00 00 00 00 00 00 00  |................|
+
+Same result as test vector expected output.
+
+
+In the following lines you can find a few more AES KAT vectors.
+
+mode ecb
+KEY = 00000000000000000000000000000000
+PLAINTEXT = ffffffffffffffe00000000000000000
+CIPHERTEXT = d451b8d6e1e1a0ebb155fbbf6e7b7dc3
+
+mode cfb
+KEY = 00000000000000000000000000000000
+IV = ffffffffffffffe00000000000000000
+PLAINTEXT = 00000000000000000000000000000000
+CIPHERTEXT = d451b8d6e1e1a0ebb155fbbf6e7b7dc3
+
+Examples for AEAD modes
+-----------------------
+
+For AEAD modes like GCM, end-of-data is still signaled with either a last
+message of length not multiple of 16 or with an empty message. The last
+message is not padded with 0. The length of the ciphertext is exactly the
+length of the cleartext.
+
+For encrypt operations, the last response message contains appended the
+authentication tag. If the last sent message is the empty message, the
+response is exactly the authentication tag.
+
+The start message (before the data message) needs to contain the tag (for
+decrypt) or the tag length (for encrypt).
+
+The AAD (additional authenticated data) has to be provided in its entirety in
+the start message or provide a "-" meaning there is no AAD.
+
+$ cmtest data -f100 "encrypt gcm 16 - 0xca7db9e97cfa056b80dcd04f46228640 0x5e8dc246ee835dc5f229d698"
+                        taglen --^  ^-- no aad     ^-- key              iv --^
+$ printf "964610fb6585cbbb070fd9ab10a7a600" | xxd -r -p > ./cleartext
+$ cmtest data -f100 ./cleartext > ciphertext
+$ cmtest data -f100 "" > tag
+
+$ xxd -p ./tag
+c633075a8b608d5f96971d2bc1ea2a0e
+                                 !-- tag instead of taglen for "decrypt"
+$ cmtest data -f100 "decrypt gcm 0xc633075a8b608d5f96971d2bc1ea2a0e - 0xca7db9e97cfa056b80dcd04f46228640 0x5e8dc246ee835dc5f229d698"
+$ cmtest data -f100 ./ciphertext > decypted_text
+$ cmtest data -f100 ""
+$ xxd -p ./decrypted_text
+964610fb6585cbbb070fd9ab10a7a600
+$ cmp ./cleartext ./decrypted_text
+$
+
+If we repeat the same decryption but we corrupt the provided tag, the first
+data message is decrypted successfully but the last empty message will
+trigger an exit of the container because the last syscall fails with -5.
+
+14:23:14,904: CE: cmrt_aes_final failed with -5
+
+This means an authentication error.
+
+Sending a single empty data message after the starts message is valid and it
+represents an empty message. The tag is returned.
+
+Examples for CMAC mode
+----------------------
+
+CMAC is a keyed hash. The container considers the end of input when either an
+empty data message is received or a message whose length is not multiple of 16,
+same as the normal cipher modes. However, only the last message will yield a
+result via SIC, which is the fixed-size hash (16 bytes) of all the data.
+
+$ cmtest data -f100 "cmac 0x41414141414141414141414141414141"
+$ cmtest data -f100 "" > hash
+$ xxd -p ./hash
+1686dfe9b1609462ef3a6a4b3469b54a
+
+$ cmtest data -f100 "cmac 0x41414141414141414141414141414141"
+$ cmtest data -f100 "hello" > hash
+$ xxd -p ./hash
+ecebc53d3568d175b3c729bb77d3399b

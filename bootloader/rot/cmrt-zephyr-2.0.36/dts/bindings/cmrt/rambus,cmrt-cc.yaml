@@ -1,0 +1,7 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT Canary Core
+
+compatible: "rambus,cmrt-cc"
+
+include: rambus,cmrt-hwc.yaml

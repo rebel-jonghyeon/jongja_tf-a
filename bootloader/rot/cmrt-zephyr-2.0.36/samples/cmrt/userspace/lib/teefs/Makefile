@@ -1,0 +1,11 @@
+CTOOLDIR=../common
+
+user_name = libteefs.a
+user_objs = ./teefs.o \
+	./teedev.o
+
+user_cflags = -DCONFIG_TEEFS_MAX_INSTANCES=1 -DCONFIG_TEEFS_MAX_PAGES=15 -DCONFIG_TEEFS_MAX_FILES=4 -DCONFIG_TEEFS_MAX_PAGE_SIZE=8 -DCONFIG_TEEFS_MAX_DIRS=1 -DCONFIG_TEEFS_MAX_CACHE_PAGES=4 -DCONFIG_TEEFS_MAX_BAD_BLOCKS=1 -DCONFIG_TEEFS_MAX_NAMELEN=64
+
+include ../../common/lib.mk
+
+user_includes = -I$(USDIR)/include/fs

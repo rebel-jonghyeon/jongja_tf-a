@@ -1,0 +1,34 @@
+
+linger sample container: Receive message, linger for a while (total 1 sec)
+                         in critical moments, then echo reply to the caller
+
+This is to demonstrate EBUSY scenario in SIC communication.
+
+Run (load and start) container:
+
+    $ mwtest.py -c100 run sample_linger.img
+
+Create test data:
+
+    $ printf echo.me. > testfile
+
+Send testfile twice to the container:
+
+    $ cmtest data -f100 testfile; cmtest data -f100 testfile
+
+The second pmtest invocation, when reading response from container
+will fail with "FAILED: 16: Device or resource busy"
+
+The reason is that the write sent before did not go through as the
+container was not yet ready to receive the message. That information
+is not known by the caller until it tries to receive reply.
+
+In real-world application should such an improbable case that EBUSY
+is received in (response) read, the write request has to be re-sent.
+
+The CMRT HLOS Programmer's Guide contains section "SIC Protocol Scenarios"
+which has this request - response service well documented.
+
+Unload container:
+
+    $ mwtest.py -c100 unload

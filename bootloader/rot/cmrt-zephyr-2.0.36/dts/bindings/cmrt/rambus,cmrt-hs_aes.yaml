@@ -1,0 +1,7 @@
+# Copyright (c) 2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT HS AES Core
+
+compatible: "rambus,cmrt-hs_aes"
+
+include: rambus,cmrt-hwc.yaml

@@ -1,0 +1,24 @@
+
+test_lms: LMS and LMS-HSS message verification
+
+Input required for LMS operations:
+- public key
+- message
+- message length
+- signature
+
+Output:
+- return value, 0 means success
+
+Load the container and see usage in logs:
+$ mwtest.py -c100 run test_lms.img
+$ cmtest log
+<...>
+<...>
+
+Example:
+$ cmtest cmd -f100 open 0
+$ cmtest cmd -f100 lms-verify PK MESSAGE SIGNATURE
+
+To unload container:
+$ mwtest.py -c100 unload

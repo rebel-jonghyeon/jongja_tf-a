@@ -1,0 +1,40 @@
+
+test_kdc: Test the KDC along with HMAC, AES, and ECDH
+
+First message:      AES|HC|ECDH [MODE | OP] [ALGO | CORE] [DATALEN] [KEYSIZE] [CURVE] KEY [DIV_PATH]
+Next message(s):    AES|HC|ECDH update|final|aad|private|public DATA
+MODE (AES):         ecb|cbc|cfb|ctr|gcm|ccm|cmac|xts
+OP (AES):           encrypt|decrypt
+ALGO (HC):          sha-224|sha-256|sha-384|sha-512|sha-512_224|sha-512_256|
+                    sha3-224|sha3-256|sha3-384|sha3-512|shake128|shake256|whirlpool
+CORE (HC):          s2hc|s3hc|cshc|whc
+DATALEN (AES GCM):  total data that will be used
+KEYSIZE (AES|HC):   16|32
+KEY (AES|HC|ECDH):  DGOK|BNAK|SNAK|PNAK
+CURVE (ECDH):       NIST_P192|NIST_P224|NIST_P256|NIST_P384|NIST_P521|Bp_P192R1|
+                    Bp_P224R1|Bp_P256R1|Bp_P320R1|Bp_P384R1|Bp_P512R1|Bp_P192T1|
+                    Bp_P224T1|Bp_P256T1|Bp_P320T1|Bp_P384T1|Bp_P512T1|X25519|
+                    X448|FRP_256V1
+DIV_PATH (ECDH):    diversity path to differentiate between user key and peer key (any value)
+DATA (AES|HC|ECDH): ascii or binary (no hex encoding)
+
+Load the container and see usage in logs:
+$ mwtest.py -c100 run test_kdc.img
+$ cmtest log
+
+To run HMAC with alg SHA2 224 using s2hc core and 16 bytes key:
+$ cmtest cmd -f100 HC sha-224 s2hc 16 DGOK
+$ cmtest cmd -f100 HC update 00112233445566778899AABBCCDDEEFF
+$ cmtest cmd -f100 HC final 00112233445566778899AABBCCDDEEFF
+
+To run AES CBC encrypt with 16 bytes key:
+$ cmtest cmd -f100 AES cbc encrypt 16 SNAK
+$ cmtest cmd -f100 AES update 00112233445566778899AABBCCDDEEFF
+$ cmtest cmd -f100 AES final 00112233445566778899AABBCCDDEEFF
+
+To run ECDH with NIST P256:
+$ cmtest cmd -f100 ECDH NIST_P256 DGOK custom_div_path
+$ cmtest cmd -f100 ECDH private %81453846e1a3b89af0e34c849add02af
+
+To unload container:
+$ mwtest.py -c100 unload

@@ -1,0 +1,27 @@
+
+sample_otp_sub: Demonstrate OTP root deletion/obliteration
+
+sample_otp_sub will delete a root created by sample_otp user container.
+
+Create a root for sample_otp_sub and dummy root by loading
+sample_otp container:
+
+$ mwtest.py -c 100 run sample_otp.img
+
+$ printf true > test.txt
+$ cmtest data -f100 test.txt
+
+Unload the sample_otp container:
+$ mwtest.py -c100 unload
+
+Run hard reset command as it is silo container
+$ cmtest reset hard
+
+Now load the sample_otp_sub container which will delete the dummy root
+created by sample_otp:
+
+$ mwtest.py -c100 run sample_otp_sub.img
+$ cmtest data -f100 test.txt
+
+To unload container:
+$ mwtest.py -c100 unload

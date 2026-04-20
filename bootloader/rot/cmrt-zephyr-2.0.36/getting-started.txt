@@ -1,0 +1,318 @@
+
+Getting Started with CMRT
+=========================
+
+An initial look to the CMRT source distribution, to build and
+run CMRT executables on QEMU environment for the first time.
+
+Refer to the CMRT System Architecture and User's Guide for further details.
+
+
+System Requirements
+-------------------
+
+The build environment should work on any Linux system published in 2016 or
+later with the following (or comparable) packages installed:
+
+* Debian/Ubuntu 64-bit
+
+    sudo apt-get update
+    sudo apt-get install --no-install-recommends build-essential git file \
+             libpixman-1-0 gperf
+
+* Fedora 64-bit
+
+    sudo dnf group install 'Development Tools'
+    sudo dnf install pixman gperf
+
+* RHEL/CentOS 64-bit
+
+    sudo yum group install 'Development Tools'
+    sudo yum install pixman gperf
+
+Note: These are minimum requirements for building and running CMRT software
+      for QEMU environment. Other documents may state more requirements for
+      e.g. any specific FPGA environment.
+
+
+CMRT Files
+----------
+
+* {cmrt-zephyr}.tar.xz
+
+    The CMRT sources built on Zephyr RTOS.
+
+    This is the package that draws the most interest!
+
+    The actual file name depends on its part number. Refer to the release
+    artifacts. Referenced in this document as '{cmrt-zephyr}.tar.xz'.
+
+* {cmrt-sdk}.sh
+
+    The CMRT Software Development Kit (SDK), contains a superset of
+    tools needed to pre-check, build and test all CMRT software.
+
+    The source of related QEMU (if not shipped elsewhere) is located in
+    $CMRT_SDK_BASE/src/qemu/ after SDK is installed.
+
+    The actual file name depends on its part number. Refer to the release
+    artifacts. Referenced in this document as '{cmrt-sdk}.sh'
+
+
+SDK Installation
+----------------
+
+To install the SDK, execute the following command:
+
+    $ ./{cmrt-sdk}.sh
+
+from command line (sh {cmrt-sdk}.sh if it did not have execution permission).
+
+Note that the default installation directory is /opt/cmrt/sdk/,
+and it may be required to run the script with sudo.
+
+After installation, source the SDK environment into your current shell:
+
+    $ source /opt/cmrt/sdk/sourceme-env-setup
+
+Note: Remember (or write down) the installation location if the SDK was
+installed into a non-default location.
+
+Uninstalling is easy. Run the following command: rm -rf /opt/cmrt/sdk/
+
+
+First Build
+-----------
+
+The source archive provides pre-built fboot, but no other CMRT executables.
+
+The following steps provide an initial overview of the build process:
+
+    $ tar xf {cmrt-zephyr}.tar.xz
+    $ cd {cmrt-zephyr}
+    $ script
+    $ source /opt/cmrt/sdk/sourceme-env-setup
+    $ source ./cmrt-zephyr-env.sh
+    $ export RELEASE_BUILD=1
+    $ make -C samples/cmrt
+    $ exit ;: from script -- environment back to pre-script state (*)
+    $ less typescript
+
+WARNING: The example code for sboot includes console hexdumps
+         for the generated keys and other sensitive data.
+
+(*) Alternative is to run the build as
+    $ /opt/cmrt/sdk/with-sdk-env.sh ./with-cmrt-env.sh make -C samples/cmrt RELEASE_BUILD=1
+to get the same build results. There are some use cases where this
+is more convenient than sourcing the configuration files. This document
+concentrates using the 'source' methods.
+
+
+Source Locations and Build Results
+----------------------------------
+
+* sboot
+
+The sboot source is available in samples/cmrt/sboot/, build results are
+written to samples/cmrt/sboot/build/.
+
+* supervisors
+
+The "sample" supervisors shipped are located in the
+samples/cmrt/supervisors/ directory tree. The file hierarchy is the same
+as in sboot above, just one level deeper in the file system. For example,
+samples/cmrt/supervisors/mw/build/ contains the build results of the 'mw'
+supervisor.
+
+* fboot Containers
+
+The "sample" fboot Containers shipped, 'blank', 'tested' and 'provisioned'
+are located in the samples/cmrt/perso/ directory tree. The file hierarchy
+is the same as in the cases above, just instead of /supervisor/, the path
+component is /perso/. For example, samples/cmrt/perso/blank/build/ contains
+the build results of the 'blank' fboot Container.
+
+* User Containers
+
+When CONFIG_USERSPACE is set in supervisor configuration (prj.conf),
+supervisor is able to run User Containers. User Containers are available
+in samples/cmrt/userspace/ directory tree.
+
+
+First Run
+---------
+
+To use the components built above, execute the following:
+
+    $ mkdir runtime
+    $ cd runtime
+    $ source /opt/cmrt/sdk/sourceme-env-setup
+    $ qemu-system-riscv32 -machine cmrt -cmrt config=../build/board.json -s \
+        -serial mon:stdio -kernel ../samples/cmrt/fboot/build/zephyr/zephyr.elf
+
+and observe the (boot) logs printed on the terminal.
+
+Note: When `qemu-system-riscv32` is run from command line, `ctrl-a x`
+exits QEMU (press `ctrl-a h` to get some help).
+
+Open a second terminal, and run the following provisioning steps:
+
+    $ cd {cmrt-zephyr}
+    $ source /opt/cmrt/sdk/sourceme-env-setup
+    $ source ./cmrt-zephyr-env.sh
+    $ cmtest status
+    $ cmtest data -f0 samples/cmrt/perso/blank/build/blank.img
+    $ cmtest reset
+    $ cmtest status
+    $ cmtest data -f0 samples/cmrt/perso/tested/build/tested.img
+    $ cmtest reset
+    $ cmtest status
+    $ cmtest data -f0 -o 8192 samples/cmrt/perso/provisioned/build/provisioned.img
+    $ cmtest reset
+    $ cmtest status
+
+(run the above manually for the first time, and spend time examining output)
+
+(the -o 8192 with provisioned.img is to speed up running it in QEMU
+-- the SIC protocol is so slow when running in QEMU that without it, it
+may take more than 10 seconds to run the provisioned fboot Container)
+
+The above steps "provisions" the CMRT environment, otpmem.bin in current
+directory contains provisioned OTP memory in MISSION lifecycle and sboot
+installed. extmem.bin contains (encrypted) supervisor (mw) image.
+
+When QEMU starts (using cmrt config) it reads otpmem.bin and extmem.bin
+from current directory (creates those as sparse files if those do not
+exist).
+So now one can copy the otpmem.bin and extmem.bin files for further use,
+so that this provision step does not need to be done every time QEMU
+is started.
+
+Now it is simplest to run the 'echo' User Container:
+
+    $ mwtest.py -c100 run samples/cmrt/userspace/containers/echo/echo.img
+    $ cmtest data -f100 "echo me back this message"
+    $ mwtest.py -c100 unload
+
+
+When caliptra is enabled, 'caliptra_setup' fboot container replaces
+'tested' fboot container. Other fboot containers are unchanged.
+'caliptra_rt' is the user container which is auto-loaded on boot.
+
+In the terminal where QEMU is running, press `ctrl-a x` to exit QEMU, and:
+
+    $ cd ..
+    $ rm -rf runtime
+    $ mkdir runtime
+    $ cd runtime
+    $ qemu-system-riscv32 -machine cmrt -cmrt config=../build/board.json -s \
+        -serial mon:stdio -kernel ../samples/cmrt/fboot/build/zephyr/zephyr.elf
+
+In the other terminal, run the following provisioning steps for caliptra
+flow:
+
+    $ cmtest status
+    $ cmtest data -f0 samples/cmrt/perso/blank/build/blank.img
+    $ cmtest reset
+    $ cmtest status
+    $ cmtest data -f0 samples/cmrt/perso/caliptra_setup/build/caliptra_setup.img
+    $ cmtest reset
+    $ cmtest status
+    $ cmtest data -f0 samples/cmrt/perso/caliptra_setup/build/caliptra_setup.img
+    $ cmtest status
+    $ samples/cmrt/hlos_tools/caliptra/caliptra-tool.py write-field-entropy --use-tmc
+    $ cmtest status
+    $ samples/cmrt/hlos_tools/caliptra/caliptra-tool.py export-idevid-csr --out idevid-csr.der
+    $ cmtest status
+    $ openssl asn1parse -inform DER -in idevid-csr.der -i
+    $ cmtest status
+    $ samples/cmrt/hlos_tools/caliptra/caliptra-tool.py create-ca --ca-dir ca
+    $ cmtest status
+    $ samples/cmrt/hlos_tools/caliptra/caliptra-tool.py issue-cert --ca-dir ca --csr idevid-csr.der --out idevid-cert.der
+    $ cmtest status
+    $ samples/cmrt/hlos_tools/caliptra/caliptra-tool.py import-idevid-cert-chain --ca-dir ca --input idevid-cert.der
+    $ cmtest status
+
+All done for 'caliptra_setup'.
+
+
+Create "autoload" image bundle with 'caliptra_rt' user container:
+
+    $ samples/cmrt/supervisors/mw/autoload.sh samples/cmrt/supervisors/mw/build/os.img \
+        samples/cmrt/userspace/containers/caliptra_rt/caliptra_rt.img os-autoload.img
+
+There are two options for provisioning the "autoload" image bundle.
+
+Option 1) Backdoor burn autoload bundle:
+
+    $ cmrt sac 0x40000 os-autoload.img
+
+Restart the board and the caliptra runtime should automatically run.
+
+    $ cmtest reset
+    $ cmtest status
+
+All done for 'caliptra_rt' user container.
+
+Option 2) Using caliptra provisioned fboot container to burn autoload bundle:
+
+To use 'provisioned' fboot container to burn autoload image bundle
+to external flash, set 'OS_IMG' variable with the absolute path of
+the caliptra autoload image bundle and rebuild the provisioned fboot container.
+
+    $ make -C samples/cmrt/perso/provisioned pristine
+    $ make -C samples/cmrt/perso/provisioned OS_IMG=$PWD/os-autoload.img
+
+Then, clear SAC, reset the board and run the provisioned fboot container.
+
+    $ cmtest clear sac
+    $ cmtest reset
+    $ cmtest data -f0 -o 8192 samples/cmrt/perso/provisioned/build/provisioned.img
+
+After the provisioned perso has executed, restart the board and the caliptra
+runtime will automatically run.
+
+    $ cmtest reset
+    $ cmtest status
+
+All done for 'caliptra_rt' user container.
+
+
+Supported commands from user container:
+
+    $ samples/cmrt/hlos_tools/caliptra/caliptra-tool.py export-owner-csrs --outdir csrs
+    $ samples/cmrt/hlos_tools/caliptra/caliptra-tool.py export-idevid-cert-chain --outdir chain
+    $ samples/cmrt/hlos_tools/caliptra/caliptra-tool.py update-field-entropy --input {file_with_random_data}
+
+To generate random data of 32 bytes to a file:
+
+    $ dd if=/dev/urandom bs=32 count=1 of=output.txt
+    $ samples/cmrt/hlos_tools/caliptra/caliptra-tool.py update-field-entropy --input output.txt
+
+
+Finally, perhaps the simplest way to quit running QEMU is to execute:
+
+    $ pkill qemu-system-ris ;: pkill -9 qemu-system-ris ;: to be sure
+
+
+First GDB session
+-----------------
+
+Remove otpmem.bin and extmem.bin (or rename those as a backup files).
+
+In the above QEMU execution command line, add `-S` to the arguments.
+
+Open new terminal window, change the directory to {cmrt-zephyr}/ and
+source the environment files.
+
+In this terminal, execute:
+
+   $ run-riscv32-gdb.sh qemu samples/cmrt/fboot/build/zephyr/zephyr.elf
+
+Enter `cont` to continue, `quit` to quit, and then `pkill qemu-system-ris`
+to clean up processes.
+
+To debug other components than fboot, set a breakpoint in a suitable place
+(for example lifecycle.c:handle_lc_blank) before continuing execution,
+then load symbols from another file in the GDB command prompt
+(e.g., symbol-file samples/cmrt/perso/blank/build/blank.elf).

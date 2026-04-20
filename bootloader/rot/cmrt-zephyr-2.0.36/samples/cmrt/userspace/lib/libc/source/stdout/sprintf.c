@@ -1,0 +1,1 @@
+../../../../../../../lib/libc/minimal/source/stdout/sprintf.c

@@ -1,0 +1,65 @@
+
+&reg_write_func = 1
+&reg_read_func = 2
+&reg_modify_func = 3
+
+&bass_addr=&g_sfr_base_addr
+
+CommonMain:
+IF &common_func==&reg_write_func
+(
+  GOSUB RegWrite &common_arg0 &common_arg1 ;offset, write data
+  GOTO CommonExit
+)
+IF &common_func==&reg_read_func
+(
+  LOCAL &temp
+  GOSUB RegRead &common_arg0; offset
+  RETURNVALUES &temp
+  &common_arg1=&temp
+
+  GOTO CommonExit
+)
+IF &common_func==&reg_modify_func
+(
+  GOSUB RegModify &common_arg0 &common_arg1 &common_arg2;offset, data, clear mask
+  GOTO CommonExit
+)
+CommonExit:
+
+ENDDO
+
+RegWrite:
+(
+  ENTRY &addr_offset &write_value
+  LOCAL &addr
+
+  &addr=&bass_addr+&addr_offset
+  Data.set zaxi:&addr %Long &write_value
+
+  RETURN
+)
+
+RegRead:
+(
+  ENTRY &addr_offset
+  LOCAL &addr &value
+  &addr=&bass_addr+&addr_offset
+  &value=Data.Long(zaxi:&addr)
+  RETURN "&value"
+)
+
+RegModify:
+(
+  ENTRY &addr_offset &value &clear_mask
+  LOCAL &addr &temp
+
+  &addr=&bass_addr+&addr_offset
+
+  &temp=Data.Long(zaxi:&addr)
+  &temp = (&temp)&~(&clear_mask)
+  &temp = &temp|&value
+  Data.set zaxi:&addr %Long &temp
+
+  RETURN
+)

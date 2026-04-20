@@ -1,0 +1,24 @@
+# Copyright (c) 2024 Samsung Electronics Co., Ltd.
+# SPDX-License-Identifier: Apache-2.0
+
+if SOC_REBEL_H
+
+config SOC
+	default "rebel_h"
+
+config NUM_IRQS
+	default 991
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default 500000000
+
+# Workaround for not being able to have commas in macro arguments
+DT_CHOSEN_Z_FLASH := zephyr,flash
+
+config FLASH_SIZE
+	default $(dt_chosen_reg_size_int,$(DT_CHOSEN_Z_FLASH),0,K)
+
+config FLASH_BASE_ADDRESS
+	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_FLASH))
+
+endif # SOC_QEMU_VIRT_ARM64

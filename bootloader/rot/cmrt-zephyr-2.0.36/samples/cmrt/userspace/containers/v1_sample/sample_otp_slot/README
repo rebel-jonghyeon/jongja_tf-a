@@ -1,0 +1,19 @@
+
+otp_slot: Exercise OMC slot write functions
+
+It leaves OTP in quite unusable state.
+
+The container should be run in TESTED or PROVISIONED lifecycle.
+It will update the lifecycle to MISSION.
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_otp_slot.img
+
+Sending anything to the container triggers the OTP slot write update:
+$ echo > testfile
+$ cmtest data -f100 testfile
+
+To unload container:
+$ mwtest.py -c100 unload
+
+Manually inspect OTP contents to verify the container really did run.

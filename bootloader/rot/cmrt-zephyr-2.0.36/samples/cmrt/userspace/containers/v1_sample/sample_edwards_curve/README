@@ -1,0 +1,13 @@
+
+sample_edwards_curve: Edwards curves sample
+
+Sample includes eddsa and rfc7748 for curve 25519 and 448.
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_edwards_curve.img
+
+To send data to container:
+$ cmtest data -f100 "Sign me please"
+
+To unload container:
+$ mwtest.py -c100 unload

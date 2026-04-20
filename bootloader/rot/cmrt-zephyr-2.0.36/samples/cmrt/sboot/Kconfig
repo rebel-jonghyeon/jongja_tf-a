@@ -1,0 +1,17 @@
+# Copyright (c) 2023 Cryptography Research, Inc. (CRI)
+
+menu "SBOOT Options"
+
+config CMRT_SBOOT_WATCHDOG_TIMEOUT_MS
+	int "Watchdog timeout in milliseconds"
+	default 5000 if CMRT_CALIPTRA_SUPPORT
+	default 2863 if CMRT_FBOOT_HAS_LMS_VERIFY || CMRT_FBOOT_HAS_LMS_HSS_VERIFY || CMRT_FBOOT_HAS_XMSS_VERIFY || CMRT_FBOOT_HAS_XMSS_MT_VERIFY
+	default 0
+	help
+	  CMRT boot till sboot with HW configured watchdog timeout.
+	  sboot configures watchdog timeout to a value that is appropriate for
+	  the device. This value should be changed by customer. If the value is
+	  zero then sboot will not configure a new watchdog timeout.
+endmenu
+
+rsource "../fboot/Kconfig"

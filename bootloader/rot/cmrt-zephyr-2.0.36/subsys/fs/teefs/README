@@ -1,0 +1,400 @@
+TEEFS and TEEDEV
+================
+v1.0, 2023-11-02, (c) 2019-2023 Cryptography Research, Inc.
+:sectnums:
+:toc:
+
+Revision history
+----------------
+
+[format="csv",cols="1,1,4,1",options="header",separator=";"]
+|===
+Version; Date; Comments; Editor
+v0.1; 2019-10-04; Initial version.
+v0.2; 2019-10-08; Operation principles added.
+v0.3; 2019-10-11; Configuration and OTP chapter added.
+v0.4; 2019-10-16; Simulation and unit testing chapter added.
+v0.5; 2021-02-05; Changed garbage collection scheme.
+v0.6; 2021-03-16; API change.
+v1.0; 2023-11-02; Updated for CMRTv2.
+|===
+
+
+Overview
+--------
+
+TEEFS is designed to be an object storage for Global Platform TEE Persistent
+Objects for Flash storages. TEEFS is not a general purpose file system
+(flat filesystem, no real directories, no links) but it has many typical
+filesystem characteristics like:
+
+- API to create, open, seek, read, write, truncate, rename and delete files.
+- Journaling support to fall back to last known good state in case of failure.
+- Perfect wear leveling for (Flash) storage.
+- Bad block management to work its way around bad blocks.
+- Support for page level encryption in TEEDEV.
+
+TEEDEV is the device abstraction TEEFS uses to read and save pages to the
+physical media. It can be implemented as a small layer using any (Flash)
+driver for the real work. A unit test device in `simdev.c` is an example
+TEEDEV that simulates Flash/OTP as a file in the development host.
+
+TEEFS supports a configurable number of filesystem instances. Each instance
+is bound to a TEEDEV. TEEDEVs need to be registered to a mount point before
+TEEFS can make use of them.
+
+
+Design goals
+------------
+
+As noted in previous chapter, TEEFS is designed to be an object storage for
+Global Platform TEE Persistent Objects for Flash storages. In addition,
+these have been the driving design goals:
+
+- Small memory footprint both in terms of code size and runtime RAM usage.
+  TEEFS can work with only one page as a cache at runtime.
+- No dynamic memory allocation.
+- Ability to create very small filesystems, starting from just few kilobytes.
+- Focus on reliability and recoverability.
+
+
+Important files, functions and structures
+-----------------------------------------
+
+TEEFS external API is defined in `include/fs/teefs.h`. Internal definitions are
+in `subsys/fs/teefs/src/teeint.h`. Complete implementation is in
+`subsys/fs/teefs/src/teefs.c`.
+
+TEEDEV external API is defined in `include/fs/teedev.h`. Simulation device
+is implemented in `subsys/fs/teefs/src/simdev.c` and it is used in unit test
+`subsys/fs/teefs/src/simfs.c`.
+
+One important function is `teefs_mount` which mounts the filesystem.
+It scans the filesystem blocks for the latest root entry. Root entries
+serve as journal entries that can be scanned to search for files.
+
+Function `teefs_gc` does garbage collecting which is needed to make room
+for new files by 'removing' deleted files.
+
+Finally, `prog_file` serves as a workhorse for all functions that save files,
+that is, `teefs_create`, `teefs_write`, `teefs_truncate`, `teefs_rename` and
+also `teefs_gc`.
+
+Thread safety
+~~~~~~~~~~~~~
+
+All functions are thread safe. Accessing a TEEFS instance simultaneously
+from multiple threads/processes is protected if CONFIG_TEEFS_MULTITHREADING
+is set.
+
+
+Operation principles
+--------------------
+
+Each page starts with a `tee_page_t` structure telling the page id and type.
+Page id is a running counter where the lowest bits tell the physical page.
+Page type is either `ROOT` for journal entries or `FILE` for actual files.
+
+Block and page sizes are defined by TEEDEV implementation, for a Flash
+device block size equals erase block size and page size equals write size
+which is typically smaller.
+
+Every time a file is written TEEFS writes one `ROOT` journal page after
+the `FILE` pages. For delete TEEFS just writes a new `ROOT`. Journal pages
+serve as the manifest for the files in the filesystem. Because TEEFS is
+accessing raw flash pages via TEEDEV, it cannot rewrite a page already
+written. Anything written stays there until corresponding block is erased.
+
+When existing file is changed somehow, for example when new data is appended,
+TEEFS always rewrites the entire file and the following `ROOT` marks the old
+version of the file deleted. Later on when `teefs_gc` is called, it searches
+the root chain for deleted entries and can make that space available for new
+files.
+
+Write caching
+~~~~~~~~~~~~~
+
+Depending on the number of cache pages in TEEDEV writes may be buffered.
+Even just a few cache pages will typically reduce the number of writes a lot.
+However, write buffering also means there's higher chance to lose data in
+case of power failure, for example. Only the files before the last valid
+`ROOT` are considered valid when TEEFS is mounted!
+
+NOTE: A recovery mount option has not been implemented. It could be,
+and with that it would be possible to recover even the files that were
+written to the media without the final `ROOT` page.
+
+An example run
+~~~~~~~~~~~~~~
+
+In the following example we create one file with initial data, then write
+some more data into it. Finally we do garbage collecting to free up the
+deleted version of the file.
+
+All diagrams below are produced by running `teedump` utility that visualizes
+filesystem contents.
+
+This is the state after creating the filesystem, just one empty root page:
+
+----
+ +------------------------------------------------------+
+ | 00000000  ROOT                                       |
+ |------------------------------------------------------|
+ | state:    OK                                         |
+ | roots:           1                                   |
+ | prev_id:  FFFFFFFF                                   |
+ | first_id: 00000000                                   |
+ | infos:           0                                   |
+ +------------------------------------------------------+
+----
+
+Then we created the file which fits into one page and is followed by a
+root entry.
+
+----
+ +------------------------------------------------------+
+ | 00000001  FILE                                       |
+ |------------------------------------------------------|
+ | fnv_hash: 80E7A876                                   |
+ | namelen:         5                                   |
+ | datalen:         5                                   |
+ | name: 00000000: 66 69 6c 65  31 00 00 00  |file1...| |
+ | data: 00000000: 64 61 74 61  31 00 00 00  |data1...| |
+ +------------------------------------------------------+
+
+ +------------------------------------------------------+
+ | 00000002  ROOT                                       |
+ |------------------------------------------------------|
+ | state:    OK                                         |
+ | roots:           1                                   |
+ | prev_id:  FFFFFFFF                                   |
+ | first_id: 00000000                                   |
+ | infos:           1                                   |
+ | fnv_hash: 80E7A876 old_id: 00000000 new_id: 00000001 |
+ +------------------------------------------------------+
+----
+
+Then we appended some data which makes a new file entry and new root entry:
+
+----
+ +------------------------------------------------------+
+ | 00000003  FILE                                       |
+ |------------------------------------------------------|
+ | fnv_hash: 80E7A876                                   |
+ | namelen:         5                                   |
+ | datalen:        20                                   |
+ | name: 00000000: 66 69 6c 65  31 00 00 00  |file1...| |
+ | data: 00000000: 64 61 74 61  31 5f 77 69  |data1_wi| |
+ +------------------------------------------------------+
+
+ +------------------------------------------------------+
+ | 00000004  ROOT                                       |
+ |------------------------------------------------------|
+ | state:    OK                                         |
+ | roots:           1                                   |
+ | prev_id:  FFFFFFFF                                   |
+ | first_id: 00000000                                   |
+ | infos:           2                                   |
+ | fnv_hash: 80E7A876 old_id: 00000000 new_id: 00000001 |
+ | fnv_hash: 80E7A876 old_id: 00000001 new_id: 00000003 |
+ +------------------------------------------------------+
+----
+
+The root entry above says we have a file with old page id 00000001 and
+new page id 00000003. This means we can garbage collect the old file.
+Function `teefs_gc` first creates a new clean root entry and starts
+moving files from the last root entry:
+
+----
+ +------------------------------------------------------+
+ | 00000005  ROOT                                       |
+ |------------------------------------------------------|
+ | state:    GC                                         |
+ | roots:           2                                   |
+ | prev_id:  00000004                                   |
+ | first_id: 00000005                                   |
+ | infos:           0                                   |
+ +------------------------------------------------------+
+
+ +------------------------------------------------------+
+ | 00000006  FILE                                       |
+ |------------------------------------------------------|
+ | fnv_hash: 80E7A876                                   |
+ | namelen:         5                                   |
+ | datalen:        20                                   |
+ | name: 00000000: 66 69 6c 65  31 00 00 00  |file1...| |
+ | data: 00000000: 64 61 74 61  31 5f 77 69  |data1_wi| |
+ +------------------------------------------------------+
+
+ +------------------------------------------------------+
+ | 00000007  ROOT                                       |
+ |------------------------------------------------------|
+ | state:    GC                                         |
+ | roots:           2                                   |
+ | prev_id:  00000004                                   |
+ | first_id: 00000005                                   |
+ | infos:           1                                   |
+ | fnv_hash: 80E7A876 old_id: 00000003 new_id: 00000006 |
+ +------------------------------------------------------+
+
+ +------------------------------------------------------+
+ | 00000008  ROOT                                       |
+ |------------------------------------------------------|
+ | state:    OK                                         |
+ | roots:           1                                   |
+ | prev_id:  00000004                                   |
+ | first_id: 00000005                                   |
+ | infos:           1                                   |
+ | fnv_hash: 80E7A876 old_id: 00000003 new_id: 00000006 |
+ +------------------------------------------------------+
+----
+
+Finally TEEFS state is set back to OK and a final root is written.
+Notice that `first_id` in the root entry has value 00000005 which is the
+first page actually in use. Pages 00000000 - 00000004 are now available
+for new data once we wrap around to the first block again.
+
+In this case there was only one file to move, but typically there are many
+and garbage collecting will move the live files over the deleted ones.
+
+Setting more than one cache page for a TEEDEV will reduce the number of
+intermediate root entries and write buffering may also mean that intermediate
+file updates are not written to the media.
+
+
+TEEFS configuration
+-------------------
+
+----
+config TEEFS_MAX_INSTANCES
+	int "Max number of TEEFS instances"
+	depends on TEEFS
+	default 1
+	help
+	  Defines the maximum number of TEEFS instances. One instance is
+	  connected to one device and operates individually. A device is
+	  connected to a mount point and needs to be there before TEEFS
+	  functions will work.
+
+config TEEFS_MAX_PAGES
+	int "Max number of pages in log2"
+	depends on TEEFS
+	default 15
+	help
+	  Valid values are 31, 15 and 7 in log2.
+	  With value 31 TEEFS can have 1 << 31 pages in a filesystem.
+	  With value 15 TEEFS can have 1 << 15 pages in a filesystem.
+	  With value 7 TEEFS can have 1 << 7 pages in a filesystem.
+	  The smaller the value the more space is saved on each page header.
+	  This may have a meaning in small OTP filesystems, for example,
+	  where each byte counts. Note that this is common setting for all
+	  teefs instances. Select the value depending on your use and your
+	  devices.
+
+config TEEFS_MAX_FILES
+	int "Max number of TEEFS file descriptors"
+	depends on TEEFS
+	default 8
+	help
+	  Defines the maximum number of TEEFS pre-allocated file descriptors.
+	  This means the maximum number of open files at once for all TEEFS
+	  instances. File descriptors do not take much memory.
+
+config TEEFS_MAX_DIRS
+	int "Max number of TEEFS directory descriptors"
+	depends on TEEFS
+	default 1
+	help
+	  Defines the maximum number of pre-allocated TEEFS directory
+	  descriptors. This means the maximum number of open directories
+	  at once for all TEEFS instances. Directory descriptors are more
+	  costly in terms of memory usage.
+
+config TEEFS_MAX_PAGE_SIZE
+	int "Max supported page size in log2"
+	depends on TEEFS
+	default 8
+	help
+	  Maximum supported page size. This should be tuned to match the
+	  largest device page size configuration. TEEFS allocates data
+	  structures based on this value.
+
+config TEEFS_MAX_CACHE_PAGES
+	int "Max supported number of pages to keep in cache"
+	depends on TEEFS
+	default 4
+	help
+	  TEEFS works fine with just one cache page. If there's more memory
+	  to spare this can be set larger to reduce the need to read/write
+	  pages from/to the disk device. This should be tuned to match the
+	  largest device cache pages configuration.
+
+config TEEFS_MAX_BAD_BLOCKS
+	int "Reserve for possible bad blocks"
+	depends on CMRT_TEEDEV_DMAC
+	default 1
+	help
+	  Blocks reserved to go around possible contiguous bad blocks.
+
+config TEEFS_MAX_NAMELEN
+	int "Maximum length reserved for file names"
+	depends on TEEFS
+	range 1 255
+	default 64
+	help
+	  Maximum file name length. Default value is 64 which comes from the
+	  TEE specification. File name will be truncated if first page cannot
+	  fit maximum file name length. This setting should be tuned to fit
+	  the smallest filesystem, like an OTP filesystem, where there is
+	  no space to spare.
+
+config TEEFS_MULTITHREADING
+	bool
+	prompt "TEEFS multithreading support"
+	default y if CONFIG_MULTITHREADING
+	default n
+	help
+	  Enable multithreading support in the TEEFS filesystem.
+----
+
+Typical TEEDEV configuration
+----------------------------
+
+Include `fs/teedev.h` with these defines to create a RAM device and allocate
+static memory structures for it:
+
+----
+#define TEEDEV_BLOCK_SIZE 12 /* erase block size in log2 (1 << value) */
+#define TEEDEV_PAGE_SIZE 8 /* page size in log2 (1 << value) */
+#define TEEDEV_CACHE_PAGES 4 /* nr of cache pages, see TEEFS_MAX_CACHE_PAGES */
+#define TEEDEV_WRITE_ONCE false /* true for OTP, false for FLASH/RAM/etc. */
+#define TEEDEV_WRITE_OVER false /* true for OTP/RAM/etc., false for FLASH. */
+#define TEEDEV_AUTO_OBLITERATE false /* can be true if write_over is allowed */
+#undef TEEDEV_CRYPTO /* define to use encrypted FS */
+#define TEEDEV_RAM /* define to use in-built RAM device */
+#include <fs/teedev.h>
+#include <fs/teefs.h>
+----
+
+Adding new device
+~~~~~~~~~~~~~~~~~
+
+If there's need for new devices in addition to TEEDEV_RAM, TEEDEV_DMAC,
+TEEDEV_FLASH and TEEDEV_OTP, one needs to add the calls into `fs/teedev.h`
+and the implementation into `drivers/cmrt/teefs/`.
+
+
+Simulation and unit testing
+---------------------------
+
+The `Makefile` will build two binaries you can run in your development host,
+a `teesim` for running `src/simfs.c` and `teedump` which can be used to
+visualize filesystem contents.
+
+Currently `src/simfs.c` just calls a bunch of TEEFS API functions and finally
+verifies that filesystem state is correct. The filesystem is simulated as a
+file `teesim.bin` in your development host.
+
+The best tool for testing the filesystem itself is `src/stressit.c` which
+runs TEEFS operations side by side with the development host filesystem
+and makes sure they have the same contents.

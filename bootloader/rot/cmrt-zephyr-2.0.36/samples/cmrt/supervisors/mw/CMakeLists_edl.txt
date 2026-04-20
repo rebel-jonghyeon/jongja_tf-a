@@ -1,0 +1,26 @@
+# Copyright (c) 2017-2023 Cryptography Research, Inc. (CRI).
+
+cmake_minimum_required(VERSION 3.20.0)
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(supervisor)
+
+if(CONFIG_DEBUG)
+  zephyr_cc_option(-Os)
+endif()
+add_definitions(-DSUPERVISOR_VERSION_INFO="${SUPERVISOR_VERSION_INFO}")
+
+target_include_directories(app PRIVATE
+  ${ZEPHYR_BASE}/samples/cmrt/fboot/include
+  ${ZEPHYR_BASE}/include
+  )
+
+target_sources(app PRIVATE
+  src/main.c
+  )
+target_link_libraries(app PUBLIC "-Wl,-e__reset")
+
+if(CONFIG_CMRT_CALIPTRA_SUPPORT)
+  target_sources(app PRIVATE src/caliptra.c)
+  target_link_libraries(app PRIVATE caliptra)
+endif()

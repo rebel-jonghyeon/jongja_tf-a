@@ -1,0 +1,13 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT Core-Local interruptor
+
+compatible: "rambus,cmrt-clint"
+
+include: riscv,clint0.yaml
+
+properties:
+    wdt-hw-start:
+      required: false
+      type: boolean
+      description: Watchdog is started by HW

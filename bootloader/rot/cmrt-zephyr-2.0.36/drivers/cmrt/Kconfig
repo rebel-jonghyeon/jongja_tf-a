@@ -1,0 +1,532 @@
+# Kconfig - CMRT configuration options
+
+# Copyright (c) 2017-2023 Cryptography Research, Inc. (CRI).
+
+if SOC_SERIES_RISCV_CMRT
+
+module = CMRT
+module-str = cmrt
+source "subsys/logging/Kconfig.template.log_config"
+
+config CMRT_AES
+	bool "Enable AES Core (AES)"
+	default y
+	help
+	  Enable AES Core (AES) Driver.
+
+config CMRT_CC
+	bool "Enable Canary Core (CC)"
+	default y
+	help
+	  Enable Canary Core (CC) driver.
+
+config CMRT_CCP
+	bool "Enable CCP Core (CCP)"
+	depends on !CMRT_FBOOT
+	default n
+	help
+	  Enable ChaChaPoly Core (CCP) Driver.
+
+config CMRT_DMAC
+	bool "Enable Direct Memory Access Controller (DMAC)"
+	default y
+	help
+	  Enable Enable Direct Memory Access Controller (DMAC) driver
+
+config CMRT_DMAC_THRESHOLD
+	int "Threshold for using DMAC in crypto cores"
+	default 256
+	help
+	  Crypto cores like AES and the HC cores can internally use DMAC
+	  for offloading data transfer from the CPU. DMAC will be used if
+	  data size is equal or larger than the value here. Value zero
+	  means DMAC is not used at all.
+
+config CMRT_EAC
+	bool "Enable Error Aggregator Core (EAC)"
+	default y
+	help
+	  Enable Error Aggregator Core (EAC) driver.
+
+config CMRT_EAC_ERROR_DEBUG
+	bool "Copy last EAC errors to SIC custom registers at boot"
+	depends on CMRT_EAC
+	default y if DEBUG
+	default n
+	help
+	  Copy last EAC errors to SIC custom registers at boot.
+	  This helps debugging random errors in CI runs, for example.
+
+config CMRT_EMC
+	bool "Enable Entropy Management Core (EMC)"
+	default y if !CMRT_CFI
+	help
+	  Enable Entropy Management Core (EMC) driver.
+
+config CMRT_FMC
+	bool "Enable Feature Management Core (FMC)"
+	default y
+	help
+	  Enable Feature Management Core (FMC) driver.
+
+config CMRT_HC
+	bool "Enable Hash Core (HC)"
+	default y
+	help
+	  Enable Hash Core (HC) Driver.
+
+config CMRT_CSHC
+	bool "Enable Compact SHA Hash Core (CSHC)"
+	default n
+	depends on CMRT_HC
+	help
+	  Enable Compact SHA Hash Core (CSHC) Driver.
+
+config CMRT_WHC
+	bool "Enable Whirlpool Hash Core (WHC)"
+	default n
+	depends on CMRT_HC
+	help
+	  Enable Whirlpool Hash Core (WHC) Driver.
+
+config CMRT_HC2
+	bool "Enable Second Hash Core (HC)"
+	depends on CMRT_HC
+	default n
+	help
+	  Enable Second Hash Core (HC) Driver.
+
+config CMRT_KDC
+	bool "Enable Key Derivation Core (KDC)"
+	default y
+	help
+	  Enable Key Derivation Core (KDC) Driver.
+
+config CMRT_KDC_HW_STATE
+	hex
+	prompt "Initial value for KDC hardware state"
+	default 0x00
+	depends on CMRT_KDC
+	help
+	  Hardware state affects key derivations. It's use is
+	  implementation specific.
+
+config CMRT_KTC
+	bool "Enable Key Transport Core (KTC)"
+	default y
+	help
+	  Enable Key Transport Core (KTC) Driver.
+
+config CMRT_HSAES
+	bool "Enable HSAES driver"
+	default n
+	select CMRT_AES
+	select CMRT_KTC
+	help
+	  Enable HSAES Driver.
+
+config CMRT_PDMA
+	bool "Enable PCIe DMA (PDMA)"
+	default n
+	help
+	  Enable PCIe DMA core (PDMA) Driver
+
+config CMRT_OMC
+	bool "Enable OTP Memory Controller (OMC)"
+	default y
+	help
+	  Enable OTP Memory Controller (OMC) Driver
+
+config CMRT_OMC_EMULATED_OTP
+	bool "OTP memory is emulated"
+	default n
+	depends on CMRT_OMC
+	help
+	  Set for emulated OTP memory.
+
+config CMRT_OMC_EMULATED_OTP_INIT
+	bool "Emulated OTP must be initialized before use"
+	default n
+	depends on CMRT_OMC_EMULATED_OTP
+	help
+	  Set to initialize emulated OTP version fuses and AES IV.
+
+config CMRT_OMC_VERSION_EFUSES
+	int "Number of version efuses"
+	default 160
+	range 32 256
+	depends on CMRT_OMC_EMULATED_OTP_INIT
+	help
+	  Specify the number of version efuses for emulated OTP.
+	  At the moment this value needs to be 32bit word aligned.
+	  The value depends on the FPGA platform.
+
+config CMRT_OMC_ESW_RSVD_WORDS
+	int "Number of reserved words in OTP eSW area"
+	default 3
+	help
+	  Specify number of reserved words in OTP eSW area. These are for
+	  configuration used in boot time, for example, the anti-rollback
+	  version words.
+
+config CMRT_OMC_ESW_RSVD_FIRST
+	bool "Place the reserved words first to the OTP eSW area"
+	default y
+	help
+	  If set the location for the reserved words is the beginning of the
+	  OTP eSW area, before the possible sboot image. If this is not set
+	  they are placed to the very end of the OTP eSW area.
+
+config CMRT_PKE
+	bool "Enable PK Engine Driver (PKE)"
+	default y if CMRT_FBOOT || SUPERVISOR_MODE
+	default n
+	help
+	  Enable Enable Public Key Engine (PKE) Driver
+
+choice
+	prompt "PKE word size"
+	default CMRT_PKE_64_BIT
+	depends on CMRT_PKE
+	help
+	  Choose the word size of the Public Key Engine (PKE) driver.
+
+config CMRT_PKE_64_BIT
+	bool "64-bit multiplier"
+	help
+	  64-bit PKE word size
+
+config CMRT_PKE_32_BIT
+	bool "32-bit multiplier"
+	help
+	  32-bit PKE word size
+
+endchoice
+
+config CMRT_PKE_VERSION
+	hex
+	default 0x040000 if CMRT_PKE
+	default 0x0
+
+config CMRT_PKE_CP_REVERSE_BYTES
+	bool "Reverse byte order copying into PKE"
+	default y
+	help
+	  Reverse byte order copying into PKE
+
+config CMRT_PKE_CP_RANDOM_ORDER
+	bool "Random order copy to PKE"
+	default n
+	help
+	  Enable random order copying into PKE
+
+config CMRT_PKE_CP_PROTECT_LOOP
+	bool "Protect copy loop"
+	default n
+	help
+	  Enable loop protection on copy into PKE
+
+config CMRT_PKE_CP_SUM_WORDS
+	bool "Checksum on copy to PKE"
+	default n
+	help
+	  Enable simple checksum on copy to PKE
+
+config CMRT_RSA
+	bool "Enable RSA"
+	default n
+	help
+	  Enable RSA Driver
+
+config CMRT_RSA_CRT
+	bool "Enable CRT RSA"
+	depends on CMRT_RSA
+	default n
+	help
+	  Enable RSA CRT Driver
+
+choice
+	prompt "Choose RSA keygen implementation"
+	default CMRT_RSA_KEYGEN_FAST
+
+config CMRT_RSA_KEYGEN_DPA_RESIST
+	bool "Use DPA keygen implementation"
+
+config CMRT_RSA_KEYGEN_FAST
+	bool "Use fast keygen implementation"
+	help
+	  Fast keygen uses fixed public exponent 65537.
+
+endchoice
+
+config CMRT_FFDH
+	bool "Enable Finite Field Diffie-Hellman (FFDH) key exchange"
+	depends on (CMRT_PKE_VERSION >= 0x040000) && !CMRT_FBOOT
+	default y
+	help
+	Enable Finite Field Diffie-Hellman (FFDH) key exchange
+
+config CMRT_PKE_NIST_P192
+	bool "Enable NIST P192 curve"
+	depends on CMRT_PKE && !CMRT_FBOOT
+	default y
+	help
+	  Enable NIST P192 curve
+
+config CMRT_PKE_NIST_P224
+	bool "Enable NIST P224 curve"
+	depends on CMRT_PKE && !CMRT_FBOOT
+	default y
+	help
+	  Enable NIST P224 curve
+
+config CMRT_PKE_NIST_P256
+	bool "Enable NIST P256 curve"
+	depends on CMRT_PKE
+	default y
+	help
+	  Enable NIST P256 curve
+
+config CMRT_PKE_SECP256K1
+	bool "Enable SECP256K1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x030000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable SECP256K1 curve
+
+config CMRT_PKE_NIST_P384
+	bool "Enable NIST P384 curve"
+	depends on CMRT_PKE && (!CMRT_FBOOT || CMRT_FBOOT_HAS_ECDSA_P384)
+	default y
+	help
+	  Enable NIST P384 curve
+
+config CMRT_PKE_NIST_P521
+	bool "Enable NIST P521 curve"
+	depends on CMRT_PKE && (!CMRT_FBOOT || CMRT_FBOOT_HAS_ECDSA_P521)
+	default y
+	help
+	  Enable NIST NIST P521 curve
+
+config CMRT_PKE_BRAINPOOL_P192R1
+	bool "Enable brainpool P192 R1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x030000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P192 R1 curve
+
+config CMRT_PKE_BRAINPOOL_P224R1
+	bool "Enable brainpool P224 R1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x030000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P224 R1 curve
+
+config CMRT_PKE_BRAINPOOL_P256R1
+	bool "Enable brainpool P256 R1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x030000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P256 R1 curve
+
+config CMRT_PKE_BRAINPOOL_P320R1
+	bool "Enable brainpool P320 R1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x030000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P320 R1 curve
+
+config CMRT_PKE_BRAINPOOL_P384R1
+	bool "Enable brainpool P384 R1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x030000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P384 R1 curve
+
+config CMRT_PKE_BRAINPOOL_P512R1
+	bool "Enable brainpool P512 R1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x030000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P512 R1 curve
+
+config CMRT_PKE_BRAINPOOL_P192T1
+	bool "Enable brainpool P192 T1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x040000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P192 T1 curve
+
+config CMRT_PKE_BRAINPOOL_P224T1
+	bool "Enable brainpool P224 T1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x040000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P224 T1 curve
+
+config CMRT_PKE_BRAINPOOL_P256T1
+	bool "Enable brainpool P256 T1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x040000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P256 T1 curve
+
+config CMRT_PKE_BRAINPOOL_P320T1
+	bool "Enable brainpool P320 T1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x040000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P320 T1 curve
+
+config CMRT_PKE_BRAINPOOL_P384T1
+	bool "Enable brainpool P384 T1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x040000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P384 T1 curve
+
+config CMRT_PKE_BRAINPOOL_P512T1
+	bool "Enable brainpool P512 T1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x040000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable Brainpool P512 T1 curve
+
+config CMRT_PKE_SM2_CURVE
+	bool "Enable SM2 curve"
+	depends on (CMRT_PKE_VERSION >= 0x040000) && !CMRT_FBOOT
+	default n
+	help
+	  Enable SM2 curve
+
+config CMRT_EDDSA
+	bool "Enable EdDSA"
+	depends on CMRT_PKE_ED25519_CURVE || CMRT_PKE_ED448_CURVE
+	default y
+	help
+	  Enable EdDSA
+
+config CMRT_PKE_ED25519_CURVE
+	bool "Enable ed25519 Curve"
+	depends on (CMRT_PKE_VERSION >= 0x030000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable ed25519 curve
+
+config CMRT_PKE_X25519_CURVE
+	bool "Enable X25519 Curve"
+	depends on CMRT_PKE && !CMRT_FBOOT
+	default y
+	help
+	  Enable X25519 curve
+
+config CMRT_PKE_X448_CURVE
+	bool "Enable X448 curve"
+	depends on CMRT_PKE && !CMRT_FBOOT
+	default y
+	help
+	  Enable X448 curve
+
+config CMRT_PKE_ED448_CURVE
+	bool "Enable ed448 curve"
+	depends on (CMRT_PKE_VERSION >= 0x040000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable ed448 curve
+
+config CMRT_PKE_FRP256_CURVE
+	bool "Enable ANSSI FRP256v1 curve"
+	depends on (CMRT_PKE_VERSION >= 0x030000) && !CMRT_FBOOT
+	default y
+	help
+	  Enable ANSSI FRP256v1 curve
+
+config CMRT_PMU
+	bool "Enable the Power Management Unit (PMU)"
+	default n
+	depends on CMRT_SIC || CMRT_SIC2
+	help
+	  Enable the Power Management Unit (PMU) support in the SIC driver.
+	  If enabled, waking up from sleep will restore all OS state.
+	  If disabled, waking up from sleep will reboot and restart the OS.
+
+config CMRT_SAC
+	bool "Enable System Aperture Core (SAC)"
+	default n
+	help
+	  Enable System Aperture Core (SAC) driver.
+
+config CMRT_SAC2
+	bool "Enable 64bit System Aperture Core (SAC2)"
+	default y if !CMRT_SAC
+	help
+	  Enable 64bit System Aperture Core (SAC2) driver.
+
+config CMRT_SAC_CONSOLE
+	bool "Copy RAM console messages to SAC memory"
+	depends on RAM_CONSOLE && (CMRT_SAC || CMRT_SAC2)
+	default y if DEBUG
+	default n
+	help
+	  Copying takes place when CMRT has nothing to do or when CMRT is
+	  about to halt. Console buffer size is RAM_CONSOLE_BUFFER_SIZE and
+	  it is located at the end of FPGA visible SAC memory.
+
+config CMRT_SAC_ACCESS_FIXUP
+	bool "Enable trap handler translation of SAC accesses"
+	depends on CMRT_SAC2
+	default n
+	help
+	  The new 64bit SAC does not map the SAC window to CMRT memory space
+	  anymore. Accesses to the old SAC window will cause CPU trap which
+	  normally kills the thread. However, if this option is enabled,
+	  the trap handler will resolve the access and program execution
+	  will continue as if access worked normally.
+
+config CMRT_SIC
+	bool "Enable System Interface Core (SIC)"
+	default n
+	help
+	  Enable System Interface Core (SIC) driver.
+
+config CMRT_SIC2
+	bool "Enable System Interface Core (SIC2)"
+	default y if !CMRT_SIC
+	help
+	  Enable System Interface Core (SIC2) driver with SIC messaging
+	  protocol v2.
+
+config CMRT_SID
+	bool "Enable SOC IRQ driver (SID)"
+	default n
+	depends on CMRT_SIC || CMRT_SIC2
+	select DYNAMIC_INTERRUPTS
+	help
+	  Enable SOC IRQ driver (SID).
+
+config CMRT_TMC
+	bool "Enable TRNG Management Core (TMC)"
+	default y
+	help
+	  Enable TRNG Management Core (TMC) Driver.
+
+config CMRT_WDT
+	bool "Enable CMRT Watchdog wrapper"
+	depends on WDT_CMRT && SUPERVISOR_MODE
+	select TASK_WDT
+	default n
+	help
+	  Enable CMRT Watchdog wrapper.
+
+config TEST_REBEL_H
+	bool "Enable test features for REBEL_H"
+	default n
+	help
+	  Enable test features for REBEL_H
+	  This support receiving test commends through mailbox
+	  Currently in use only in supervisor mw
+	  please refer config-develop.mk for detail
+
+source "drivers/cmrt/teefs/Kconfig"
+
+endif # SOC_SERIES_RISCV_CMRT

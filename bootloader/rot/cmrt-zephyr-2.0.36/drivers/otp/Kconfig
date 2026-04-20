@@ -1,0 +1,5 @@
+# OTPC_NONSEC configuration options
+
+config OTP_SAMSUNG
+	bool "OTP Drivers"
+	default y

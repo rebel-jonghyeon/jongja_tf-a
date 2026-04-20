@@ -1,0 +1,4 @@
+#!/bin/sh
+
+#run checkpatch
+exec ./scripts/checkpatch.sh

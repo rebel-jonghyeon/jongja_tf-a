@@ -1,0 +1,291 @@
+GLOBAL &DEVICE_TYPE     ;; 0: EVB, 1: TGB
+&DEVICE_TYPE=0.
+
+GLOBAL &CHIP_REV		;; EVT0, EVT1
+&CHIP_REV="EVT0"
+
+GLOBAL &PROJ_PATH
+&PROJ_PATH=STRing.REPLACE(OS.PWD(),"\","/",0)
+
+GLOBAL &CMM_PATH
+&CMM_PATH=""
+
+GLOBAL &UCIE_FW_PATH
+&UCIE_FW_PATH=""
+
+GLOBAL &FW_PATH
+&FW_PATH=""
+
+GLOBAL &DIRECT_CONNECT
+&DIRECT_CONNECT=0.
+
+GLOBAL &CL_ID
+&CL_ID=0.
+
+GLOBAL &HBM_DUMP_PATH
+&HBM_DUMP_PATH=""
+
+; Create and Open a dialog named "REBEL_Q"
+WinPOS ,,,,,,REBEL_Q
+DIALOG.view
+(
+	HEADER "REBEL_Q T32 GUI"
+
+	POS 1. 0. 10. 3.
+	BOX "Device Type"
+		POS 2. 1. 8. 1.
+		DEVICE_TYPE.SEL: PULLDOWN "EVB,TGB" ""
+
+	POS 12. 0. 10. 3.
+	BOX "Chip Rev"
+		POS 13. 1. 8. 1.
+		CHIP_REV.SEL: PULLDOWN "EVT0,EVT1" ""
+
+	POS 1. 2.5 38.5 3.
+	BOX "T32 Connection to Chiplet"
+		POS 2. 3.5 8. 1.
+		SINGLE.CHECK: CHECKBOX "DIRECT"
+		(
+			IF DIALOG.BOOLEAN(SINGLE.CHECK)
+			(
+				&DIRECT_CONNECT=1.
+				DIALOG.Disable CHIPLET.0
+				DIALOG.Disable CHIPLET.1
+				DIALOG.Disable CHIPLET.2
+				DIALOG.Disable CHIPLET.3
+			)
+			ELSE
+			(
+				&DIRECT_CONNECT=0.
+				DIALOG.Enable CHIPLET.0
+				DIALOG.Enable CHIPLET.1
+				DIALOG.Enable CHIPLET.2
+				DIALOG.Enable CHIPLET.3
+			)
+		)
+
+		POSX 0.5 4. 1.
+		CHIPLET.0: CHOOSEBOX "CL0"
+		(
+			IF DIALOG.BOOLEAN(CHIPLET.0)
+				&CL_ID=0.
+		)
+		POSX 0.5 4. 1.
+		CHIPLET.1: CHOOSEBOX "CL1"
+		(
+			IF DIALOG.BOOLEAN(CHIPLET.1)
+				&CL_ID=1.
+		)
+		POSX 0.5 4. 1.
+		CHIPLET.2: CHOOSEBOX "CL2"
+		(
+			IF DIALOG.BOOLEAN(CHIPLET.2)
+				&CL_ID=2.
+		)
+		POSX 0.5 4. 1.
+		CHIPLET.3: CHOOSEBOX "CL3"
+		(
+			IF DIALOG.BOOLEAN(CHIPLET.3)
+				&CL_ID=3.
+		)
+
+	POS 1. 5. 38.5 3.
+	BOX "Project Path"
+			POS 2. 6. 30. 1.
+			PROJ_PATH_INPUT: EDIT "" ""
+			POSX 1.5 5. 1.
+			BUTTON "[:folder]"
+			(
+				DIALOG.SetDIR PROJ_PATH_INPUT OS.PWD()/*
+			)
+
+	POS 1. 7.5 38.5 3.
+	BOX "Operation"
+		POS 2. 8.5 10. 1.
+		BUTTON "SW Reset"
+		(
+			DO T32_GUI.reset.cmm &DIRECT_CONNECT &CL_ID
+		)
+
+		POSX 0.5 10. 1.
+		BUTTON "Attach"
+		(
+			PRINT "SINGLE:" "&DIRECT_CONNECT" "ID:" "&CL_ID"
+			DO T32_GUI.attach.cmm &DIRECT_CONNECT &CL_ID
+		)
+
+		POSX 0.5 10. 1.
+		BUTTON "Detach"
+		(
+			DO T32_GUI.detach.cmm
+		)
+
+	POS 1. 10. 38.5 7.0
+	BOX "FW Preload"
+
+		POS 2. 11. 25. 1.
+		TEXT "Custom Preload CMM File Path (optional)"
+		POS 2. 12. 30. 1.
+		CUSTOM_CMM_PATH_INPUT: EDIT "" ""
+		POSX 1.5 5. 1.
+		BUTTON "[:load]"
+		(
+			DIALOG.SetFile.SELECT CUSTOM_CMM_PATH_INPUT &CMM_PATH *.cmm
+		)
+
+		POS 2. 13. 20. 1.
+        TEXT "UCIe FW Binary Path (optional)"
+        POS 2. 14. 30. 1.
+        UCIE_FW_PATH_INPUT: EDIT "" ""
+        POSX 1.5 5. 1.
+		BUTTON "[:load]"
+		(
+			DIALOG.SetFile.SELECT UCIE_FW_PATH_INPUT &UCIE_FW_PATH *.bin
+		)
+
+		POS 2. 15.5 36. 1.2
+		BUTTON "FW Preload Start"
+		(
+			&PROJ_PATH=STRing.TRIM(DIALOG.STRing(PROJ_PATH_INPUT))
+			&UCIE_FW_PATH=STRing.TRIM(DIALOG.STRing(UCIE_FW_PATH_INPUT))
+			&CMM_PATH=STRing.TRIM(DIALOG.STRing(CUSTOM_CMM_PATH_INPUT))
+			&CHIP_REV=STRing.TRIM(DIALOG.STRing(CHIP_REV.SEL))
+
+			IF "&CMM_PATH"==""
+			(
+				PRINT "Do Default Preload CMM"
+				DO T32_GUI.preload.cmm &CHIP_REV &DIRECT_CONNECT &CL_ID &PROJ_PATH &UCIE_FW_PATH
+			)
+			ELSE
+			(
+				PRINT "Do Custom Preload CMM"
+				DO "&CMM_PATH" &DIRECT_CONNECT &CL_ID &PROJ_PATH &UCIE_FW_PATH
+			)
+		)
+
+	POS 1. 17.5 38.5 6.0
+	BOX "FLASH FUSE"
+		POS 2. 18.5 11. 1.2
+        BUTTON "ERASE FLASH"
+        (
+            LOCAL &OP
+            &OP = 0.
+            DO T32_GUI.flash.cmm &OP &DIRECT_CONNECT &PROJ_PATH ""
+        )
+
+		POSX 1.0 11. 1.2
+        BUTTON "WRITE FW"
+        (
+            &FW_PATH=STRing.TRIM(DIALOG.STRing(FW_PATH_INPUT))
+            &PROJ_PATH=STRing.TRIM(DIALOG.STRing(PROJ_PATH_INPUT))
+            IF "&FW_PATH"==""
+                DIALOG.OK "Please Load Binary"
+            ELSE
+            (
+                LOCAL &WRITE
+                &WRITE = 1.
+                DO T32_GUI.flash.cmm &WRITE &DIRECT_CONNECT &PROJ_PATH &FW_PATH
+            )
+        )
+
+		POSX 1.0 11. 1.2
+        BUTTON "SECTOR ERASE"
+        (
+            LOCAL &OP
+            &OP = 2.
+            &FW_PATH=STRing.TRIM(DIALOG.STRing(FW_PATH_INPUT))
+            DO T32_GUI.flash.cmm &OP &DIRECT_CONNECT &PROJ_PATH &FW_PATH
+        )
+
+		POS 2. 20.2 25. 1.
+        TEXT "FW Binary Path"
+        POS 2. 21.2 30. 1.
+        FW_PATH_INPUT: EDIT "" ""
+        POSX 1.5 5. 1.
+        BUTTON "[:load]"
+        (
+            DIALOG.SetFile.SELECT FW_PATH_INPUT &FW_PATH *.bin
+        )
+
+	POS 1. 24.0 38.5 3.0
+	BOX "Debug::Data.LOAD.Elf"
+		POS 2. 25.0 8. 1.
+		BUTTON "BL1"
+		(
+			&PROJ_PATH=STRing.TRIM(DIALOG.STRing(PROJ_PATH_INPUT))
+			Data.LOAD.Elf "&PROJ_PATH"/binaries/BootLoader_CP/bl1.elf /NoCODE
+		)
+
+		POSX 0.5 8. 1.
+		BUTTON "BL2"
+		(
+			&PROJ_PATH=STRing.TRIM(DIALOG.STRing(PROJ_PATH_INPUT))
+			Data.LOAD.Elf "&PROJ_PATH"/binaries/BootLoader_CP/bl2.elf /NoCODE
+		)
+
+		POSX 0.5 8. 1.
+		BUTTON "BL31"
+		(
+			&PROJ_PATH=STRing.TRIM(DIALOG.STRing(PROJ_PATH_INPUT))
+			Data.LOAD.Elf "&PROJ_PATH"/binaries/BootLoader_CP/bl31.elf /NoCODE
+		)
+
+		POSX 0.5 8. 1.
+		BUTTON "FW"
+		(
+			&PROJ_PATH=STRing.TRIM(DIALOG.STRing(PROJ_PATH_INPUT))
+			Data.LOAD.Elf "&PROJ_PATH"/binaries/FreeRTOS_CP/freertos_kernel.elf /NoCODE
+		)
+
+	POS 1. 27.5 38.5 4.5
+	BOX "Debug::HBM Dump"
+		POS 2. 28.5 30. 1.
+		TEXT "HBM Dump Directory"
+		POS 2. 29.5 20. 1.
+		HBM_DUMP_PATH_INPUT: EDIT "" ""
+		POSX 1.5 5. 1.
+		BUTTON "[:load]"
+		(
+			DIALOG.SetDIR HBM_DUMP_PATH_INPUT &HBM_DUMP_PATH *
+		)
+
+		POSX 1. 8. 1.
+		BUTTON "Dump"
+		(
+			PRINT "DO HBM3e DUMP"
+			&HBM_DUMP_PATH=STRing.TRIM(DIALOG.STRing(HBM_DUMP_PATH_INPUT))
+
+			IF "&HBM_DUMP_PATH"==""
+			(
+				DIALOG.MESSAGE "Please input HBM Dump Directory!"
+			)
+			ELSE
+			(
+				IF ("&DIRECT_CONNECT"=="1.")||("&CL_ID"=="0.")
+				(
+					DO T32_GUI.hbm_dump.cmm &DIRECT_CONNECT &CL_ID &HBM_DUMP_PATH
+				)
+				ELSE
+				(
+					DIALOG.MESSAGE "Please select DIRECT or CL0!"
+				)
+			)
+		)
+
+	INIT "GOSUB SetDefaults"
+
+	; Subroutines
+	SUBROUTINE SetDefaults
+	(
+		DIALOG.Set DEVICE_TYPE.SEL "EVB"
+		DIALOG.Set CHIPLET.0
+		DIALOG.Set PROJ_PATH_INPUT "&PROJ_PATH"
+	)
+)
+; STOP command halts script execution
+STOP
+
+; Close dialog window
+DIALOG.END
+
+ENDDO

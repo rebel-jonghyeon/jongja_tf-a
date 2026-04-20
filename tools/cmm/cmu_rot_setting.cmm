@@ -1,0 +1,179 @@
+B::
+
+global &cmu_rot_base
+&cmu_rot_base=0x1FF0200000
+
+global &pll_locktime_pll_rot
+&pll_locktime_pll_rot=0x0
+
+global &pll_con0_pll_rot
+&pll_con0_pll_rot=0x100
+
+global &pll_con3_pll_rot
+&pll_con3_pll_rot =0x10c
+
+global &clk_con_div_div4_rot_otp
+&clk_con_div_div4_rot_otp=0x180c
+
+global &clk_con_div_div2_rot_aclk
+&clk_con_div_div2_rot_aclk=0x1800
+
+global &clk_con_div_div7_rot_pvt
+&clk_con_div_div7_rot_pvt=0x1808
+
+global &clk_con_div_div3_rot_pclk
+&clk_con_div_div3_rot_pclk=0x1804
+
+global &clk_con_div_div1_rot_tsclk
+&clk_con_div_div1_rot_tsclk=0x1810
+
+global &clk_con_div_div3_rot_cntclk
+&clk_con_div_div3_rot_cntclk=0x1814
+
+global &clk_con_div_div3_rot_rtck
+&clk_con_div_div3_rot_rtck=0x1818
+
+
+GOSUB set_pll_f0434_locktime
+GOSUB set_pll_f0434_con0
+GOSUB set_pll_f0434_con3
+
+GOSUB poll_pll_f0434_locked
+
+local &mask_lowest_4bit
+local &mask_lowest_6bit
+&mask_lowest_4bit=0xF	; [3:0]mask
+&mask_lowest_6bit=0x3F	; [5:0]mask
+
+GOSUB set_div &cmu_rot_base+&clk_con_div_div4_rot_otp 3. &mask_lowest_4bit
+GOSUB set_div &cmu_rot_base+&clk_con_div_div2_rot_aclk 1. &mask_lowest_4bit
+GOSUB set_div &cmu_rot_base+&clk_con_div_div7_rot_pvt 6. &mask_lowest_4bit
+GOSUB set_div &cmu_rot_base+&clk_con_div_div3_rot_pclk 2. &mask_lowest_4bit
+GOSUB set_div &cmu_rot_base+&clk_con_div_div1_rot_tsclk 0. &mask_lowest_6bit
+GOSUB set_div &cmu_rot_base+&clk_con_div_div3_rot_cntclk 2. &mask_lowest_4bit
+GOSUB set_div &cmu_rot_base+&clk_con_div_div3_rot_rtck 2. &mask_lowest_4bit
+
+GOSUB set_con0_mux_sel
+
+ENDDO
+
+set_pll_f0434_locktime:
+	local &pll_lock_time_mask
+	&pll_lock_time_mask=0xfffff
+	local &pll_locktime_pll_rot_value
+
+	GOSUB axi_read &cmu_rot_base+&pll_locktime_pll_rot
+	ENTRY &pll_locktime_pll_rot_value
+
+	&pll_locktime_pll_rot_value=(&pll_locktime_pll_rot_value&(~&pll_lock_time_mask))
+	&pll_locktime_pll_rot_value=&pll_locktime_pll_rot_value|500.
+
+	GOSUB axi_write &cmu_rot_base+&pll_locktime_pll_rot &pll_locktime_pll_rot_value
+
+	RETURN
+
+set_pll_f0434_con0:
+	local &pll_pms_mask
+	&pll_pms_mask=0x83FF3F07 ; div_s[2:0], div_p[13:8], div_m[25:16], enable[31]
+
+	local &p
+	local &m
+	local &s
+	local &enable
+	&p=1.<<8.
+	&m=75.<<16.
+	&s=1.<<0.
+	&enable=1.<<31.
+
+	local &pll_con0_pll_rot_value
+	GOSUB axi_read &cmu_rot_base+&pll_con0_pll_rot
+	ENTRY &pll_con0_pll_rot_value
+
+	&pll_con0_pll_rot_value=(&pll_con0_pll_rot_value)&(~&pll_pms_mask)
+	&pll_con0_pll_rot_value=&pll_con0_pll_rot_value|&p|&m|&s|&enable
+
+	GOSUB axi_write &cmu_rot_base+&pll_con0_pll_rot &pll_con0_pll_rot_value
+
+	RETURN
+
+set_pll_f0434_con3:
+	local &div_k_mask
+	&div_k_mask=0xFFFF ; div_k [15:0]
+
+	local &div_k
+	&div_k=0.
+
+	local &pll_con3_pll_rot_value
+	GOSUB axi_read &cmu_rot_base+&pll_con3_pll_rot
+	ENTRY &pll_con3_pll_rot_value
+
+	&pll_con3_pll_rot_value=&pll_con3_pll_rot_value&(~&div_k_mask)
+	&pll_con3_pll_rot_value=&pll_con3_pll_rot_value|&div_k
+
+	RETURN
+
+poll_pll_f0434_locked:
+	local &stable_bit
+	&stable_bit=(0x1<<29.)
+
+	local &pll_con0_pll_rot_value
+	GOSUB axi_read &cmu_rot_base+&pll_con0_pll_rot
+	ENTRY &pll_con0_pll_rot_value
+
+	while ((&pll_con0_pll_rot_value&(&stable_bit))==0)
+	(
+		GOSUB axi_read &cmu_rot_base+&pll_con0_pll_rot
+		ENTRY &pll_con0_pll_rot_value
+	)
+
+	RETURN
+
+
+set_div:
+	LOCAL &addr &val &mask_bit
+	ENTRY &addr &val &mask_bit
+
+	LOCAL &div_value
+	GOSUB axi_read &addr
+	ENTRY &div_value
+
+	&div_value=(&div_value&(~&mask_bit)|&val)
+	GOSUB axi_write &addr &div_value
+
+	RETURN
+
+set_con0_mux_sel:
+	local &mux_select
+	local &mux_busy
+	&mux_select=0x10
+	&mux_busy=0x80
+
+	local &pll_con0_pll_rot_value
+	GOSUB axi_read &cmu_rot_base+&pll_con0_pll_rot
+	ENTRY &pll_con0_pll_rot_value
+
+	GOSUB axi_write &cmu_rot_base+&pll_con0_pll_rot (&pll_con0_pll_rot_value|&mux_select)
+
+	GOSUB axi_read &cmu_rot_base+&pll_con0_pll_rot
+	ENTRY &pll_con0_pll_rot_value
+
+	while ((&pll_con0_pll_rot_value&(&mux_busy))==1.)
+	(
+		GOSUB axi_read &cmu_rot_base+&pll_con0_pll_rot
+		ENTRY &pll_con0_pll_rot_value
+	)
+
+	RETURN
+
+axi_write:
+  LOCAL &addr &val
+  ENTRY &addr &val
+  data.set zaxi:&addr %le %long &val
+  print "axi_write: &addr = &val"
+  RETURN
+axi_read:
+  LOCAL &addr
+  ENTRY &addr
+  &value=data.long(zaxi:&addr)
+  print "axi_read: &addr = &value"
+  RETURN &value

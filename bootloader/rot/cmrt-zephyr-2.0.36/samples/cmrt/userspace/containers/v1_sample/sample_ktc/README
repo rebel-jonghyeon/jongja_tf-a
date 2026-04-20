@@ -1,0 +1,20 @@
+
+sample_ktc: Show how to use KTC to transfer a key to SOC key destination 2
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_ktc.img
+
+To trigger key export:
+$ cmtest data -f100 ""
+
+Expected return value OK.
+Expected QEMU log messages:
+KTC: Destination 0x00000002
+KTC: Allowed destinations 0x0000ffff
+KTC: Total block num 16
+KTC: Block 0
+...
+KTC: tx complete
+
+To unload container:
+$ mwtest.py -c100 unload

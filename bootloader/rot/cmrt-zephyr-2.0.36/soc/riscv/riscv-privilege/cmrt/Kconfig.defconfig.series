@@ -1,0 +1,74 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+if SOC_SERIES_RISCV_CMRT
+
+config SOC_SERIES
+	default "cmrt"
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default 4000000
+
+config RISCV_SOC_INTERRUPT_INIT
+	default y
+
+config RISCV_HAS_CPU_IDLE
+	default y
+
+config RISCV_HAS_PLIC
+	default y
+
+config RISCV_HAS_SLIC
+	default y if CMRT_SIC || CMRT_SIC2
+
+config RISCV_HAS_AXI
+	default y if ETH_XAXIDMA
+
+config RISCV_GP
+	default y if !CMRT_FBOOT
+
+config 2ND_LVL_ISR_TBL_OFFSET
+	default 12
+
+config NUM_2ND_LEVEL_AGGREGATORS
+	default 2
+
+config 2ND_LVL_INTR_00_OFFSET
+	default 11 # MEI
+
+config 2ND_LVL_INTR_01_OFFSET
+	default 9 # SEI
+
+config 3RD_LVL_ISR_TBL_OFFSET
+	default 24
+
+config 3RD_LVL_INTR_00_OFFSET
+	default 5 # SIC IRQ + 1
+
+config 4TH_LVL_ISR_TBL_OFFSET
+	default 56
+
+config 4TH_LVL_INTR_00_OFFSET
+	default 6 # AXI_INTC_IRQ + 1
+
+config MAX_IRQ_PER_AGGREGATOR
+	default 32
+
+config NUM_IRQS
+	default 64 # 12 RISC-V + 12 CMRT PLIC + 32 SOC IRQS + 8 AXI IRQS
+
+config CRI_OMC_LAYOUT_VERSION
+	int
+	default $(dt_node_int_prop_int,/soc/omc@40000,layout-version)
+
+config CRI_OMC_KEYSPLITS_NUM
+	int
+	default $(dt_node_int_prop_int,/soc/omc@40000,num-keysplits)
+
+config CRI_OMC_ROOTS_NUM
+	int
+	default $(dt_node_int_prop_int,/soc/omc@40000,num-roots)
+
+config CMRT_CFI
+	def_bool $(dt_node_has_bool_prop,/cpus/cpu@0,has-cfi)
+
+endif # SOC_SERIES_RISCV_CMRT

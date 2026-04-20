@@ -1,0 +1,128 @@
+B::
+
+RESet
+SYStem.RESet
+
+; Platform, 1 = ZEBU / 0 = Silicon (default)
+LOCAL &ZEBU
+
+; Chiplet-id of target
+; Xj0* JTAG: per-chiplet standalone
+; Xj1* JTAG PAD route: TDI -> chiplet-0 -> chiplet-2 -> chiplet-3 -> chiplet-1 -> TDO
+
+LOCAL &STANDALONE	; 0: per-chiplet Xj0*, 1: daisy-chain Xj1* path
+LOCAL &CHIPLET_ID
+
+&ZEBU=0.
+&STANDALONE=1.
+&CHIPLET_ID=0.
+
+IF &ZEBU==1.
+(
+ sys.CONFIG.DEBUGPORT GTL0
+ sys.gtl.modelconfig "NODE=localhost|PORT=20010|TIMEOUT=600000|TRST_USED=1|SRST_USED=0|CLK_RATIO=2|CPU_FREQ_MHZ=5"
+ sys.gtl.LIBname "/user/zebusw/XTOR/S/IP_ROOT_S_2023_03/lib/libxtor_t32_socket_svs.so"
+ sys.gtl.JTAGPROBENAME "JTAGPROBE0"
+ sys.vt.timeintargettime on                                               ; configure usage of model timing
+ sys.vt.pauseintargettime on                                              ; configure usage of model timing
+ sys.vt.hardwaretimeoutscale 100.0
+ sys.gtl.connect
+ sys.vt.timeintargettime on
+ sys.vt.pauseintargettime on
+)
+
+PRINT			VERSION.SOFTWARE()
+
+; Set DAP's IR/DR POST/PRE value for the target chiplet
+IF &STANDALONE==1.
+(
+  SYS.CONFIG DAPIRPRE		0.
+  SYS.CONFIG DAPIRPOST		0.
+  SYS.CONFIG DAPDRPRE		0.
+  SYS.CONFIG DAPDRPOST		0.
+)
+ELSE IF &CHIPLET_ID==0.
+(
+  SYS.CONFIG DAPIRPRE		12.
+  SYS.CONFIG DAPIRPOST		0.
+  SYS.CONFIG DAPDRPRE		3.
+  SYS.CONFIG DAPDRPOST		0.
+)
+ELSE IF &CHIPLET_ID==1.
+(
+  SYS.CONFIG DAPIRPRE		0.
+  SYS.CONFIG DAPIRPOST		12.
+  SYS.CONFIG DAPDRPRE		0.
+  SYS.CONFIG DAPDRPOST		3.
+)
+ELSE IF &CHIPLET_ID==2.
+(
+  SYS.CONFIG DAPIRPRE		8.
+  SYS.CONFIG DAPIRPOST		4.
+  SYS.CONFIG DAPDRPRE		2.
+  SYS.CONFIG DAPDRPOST		1.
+)
+ELSE IF &CHIPLET_ID==3.
+(
+  SYS.CONFIG DAPIRPRE		4.
+  SYS.CONFIG DAPIRPOST		8.
+  SYS.CONFIG DAPDRPRE		1.
+  SYS.CONFIG DAPDRPOST		2.
+)
+ELSE
+(
+  PRINT "Not supported"
+  ENDDO
+)
+
+; Basic setting
+SYSTEM.JTAGCLOCK		20MHz
+SYSTEM.CPU				CORTEXA73
+
+SYSTEM.OPTION	RESBREAK	OFF
+SYSTEM.OPTION	ENRESET		OFF
+SYSTEM.OPTION 	TRST		OFF
+SYSTEM.OPTION.MEMSTATUSCHECK ON
+
+; APB-AP for CA73 debug
+SYSTEM.CONFIG.APBAP1.Base		DP:0x00004000
+SYSTEM.CONFIG.COREDEBUG.base	APB:0x00810000
+SYSTEM.CONFIG.CTIBASE			APB:0x00820000
+
+; AXI-AP
+SYSTEM.CONFIG.AXIAP1.Base		DP:0x00002000
+
+SYStem.attach
+
+if run()
+  break
+
+;
+; Based on WFD, start with sboot_n -> tboot_n on SRAM.
+;
+
+; Load sboot_n / tboot_n / FreeRTOS_PCIE binary to SRAM
+LOCAL &root_path
+&root_path="M:\project\REBEL-H\rebel_fds_collab"
+
+Data.LOAD.Binary &root_path/binaries/BootLoader_CP/bl1.bin zaxi:0x1e00010000
+Data.LOAD.Binary &root_path/binaries/BootLoader_CP/bl2.bin zaxi:0x1e00030000
+;Data.LOAD.Binary &root_path/binaries/FreeRTOS_PCIE/freertos_kernel.bin zaxi:0x1e08000000
+
+; Load sboot_n / tboot_n / FreeRTOS_PCIE .elf symbol
+
+;Data.LOAD.Elf &root_path/binaries/BootLoader_CP/bl1.elf /nocode
+;Data.LOAD.Elf &root_path/binaries/BootLoader_CP/bl2.elf /nocode
+;Data.LOAD.Elf &root_path/binaries/FreeRTOS_PCIE/freertos_kernel.elf /nocode
+
+; Change core state with EL3/Secure, CA73's PC value to a target entry point
+
+;Register.Set M 0xc
+;Register.Set NS 0
+Register.Set PC 0x1e00010000 ; Entry of sboot_n
+
+; sYmbol.SourcePATH.Translate "/home1/gildong.hong/" "M:/"
+
+; End of SRAM pre-loading
+
+ENDDO

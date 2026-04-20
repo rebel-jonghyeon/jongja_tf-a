@@ -1,0 +1,41 @@
+Echo sample supervisor reads SIC input from HLOS and and writes the same
+data back.
+
+In addition, echo supervisor can be used to test user mode threads
+(set CONFIG_TEST_USER_THREADS=y in prj.conf) and user mode containers
+(set CONFIG_TEST_USER_CONTAINERS=y in prj.conf).
+
+The main supervisor mode thread reads SIC flow 0, possible user mode thread
+reads SIC flow 1, possible user mode container thread reads SIC flow 2.
+
+To send data to supervisor mode thread:
+$ cmtest data -f0 "hello"
+
+To send data to user mode thread:
+$ cmtest data -f1 "hello"
+
+To send data to user container thread, first load the echo container
+to the main thread using flow 0, then send data to flow 2:
+$ cmtest data -f0 containers/echo/echo.img
+$ cmtest data -f2 "hello"
+
+Supervisor mode logs for echo supervisor with all config options set:
+$ cmtest data -f0 containers/echo/echo.img
+$ cmtest data -f0 "hello"
+$ cmtest data -f1 "hello"
+$ cmtest data -f2 "hello"
+$ cmtest log
+-------------------------------supervisor-------------------------------
+*** Booting Zephyr OS build v2.7.1-2022-12-29-g7b2001069275  ***
+I: Supervisor (echo) 2022-12-30-g7b20010-stanmore-debug running...
+I: Waiting for SIC input on 0x1...
+I: Waiting for user container on 0x0...
+I: Loaded 12272 bytes from 0x1
+I: Relocating at 0x10197a4: 0x12ef0 -> 0x1019798
+I: Relocating at 0x10197a8: 0x11ef0 -> 0x1018798
+CI: Waiting for SIC input on 0x2...
+I: Waiting for SIC input on 0x0...
+I: Echoing 5 bytes from 0x0 to 0x2
+I: Echoing 5 bytes from 0x1 to 0x3
+CI: Echoing 5 bytes from 0x2 to 0x4
+------------------------------------------------------------------------

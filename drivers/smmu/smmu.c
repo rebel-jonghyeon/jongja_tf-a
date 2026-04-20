@@ -1,709 +1,972 @@
-/*
- * Copyright (c) 2023-2024, Samsung Electronics Co., Ltd. All rights reserved.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-#include <lib/libc/stdint.h>
+#include <util.h>
+#include <rebel_h_platform.h>
+#include <driver.h>
+#include "interrupt.h"
+#include "smmu.h"
+#include <stdlib.h>
 #include <string.h>
-#include <stddef.h>
-#include <platform_def.h>
-#include <drivers/smmu/smmu.h>
-#include <common/debug.h>
+#include "cpu.h"
+#include "gic.h"
+#include "semphr.h"
+#include "mmu.h"
+#include "rl_utils.h"
 
-#define SMMU_REGS_BASE  (TCU)
-#define SMMU_SID_NUM	(17)
-#define SMMU_SSID_NUM	(0)
+#define CMDQ_LOG2   10UL
+#define EVTQ_LOG2   10UL
 
-static struct smmu600_regs *smmu_regs = (struct smmu600_regs *)SMMU_REGS_BASE;
-static struct smmu600_regs *smmu_regs_chiplet3 = (struct smmu600_regs *)(SMMU_REGS_BASE +
-												CHIPLET3_BASE_ADDRESS);
-static struct str_ste *smmu_ste = STE_ADDR(SMMU_SID_NUM);
-static struct str_ste *smmu_ste3 = STE_ADDR3(SMMU_SID_NUM);
-static struct str_cd *smmu_ste17_cd = CD_BASE_ADDR(SMMU_SID_NUM, SMMU_SSID_NUM);
-static struct str_cd *smmu_ste17_cd3 = CD_BASE_ADDR3(SMMU_SID_NUM, SMMU_SSID_NUM);
-/*
- * Notes on the region info structures
- * 1. Have to be VA aligned by block/page size and allocate VA regions in acending order.
- *    If not, it will operate in a wrong way.
- * 2. 4K table region(NUM_OF_4K_REGION) must be equal to or less than 1.
- */
-static struct str_pt pt_1g_region_info[NUM_OF_1G_REGION] = {
-	{.va = 0x10000000000, .pa = 0x0000000000, .num = 36, .acp = SMMU_DISABLE_ACP},
+#define Q_IDX(q, p)     ((p) & ((1 << (q)->size_log2) - 1))
+#define Q_WRP(q, p)     ((p) & (1 << (q)->size_log2))
+#define Q_OVF(p)        ((p) & (1 << 31)) /* Event queue overflowed */
+#define Q_ENT(q, p, dwords)    (~(1UL << 62) & ((q)->base + Q_IDX(q, p) * (dwords) * 8))
+
+#define ACK_TIMEOUT 100000
+
+#define TCU_EVENT_Q_NS_ID   762
+#define TCU_CMD_SYNC_NS_ID  763
+#define TCU_GLOBAL_SYNC_NS_ID   765
+#define TCU_PRI_Q_NS_ID     769
+
+#define CMDQ_ENTRY_DWORDS   2
+#define EVTQ_ENTRY_DWORDS   4
+#define PRIQ_ENTRY_DWORDS   2
+
+#define STRTAB_L1_SZ_SHIFT  20
+#define STRTAB_SPLIT        6
+
+#define STRTAB_L1_DESC_L2PTR_M  (0x3fffffffffff << 6)
+#define STRTAB_L1_DESC_DWORDS   1
+
+#define STRTAB_STE_DWORDS   8
+#define CD_DWORDS       8
+
+#define GERROR_ERR_MASK         0x1fd
+#define GERROR_SFM_ERR          BIT(8)
+#define GERROR_MSI_GERROR_ABT_ERR   BIT(7)
+#define GERROR_MSI_PRIQ_ABT_ERR     BIT(6)
+#define GERROR_MSI_EVTQ_ABT_ERR     BIT(5)
+#define GERROR_MSI_CMDQ_ABT_ERR     BIT(4)
+#define GERROR_PRIQ_ABT_ERR     BIT(3)
+#define GERROR_EVTQ_ABT_ERR     BIT(2)
+#define GERROR_CMDQ_ERR         BIT(0)
+
+#define CMDQ_CONS_ERR           RL_GENMASK(30, 24)
+#define CMDQ_CONS_RD			RL_GENMASK(19, 0)
+#define CMDQ_ERR_CERROR_NONE_IDX    0
+#define CMDQ_ERR_CERROR_ILL_IDX     1
+#define CMDQ_ERR_CERROR_ABT_IDX     2
+#define CMDQ_ERR_CERROR_ATC_INV_IDX 3
+
+#define SMMU_EVT_IRQ	762
+#define SMMU_GERR_IRQ	765
+
+#define CMDQ_BASE		(0x140f8000ULL)
+#define EVTQ_BASE		(0x140f0000ULL)
+#define ST_ADDR			(0x14000000ULL)
+#define CDT_ADDR		(0x14001000ULL)
+#define SMMU_REGION_0	(0x14020000ULL)
+#define SMMU_REGION_1	(0x14030000ULL)
+#ifdef __TEST
+#define SMMU_REGION_PCIE	(0x14040000ULL)
+#endif
+
+SemaphoreHandle_t mtx;
+
+static uint16_t smmu_xlat_use_count[MAX_XLAT_TABLES];
+static uint16_t smmu_xlat_sid0_use_count[MAX_XLAT_TABLES];
+
+extern const char dma_mcode_start[];
+
+/* TODO : The following regions are for testing. */
+struct mmu_region smmu_regions[] = {
+	MMU_REGION_FLAT_ENTRY("dma0_mcode",
+						  0x00600000ULL,
+						  0x4000,
+						  MT_NORMAL_NC | MT_P_RX_U_RX | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("dma1_mcode",
+						  0x2000600000ULL,
+						  0x4000,
+						  MT_NORMAL_NC | MT_P_RX_U_RX | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("dma2_mcode",
+						  0x4000600000ULL,
+						  0x4000,
+						  MT_NORMAL_NC | MT_P_RX_U_RX | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("dma3_mcode",
+						  0x6000600000ULL,
+						  0x4000,
+						  MT_NORMAL_NC | MT_P_RX_U_RX | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("DRAM0 User Region",
+						  0x0040000000ULL,
+						  0x08C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("DRAM1 User Region",
+						  0x2040000000ULL,
+						  0x08C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("DRAM2 User Region",
+						  0x4040000000ULL,
+						  0x08C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("DRAM3 User Region",
+						  0x6040000000ULL,
+						  0x08C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS | MT_NG),
 };
 
-static struct str_pt pt_2m_region_info[NUM_OF_2M_REGION] = {
-	{.va = 0x10000000000 + 0x03F40000000, .pa = 0x1FE0000000, .num = 32, .acp = SMMU_DISABLE_ACP},
-	{.va = 0x10000000000 + 0x03F80000000, .pa = 0x1FE4000000, .num = 32, .acp = SMMU_DISABLE_ACP},
-	{.va = 0x10000000000 + 0x03FC0000000, .pa = 0x1FF0000000, .num = 128, .acp = SMMU_DISABLE_ACP},
-	{.va = 0x14000000000, .pa = 0x0010000000, .num = 32, .acp = SMMU_ENABLE_ACP},
+struct mmu_region smmu_regions1[] = {
+	MMU_REGION_FLAT_ENTRY("dma_mcode",
+						  0x0044A000ULL,
+						  0x4000,
+						  MT_NORMAL_NC | MT_P_RX_U_RX | MT_NS | MT_NG),
 };
 
-#if NUM_OF_4K_REGION == 1
-static struct str_pt pt_4k_region_info[NUM_OF_4K_REGION] = {
-	{.va = 0x01FF8170000, .pa = 0x01ff8170000, .num = 1, .acp = SMMU_DISABLE_ACP},
+#ifdef __TEST
+/* NOTE: SMMU regions for PCIe HDMA test*/
+struct mmu_region smmu_regions_pcie[] = {
+	MMU_REGION_FLAT_ENTRY("PCIE_HDMA_DESC",
+						  0x1E08000000ULL,
+						  0x40000,
+						  MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("DRAM0 User Region",
+						  0x0040000000ULL,
+						  0x08C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("DRAM1 User Region",
+						  0x2040000000ULL,
+						  0x08C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("DRAM2 User Region",
+						  0x4040000000ULL,
+						  0x08C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS | MT_NG),
+	MMU_REGION_FLAT_ENTRY("DRAM3 User Region",
+						  0x6040000000ULL,
+						  0x08C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS | MT_NG),
 };
 #endif
 
-static struct str_region_info region_info = {
-	.region_num_1g = NUM_OF_1G_REGION,
-	.region_num_2m = NUM_OF_2M_REGION,
-	.region_num_4k = NUM_OF_4K_REGION,
-	.region_info_1g = pt_1g_region_info,
-	.region_info_2m = pt_2m_region_info,
-#if NUM_OF_4K_REGION == 1
-	.region_info_4k = pt_4k_region_info,
-#else
-	.region_info_4k = NULL,
+/* TODO : The following struct is for testing. */
+struct mmu_ptables smmu_ptables[] = {
+	{
+		.mmu_flat_range = NULL,
+		.mmu_flat_range_size = 0,
+		.mmu_region = smmu_regions,
+		.mmu_region_size = (sizeof(smmu_regions) / sizeof((smmu_regions)[0])),
+		.base_xlat_table = (void *)SMMU_REGION_0,
+		.xlat_use_count = smmu_xlat_sid0_use_count,
+		.xlat_table_count = MAX_XLAT_TABLES,
+		.xlat_table_size = Ln_NUM_ENTRIES,
+		.flag = 0,
+	},
+	{
+		.mmu_flat_range = NULL,
+		.mmu_flat_range_size = 0,
+		.mmu_region = smmu_regions1,
+		.mmu_region_size = (sizeof(smmu_regions1) / sizeof((smmu_regions1)[0])),
+		.base_xlat_table = (void *)SMMU_REGION_1,
+		.xlat_use_count = smmu_xlat_use_count,
+		.xlat_table_count = MAX_XLAT_TABLES,
+		.xlat_table_size = Ln_NUM_ENTRIES,
+		.flag = 0,
+	},
+#ifdef __TEST
+	{
+		.mmu_flat_range = NULL,
+		.mmu_flat_range_size = 0,
+		.mmu_region = smmu_regions_pcie,
+		.mmu_region_size = (sizeof(smmu_regions_pcie) / sizeof((smmu_regions_pcie)[0])),
+		.base_xlat_table = (void *)SMMU_REGION_PCIE,
+		.xlat_use_count = smmu_xlat_use_count,
+		.xlat_table_count = MAX_XLAT_TABLES,
+		.xlat_table_size = Ln_NUM_ENTRIES,
+		.flag = 0,
+	},
 #endif
 };
 
-/* Page table for chiplet3 */
-static struct str_pt pt_1g_region_info_cl3[NUM_OF_1G_REGION] = {
-	{.va = 0x10000000000, .pa = 0x6000000000, .num = 36, .acp = SMMU_DISABLE_ACP},
+static struct stream_table *st;
+static struct cd_tables *cdt;
+
+static struct smmu_event events[] = {
+	{ 0x01, "F_UUT",
+		"Unsupported Upstream Transaction."},
+	{ 0x02, "C_BAD_STREAMID",
+		"Transaction StreamID out of range."},
+	{ 0x03, "F_STE_FETCH",
+		"Fetch of STE caused external abort."},
+	{ 0x04, "C_BAD_STE",
+		"Used STE invalid."},
+	{ 0x05, "F_BAD_ATS_TREQ",
+		"Address Translation Request disallowed for a StreamID "
+		"and a PCIe ATS Translation Request received."},
+	{ 0x06, "F_STREAM_DISABLED",
+		"The STE of a transaction marks non-substream transactions "
+		"disabled."},
+	{ 0x07, "F_TRANSL_FORBIDDEN",
+		"An incoming PCIe transaction is marked Translated but "
+		"SMMU bypass is disallowed for this StreamID."},
+	{ 0x08, "C_BAD_SUBSTREAMID",
+		"Incoming SubstreamID present, but configuration is invalid."},
+	{ 0x09, "F_CD_FETCH",
+		"Fetch of CD caused external abort."},
+	{ 0x0a, "C_BAD_CD",
+		"Fetched CD invalid."},
+	{ 0x0b, "F_WALK_EABT",
+		"An external abort occurred fetching (or updating) "
+		"a translation table descriptor."},
+	{ 0x10, "F_TRANSLATION",
+		"Translation fault."},
+	{ 0x11, "F_ADDR_SIZE",
+		"Address Size fault."},
+	{ 0x12, "F_ACCESS",
+		"Access flag fault due to AF == 0 in a page or block TTD."},
+	{ 0x13, "F_PERMISSION",
+		"Permission fault occurred on page access."},
+	{ 0x20, "F_TLB_CONFLICT",
+		"A TLB conflict occurred because of the transaction."},
+	{ 0x21, "F_CFG_CONFLICT",
+		"A configuration cache conflict occurred due to "
+		"the transaction."},
+	{ 0x24, "E_PAGE_REQUEST",
+		"Speculative page request hint."},
+	{ 0x25, "F_VMS_FETCH",
+		"Fetch of VMS caused external abort."},
+	{ 0, NULL, NULL },
 };
 
-static struct str_pt pt_2m_region_info_cl3[NUM_OF_2M_REGION] = {
-	{.va = 0x10000000000 + 0x03F40000000, .pa = 0x7FE0000000, .num = 32, .acp = SMMU_DISABLE_ACP},
-	{.va = 0x10000000000 + 0x03F80000000, .pa = 0x7FE4000000, .num = 32, .acp = SMMU_DISABLE_ACP},
-	{.va = 0x10000000000 + 0x03FC0000000, .pa = 0x7FF0000000, .num = 128, .acp = SMMU_DISABLE_ACP},
-	{.va = 0x14000000000, .pa = 0x6010000000, .num = 32, .acp = SMMU_ENABLE_ACP},
+static struct smmu_queue smmu_cmdq = {
+	.paddr = CMDQ_BASE,
+	.size_log2 = CMDQ_LOG2,
 };
 
-#if NUM_OF_4K_REGION == 1
-static struct str_pt pt_4k_region_info_cl3[NUM_OF_4K_REGION] = {
-	{.va = 0x01FF8170000, .pa = 0x07ff8170000, .num = 1, .acp = SMMU_DISABLE_ACP},
-};
-#endif
-
-static struct str_region_info region_info_cl3 = {
-	.region_num_1g = NUM_OF_1G_REGION,
-	.region_num_2m = NUM_OF_2M_REGION,
-	.region_num_4k = NUM_OF_4K_REGION,
-	.region_info_1g = pt_1g_region_info_cl3,
-	.region_info_2m = pt_2m_region_info_cl3,
-#if NUM_OF_4K_REGION == 1
-	.region_info_4k = pt_4k_region_info_cl3,
-#else
-	.region_info_4k = NULL,
-#endif
+static struct smmu_queue smmu_evtq = {
+	.paddr = EVTQ_BASE,
+	.size_log2 = EVTQ_LOG2,
 };
 
-static uint64_t smmu_l1_pt_base[NUM_OF_1G_REGION + NUM_OF_2M_REGION + NUM_OF_4K_REGION] = {0};
-static uint32_t smmu_l1_pt_index[NUM_OF_1G_REGION + NUM_OF_2M_REGION + NUM_OF_4K_REGION] = {0};
+static void make_cmd(uint64_t *cmd, struct smmu_cmdq_entry *entry)
+{
+	memset(cmd, 0, CMDQ_ENTRY_DWORDS * 8);
+	cmd[0] = entry->opcode << CMD_QUEUE_OPCODE_S;
 
-static uint64_t smmu_l2_pt_base[NUM_OF_2M_REGION + NUM_OF_4K_REGION] = {0};
-static uint32_t smmu_l2_pt_index[NUM_OF_2M_REGION + NUM_OF_4K_REGION] = {0};
+	switch (entry->opcode) {
+	case CMD_TLBI_NH_VA:
+	    cmd[0] |= (uint64_t)entry->tlbi.asid << TLBI_0_ASID_S;
+	    cmd[1] = entry->tlbi.addr & TLBI_1_ADDR_M;
+	    if (entry->tlbi.leaf) {
+			/*
+			 * Leaf flag means that only cached entries
+			 * for the last level of translation table walk
+			 * are required to be invalidated.
+			 */
+			cmd[1] |= TLBI_1_LEAF;
+	    }
+	    break;
+	case CMD_TLBI_NH_ASID:
+		cmd[0] |= (uint64_t)entry->tlbi.asid << TLBI_0_ASID_S;
+		cmd[0] |= (uint64_t)entry->tlbi.vmid << TLBI_0_VMID_S;
+	    break;
+	case CMD_TLBI_NSNH_ALL:
+	case CMD_TLBI_NH_ALL:
+	case CMD_TLBI_EL2_ALL:
+	    break;
+	case CMD_CFGI_CD_ALL:
+		cmd[0] |= ((uint64_t)entry->cfgi.sid << CFGI_0_STE_SID_S);
+	case CMD_CFGI_CD:
+	    cmd[0] |= ((uint64_t)entry->cfgi.ssid << CFGI_0_SSID_S);
+	    /* FALLTROUGH */
+	case CMD_CFGI_STE:
+	    cmd[0] |= ((uint64_t)entry->cfgi.sid << CFGI_0_STE_SID_S);
+	    cmd[1] |= ((uint64_t)entry->cfgi.leaf << CFGI_1_LEAF_S);
+	    break;
+	case CMD_CFGI_STE_RANGE:
+	    cmd[1] = (5 << CFGI_1_STE_RANGE_S);
+	    break;
+	case CMD_SYNC:
+	    cmd[0] |= SYNC_0_MSH_IS | SYNC_0_MSIATTR_OIWB;
+	    if (entry->sync.msiaddr) {
+			cmd[0] |= SYNC_0_CS_SIG_IRQ;
+			cmd[1] |= (entry->sync.msiaddr & SYNC_1_MSIADDRESS_M);
+	    } else
+			cmd[0] |= SYNC_0_CS_SIG_SEV;
+	    break;
+	case CMD_PREFETCH_CONFIG:
+	    cmd[0] |= ((uint64_t)entry->prefetch.sid << PREFETCH_0_SID_S);
+	    cmd[0] |= ((uint64_t)entry->prefetch.ssid << PREFETCH_0_SSID_S);
+	    cmd[0] |= ((uint64_t)entry->prefetch.ssv << PREFETCH_0_SSV_S);
+	    cmd[0] |= ((uint64_t)entry->prefetch.ssec << PREFETCH_0_SSEC_S);
+	    break;
+	};
+}
 
-#if NUM_OF_4K_REGION == 1
-static uint64_t smmu_l3_pt_base[NUM_OF_4K_REGION] = {0};
-static uint32_t smmu_l3_pt_index[NUM_OF_4K_REGION] = {0};
-#else
-static uint64_t *smmu_l3_pt_base;
-static uint32_t *smmu_l3_pt_index;
+static int smmu_q_has_space(struct smmu_queue *q)
+{
+	if (Q_IDX(q, q->lc.cons) != Q_IDX(q, q->lc.prod) ||
+		Q_WRP(q, q->lc.cons) == Q_WRP(q, q->lc.prod))
+	    return (1);
+
+	return 0;
+}
+
+static uint32_t smmu_q_inc_prod(struct smmu_queue *q)
+{
+	uint32_t prod;
+	uint32_t val;
+
+	prod = (Q_WRP(q, q->lc.prod) | Q_IDX(q, q->lc.prod)) + 1;
+	val = (Q_OVF(q->lc.prod) | Q_WRP(q, prod) | Q_IDX(q, prod));
+
+	return val;
+}
+
+static uint32_t smmu_q_inc_cons(struct smmu_queue *q)
+{
+	uint32_t cons;
+	uint32_t val;
+
+	cons = (Q_WRP(q, q->lc.cons) | Q_IDX(q, q->lc.cons)) + 1;
+	val = (Q_OVF(q->lc.cons) | Q_WRP(q, cons) | Q_IDX(q, cons));
+
+	return val;
+}
+
+static int smmu_q_empty(struct smmu_queue *q)
+{
+
+	if (Q_IDX(q, q->lc.cons) == Q_IDX(q, q->lc.prod) &&
+		Q_WRP(q, q->lc.cons) == Q_WRP(q, q->lc.prod))
+		return 1;
+
+	return 0;
+}
+
+static int smmu_write_ack(uint32_t reg, uint32_t reg_ack, uint32_t val)
+{
+	uint32_t v;
+	int timeout;
+
+	timeout = ACK_TIMEOUT;
+
+	v = sys_read32(TCU + reg);
+	v |= val;
+
+	sys_write32(v, TCU + reg);
+
+	do {
+	    v = sys_read32(TCU + reg_ack);
+	    if (v & val)
+			break;
+	} while (timeout--);
+
+	if (timeout <= 0) {
+	    printf("Failed to write reg.\n");
+	    return -1;
+	}
+
+	return 0;
+}
+
+void smmu_cmdq_enqueue_cmd(struct smmu_cmdq_entry *entry)
+{
+	uint64_t cmd[CMDQ_ENTRY_DWORDS];
+	struct smmu_queue *cmdq;
+	void *entry_addr;
+
+	cmdq = &smmu_cmdq;
+
+	make_cmd(cmd, entry);
+
+	xSemaphoreTake(mtx, portMAX_DELAY);
+
+	/* Ensure that a space is available. */
+	do {
+	    cmdq->lc.cons = sys_read32(TCU + cmdq->cons_off);
+	} while (smmu_q_has_space(cmdq) == 0);
+
+	/* Write the command to the current prod entry. */
+	entry_addr = (void *)(cmdq->paddr + Q_IDX(cmdq, cmdq->lc.prod) * CMDQ_ENTRY_DWORDS * 8 + CHIPLET_BASE_ADDRESS);
+	memcpy(entry_addr, cmd, CMDQ_ENTRY_DWORDS * 8);
+
+	/* Increment prod index. */
+	cmdq->lc.prod = smmu_q_inc_prod(cmdq);
+	sys_write32(cmdq->lc.prod, TCU + cmdq->prod_off);
+
+	xSemaphoreGive(mtx);
+}
+
+int smmu_sync(void)
+{
+	struct smmu_cmdq_entry cmd;
+	struct smmu_queue *q;
+	uint32_t *base;
+	int timeout;
+	int prod;
+
+	q = &smmu_cmdq;
+	prod = q->lc.prod;
+
+	/* Enqueue sync command. */
+	cmd.opcode = CMD_SYNC;
+	cmd.sync.msiaddr = q->paddr + Q_IDX(q, prod) * CMDQ_ENTRY_DWORDS * 8 + CHIPLET_BASE_ADDRESS;
+	smmu_cmdq_enqueue_cmd(&cmd);
+
+	/* Wait for the sync completion. */
+	base = (void *)(q->paddr + Q_IDX(q, prod) * CMDQ_ENTRY_DWORDS * 8 + CHIPLET_BASE_ADDRESS);
+
+	timeout = ACK_TIMEOUT;
+
+	do {
+	    if (*base == 0) {
+			/* MSI write completed. */
+			break;
+	    }
+	    __asm__ volatile("yield" ::: "memory");
+	} while (timeout--);
+
+	if (timeout < 0)
+	    printf("Failed to sync\n");
+
+	return 0;
+}
+
+void smmu_invalidate_all_cd(void)
+{
+	struct smmu_cmdq_entry cmd;
+
+	cmd.opcode = CMD_CFGI_CD_ALL;
+	smmu_cmdq_enqueue_cmd(&cmd);
+	smmu_sync();
+}
+
+void smmu_invalidate_sid(uint32_t sid)
+{
+	struct smmu_cmdq_entry cmd;
+
+	cmd.opcode = CMD_CFGI_STE;
+	cmd.cfgi.sid = sid;
+	smmu_cmdq_enqueue_cmd(&cmd);
+	smmu_sync();
+}
+
+void smmu_prefetch(uint32_t sid, uint32_t ssid, uint8_t ssv, uint8_t ssec)
+{
+	struct smmu_cmdq_entry cmd;
+
+	cmd.opcode = CMD_PREFETCH_CONFIG;
+	cmd.prefetch.sid = sid;
+	cmd.prefetch.ssid = ssid;
+	cmd.prefetch.ssv = ssv;
+	cmd.prefetch.ssec = ssec;
+	smmu_cmdq_enqueue_cmd(&cmd);
+	smmu_sync();
+}
+
+int smmu_sync_cd(int sid, int ssid, bool leaf)
+{
+	struct smmu_cmdq_entry cmd;
+
+	cmd.opcode = CMD_CFGI_CD;
+	cmd.cfgi.sid = sid;
+	cmd.cfgi.ssid = ssid;
+	cmd.cfgi.leaf = leaf;
+	smmu_cmdq_enqueue_cmd(&cmd);
+
+	return 0;
+}
+
+void smmu_invalidate_tlb_asid(uint32_t sid, uint32_t ssid)
+{
+	struct smmu_cmdq_entry cmd;
+
+	cmd.opcode = CMD_TLBI_NH_ASID;
+	cmd.tlbi.vmid = sid;
+	cmd.tlbi.asid = ssid;
+	smmu_cmdq_enqueue_cmd(&cmd);
+	smmu_sync();
+}
+
+void smmu_activate_ctx(int func_id, int ctx_id, uint64_t pt_base)
+{
+	cdt[func_id].cd[ctx_id].val[0] |= CD0_VALID;
+	cdt[func_id].cd[ctx_id].val[1] = pt_base;
+
+	/* Sync CD update before invalidating TLB */
+	smmu_sync_cd(func_id, ctx_id, 1);
+//	smmu_sync();  /* Wait for CD update to complete */
+	smmu_invalidate_tlb_asid(func_id, ctx_id);
+}
+
+static void smmu_init_ste_bypass(uint32_t sid)
+{
+	uint32_t bypass_sid;
+	uint64_t val;
+
+	val = STE0_VALID | STE0_CONFIG_BYPASS;
+	bypass_sid = sid + BYPASS_START_SID;
+
+	st[bypass_sid].ste[0] = val;
+
+	smmu_invalidate_sid(bypass_sid);
+}
+
+void smmu_s2_enable(int func_id, uint64_t pt_base)
+{
+	uint64_t val;
+
+	st[func_id].ste[3] = pt_base;
+
+	val = st[func_id].ste[0];
+	val |= STE0_CONFIG_ALL_TRANS;
+	st[func_id].ste[0] = val;
+
+	val = STE2_S2AA64;
+	val |= STE2_S2TG_4KB;
+	val |= (26ULL << STE2_S2T0SZ_S);
+	val |= STE2_S2SL0_L1;
+	val |= STE2_S2IR0_WBC_RA;
+	val |= STE2_S2OR0_WBC_RA;
+	val |= STE2_S2SH0_IS;
+	val |= (0x5ULL << STE2_S2PS_S);
+	val |= STE2_S2AFFD;
+	val |= STE2_S2R;
+	val |= (func_id << STE2_S2VMID_S);
+
+	st[func_id].ste[2] = val;
+
+	assert(func_id < BYPASS_START_SID);
+	smmu_init_ste_bypass(func_id);
+
+	smmu_invalidate_all_sid();
+}
+
+void smmu_s2_disable(int func_id)
+{
+	uint64_t val;
+
+	/* STE[0]에서 STE0_CONFIG_ALL_TRANS 제거, STE0_CONFIG_S1_TRANS만 유지 */
+	val = st[func_id].ste[0];
+	val &= ~STE0_CONFIG_ALL_TRANS;  /* S2 설정 제거 */
+	val |= STE0_CONFIG_S1_TRANS;     /* S1만 유지 */
+	st[func_id].ste[0] = val;
+
+	/* STE[2]를 원래대로 복원 (S2VMID만, S2 translation 설정 제거) */
+	st[func_id].ste[2] = (func_id << STE2_S2VMID_S);
+
+	/* STE[3] S2TTB 초기화 */
+	st[func_id].ste[3] = 0;
+
+	/* 변경사항 동기화 */
+	smmu_invalidate_sid(func_id);
+	smmu_sync();
+}
+
+void smmu_deinit_ste(uint32_t sid)
+{
+	st[sid].ste[0] = 0;
+
+	smmu_invalidate_sid(sid);
+	smmu_sync_cd(sid, 0, true);
+	smmu_invalidate_sid(sid);
+}
+
+int smmu_init_ste(uint64_t sid)
+{
+	uint64_t val;
+	const uint64_t vf_system_hidden_offset = 0x10000000; // 256MB
+	const uint64_t pf_system_ipa_base = 0x40000000; // 1GB
+
+	val = STE0_VALID;
+
+	/* S1 */
+	st[sid].ste[1] =  STE1_S1STALLD | STE1_EATS_FULLATS | STE1_STRW_NS_EL1 | STE1_S1CSH_IS |
+					  STE1_S1CIR_WBRA | STE1_S1COR_WBRA | STE1_S1DSS_BYPASS;
+	st[sid].ste[2] = (sid << STE2_S2VMID_S);                     /* S2VMID, S2T0SZ, S2TG */
+	st[sid].ste[3] = 0;                     /* S2TTB */
+	st[sid].ste[4] = 0;                     /* S2T0SZ, S2TG */
+	st[sid].ste[5] = 0;                     /* VMSptr */
+	st[sid].ste[6] = 0;                     /* S2TTB Sec*/
+	st[sid].ste[7] = 0;                     /* RES0 */
+
+	/* Configure STE */
+	val |= ((uint64_t)(cdt + sid) & (CHIPLET_OFFSET - 1) & STE0_S1CONTEXTPTR_M);
+	val |= STE0_CONFIG_S1_TRANS;
+	val |= (6UL << STE0_S1CDMAX_S);
+
+	val += (sid > 0) ? vf_system_hidden_offset : pf_system_ipa_base;
+
+	smmu_invalidate_sid(sid);
+
+	/* The STE[0] has to be written in a single blast, last of all. */
+	st[sid].ste[0] = val;                   /* Valid, Config, S1contextPtr */
+	dsb();
+
+	smmu_invalidate_sid(sid);
+
+	return 0;
+}
+
+static void smmu_create_ptables(void)
+{
+	struct mmu_ptables ptables;
+
+	for (int i = 0; i < sizeof(smmu_ptables) / sizeof(struct mmu_ptables); i++) {
+		ptables = smmu_ptables[i];
+		ptables.base_xlat_table = (void *)((uint64_t)ptables.base_xlat_table + CHIPLET_BASE_ADDRESS);
+		new_table(&ptables);
+		setup_page_tables(&ptables);
+	}
+}
+
+void smmu_init_cd(struct context_desc *cd)
+{
+	uint64_t val;
+
+	for (uint64_t ssid = 0; ssid < 64; ssid++) {
+		val = CD0_AA64;
+		val |= CD0_TG0_4KB;
+		val |= CD0_TG1_4KB;
+		val |= CD0_EPD1; /* Disable TT1 */
+		val |= (23 << CD0_T0SZ_S);
+		val |= CD0_IPS_40BITS;
+		val |= CD0_TBI0;
+		val |= CD0_TBI1;
+		val |= CD0_SH0_IS;
+		val |= CD0_OR0_WBC_RA;
+		val |= CD0_IR0_WBC_RA;
+		val |= CD0_R;
+		val |= CD0_A;	// for quad replay, 2026-02-12
+		val |= CD0_AFFD;
+		val |= CD0_ASET;
+		val |= ssid << CD0_ASID_S;
+
+		cd[ssid].val[1] = 0; /* table address */
+		cd[ssid].val[2] = 0;
+		cd[ssid].val[3] = MEMORY_ATTRIBUTES;
+
+		/* Install the CD. */
+		cd[ssid].val[0] = val;
+	}
+}
+
+static int smmu_init_queue(struct smmu_queue *q, uint32_t prod_off, uint32_t cons_off,
+						   uint32_t dwords)
+{
+	q->prod_off = prod_off;
+	q->cons_off = cons_off;
+
+	q->base = CMDQ_BASE_RA | EVENTQ_BASE_WA;
+	q->base |= q->paddr + CHIPLET_BASE_ADDRESS;
+	q->base |= q->size_log2 << Q_LOG2SIZE_S;
+
+	return 0;
+}
+
+static int smmu_init_queues(void)
+{
+	int err;
+
+	/* Command queue. */
+	err = smmu_init_queue(&smmu_cmdq, SMMU_CMDQ_PROD, SMMU_CMDQ_CONS, CMDQ_ENTRY_DWORDS);
+	if (err)
+	    return -ENXIO;
+
+	/* Event queue. */
+	err = smmu_init_queue(&smmu_evtq, SMMU_EVENTQ_PROD, SMMU_EVENTQ_CONS, EVTQ_ENTRY_DWORDS);
+	if (err)
+	    return -ENXIO;
+
+	return 0;
+}
+
+void smmu_invalidate_all_sid(void)
+{
+	struct smmu_cmdq_entry cmd;
+
+	cmd.opcode = CMD_CFGI_STE_RANGE;
+	smmu_cmdq_enqueue_cmd(&cmd);
+	smmu_sync();
+}
+
+void smmu_tlbi_all(void)
+{
+	struct smmu_cmdq_entry cmd;
+
+	cmd.opcode = CMD_TLBI_NSNH_ALL;
+	smmu_cmdq_enqueue_cmd(&cmd);
+	smmu_sync();
+}
+
+static void smmu_evtq_dequeue(uint32_t *evt)
+{
+	void *entry_addr;
+
+	smmu_evtq.lc.val = sys_read64(TCU + smmu_evtq.prod_off);
+	entry_addr = (void *)((uint64_t)smmu_evtq.paddr + smmu_evtq.lc.cons * EVTQ_ENTRY_DWORDS * 8 + CHIPLET_BASE_ADDRESS);
+	memcpy(evt, entry_addr, EVTQ_ENTRY_DWORDS * 8);
+	smmu_evtq.lc.cons = smmu_q_inc_cons(&smmu_evtq);
+	sys_write32(smmu_evtq.lc.cons, TCU + smmu_evtq.cons_off);
+}
+
+static void smmu_print_event(uint32_t *evt)
+{
+	struct smmu_event *ev;
+	uintptr_t input_addr;
+	uint8_t event_id;
+	int sid;
+	int i;
+
+	ev = NULL;
+	event_id = evt[0] & 0xff;
+	for (i = 0; events[i].ident != 0; i++) {
+		if (events[i].ident == event_id) {
+		    ev = &events[i];
+		    break;
+		}
+	}
+
+	sid = evt[1];
+	input_addr = evt[5];
+	input_addr <<= 32;
+	input_addr |= evt[4];
+
+	if (ev) {
+		printf("Event %s (%s) received.\n", ev->str, ev->msg);
+	} else
+		printf("Event 0x%x received\n", event_id);
+
+	printf("SID %d, Input Address: 0x%jx\n", sid, input_addr);
+
+	for (i = 0; i < 8; i++)
+		printf("evt[%d] %x\n", i, evt[i]);
+}
+
+static void smmu_cmdq_skip_err(void)
+{
+	static const char * const cerror_str[] = {
+		[CMDQ_ERR_CERROR_NONE_IDX]  = "No error",
+		[CMDQ_ERR_CERROR_ILL_IDX]   = "Illegal command",
+		[CMDQ_ERR_CERROR_ABT_IDX]   = "Abort on command fetch",
+		[CMDQ_ERR_CERROR_ATC_INV_IDX]   = "ATC invalidate timeout",
+	};
+
+	int i;
+	uint64_t cmd[CMDQ_ENTRY_DWORDS];
+	uint32_t val = sys_read32(TCU + smmu_cmdq.cons_off);
+	uint32_t idx = RL_BITFIELD_GET(CMDQ_CONS_ERR, val);
+	uint32_t cons = RL_BITFIELD_GET(CMDQ_CONS_RD, val);
+	void *entry_addr;
+	struct smmu_queue *q;
+
+	q = &smmu_cmdq;
+
+	struct smmu_cmdq_entry cmd_sync;
+
+	cmd_sync.opcode = CMD_SYNC;
+
+	printf("CMDQ error (cons 0x%08x): %s\n", cons,
+		   idx < ARRAY_SIZE(cerror_str) ?  cerror_str[idx] : "Unknown");
+
+	switch (idx) {
+	case CMDQ_ERR_CERROR_ABT_IDX:
+		printf("retrying command fetch\n");
+		return;
+	case CMDQ_ERR_CERROR_NONE_IDX:
+		return;
+	case CMDQ_ERR_CERROR_ATC_INV_IDX:
+		return;
+	case CMDQ_ERR_CERROR_ILL_IDX:
+	default:
+		break;
+	}
+
+	entry_addr = (void *)(q->paddr + Q_IDX(q, q->lc.cons) * CMDQ_ENTRY_DWORDS * 8 + CHIPLET_BASE_ADDRESS);
+	memcpy(cmd, entry_addr, CMDQ_ENTRY_DWORDS * 8);
+
+	printf("skipping command in error state:\n");
+	for (i = 0; i < ARRAY_SIZE(cmd); ++i)
+		printf("\t0x%016llx\n", (unsigned long long)cmd[i]);
+
+	make_cmd(cmd, &cmd_sync);
+
+	memcpy(entry_addr, cmd, CMDQ_ENTRY_DWORDS * 8);
+}
+
+void smmu_disable(void)
+{
+	uint32_t val;
+
+	val = sys_read32(TCU + SMMU_CR0);
+	val &= ~CR0_SMMUEN;
+	sys_write32(val, TCU + SMMU_CR0);
+}
+
+static void smmu_event_intr(void)
+{
+	uint32_t evt[EVTQ_ENTRY_DWORDS * 2];
+
+	do {
+		smmu_evtq_dequeue(evt);
+		smmu_print_event(evt);
+	} while (!smmu_q_empty(&smmu_evtq));
+}
+
+static void smmu_gerr_intr(void)
+{
+	uint32_t gerror, gerrorn, active;
+
+	gerror = sys_read32(TCU + SMMU_GERROR);
+	gerrorn = sys_read32(TCU + SMMU_GERRORN);
+	active = gerror ^ gerrorn;
+
+	if (!(active & GERROR_ERR_MASK))
+		return;
+
+	if (active & GERROR_SFM_ERR) {
+		printf("device has entered Service Failure Mode!\n");
+		smmu_disable();
+	}
+
+	if (active & GERROR_MSI_GERROR_ABT_ERR)
+		printf("GERROR MSI write aborted\n");
+
+	if (active & GERROR_MSI_EVTQ_ABT_ERR)
+		printf("EVTQ MSI write aborted\n");
+
+	if (active & GERROR_MSI_CMDQ_ABT_ERR)
+		printf("CMDQ MSI write aborted\n");
+
+	if (active & GERROR_EVTQ_ABT_ERR)
+		printf("EVTQ write aborted -- events may have been lost\n");
+
+	if (active & GERROR_CMDQ_ERR)
+		smmu_cmdq_skip_err();
+
+	sys_write32(gerror, TCU + SMMU_GERRORN);
+}
+
+static inline void smmu_enable_interrupt(void)
+{
+
+	sys_write64(0, TCU + SMMU_GERROR_IRQ_CFG0);
+	sys_write32(0, TCU + SMMU_GERROR_IRQ_CFG1);
+	sys_write32(0, TCU + SMMU_GERROR_IRQ_CFG2);
+
+	sys_write64(0, TCU + SMMU_EVENTQ_IRQ_CFG0);
+	sys_write32(0, TCU + SMMU_EVENTQ_IRQ_CFG1);
+	sys_write32(0, TCU + SMMU_EVENTQ_IRQ_CFG2);
+
+	connect_interrupt_with_handler(SMMU_EVT_IRQ, GIC_PRI_DEF, IRQ_TYPE_EDGE, smmu_event_intr, NULL);
+	connect_interrupt_with_handler(SMMU_GERR_IRQ, GIC_PRI_DEF, IRQ_TYPE_EDGE, smmu_gerr_intr, NULL);
+
+	smmu_write_ack(SMMU_IRQ_CTRL, SMMU_IRQ_CTRLACK, IRQ_CTRL_GERROR_IRQEN | IRQ_CTRL_EVENTQ_IRQEN);
+}
+
+static inline void smmu_enable_queues(void)
+{
+	sys_write64(smmu_cmdq.base, TCU + SMMU_CMDQ_BASE);
+	sys_write32(smmu_cmdq.lc.prod, TCU + SMMU_CMDQ_PROD);
+	sys_write32(smmu_cmdq.lc.cons, TCU + SMMU_CMDQ_CONS);
+	smmu_write_ack(SMMU_CR0, SMMU_CR0ACK, CR0_CMDQEN);
+
+	sys_write64(smmu_evtq.base, TCU + SMMU_EVENTQ_BASE);
+	sys_write32(smmu_evtq.lc.prod, TCU + SMMU_EVENTQ_PROD);
+	sys_write32(smmu_evtq.lc.cons, TCU + SMMU_EVENTQ_CONS);
+	smmu_write_ack(SMMU_CR0, SMMU_CR0ACK, CR0_EVENTQEN);
+}
+
+static inline void smmu_init_strtab(void)
+{
+	sys_write32(5 << STRTAB_BASE_CFG_LOG2SIZE_S, TCU + SMMU_STRTAB_BASE_CFG);
+	sys_write64((uint64_t)st | STRTAB_BASE_RA, TCU + SMMU_STRTAB_BASE);
+}
+
+void smmu_enable(void)
+{
+	smmu_write_ack(SMMU_CR0, SMMU_CR0ACK, CR0_SMMUEN);
+}
+
+void smmu_check_early_event(void)
+{
+	smmu_evtq.lc.prod = sys_read32(TCU + SMMU_EVENTQ_PROD);
+
+	if (smmu_evtq.lc.prod != 0)
+		smmu_event_intr();
+}
+
+void smmu_attach_ptable(void)
+{
+	uint64_t val;
+
+	val = cdt[0].cd[0].val[0];
+	val |= CD0_VALID;
+	cdt[0].cd[0].val[0] = val;
+	cdt[0].cd[0].val[1] = SMMU_REGION_0;
+
+	val = cdt[2].cd[1].val[0];
+	val |= CD0_VALID;
+	cdt[2].cd[1].val[0] = val;
+	cdt[2].cd[1].val[1] = SMMU_REGION_1 + CHIPLET_BASE_ADDRESS;
+
+#ifdef __TEST
+	/* SID:0, SSID:1 */
+	val = cdt[0].cd[1].val[0];
+	val |= CD0_VALID;
+	cdt[0].cd[1].val[0] = val;
+	cdt[0].cd[1].val[1] = SMMU_REGION_PCIE + CHIPLET_BASE_ADDRESS;
+
+	/* SID:8, SSID:1 */
+	val = cdt[8].cd[1].val[0];
+	val |= CD0_VALID;
+	cdt[8].cd[1].val[0] = val;
+	cdt[8].cd[1].val[1] = SMMU_REGION_PCIE + CHIPLET_BASE_ADDRESS;
+
+	/* SID:16, SSID:1 */
+	val = cdt[16].cd[1].val[0];
+	val |= CD0_VALID;
+	cdt[16].cd[1].val[0] = val;
+	cdt[16].cd[1].val[1] = SMMU_REGION_PCIE + CHIPLET_BASE_ADDRESS;
 #endif
 
-static void smmu_clear_base_index(void)
-{
-	uint32_t max_index;
-	uint32_t i;
-
-	max_index = NUM_OF_1G_REGION + NUM_OF_2M_REGION + NUM_OF_4K_REGION;
-	for (i = 0; i < max_index; i++)	{
-		smmu_l1_pt_base[i] = 0;
-		smmu_l1_pt_index[i] = 0;
-	}
-
-	max_index = NUM_OF_2M_REGION + NUM_OF_4K_REGION;
-	for (i = 0; i < max_index; i++)	{
-		smmu_l2_pt_base[i] = 0;
-		smmu_l2_pt_index[i] = 0;
-	}
-
-	smmu_l3_pt_base[0] = 0;
-	smmu_l3_pt_index[0] = 0;
+	smmu_invalidate_all_sid();
 }
 
-#ifdef SMMU_CLEAR_TABLE
-
-static void smmu_clear_all_pagetable(struct str_region_info *region, uint64_t tt_base,
-									 uint64_t *l1_pt_base, uint64_t *l2_pt_base,
-									 uint64_t *l3_pt_base)
+int smmu_init(void)
 {
-	uint32_t num_1g = region->region_num_1g;
-	uint32_t num_2m = region->region_num_2m;
-	uint32_t num_4k = region->region_num_4k;
-	uint32_t i;
-	uint32_t j;
-	uint32_t total_regions;
-	uint64_t *addr;
+	mtx = xSemaphoreCreateMutex();
 
-	addr = (uint64_t *)DESCRIPTOR_ADDR_L0(tt_base);
-	for (i = 0; i < TABLE_SIZE_4K_BY_64BIT; i++) {
-		addr[i] = 0;
+	st = (struct stream_table *)(ST_ADDR + CHIPLET_BASE_ADDRESS);
+	cdt = (struct cd_tables *)(CDT_ADDR + CHIPLET_BASE_ADDRESS);
+
+	sys_write32(0x0, TCU + SMMU_CR0);
+
+	smmu_init_strtab();
+
+	smmu_enable_interrupt();
+
+	smmu_init_queues();
+
+	smmu_enable_queues();
+
+	smmu_invalidate_all_sid();
+
+	smmu_tlbi_all();
+
+	//smmu_create_ptables();
+
+	for (uint64_t sid = 0; sid <= 4; sid++) {
+		smmu_init_cd(cdt[sid].cd);
+		smmu_init_ste(sid);
 	}
 
-	total_regions = num_1g + num_2m + num_4k;
-	for (i = 0; i < total_regions; i++) {
-		if (l1_pt_base[i]) {
-			addr = (uint64_t *)l1_pt_base[i];
+	//smmu_attach_ptable();
 
-			for (j = 0; j < TABLE_SIZE_4K_BY_64BIT; j++) {
-				addr[j] = 0;
-			}
-		}
-	}
+	smmu_enable();
 
-	total_regions = num_2m + num_4k;
-	for (i = 0; i < total_regions; i++) {
-		if (l2_pt_base[i]) {
-			addr = (uint64_t *)l2_pt_base[i];
-
-			for (j = 0; j < TABLE_SIZE_4K_BY_64BIT; j++) {
-				addr[j] = 0;
-			}
-		}
-	}
-
-	total_regions = num_4k;
-	for (i = 0; i < total_regions; i++) {
-		if (l3_pt_base[i]) {
-			addr = (uint64_t *)l3_pt_base[i];
-
-			for (j = 0; j < TABLE_SIZE_4K_BY_64BIT; j++) {
-				addr[j] = 0;
-			}
-		}
-	}
+	return 0;
 }
+
+#ifndef ZEBU_POC
+#if defined(__RUN_RTOS)
+DRIVER_INIT_ENTRY_DEFINE(4, smmu_init);
 #endif
-
-static uint64_t smmu_find_number_of_512g_region(struct str_region_info *region)
-{
-	uint32_t i;
-	uint64_t va_min;
-	uint64_t va_max;
-	uint32_t num_1g = region->region_num_1g;
-	uint32_t num_2m = region->region_num_2m;
-	uint32_t num_4k = region->region_num_4k;
-	struct str_pt *p_1g_info = region->region_info_1g;
-	struct str_pt *p_2m_info = region->region_info_2m;
-	struct str_pt *p_4k_info = region->region_info_4k;
-
-	va_min = 0;
-	va_max = 0;
-
-	for (i = 0; i < num_1g; i++) {
-		va_min = MIN(p_1g_info[i].va, va_min);
-		va_max = MAX(p_1g_info[i].va, va_max);
-	}
-
-	for (i = 0; i < num_2m; i++) {
-		va_min = MIN(p_2m_info[i].va, va_min);
-		va_max = MAX(p_2m_info[i].va, va_max);
-	}
-
-	if (num_4k) {
-		for (i = 0; i < num_4k; i++) {
-			va_min = MIN(p_4k_info[i].va, va_min);
-			va_max = MAX(p_4k_info[i].va, va_max);
-		}
-	}
-
-	return CALC_NUM_OF_512G(va_max - va_min);
-}
-
-static void smmu_make_l1_table_index(struct str_region_info *str_region, uint32_t *l1_pt_index)
-{
-	uint32_t i;
-	uint32_t num_1g = str_region->region_num_1g;
-	uint32_t num_2m = str_region->region_num_2m;
-	uint32_t num_4k = str_region->region_num_4k;
-	struct str_pt *p_1g_info = str_region->region_info_1g;
-	struct str_pt *p_2m_info = str_region->region_info_2m;
-	struct str_pt *p_4k_info = str_region->region_info_4k;
-
-	for (i = 0; i < num_1g; i++) {
-		l1_pt_index[i] = CALC_ADDR_L0_OFFSET(p_1g_info[i].va);
-	}
-
-	for (i = 0; i < num_2m; i++) {
-		l1_pt_index[num_1g + i] = CALC_ADDR_L0_OFFSET(p_2m_info[i].va);
-	}
-
-	if (num_4k)
-		l1_pt_index[num_1g + num_2m] = CALC_ADDR_L0_OFFSET(p_4k_info[0].va);
-}
-
-static void smmu_make_l2_table_index(struct str_region_info *str_region, uint32_t *l2_pt_index)
-{
-	uint32_t i;
-	uint32_t num_2m = str_region->region_num_2m;
-	uint32_t index;
-	uint32_t prev_offset;
-	uint32_t cur_offset;
-	struct str_pt *p_2m_info = str_region->region_info_2m;
-
-	prev_offset = CALC_ADDR_L1_OFFSET(p_2m_info[0].va);
-	index = 0;
-
-	for (i = 0; i < num_2m; i++) {
-		cur_offset = CALC_ADDR_L1_OFFSET(p_2m_info[i].va);
-		if (prev_offset != cur_offset)
-			index++;
-
-		l2_pt_index[i] = index;
-		prev_offset = cur_offset;
-	}
-}
-
-static void smmu_make_l3_table_index(struct str_region_info *str_region, uint32_t *l3_pt_index)
-{
-	uint32_t num_4k = str_region->region_num_4k;
-
-	if (num_4k)
-		l3_pt_index[0] = 0;
-}
-
-static uint32_t smmu_is_va_diff_over_1g_region(uint64_t va1, uint64_t va2)
-{
-	uint64_t va1_masked;
-	uint64_t va2_masked;
-
-	va1_masked = BLOCK_SIZE_1G_MASK & va1;
-	va2_masked = BLOCK_SIZE_1G_MASK & va2;
-
-	if (SMMU_ABS(va1_masked - va2_masked) >= BLOCK_SIZE_1G)
-		return true;
-	else
-		return false;
-}
-
-static void smmu_make_table_address(struct str_region_info *str_region,
-									uint64_t tt_base, uint32_t count_512g,
-									uint32_t *l1_pt_index, uint32_t *l2_pt_index,
-									uint32_t *l3_pt_index, uint64_t *l1_pt_base,
-									uint64_t *l2_pt_base, uint64_t *l3_pt_base)
-{
-	uint64_t next_page_addr;
-	uint32_t i;
-	uint32_t j;
-	uint32_t table_count;
-	uint64_t count_1g_region;
-	uint32_t num_1g = str_region->region_num_1g;
-	uint32_t num_2m = str_region->region_num_2m;
-	uint32_t num_4k = str_region->region_num_4k;
-	struct str_pt *p_2m_info = str_region->region_info_2m;
-	struct str_pt *p_4k_info = str_region->region_info_4k;
-	uint32_t l2_pt_base_index = 1;
-
-	table_count = 0;
-
-	for (i = 0; i < count_512g; i++) {
-		for (j = 0; j < num_1g + num_2m + num_4k; j++) {
-			if (l1_pt_index[j] == i) {
-				l1_pt_base[i] = CALC_DESCRIPTOR_ADDR(tt_base, table_count);
-				table_count++;
-
-				break;
-			}
-		}
-	}
-
-	next_page_addr = l1_pt_base[count_512g - 1] + TABLE_SIZE_4K;
-
-	l2_pt_base[0] = next_page_addr;
-
-	for (i = 1; i < num_2m; i++) {
-		if (smmu_is_va_diff_over_1g_region(p_2m_info[i].va, p_2m_info[i - 1].va)) {
-			next_page_addr += TABLE_SIZE_4K;
-			l2_pt_base[l2_pt_base_index++] = next_page_addr;
-		}
-	}
-
-	count_1g_region = num_2m;
-	table_count = 0;
-
-	if (num_4k) {
-		for (i = 0; i < num_2m; i++) {
-			if (smmu_is_va_diff_over_1g_region(p_2m_info[i].va, p_4k_info[0].va)) {
-				table_count++;
-			}
-		}
-
-		if (table_count > 0) {
-			next_page_addr += TABLE_SIZE_4K;
-			l2_pt_base[l2_pt_base_index] = next_page_addr;
-			l2_pt_index[count_1g_region] = l2_pt_index[count_1g_region - 1] + 1;
-			count_1g_region++;
-		}
-
-		next_page_addr += TABLE_SIZE_4K;
-		l3_pt_base[0] = next_page_addr;
-	}
-}
-
-static void smmu_write_l0_table(uint64_t tt_base, uint32_t count_512g, uint64_t *l1_pt_base)
-{
-	uint32_t i;
-
-	for (i = 0; i < count_512g; i++) {
-		if (l1_pt_base[i]) {
-			*(uint64_t *)CALC_512G_BLOCK_DESC(tt_base, i) =
-											(uint64_t)(l1_pt_base[i] | PT_TABLE_ATTR);
-		}
-	}
-}
-
-static void smmu_write_l1_table(struct str_region_info *str_region,
-								uint64_t tt_base, uint32_t count_512g,
-								uint32_t *l1_pt_index, uint32_t *l2_pt_index, uint32_t *l3_pt_index,
-								uint64_t *l1_pt_base, uint64_t *l2_pt_base, uint64_t *l3_pt_base)
-{
-	uint64_t desc_val;
-	uint64_t vaddr;
-	uint64_t paddr;
-	uint32_t i;
-	uint32_t j;
-	uint32_t num_1g = str_region->region_num_1g;
-	uint32_t num_2m = str_region->region_num_2m;
-	uint32_t num_4k = str_region->region_num_4k;
-	struct str_pt *p_1g_info = str_region->region_info_1g;
-	struct str_pt *p_2m_info = str_region->region_info_2m;
-	struct str_pt *p_4k_info = str_region->region_info_4k;
-
-	for (j = 0; j < num_1g; j++) {
-		for (i = 0; i < p_1g_info[j].num; i++) {
-			paddr = (uint64_t)(p_1g_info[j].pa + BLOCK_SIZE_1G * i);
-			desc_val = (paddr & BLOCK_SIZE_1G_MASK) | PT_BLOCK_ATTR | (MT_C_IS * p_1g_info[j].acp);
-			vaddr = p_1g_info[j].va + BLOCK_SIZE_1G * i;
-			*(uint64_t *)(l1_pt_base[l1_pt_index[j]] + PT_BLOCK_OFFSET_L1(vaddr)) = desc_val;
-		}
-	}
-
-	for (j = 0; j < num_2m; j++) {
-		vaddr = (uint64_t)(l2_pt_base[l2_pt_index[j]]);
-		desc_val = vaddr | PT_TABLE_ATTR;
-
-		*(uint64_t *)(l1_pt_base[l1_pt_index[num_1g + j]] +
-					PT_BLOCK_OFFSET_L1(p_2m_info[j].va)) = desc_val;
-	}
-
-	if (num_4k) {
-		for (j = 0; j < num_4k; j++) {
-			vaddr = (uint64_t)(l2_pt_base[l2_pt_index[num_2m + j]]);
-			desc_val = vaddr | PT_TABLE_ATTR;
-
-			*(uint64_t *)(l1_pt_base[l1_pt_index[num_1g + num_2m + j]] +
-						PT_BLOCK_OFFSET_L1(p_4k_info[j].va)) = desc_val;
-		}
-	}
-}
-
-static void smmu_write_l2_table(struct str_region_info *str_region,
-								uint32_t *l1_pt_index, uint32_t *l2_pt_index, uint32_t *l3_pt_index,
-								uint64_t *l1_pt_base, uint64_t *l2_pt_base, uint64_t *l3_pt_base)
-{
-	uint64_t desc_val;
-	uint64_t vaddr;
-	uint64_t paddr;
-	uint32_t i;
-	uint32_t j;
-	uint32_t num_2m = str_region->region_num_2m;
-	uint32_t num_4k = str_region->region_num_4k;
-	struct str_pt *p_2m_info = str_region->region_info_2m;
-	struct str_pt *p_4k_info = str_region->region_info_4k;
-
-	for (j = 0; j < num_2m; j++) {
-		for (i = 0; i < p_2m_info[j].num; i++) {
-			paddr = (uint64_t)(p_2m_info[j].pa + BLOCK_SIZE_2M * i);
-			desc_val = (paddr & BLOCK_SIZE_2M_MASK) | PT_BLOCK_ATTR | (MT_C_IS * p_2m_info[j].acp);
-			vaddr = p_2m_info[j].va + BLOCK_SIZE_2M * i;
-			*(uint64_t *)(l2_pt_base[l2_pt_index[j]] + PT_BLOCK_OFFSET_L2(vaddr)) = desc_val;
-		}
-	}
-
-	if (num_4k) {
-		for (i = 0; i < num_4k; i++) {
-			vaddr = (uint64_t)(l3_pt_base[i]);
-			desc_val = vaddr | PT_TABLE_ATTR;
-
-			*(uint64_t *)(l2_pt_base[l2_pt_index[num_2m + i]] +
-						PT_BLOCK_OFFSET_L2(p_4k_info[i].va)) = desc_val;
-		}
-	}
-}
-
-static void smmu_write_l3_table(struct str_region_info *str_region,
-								uint32_t *l3_pt_index, uint64_t *l3_pt_base)
-{
-	uint64_t desc_val;
-	uint64_t vaddr;
-	uint64_t paddr;
-	uint32_t i;
-	uint32_t j;
-	uint32_t num_4k = str_region->region_num_4k;
-	struct str_pt *p_2m_info = str_region->region_info_2m;
-	struct str_pt *p_4k_info = str_region->region_info_4k;
-
-	if (num_4k) {
-		for (j = 0; j < num_4k; j++) {
-			for (i = 0; i < p_4k_info[j].num; i++) {
-				paddr = (uint64_t)(p_4k_info[j].pa + PAGE_SIZE_4K * i);
-				desc_val = paddr | PT_PAGE_ATTR | (MT_C_IS * p_2m_info[j].acp);
-				vaddr = p_4k_info[j].va + PAGE_SIZE_4K * i;
-				*(uint64_t *)(l3_pt_base[l3_pt_index[j]] + PT_PAGE_OFFSET_L3(vaddr)) = desc_val;
-			}
-		}
-	}
-}
-
-static void smmu_gen_pagetable(uint64_t tt_base, struct str_region_info *str_region)
-{
-	uint64_t count_512g_region;
-	struct str_region_info *p_region = str_region;
-
-	count_512g_region = smmu_find_number_of_512g_region(p_region);
-
-	smmu_make_l1_table_index(p_region, smmu_l1_pt_index);
-	smmu_make_l2_table_index(p_region, smmu_l2_pt_index);
-	smmu_make_l3_table_index(p_region, smmu_l3_pt_index);
-
-	smmu_make_table_address(p_region, tt_base, count_512g_region,
-							smmu_l1_pt_index, smmu_l2_pt_index, smmu_l3_pt_index,
-							smmu_l1_pt_base, smmu_l2_pt_base, smmu_l3_pt_base);
-
-#ifdef SMMU_CLEAR_TABLE
-	smmu_clear_all_pagetable(p_region, tt_base, smmu_l1_pt_base, smmu_l2_pt_base, smmu_l3_pt_base);
-#endif
-
-	smmu_write_l0_table(tt_base, count_512g_region, smmu_l1_pt_base);
-	smmu_write_l1_table(p_region, tt_base, count_512g_region,
-						smmu_l1_pt_index, smmu_l2_pt_index, smmu_l3_pt_index,
-						smmu_l1_pt_base, smmu_l2_pt_base, smmu_l3_pt_base);
-	smmu_write_l2_table(p_region,
-						smmu_l1_pt_index, smmu_l2_pt_index, smmu_l3_pt_index,
-						smmu_l1_pt_base, smmu_l2_pt_base, smmu_l3_pt_base);
-	smmu_write_l3_table(p_region, smmu_l3_pt_index, smmu_l3_pt_base);
-}
-
-static void __unused smmu_set_priq(uint32_t secondary_chiplet_cnt)
-{
-	volatile struct smmu600_regs *regs = smmu_regs;
-	volatile struct smmu600_regs *regs3 = smmu_regs_chiplet3;
-
-	regs->priq_base = PRIQ_BASE_ADDR | Q_LOG2SIZE;
-
-	if (secondary_chiplet_cnt == CHIPLET_ID3 && GET_REVISION == REVISION_EVT1)
-		regs3->priq_base = PRIQ_BASE_ADDR | Q_LOG2SIZE | CHIPLET3_BASE_ADDRESS;
-}
-
-static void smmu_set_eventq(uint32_t secondary_chiplet_cnt)
-{
-	volatile struct smmu600_regs *regs = smmu_regs;
-	volatile struct smmu600_regs *regs3 = smmu_regs_chiplet3;
-
-	regs->eventq_base = EVENTQ_BASE_ADDR | Q_LOG2SIZE;
-
-	if (secondary_chiplet_cnt == CHIPLET_ID3 && GET_REVISION == REVISION_EVT1)
-		regs3->eventq_base = EVENTQ_BASE_ADDR | Q_LOG2SIZE | CHIPLET3_BASE_ADDRESS;
-}
-
-static void __unused smmu_set_cmdq(uint32_t secondary_chiplet_cnt)
-{
-	volatile struct smmu600_regs *regs = smmu_regs;
-	volatile struct smmu600_regs *regs3 = smmu_regs_chiplet3;
-
-	regs->cmdq_base = CMDQ_BASE_ADDR | Q_LOG2SIZE;
-
-	if (secondary_chiplet_cnt == CHIPLET_ID3 && GET_REVISION == REVISION_EVT1)
-		regs3->cmdq_base = CMDQ_BASE_ADDR | Q_LOG2SIZE | CHIPLET3_BASE_ADDRESS;
-}
-
-static void smmu_set_ste17_cd(uint32_t secondary_chiplet_cnt)
-{
-	smmu_ste17_cd->word0 = CD_VALID | CD_EPD1_DISABLE | CD_T0SZ;
-	smmu_ste17_cd->word1 = CD_R | CD_AA64 | CD_TBI0 | CD_AFF | CD_IPS_40BIT;
-	smmu_ste17_cd->word2 = SMMU_PT17_BASE_ADDR;
-	smmu_ste17_cd->word3 = 0;
-	smmu_ste17_cd->word4 = 0;
-	smmu_ste17_cd->word5 = 0;
-	smmu_ste17_cd->word6 = CD_MAIR_VALUE;
-	smmu_ste17_cd->word7 = CD_MAIR_VALUE;
-
-	smmu_ste17_cd->word8 = 0;
-	smmu_ste17_cd->word9 = 0;
-	smmu_ste17_cd->word10 = 0;
-	smmu_ste17_cd->word11 = 0;
-	smmu_ste17_cd->word12 = 0;
-	smmu_ste17_cd->word13 = 0;
-	smmu_ste17_cd->word14 = 0;
-	smmu_ste17_cd->word15 = 0;
-
-	if (secondary_chiplet_cnt == CHIPLET_ID3 && GET_REVISION == REVISION_EVT1) {
-		smmu_ste17_cd3->word0 = CD_VALID | CD_EPD1_DISABLE | CD_T0SZ;
-		smmu_ste17_cd3->word1 = CD_R | CD_AA64 | CD_TBI0 | CD_AFF | CD_IPS_40BIT;
-		smmu_ste17_cd3->word2 = SMMU_PT17_BASE_ADDR;
-		smmu_ste17_cd3->word3 = (uint32_t)(CHIPLET3_BASE_ADDRESS >> 32);
-		smmu_ste17_cd3->word4 = 0;
-		smmu_ste17_cd3->word5 = 0;
-		smmu_ste17_cd3->word6 = CD_MAIR_VALUE;
-		smmu_ste17_cd3->word7 = CD_MAIR_VALUE;
-
-		smmu_ste17_cd3->word8 = 0;
-		smmu_ste17_cd3->word9 = 0;
-		smmu_ste17_cd3->word10 = 0;
-		smmu_ste17_cd3->word11 = 0;
-		smmu_ste17_cd3->word12 = 0;
-		smmu_ste17_cd3->word13 = 0;
-		smmu_ste17_cd3->word14 = 0;
-		smmu_ste17_cd3->word15 = 0;
-
-	}
-}
-
-static void smmu_set_ste(uint32_t secondary_chiplet_cnt)
-{
-	smmu_ste->word0 = (uint64_t)CD_BASE_ADDR(SMMU_SID_NUM, SMMU_SSID_NUM) | STE_CONFIG_STAGE1_VALID;
-	smmu_ste->word1 = CD_MAX;
-	smmu_ste->word2 = STE_STRW_EL2_E2H | STE_S1DSS_SS0;
-	smmu_ste->word3 = STE_SHCFG_USE_INCOMING;
-	smmu_ste->word4 = 0;
-	smmu_ste->word5 = 0;
-	smmu_ste->word6 = 0;
-	smmu_ste->word7 = 0;
-
-	if (secondary_chiplet_cnt == CHIPLET_ID3 && GET_REVISION == REVISION_EVT1) {
-		smmu_ste3->word0 = (uint32_t)((uint64_t)CD_BASE_ADDR3(SMMU_SID_NUM, SMMU_SSID_NUM) |
-							STE_CONFIG_STAGE1_VALID);
-		smmu_ste3->word1 = (uint32_t)((uint64_t)CD_BASE_ADDR3(SMMU_SID_NUM, SMMU_SSID_NUM) >> 32) |
-							CD_MAX;
-		smmu_ste3->word2 = STE_STRW_EL2_E2H | STE_S1DSS_SS0;
-		smmu_ste3->word3 = STE_SHCFG_USE_INCOMING;
-		smmu_ste3->word4 = 0;
-		smmu_ste3->word5 = 0;
-		smmu_ste3->word6 = 0;
-		smmu_ste3->word7 = 0;
-
-	}
-}
-
-static void smmu_set_strtab(uint32_t secondary_chiplet_cnt)
-{
-	volatile struct smmu600_regs *regs = smmu_regs;
-	volatile struct smmu600_regs *regs3 = smmu_regs_chiplet3;
-
-	regs->strtab_base_cfg = STRTAB_CFG_VALUE;
-	regs->strtab_base = SMMU_STE_BASE_ADDR;
-
-	if (secondary_chiplet_cnt == CHIPLET_ID3 && GET_REVISION == REVISION_EVT1) {
-		regs3->strtab_base_cfg = STRTAB_CFG_VALUE;
-		regs3->strtab_base = SMMU_STE_BASE_ADDR | CHIPLET3_BASE_ADDRESS;
-	}
-}
-
-static void smmu_enable_smmu(uint32_t secondary_chiplet_cnt)
-{
-	volatile struct smmu600_regs *regs = smmu_regs;
-	volatile struct smmu600_regs *regs3 = smmu_regs_chiplet3;
-
-	regs->cr0 = SMMU_EVENTQEN;
-	while (!(regs->cr0ack & SMMU_EVENTQEN_MASK))
-		;
-
-	regs->cr0 |= SMMU_SMMUEN;
-	while (!(regs->cr0ack & SMMU_SMMUEN_MASK))
-		;
-
-	if (secondary_chiplet_cnt == CHIPLET_ID3 && GET_REVISION == REVISION_EVT1) {
-		regs3->cr0 = SMMU_EVENTQEN;
-		while (!(regs3->cr0ack & SMMU_EVENTQEN_MASK))
-			;
-
-		regs3->cr0 |= SMMU_SMMUEN;
-		while (!(regs3->cr0ack & SMMU_SMMUEN_MASK))
-			;
-	}
-}
-
-static void smmu_set_gbpa(uint32_t secondary_chiplet_cnt)
-{
-	volatile struct smmu600_regs *regs = smmu_regs;
-	volatile struct smmu600_regs *regs3 = smmu_regs_chiplet3;
-
-	regs->gbpa = SMMU_GBPA_COMPLETE | SMMU_GBPA_SHCFG_USEINCOMING;
-
-	while (regs->gbpa & SMMU_GBPA_COMPLETE_MASK)
-		;
-
-	if (secondary_chiplet_cnt == CHIPLET_ID3 && GET_REVISION == REVISION_EVT1) {
-		regs3->gbpa = SMMU_GBPA_COMPLETE | SMMU_GBPA_SHCFG_USEINCOMING;
-
-		while (regs3->gbpa & SMMU_GBPA_COMPLETE_MASK)
-			;
-	}
-}
-
-static void smmu_set_tcu(uint32_t secondary_chiplet_cnt)
-{
-	smmu_set_eventq(secondary_chiplet_cnt);
-	smmu_set_strtab(secondary_chiplet_cnt);
-	smmu_set_gbpa(secondary_chiplet_cnt);
-}
-
-static void smmu_wait_a_key(void)
-{
-	while (!(*(volatile uint32_t *)(UART0_PERI0 + SMMU_UART_LSR) & SMMU_UART_DATA_READY))
-		;
-	NOTICE("BL2: Key=%c\n", *(volatile uint32_t *)(UART0_PERI0 + SMMU_UART_DATA));
-}
-
-static void smmu_flush_all_cache(void)
-{
-	asm volatile("mov x0, #1");
-	asm volatile("MSR S1_1_C15_C14_0, x0");
-	asm volatile("DSB sy");
-
-	asm volatile("mov x0, #2");
-	asm volatile("MSR S1_1_C15_C14_0, x0");
-	asm volatile("DSB sy");
-}
-
-static void smmu_flush_l2_cache(void)
-{
-	asm volatile("mov x0, #2");
-	asm volatile("MSR S1_1_C15_C14_0, x0");
-	asm volatile("DSB sy");
-}
-
-void smmu_test_pcie(void)
-{
-	NOTICE("BL2: [SMMU] Test PCIe-SMMU\n\n");
-
-	smmu_flush_all_cache();
-
-	NOTICE("BL2: [SMMU] Perform PCIe operations using XTOR and then press any key.\n");
-	smmu_wait_a_key();
-
-	smmu_flush_l2_cache();
-
-	NOTICE("BL2: [SMMU] L2$ is cleaned and invalidated.\n");
-	NOTICE("BL2: [SMMU] Check the data of physical memory.\n");
-
-	/* Running further codes is blocked because smmu test can modify the contents of a memory. */
-	asm("b .");
-}
-
-void smmu_early_init(uint32_t secondary_chiplet_cnt)
-{
-	smmu_gen_pagetable(DESCRIPTOR_ADDR_L0(SMMU_PT17_BASE_ADDR), &region_info);
-	if (secondary_chiplet_cnt == CHIPLET_ID3 && GET_REVISION == REVISION_EVT1) {
-		smmu_clear_base_index();
-		smmu_gen_pagetable(DESCRIPTOR_ADDR_L0(SMMU_PT17_BASE_ADDR + CHIPLET3_BASE_ADDRESS),
-						   &region_info_cl3);
-	}
-	smmu_set_ste(secondary_chiplet_cnt);
-	smmu_set_ste17_cd(secondary_chiplet_cnt);
-	smmu_set_tcu(secondary_chiplet_cnt);
-	smmu_enable_smmu(secondary_chiplet_cnt);
-}
+#endif /* ZEBU_POC */

@@ -1,0 +1,78 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT Hash Core (HC)
+
+compatible: "rambus,cmrt-hc"
+
+include: rambus,cmrt-hwc.yaml
+
+properties:
+    has-shake128:
+      required: false
+      type: boolean
+      description: flag to support shake128
+
+    has-shake256:
+      required: false
+      type: boolean
+      description: flag to support shake256
+
+    shake-hw-padding:
+      required: false
+      type: boolean
+      description: flag to support HW padding for shake
+
+    has-sha-224:
+      required: false
+      type: boolean
+      description: flag to support sha2-224
+
+    has-sha-256:
+      required: false
+      type: boolean
+      description: flag to support sha2-256
+
+    has-sha-384:
+      required: false
+      type: boolean
+      description: flag to support sha2-384
+
+    has-sha-512:
+      required: false
+      type: boolean
+      description: flag to support sha2-512
+
+    has-sha-512-224:
+      required: false
+      type: boolean
+      description: flag to support sha2-512-224
+
+    has-sha-512-256:
+      required: false
+      type: boolean
+      description: flag to support sha2-512-256
+
+    has-hmac:
+      required: false
+      type: boolean
+      description: flag to support HMAC
+
+    has-sha3-224:
+      required: false
+      type: boolean
+      description: flag to support sha3-224
+
+    has-sha3-256:
+      required: false
+      type: boolean
+      description: flag to support sha3-256
+
+    has-sha3-384:
+      required: false
+      type: boolean
+      description: flag to support sha3-384
+
+    has-sha3-512:
+      required: false
+      type: boolean
+      description: flag to support sha3-512

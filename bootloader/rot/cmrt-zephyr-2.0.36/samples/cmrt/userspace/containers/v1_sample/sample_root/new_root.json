@@ -1,0 +1,15 @@
+{
+    "container_format_version": 1,
+    "permissions": {
+        "write_otp_slots": [ ],
+        "write_otp_keys": [ 3 ],
+        "establish_roots": [ 4 ],
+        "obliterate_roots": [ 4 ],
+        "use_special_keys": [ ],
+        "use_otp_keys": [ 3 ],
+        "use_keydests": [ ],
+        "write_feature_block": [ 0 ],
+        "access_otp": [ ],
+        "software_permissions": [ 31 ]
+    }
+}

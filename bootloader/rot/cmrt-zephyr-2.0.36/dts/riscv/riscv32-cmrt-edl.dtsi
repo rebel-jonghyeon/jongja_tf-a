@@ -1,0 +1,189 @@
+/* Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI) */
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		cpu: cpu@0 {
+			clock-frequency = <0>;
+			compatible = "rambus,cmrt-maui", "riscv";
+			device_type = "cpu";
+			reg = <0>;
+			riscv,isa = "rv32imc";
+			status = "okay";
+			hlic: interrupt-controller {
+				#address-cells = <1>;
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+	};
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "rambus,cmrt-soc", "simple-bus";
+		ranges;
+		debug: debug@0 {
+			compatible = "riscv,debug-013";
+			interrupts-extended = <&hlic 65535>;
+			reg = <0x0 0x1000>;
+			reg-names = "control";
+		};
+		sic: sic@1000 {
+			#address-cells = <1>;
+			#interrupt-cells = <2>;
+			compatible = "rambus,cmrt-sic2";
+			interrupt-controller;
+			interrupt-parent = <&plic>;
+			interrupts = <4>;
+			reg = <0x1000 0x1000>;
+			label = "sic";
+			num-irqs = <32>;
+			num-custom = <4>;
+		};
+		fmc: fmc@2000 {
+			compatible = "rambus,cmrt-fmc";
+			reg = <0x2000 0x1000>;
+			label = "fmc";
+			tdv-size = <4>;
+			feature-size = <1>;
+		};
+		tmc: tmc@4000 {
+			compatible = "rambus,cmrt-tmc";
+			reg = <0x4000 0x1000>;
+			label = "tmc";
+		};
+		emc: emc@5000 {
+			compatible = "rambus,cmrt-emc";
+			reg = <0x5000 0x1000>;
+			label = "emc";
+		};
+		cc: cc@8000 {
+			compatible = "rambus,cmrt-cc";
+			reg = <0x8000 0x1000>;
+			label = "cc";
+		};
+		eac: eac@b000 {
+			compatible = "rambus,cmrt-eac";
+			reg = <0xb000 0x1000>;
+			label = "eac";
+		};
+		aes: aes@10000 {
+			compatible = "rambus,cmrt-aes";
+			reg = <0x10000 0x1000>;
+			label = "aes";
+		};
+		hc0: hc0@20000 {
+			compatible = "rambus,cmrt-hc";
+			reg = <0x20000 0x1000>;
+			label = "hc0";
+		};
+		hc1: hc1@22000 {
+			compatible = "rambus,cmrt-hc";
+			reg = <0x22000 0x1000>;
+			label = "whc";
+		};
+		hc2: hc2@24000 {
+			compatible = "rambus,cmrt-hc";
+			reg = <0x24000 0x1000>;
+			label = "cshc";
+		};
+		hc3: hc3@26000 {
+			compatible = "rambus,cmrt-hc";
+			reg = <0x26000 0x1000>;
+			label = "hc3";
+		};
+		pke: pke@30000 {
+			compatible = "rambus,cmrt-pke";
+			interrupt-parent = <&plic>;
+			interrupts = <2>;
+			reg = <0x30000 0x1000>;
+			label = "pke";
+		};
+		omc: omc@40000 {
+			compatible = "rambus,cmrt-omc";
+			interrupt-parent = <&plic>;
+			interrupts = <5>;
+			reg = <0x40000 0x1000>;
+			label = "omc";
+			layout-version = <2>;
+			num-keysplits = <7>;
+			num-roots = <8>;
+		};
+		kdc: kdc@50000 {
+			compatible = "rambus,cmrt-kdc";
+			interrupt-parent = <&plic>;
+			interrupts = <3>;
+			reg = <0x50000 0x1000>;
+			label = "kdc";
+		};
+		ktc: ktc@52000 {
+			compatible = "rambus,cmrt-ktc";
+			reg = <0x52000 0x1000>;
+			label = "ktc";
+		};
+		sac: sac@60000 {
+			compatible = "rambus,cmrt-sac2";
+			reg = <0x60000 0x1000>;
+			label = "sac";
+			#size-cells = <1>;
+			#address-cells = <2>;
+			uart0: serial@1ff9050000 {
+				compatible = "ns16550";
+				interrupt-parent = <&plic>;
+				interrupts = <3>;
+				reg = <0x1f 0xf9050000 0x800>;
+				reg-names = "control";
+				current-speed = <115200>;
+				clock-frequency = <16000000>;
+				label = "uart0";
+			};
+		};
+		dmac: dmac@62000 {
+			compatible = "rambus,cmrt-dmac";
+			interrupt-parent = <&plic>;
+			interrupts = <1>;
+			reg = <0x62000 0x1000>;
+			label = "dmac";
+		};
+		mpu: mpu@70000 {
+			compatible = "rambus,cmrt-mpu";
+			reg = <0x70000 0x1000>;
+			num-regions = <32>;
+		};
+		plic: interrupt-controller@72000 {
+			#address-cells = <1>;
+			#interrupt-cells = <1>;
+			compatible = "rambus,cmrt-plic";
+			interrupt-controller;
+			interrupts-extended = <&hlic 11 &hlic 9>;
+			reg = <0x72000 0x1000>;
+		};
+		clint: clint@74000 {
+			#address-cells = <1>;
+			#interrupt-cells = <1>;
+			compatible = "rambus,cmrt-clint", "riscv,clint0";
+			interrupt-controller;
+			interrupts-extended = <&hlic 3 &hlic 7>;
+			reg = <0x74000 0x1000>;
+			label = "clint";
+		};
+		ccp: ccp@90000 {
+			compatible = "rambus,cmrt-ccp";
+			reg = <0x90000 0x1000>;
+			label = "ccp";
+		};
+		qsec: qsec@b0000 {
+			compatible = "rambus,cmrt-qsec";
+			reg = <0xb0000 0x1000>;
+			label = "qsec";
+		};
+	};
+	aliases {
+		watchdog0 = &clint;
+	};
+};

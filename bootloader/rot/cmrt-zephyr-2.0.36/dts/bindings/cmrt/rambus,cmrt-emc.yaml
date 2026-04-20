@@ -1,0 +1,7 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT Entropy Management Core (EMC)
+
+compatible: "rambus,cmrt-emc"
+
+include: rambus,cmrt-hwc.yaml

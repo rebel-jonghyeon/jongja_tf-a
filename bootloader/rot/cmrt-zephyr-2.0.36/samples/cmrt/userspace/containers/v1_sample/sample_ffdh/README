@@ -1,0 +1,16 @@
+
+sample_ffdh: Show how to use FFDH API
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_ffdh.img
+
+To send data to container and run with predefined keys:
+$ echo s >  testfile
+$ cmtest data -f100 testfile
+
+To send data to container and run with generate private and public keys:
+$ echo g >  testfile
+$ cmtest data -f100 testfile
+
+To unload container:
+$ mwtest.py -c100 unload

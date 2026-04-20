@@ -1,0 +1,7 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+menu "CMRT subsystems"
+
+source "subsys/cmrt/scratchpad/Kconfig"
+
+endmenu

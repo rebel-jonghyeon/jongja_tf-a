@@ -1,0 +1,229 @@
+# RISCV_CMRT implementation
+
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+config SOC_SERIES_RISCV_CMRT
+	bool "CMRT implementation"
+	select RISCV
+	select SOC_FAMILY_RISCV_PRIVILEGE
+	help
+	  Enable support for CMRT
+
+if SOC_SERIES_RISCV_CMRT
+
+choice FPGA_TYPE
+	prompt "Type of the CMRT FPGA"
+	default FPGA_TYPE_ZYNQ706
+
+	config FPGA_TYPE_ZYNQ706
+	bool "Xilinx zc706 Zynq"
+
+	config FPGA_TYPE_VMK180
+	bool "Xilinx vmk180 Versal"
+endchoice
+
+config FPGA_SRAM_SIZE
+	hex "Mapped SRAM size in the FPGA"
+	default 0x80000
+	help
+	  Mapped SRAM size in the FPGA.
+
+config FPGA_EXTMEM_SIZE
+	hex "Mapped external memory size in the FPGA"
+	default 0x80000
+	help
+	  Mapped external memory size in the FPGA.
+
+config CMRT_MACHINE_ROM_SIZE
+	hex "ROM size for sboot"
+	range 0 65536
+	default 0x0
+	help
+	  ROM size for sboot.
+
+config CMRT_MACHINE_RAM_SIZE
+	hex "SRAM reserved for fboot and security monitor"
+	default 0x3000 if CMRT_DATASTORE
+	default 0x2000
+	help
+	  SRAM reserved for fboot and security monitor.
+	  Note that the value must be right for the supervisor to know its
+	  place in memory, see soc/riscv/riscv-privilege/cmrt/soc.h.
+
+config SUPERVISOR_MODE
+	bool "Run Zephyr in supervisor mode"
+	help
+	  This option builds, boots and runs Zephyr in supervisor mode.
+
+config CMRT_FBOOT
+	bool "Build for CMRT first boot"
+	default n
+	select ARCH_HAS_CUSTOM_ISR
+	help
+	  This option builds for CMRT first boot.
+
+config CMRT_FBOOT_HAS_ECDSA_FULL
+	bool "Build for CMRT first boot with full ECDSA support"
+	default n
+	help
+	  This option builds for CMRT first boot with ECDSA support.
+	  In particular, setting this option includes ECDSA sign and keygen
+	  in addition to ECDSA verify which is in fboot by default.
+
+config CMRT_FBOOT_HAS_ECDSA_P521
+	bool "Build for CMRT first boot with ECDSA P-521 support"
+	default n
+	help
+	  This option builds for CMRT first boot with ECDSA P-521 support
+	  in addition to ECDSA P-256 which is in fboot by default.
+
+config CMRT_FBOOT_HAS_ECDSA_P384
+	bool "Build for CMRT first boot with ECDSA P-384 support"
+	default n
+	help
+	  This option enables support in fboot for verifying images signed
+	  with ECDSA NIST P-384 keys in addition to ECDSA P-256 which is in
+	  fboot by default.
+
+config CMRT_FBOOT_HAS_RSA_VERIFY
+	bool "Build for CMRT first boot with RSA support"
+	default n
+	help
+	  This option builds for CMRT first boot with RSA support.
+	  In particular, setting this option includes RSA verify.
+
+config CMRT_FBOOT_HAS_LMS_VERIFY
+	bool "Build for CMRT first boot with LMS SH support"
+	default n
+	help
+	  This option builds for CMRT first boot with Leighton-Micali-Signature
+	  (LMS) hash-based signature support.
+	  In particular, setting this option includes LMS verify.
+
+config CMRT_FBOOT_HAS_LMS_HSS_VERIFY
+	bool "Build for CMRT first boot with LMS-HSS support"
+	default n
+	help
+	  This option builds for CMRT first boot with Leighton-Micali-Signature
+	  (LMS) Hierarchical Signature System (HSS) hash-based signature
+	  scheme operations
+	  In particular, setting this option includes LMS-HSS verify.
+
+config CMRT_FBOOT_HAS_XMSS_VERIFY
+	bool "Build for CMRT first boot with XMSS support"
+	default n
+	help
+	  This option builds for CMRT first boot with eXtended
+	  Merkle Signature Scheme (XMSS) signature support.
+	  In particular, setting this option includes XMSS verify.
+
+config CMRT_FBOOT_HAS_XMSS_MT_VERIFY
+	bool "Build for CMRT first boot with XMSS^MT support"
+	default n
+	select CMRT_FBOOT_HAS_XMSS_VERIFY
+	help
+	  This option builds for CMRT first boot with multi-tree
+	  variant of eXtended Merkle Signature Scheme (XMSS-MT)
+	  signature support.
+	  In particular, setting this option includes XMSS-MT verify.
+
+config CMRT_SBOOT_IN_ROM
+	bool
+	prompt "Sboot in ROM instead of OTP"
+	default n
+	help
+	  Sboot is in ROM instead of OTP.
+
+config CMRT_SUPERVISOR_IN_ROM
+	bool
+	prompt "Supervisor in ROM instead of Flash"
+	default n
+	help
+	  Supervisor is located in ROM instead of Flash. This also implies
+	  tboot is in ROM if tboot is to be installed.
+
+config CMRT_AB_LOCATION_SUPPORT
+	bool
+	prompt "Two locations for the image bundle"
+	default n
+	help
+	  When set sboot tries to load the supervisor image bundle first from
+	  location A. If that fails sboot tries location B. Typically locations
+	  are defined as offsets in flash. This feature makes it possible to
+	  use two locations that can be in different flashes or in different
+	  places in the same flash.
+
+config CMRT_AB_IMAGE_SUPPORT
+	bool
+	prompt "Two versions for the image bundle"
+	default n
+	help
+	  When set supervisor image bundles can be prepended by a flash header
+	  which tells the offsets for the primary and secondary imgage bundles.
+	  This option can be set with or without CONFIG_CMRT_AB_LOCATION_SUPPORT.
+
+config CMRT_ENCRYPTED_IMAGE_SUPPORT
+	bool
+	prompt "Images can be encrypted"
+	default n
+	depends on CMRT_FBOOT
+	select CMRT_AES
+	help
+	  Adds support for decrypting images for fboot containers, supervisors
+	  and user containers. Images are encrypted with AES GCM which means
+	  the AES core is compiled into the fboot.
+
+config CMRT_IMAGE_AUTOLOAD_SUPPORT
+	bool
+	prompt "Additional image may be autoloaded for supervisor"
+	default n
+	help
+	  Adds support for autoloading an additional image for supervisor.
+	  This can be a user container, for example, to be started at boot.
+	  Autoloaded image must be concatenated to the OS image bundle.
+
+config CMRT_EXPAND_DIVERSIFY_PATH
+       bool
+       prompt  "Automatically expand diversify path to 17 bytes long"
+       default y
+       depends on CMRT_ENCRYPTED_IMAGE_SUPPORT
+       help
+	Expand the diversify path of encrypted images to full length (16
+	bytes and destination) automatically.  This should be chosen
+	to be compatible when using older build scripts.
+
+config CMRT_ASIL_B_MODE
+	bool "Compile and run in ASIL-B mode"
+	default n
+	help
+	  Drivers will call ASIL-B Known Answer Tests, system will
+	  behave differently at boot up regarding error situations.
+
+config CMRT_FIPS_140_MODE
+	bool "Compile and run with enabled FIPS 140-3 mode"
+	default n
+	help
+	  Drivers will call FIPS Known Answer Tests, system will
+	  behave differently at boot up regarding error situations.
+
+config CMRT_DATASTORE
+	bool
+	prompt "Add datastore support to security monitor"
+	default y
+	help
+	  Security monitor data store can be used to pass access
+	  controlled objects between CMRT boot stages and applications.
+
+config CMRT_CALIPTRA_SUPPORT
+	bool
+	prompt "Enable Caliptra feature"
+	default n
+	select CMRT_FBOOT_HAS_ECDSA_P384
+	select CMRT_CALIPTRA_LIBRARY
+	select CMRT_DATASTORE
+	help
+	  Adopt Root of Trust for Measurement (RTM) posture to establish chain
+	  of trust as specified in Open Compute Project's Caliptra
+	  specification.
+
+endif

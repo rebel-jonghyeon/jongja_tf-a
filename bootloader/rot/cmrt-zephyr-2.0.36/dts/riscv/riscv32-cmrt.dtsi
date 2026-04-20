@@ -1,0 +1,355 @@
+/* Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI) */
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		cpu: cpu@0 {
+			clock-frequency = <0>;
+			compatible = "rambus,cmrt-maui", "riscv";
+			device_type = "cpu";
+			reg = <0>;
+			riscv,isa = "rv32imc";
+			status = "okay";
+			hlic: interrupt-controller {
+				#address-cells = <1>;
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+	};
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "rambus,cmrt-soc", "simple-bus";
+		ranges;
+		debug: debug@0 {
+			compatible = "riscv,debug-013";
+			interrupts-extended = <&hlic 65535>;
+			reg = <0x0 0x1000>;
+			reg-names = "control";
+		};
+		sic: sic@1000 {
+			#address-cells = <1>;
+			#interrupt-cells = <2>;
+			compatible = "rambus,cmrt-sic2";
+			interrupt-controller;
+			interrupt-parent = <&plic>;
+			interrupts = <4>;
+			reg = <0x1000 0x1000>;
+			label = "sic";
+			num-irqs = <32>;
+			num-custom = <4>;
+		};
+		fmc: fmc@2000 {
+			compatible = "rambus,cmrt-fmc";
+			reg = <0x2000 0x1000>;
+			label = "fmc";
+			tdv-size = <4>;
+			feature-size = <1>;
+		};
+		tmc: tmc@4000 {
+			compatible = "rambus,cmrt-tmc";
+			reg = <0x4000 0x1000>;
+			label = "tmc";
+		};
+		emc: emc@5000 {
+			compatible = "rambus,cmrt-emc";
+			reg = <0x5000 0x1000>;
+			label = "emc";
+		};
+		cc: cc@8000 {
+			compatible = "rambus,cmrt-cc";
+			reg = <0x8000 0x1000>;
+			label = "cc";
+		};
+		eac: eac@b000 {
+			compatible = "rambus,cmrt-eac";
+			reg = <0xb000 0x1000>;
+			label = "eac";
+		};
+		aes: aes@10000 {
+			compatible = "rambus,cmrt-aes";
+			reg = <0x10000 0x1000>;
+			label = "aes";
+		};
+		hc0: hc0@20000 {
+			compatible = "rambus,cmrt-hc";
+			reg = <0x20000 0x1000>;
+			label = "hc0";
+		};
+		hc1: hc1@22000 {
+			compatible = "rambus,cmrt-hc";
+			reg = <0x22000 0x1000>;
+			label = "whc";
+		};
+		hc2: hc2@24000 {
+			compatible = "rambus,cmrt-hc";
+			reg = <0x24000 0x1000>;
+			label = "cshc";
+		};
+		hc3: hc3@26000 {
+			compatible = "rambus,cmrt-hc";
+			reg = <0x26000 0x1000>;
+			label = "hc3";
+		};
+		pke: pke@30000 {
+			compatible = "rambus,cmrt-pke";
+			interrupt-parent = <&plic>;
+			interrupts = <2>;
+			reg = <0x30000 0x1000>;
+			label = "pke";
+		};
+		omc: omc@40000 {
+			compatible = "rambus,cmrt-omc";
+			interrupt-parent = <&plic>;
+			interrupts = <5>;
+			reg = <0x40000 0x1000>;
+			label = "omc";
+			layout-version = <2>;
+			num-keysplits = <7>;
+			num-roots = <8>;
+		};
+		kdc: kdc@50000 {
+			compatible = "rambus,cmrt-kdc";
+			interrupt-parent = <&plic>;
+			interrupts = <3>;
+			reg = <0x50000 0x1000>;
+			label = "kdc";
+		};
+		ktc: ktc@52000 {
+			compatible = "rambus,cmrt-ktc";
+			reg = <0x52000 0x1000>;
+			label = "ktc";
+		};
+		sac: sac@60000 {
+			compatible = "rambus,cmrt-sac2";
+			reg = <0x60000 0x1000>;
+			label = "sac";
+			#size-cells = <1>;
+			#address-cells = <2>;
+			uart0: serial@1ff9050000 {
+				compatible = "ns16550";
+				interrupt-parent = <&plic>;
+				interrupts = <3>;
+				reg = <0x1f 0xf9050000 0x800>;
+				reg-names = "control";
+				current-speed = <115200>;
+				clock-frequency = <250000000>;
+				label = "uart0";
+			};
+			mailboxm0: mailboxm0@1ff0280000 {
+				compatible = "samsung,mailbox";
+				interrupt-parent = <&sic>;
+				interrupts = <16 0>, <17 1>;
+				reg = <0x1f 0xf0280000 0x1000>;
+				label = "MAILBOX_M0";
+			};
+			mailboxm1: mailboxm1@1ff0290000 {
+				compatible = "samsung,mailbox";
+				interrupt-parent = <&sic>;
+				interrupts = <18 0>, <19 1>;
+				reg = <0x1f 0xf0290000 0x1000>;
+				label = "MAILBOX_M1";
+			};
+			mailboxm2: mailboxm2@1ff02a0000 {
+				compatible = "samsung,mailbox";
+				interrupt-parent = <&sic>;
+				interrupts = <20 0>, <21 1>;
+				reg = <0x1f 0xf02a0000 0x1000>;
+				label = "MAILBOX_M2";
+			};
+			mailboxp0m5: mailboxp0m5@1ff9100000 {
+				compatible = "samsung,mailbox";
+				interrupt-parent = <&sic>;
+				interrupts = <12 0>, <13 1>;
+				reg = <0x1f 0xf9100000 0x1000>;
+				label = "MAILBOX_P0_M5";
+			};
+			mailboxp0m6: mailboxp0m6@1ff9110000 {
+				compatible = "samsung,mailbox";
+				interrupt-parent = <&sic>;
+				interrupts = <14 0>, <15 1>;
+				reg = <0x1f 0xf9110000 0x1000>;
+				label = "MAILBOX_P0_M6";
+			};
+			mailboxp1m50: mailboxp1m50@1ff9900000 {
+				compatible = "samsung,mailbox";
+				interrupt-parent = <&sic>;
+				interrupts = <22 0>, <23 1>;
+				reg = <0x1f 0xf9900000 0x1000>;
+				label = "MAILBOX_P1_M5_0";
+			};
+			mailboxp1m51: mailboxp1m51@1ff9900000 {
+				compatible = "samsung,mailbox";
+				interrupt-parent = <&sic>;
+				interrupts = <24 0>, <25 1>;
+				reg = <0x1f 0xf9900000 0x1000>;
+				label = "MAILBOX_P1_M5_1";
+			};
+			mailboxp1m60: mailboxp1m60@1ff9910000 {
+				compatible = "samsung,mailbox";
+				interrupt-parent = <&sic>;
+				interrupts = <26 0>, <27 1>;
+				reg = <0x1f 0xf9910000 0x1000>;
+				label = "MAILBOX_P1_M6_0";
+			};
+			mailboxp1m61: mailboxp1m61@1ff9910000 {
+				compatible = "samsung,mailbox";
+				interrupt-parent = <&sic>;
+				interrupts = <28 0>, <29 1>;
+				reg = <0x1f 0xf9910000 0x1000>;
+				label = "MAILBOX_P1_M6_1";
+			};
+			spi0: spi0@1e00500000 {
+				compatible = "samsung,qspi";
+				reg = <0x1e 0x00500000 0x1000>;
+				label = "QSPI";
+			};
+			rotpl330: rotpl330@1ff02c0000 {
+				compatible = "arm,dma-pl330";
+				microcode = <0x1f 0xf803fe00 0x200>;
+				dma-channels = <8>;
+				#dma-cells = <1>;
+				reg = <0x1f 0xf02c0000 0x1000>;
+				reg-names = "control_regs";
+				label = "PL330";
+			};
+
+			pvt0: pvt0@1ff0260000 {
+				compatible = "samsung,pvt";
+				status = "okay";
+				reg = <0x1f 0xf0260000 0x2000>;
+				label = "PVT_ROT";
+			};
+
+			sysregrot: sysregrot@1e00210000 {
+				compatible = "samsung,sysreg-rot";
+				interrupt-parent = <&sic>;
+				interrupts = <0 0>;
+				reg = <0x1e 0x00210000 0x1000>;
+				label = "SYSREG_ROT";
+			};
+
+			otp_soc: otp_soc@1ff0250000 {
+				compatible = "samsung,otp";
+				reg = <0x1f 0xf0250000 0x1228>,
+					<0x0 0x0 0x1228>,
+					<0x0 0x0 0x1fff>;
+				reg-names = "base", "ecc_parity_base", "ecc_base";
+				label = "OTP_SOC";
+				ecc_parity_addr_offset = <0xf>;
+				bank_num = <64>;
+				bank_type = <1 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+							 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+							 2 2 2 2 2 2 2 2 2 0 0 0>;
+				parity_bank_type = <1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+							 1 1 1 1 1 1 1 1 1 1>;
+			};
+			otp_cpu: otp_cpu@1ff0270000 {
+				compatible = "samsung,otp";
+				reg = <0x1f 0xf0270000 0x1228>,
+					<0x0 0x0 0x1228>,
+					<0x0 0x0 0x1fff>;
+				reg-names = "base", "ecc_parity_base", "ecc_base";
+				label = "OTP_CPU";
+				ecc_parity_addr_offset = <0xf>;
+				bank_num = <32>;
+				bank_type = <2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+							 2 2 2 0 0 0>;
+				parity_bank_type = <1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+									1 1 1 1 1 1 1 1 1 1>;
+			};
+			otp_s0: otp_s0@1ff0304000 {
+				compatible = "samsung,otp";
+				reg = <0x1f 0xf0304000 0x1228>,
+					<0x1f 0xf0307000 0x1228>,
+					<0x1f 0xf0300000 0x1fff>;
+				reg-names = "base", "ecc_parity_base", "ecc_base";
+				label = "OTP_TOP_S0";
+				ecc_parity_addr_offset = <0x0>;
+				bank_num = <64>;
+				bank_type = <1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+							 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+							 1 1 1 1 1 1 1 1 1 1 1 1>;
+				parity_bank_type = <1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+							 1 1 1 1 1 1 1 1 1 1>;
+			};
+			otp_s1: otp_s1@1ff0305000 {
+				compatible = "samsung,otp";
+				reg = <0x1f 0xf0305000 0x1228>,
+					<0x1f 0xf0307000 0x1228>,
+					<0x1f 0xf0302000 0x1fff>;
+				reg-names = "base", "ecc_parity_base", "ecc_base";
+				label = "OTP_TOP_S1";
+				ecc_parity_addr_offset = <0x1>;
+				bank_num = <64>;
+				bank_type = <1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+							 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+							 1 1 1 1 1 1 1 1 1 1 1 1>;
+				parity_bank_type = <1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+							 1 1 1 1 1 1 1 1 1 1>;
+			};
+			otp_s2: otp_s2@1ff0307000 {
+				compatible = "samsung,otp";
+				reg = <0x1f 0xf0307000 0x1228>,
+					<0x0 0x0 0x1228>,
+					<0x0 0x0 0x1fff>;
+				reg-names = "base", "ecc_parity_base", "ecc_base";
+				label = "OTP_TOP_S2";
+				ecc_parity_addr_offset = <0xf>;
+				bank_num = <32>;
+				bank_type = <1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+							 1 1 1 1 1 1>;
+				parity_bank_type = <1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+									1 1 1 1 1 1 1 1 1 1>;
+			};
+		};
+		dmac: dmac@62000 {
+			compatible = "rambus,cmrt-dmac";
+			interrupt-parent = <&plic>;
+			interrupts = <1>;
+			reg = <0x62000 0x1000>;
+			label = "dmac";
+		};
+		mpu: mpu@70000 {
+			compatible = "rambus,cmrt-mpu";
+			reg = <0x70000 0x1000>;
+			num-regions = <32>;
+		};
+		plic: interrupt-controller@72000 {
+			#address-cells = <1>;
+			#interrupt-cells = <1>;
+			compatible = "rambus,cmrt-plic";
+			interrupt-controller;
+			interrupts-extended = <&hlic 11 &hlic 9>;
+			reg = <0x72000 0x1000>;
+		};
+		clint: clint@74000 {
+			#address-cells = <1>;
+			#interrupt-cells = <1>;
+			compatible = "rambus,cmrt-clint", "riscv,clint0";
+			interrupt-controller;
+			interrupts-extended = <&hlic 3 &hlic 7>;
+			reg = <0x74000 0x1000>;
+			label = "clint";
+		};
+		ccp: ccp@90000 {
+			compatible = "rambus,cmrt-ccp";
+			reg = <0x90000 0x1000>;
+			label = "ccp";
+		};
+		qsec: qsec@b0000 {
+			compatible = "rambus,cmrt-qsec";
+			reg = <0xb0000 0x1000>;
+			label = "qsec";
+		};
+	};
+	aliases {
+		watchdog0 = &clint;
+	};
+};

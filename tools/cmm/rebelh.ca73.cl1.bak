@@ -1,0 +1,174 @@
+B::
+
+RESet
+SYStem.RESet
+
+; Platform, 1 = ZEBU / 0 = Silicon (default)
+LOCAL &ZEBU
+
+; Chiplet-id of target
+; Xj0* JTAG: per-chiplet standalone
+; Xj1* JTAG PAD route: TDI -> chiplet-0 -> chiplet-2 -> chiplet-3 -> chiplet-1 -> TDO
+
+LOCAL &STANDALONE	; 0: per-chiplet Xj0*, 1: daisy-chain Xj1* path
+LOCAL &CHIPLET_ID
+
+&ZEBU=0.
+&STANDALONE=1.
+&CHIPLET_ID=0.
+
+IF &ZEBU==1.
+(
+ sys.CONFIG.DEBUGPORT GTL0
+ sys.gtl.modelconfig "NODE=localhost|PORT=20010|TIMEOUT=600000|TRST_USED=1|SRST_USED=0|CLK_RATIO=2|CPU_FREQ_MHZ=5"
+ sys.gtl.LIBname "/user/zebusw/XTOR/S/IP_ROOT_S_2023_03/lib/libxtor_t32_socket_svs.so"
+ sys.gtl.JTAGPROBENAME "JTAGPROBE0"
+ sys.vt.timeintargettime on                                               ; configure usage of model timing
+ sys.vt.pauseintargettime on                                              ; configure usage of model timing
+ sys.vt.hardwaretimeoutscale 100.0
+ sys.gtl.connect
+ sys.vt.timeintargettime on
+ sys.vt.pauseintargettime on
+)
+
+PRINT			VERSION.SOFTWARE()
+
+; Set DAP's IR/DR POST/PRE value for the target chiplet
+IF &STANDALONE==1.
+(
+  SYS.CONFIG DAPIRPRE		0.
+  SYS.CONFIG DAPIRPOST		0.
+  SYS.CONFIG DAPDRPRE		0.
+  SYS.CONFIG DAPDRPOST		0.
+)
+ELSE IF &CHIPLET_ID==0.
+(
+  SYS.CONFIG DAPIRPRE		12.
+  SYS.CONFIG DAPIRPOST		0.
+  SYS.CONFIG DAPDRPRE		3.
+  SYS.CONFIG DAPDRPOST		0.
+)
+ELSE IF &CHIPLET_ID==1.
+(
+  SYS.CONFIG DAPIRPRE		0.
+  SYS.CONFIG DAPIRPOST		12.
+  SYS.CONFIG DAPDRPRE		0.
+  SYS.CONFIG DAPDRPOST		3.
+)
+ELSE IF &CHIPLET_ID==2.
+(
+  SYS.CONFIG DAPIRPRE		8.
+  SYS.CONFIG DAPIRPOST		4.
+  SYS.CONFIG DAPDRPRE		2.
+  SYS.CONFIG DAPDRPOST		1.
+)
+ELSE IF &CHIPLET_ID==3.
+(
+  SYS.CONFIG DAPIRPRE		4.
+  SYS.CONFIG DAPIRPOST		8.
+  SYS.CONFIG DAPDRPRE		1.
+  SYS.CONFIG DAPDRPOST		2.
+)
+ELSE
+(
+  PRINT "Not supported"
+  ENDDO
+)
+
+; Basic setting
+SYSTEM.JTAGCLOCK		20MHz
+SYSTEM.CPU				CORTEXA73
+
+SYSTEM.OPTION	RESBREAK	OFF
+SYSTEM.OPTION	ENRESET		OFF
+SYSTEM.OPTION 	TRST		OFF
+SYSTEM.OPTION.MEMSTATUSCHECK ON
+
+; APB-AP for CA73 debug
+SYSTEM.CONFIG.APBAP1.Base		DP:0x00004000
+SYSTEM.CONFIG.COREDEBUG.base	APB:0x00810000
+SYSTEM.CONFIG.CTIBASE			APB:0x00820000
+
+; AXI-AP
+SYSTEM.CONFIG.AXIAP1.Base		DP:0x00002000
+
+SYStem.attach
+
+&root_path="/home/rebellions/Silicon_BringUp_data/heeyoung/vdk_hw_quad/rebel_cds_collab_hw"
+Data.LOAD.Elf &root_path/binaries/FreeRTOS_CP/freertos_kernel.elf /nocode
+Break.Set replay_task_init
+break
+
+data.load.binary /share/tmp_heeyoung/0812_pwr/power_vector_0812/test_dir=-home-heeyoung-Downloads-250203_power_vector_dclx2-rebel_power_fp16_mode_2_CL1-command_datadb.dat zaxi:0x2054200000 /noclear
+data.load.binary /share/tmp_heeyoung/0812_pwr/power_vector_0812/test_dir=-home-heeyoung-Downloads-250203_power_vector_dclx2-rebel_power_fp16_mode_2-memory_datadb.dat zaxi:0x2060000000 /noclear
+
+if run()
+  break
+
+;
+; Based on WFD, start with pre-loaded images
+;
+
+; Load first sboot_n / tboot_n / FreeRTOS_PCIE binary to SRAM
+LOCAL &root_path
+&root_path="/home/rebellions/Silicon_BringUp_data/heeyoung/vdk_hw_quad/rebel_cds_collab_hw"
+
+Data.LOAD.Binary &root_path/binaries/BootLoader_CP/bl1.bin zaxi:0x1e00010000
+Data.LOAD.Binary &root_path/binaries/BootLoader_CP/bl2.bin zaxi:0x1e00030000
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_PCIE/freertos_kernel.bin zaxi:0x1e08000000
+
+; Load sboot_n / tboot_n / FreeRTOS_PCIE .elf symbol
+
+;Data.LOAD.Elf &root_path/binaries/BootLoader_CP/bl1.elf /nocode
+;Data.LOAD.Elf &root_path/binaries/FreeRTOS_PCIE/freertos_kernel.elf /nocode
+
+; Change core state with EL3/Secure, CA73's PC value to a target entry point
+
+;Register.Set M 0xc
+;Register.Set NS 0
+
+; Need to load bl2 symbol to break the system after hbm_init done.
+Register.Set PC 0x1e00010000 ; Entry of sboot_n
+Data.LOAD.Elf &root_path/binaries/BootLoader_CP/bl1.elf /nocode
+Break.Set _bl1_init_blk_rbc /onchip
+go
+
+WAIT 2s
+Data.LOAD.Binary &root_path/binaries/ucie_phy_pre_load.bin zaxi:0x1e05c20000
+
+Data.LOAD.Elf &root_path/binaries/BootLoader_CP/bl2.elf /nocode
+Break.Set tzpc_init_sysreg_bl2 /onchip
+
+go
+
+WAIT 20s
+
+&CH1_BASE=0x2000000000
+&CH2_BASE=0x4000000000
+&CH3_BASE=0x6000000000
+
+; Load bl31/FreeRTOS_CP binary
+Data.LOAD.Binary &root_path/binaries/BootLoader_CP/bl31.bin zaxi:0x0
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP/freertos_kernel.bin zaxi:0x200000
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP1/bl31.bin zaxi:0x14100000
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP1/freertos_kernel.bin zaxi:0x14200000
+
+Data.LOAD.Binary &root_path/binaries/BootLoader_CP/bl31.bin zaxi:(&CH1_BASE+0x0)
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP/freertos_kernel.bin zaxi:(&CH1_BASE+0x200000)
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP1/bl31.bin zaxi:(&CH1_BASE+0x14100000)
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP1/freertos_kernel.bin zaxi:(&CH1_BASE+0x14200000)
+
+Data.LOAD.Binary &root_path/binaries/BootLoader_CP/bl31.bin zaxi:(&CH2_BASE+0x0)
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP/freertos_kernel.bin zaxi:(&CH2_BASE+0x200000)
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP1/bl31.bin zaxi:(&CH2_BASE+0x14100000)
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP1/freertos_kernel.bin zaxi:(&CH2_BASE+0x14200000)
+
+Data.LOAD.Binary &root_path/binaries/BootLoader_CP/bl31.bin zaxi:(&CH3_BASE+0x0)
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP/freertos_kernel.bin zaxi:(&CH3_BASE+0x200000)
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP1/bl31.bin zaxi:(&CH3_BASE+0x14100000)
+Data.LOAD.Binary &root_path/binaries/FreeRTOS_CP1/freertos_kernel.bin zaxi:(&CH3_BASE+0x14200000)
+go
+; sYmbol.SourcePATH.Translate "/home1/gildong.hong/" "M:/"
+; End of pre-loading
+
+ENDDO

@@ -1,0 +1,926 @@
+; REBEL_Q T32 Attach Device
+GLOBAL &OPERATION &DIRECT_CONNECT &PROJ_PATH &FW_PATH
+ENTRY &OPERATION &DIRECT_CONNECT &PROJ_PATH &FW_PATH
+
+AREA.Create SPI_LOG 100. 1000.
+AREA.Select SPI_LOG
+AREA.View SPI_LOG
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; write SECTOR ERASE ADDRESS
+GLOBAL &ERASE_START
+&ERASE_START=0x0
+
+GLOBAL &ERASE_END
+&ERASE_END=0x01B000
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; DW QSPI Controller
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+GLOBAL &QSPI_BASE_OFF
+&QSPI_BASE_OFF=0x1e00500000
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; CTRL0R
+GLOBAL &DW_SSI_CTRLR0_OFF
+&DW_SSI_CTRLR0_OFF=0x00
+
+; Data Frame Size
+GLOBAL &DW_SSI_CTRLR0_DFS_BIT_POS
+&DW_SSI_CTRLR0_DFS_BIT_POS=0.
+GLOBAL &DW_SSI_CTRLR0_DFS_8_BIT
+&DW_SSI_CTRLR0_DFS_8_BIT=0x07
+GLOBAL &DW_SSI_CTRLR0_DFS_24_BIT
+&DW_SSI_CTRLR0_DFS_32_BIT=0x17
+GLOBAL &DW_SSI_CTRLR0_DFS_32_BIT
+&DW_SSI_CTRLR0_DFS_32_BIT=0x1F
+
+; Frame Format
+GLOBAL &DW_SSI_CTRLR0_FRF_BIT_POS
+&DW_SSI_CTRLR0_FRF_BIT_POS=6.
+GLOBAL &DW_SSI_CTRLR0_FRF_SPI
+&DW_SSI_CTRLR0_FRF_SPI=0x0
+
+;Transfer Mode
+GLOBAL &DW_SSI_CTRLR0_TMOD_BIT_POS
+&DW_SSI_CTRLR0_TMOD_BIT_POS=10.
+GLOBAL &DW_SSI_CTRLR0_TMOD_TX_AND_RX
+&DW_SSI_CTRLR0_TMOD_TX_AND_RX=0x0
+GLOBAL &DW_SSI_CTRLR0_TMOD_TX
+&DW_SSI_CTRLR0_TMOD_TX=0x1
+GLOBAL &DW_SSI_CTRLR0_TMOD_RX
+&DW_SSI_CTRLR0_TMOD_RX=0x2
+
+; SPI Frame Format
+GLOBAL &DW_SSI_CTRLR0_SPI_FRF_BIT_POS
+&DW_SSI_CTRLR0_SPI_FRF_BIT_POS=22.
+GLOBAL &DW_SSI_CTRLR0_SPI_FRF_STD
+&DW_SSI_CTRLR0_SPI_FRF_STD=0x0
+GLOBAL &DW_SSI_CTRLR0_SPI_FRF_QUAD
+&DW_SSI_CTRLR0_SPI_FRF_QUAD=0x2
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; CTRL1R
+GLOBAL &DW_SSI_CTRLR1_OFF
+&DW_SSI_CTRLR1_OFF=0x04
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; SSIENR
+GLOBAL &DW_SSI_SSIENR_OFF
+&DW_SSI_SSIENR_OFF=0x08
+GLOBAL &DW_SSI_SSIENR_SSIC_EN_MASK
+&DW_SSI_SSIENR_SSIC_EN_MASK=0x1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; SER
+GLOBAL &DW_SSI_SER_OFF
+&DW_SSI_SER_OFF=0x10
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; BAUDR
+GLOBAL &DW_SSI_BAUDR_OFF
+&DW_SSI_BAUDR_OFF=0x14
+GLOBAL &DW_SSI_BAUDR_SCKDV_POS
+&DW_SSI_BAUDR_SCKDV_POS=1.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; TXFLR
+GLOBAL &DW_SSI_TXFLR_OFF
+&DW_SSI_TXFLR_OFF=0x20
+
+GLOBAL &DW_SSI_TXFLR_SET_OFF
+&DW_SSI_TXFLR_SET_OFF=0x18
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; RXFLR
+GLOBAL &DW_SSI_RXFLR_OFF
+&DW_SSI_RXFLR_OFF=0x24
+
+GLOBAL &DW_SSI_RXFLR_SET_OFF
+&DW_SSI_RXFLR_SET_OFF=0x1C
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; SR
+GLOBAL &DW_SSI_SR_OFF
+&DW_SSI_SR_OFF=0x28
+GLOBAL &DW_SSI_SR_BUSY_MASK
+&DW_SSI_SR_BUSY_MASK=0x1
+GLOBAL &DW_SSI_SR_BUSY_ACTIVE
+&DW_SSI_SR_BUSY_ACTIVE=0x1
+GLOBAL &DW_SSI_SR_RFNE_BIT
+&DW_SSI_SR_RFNE_BIT=0x8
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; IMR(Interrupt Mask Register)
+GLOBAL &DW_SSI_IMR_OFF
+&DW_SSI_IMR_OFF=0x2C
+GLOBAL &DW_SSI_IMR_MASK
+&DW_SSI_IMR_MASK=0x3F
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; DRx
+GLOBAL &DW_SSI_DR_OFF
+&DW_SSI_DR_OFF=0x60
+
+GLOBAL &WRITE_BASE
+&WRITE_BASE=&QSPI_BASE_OFF+&DW_SSI_DR_OFF
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; SPI_CTRLR0
+GLOBAL &DW_SSI_SPI_CTRLR0_OFF
+&DW_SSI_SPI_CTRLR0_OFF=0xF4
+
+; Trans type
+GLOBAL &DW_SSI_SPI_CTRLR0_TT_POS
+&DW_SSI_SPI_CTRLR0_TT_POS=0.
+GLOBAL &DW_SSI_SPI_CTRLR0_TT_0
+&DW_SSI_SPI_CTRLR0_TT_0=0x0
+GLOBAL &DW_SSI_SPI_CTRLR0_TT_1
+&DW_SSI_SPI_CTRLR0_TT_1=0x1
+GLOBAL &DW_SSI_SPI_CTRLR0_TT_2
+&DW_SSI_SPI_CTRLR0_TT_2=0x2
+GLOBAL &DW_SSI_SPI_CTRLR0_TT_3
+&DW_SSI_SPI_CTRLR0_TT_3=0x3
+
+; Address Length
+GLOBAL &DW_SSI_SPI_CTRLR0_ADDR_L_POS
+&DW_SSI_SPI_CTRLR0_ADDR_L_POS=2.
+GLOBAL &DW_SSI_SPI_CTRLR0_ADDR_L0 ;0bit
+GLOBAL &DW_SSI_SPI_CTRLR0_ADDR_L8
+&DW_SSI_SPI_CTRLR0_ADDR_L8=0x2 ;8bit
+GLOBAL &DW_SSI_SPI_CTRLR0_ADDR_L24
+&DW_SSI_SPI_CTRLR0_ADDR_L24=0x6 ;24bit
+
+; Instruction Length
+GLOBAL &DW_SSI_SPI_CTRLR0_INST_L_POS
+&DW_SSI_SPI_CTRLR0_INST_L_POS=8.
+GLOBAL &DW_SSI_SPI_CTRLR0_INST_L0
+&DW_SSI_SPI_CTRLR0_INST_L0=0x0 ;0bit
+GLOBAL &DW_SSI_SPI_CTRLR0_INST_L8
+&DW_SSI_SPI_CTRLR0_INST_L8=0x2 ;8bit
+GLOBAL &DW_SSI_SPI_CTRLR0_INST_L16
+&DW_SSI_SPI_CTRLR0_INST_L16=0x3 ;16bit
+
+; Wait Cycles
+GLOBAL &DW_SSI_SPI_CTRLR0_WAIT_CYCLES_POS
+&DW_SSI_SPI_CTRLR0_WAIT_CYCLES_POS=11.
+
+; DDR Enable
+GLOBAL &DW_SSI_SPI_CTRLR0_DDR_EN_POS
+&DW_SSI_SPI_CTRLR0_DDR_EN_POS=16.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FLASH Command
+GLOBAL &FLASH_CMD_WRITE_EN
+&FLASH_CMD_WRITE_EN=0x6
+GLOBAL &FLASH_CMD_WRITE_DIS
+&FLASH_CMD_WRITE_DIS=0x4
+
+GLOBAL &FLASH_CMD_READ_STATUS
+&FLASH_CMD_READ_STATUS=0x05
+GLOBAL &FLASH_CMD_READ_FLAG_STATUS
+&FLASH_CMD_READ_FLAG_STATUS=0x70
+
+GLOBAL &FLASH_CMD_ENTER_QUAD_IO_MODE
+&FLASH_CMD_ENTER_QUAD_IO_MODE=0x35
+GLOBAL &FLASH_CMD_RESET_QUAD_IO_MODE
+&FLASH_CMD_RESET_QUAD_IO_MODE=0xF5
+
+GLOBAL &FLASH_CMD_ERASE_SECTOR
+&FLASH_CMD_ERASE_SECTOR=0xD8
+GLOBAL &FLASH_CMD_ERASE_32K_SUBSECTOR
+&FLASH_CMD_ERASE_32K_SUBSECTOR=0x52
+GLOBAL &FLASH_CMD_ERASE_4K_SUBSECTOR
+&FLASH_CMD_ERASE_4K_SUBSECTOR=0x20
+GLOBAL &FLASH_CMD_ERASE_BULK
+&FLASH_CMD_ERASE_BULK=0xC7
+
+GLOBAL &FLASH_CMD_RESET_ENABLE
+&FLASH_CMD_RESET_ENABLE=0x66
+GLOBAL &FLASH_CMD_RESET_MEMORY
+&FLASH_CMD_RESET_MEMORY=0x99
+
+GLOBAL &FLASH_CMD_QUAD_INPUT_FAST_PROGRAM
+&FLASH_CMD_QUAD_INPUT_FAST_PROGRAM=0x32
+
+GLOBAL &FLASH_CMD_PAGE_PROGRAM
+&FLASH_CMD_PAGE_PROGRAM=0x02
+
+GLOBAL &FLASH_CMD_MULTIPLE_READ_ID
+&FLASH_CMD_MULTIPLE_READ_ID=0xAF
+
+GLOBAL &FLASH_CMD_STD_READ_ID
+&FLASH_CMD_STD_READ_ID=0x9E
+
+GLOBAL &FLASH_CMD_EXIT_4BYTE
+&FLASH_CMD_EXIT_4BYTE=0xE9
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FLASH Status Register
+GLOBAL &FLASH_STATUS_WRITE_EN_LATCH
+&FLASH_STATUS_WRITE_EN_LATCH=0x02
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FLASH Flag Status Register
+GLOBAL &FLASH_FLAG_STATUS_READY
+&FLASH_FLAG_STATUS_READY=0x80
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FLASH NVCR
+GLOBAL &FLASH_CMD_READ_NVCR &FLASH_CMD_WRITE_NVCR
+&FLASH_CMD_READ_NVCR=0xB5
+&FLASH_CMD_WRITE_NVCR=0xB1
+
+GLOBAL &start_time &end_time &duration
+
+DO T32_GUI.config.cmm &DIRECT_CONNECT 0.
+
+IF RUN()
+  Break
+
+DO T32_GUI.set_spi_boot_clk.cmm 1.
+
+GOSUB DW_SSI_INIT_QUAD 12. ;20MHz
+
+GOSUB DW_SSI_FLASH_RESET
+
+GOSUB DW_SSI_FLASH_CMD_READ_NVCR
+ENTRY &current_nvcr
+PRINT "Current NVCR Value: &current_nvcr"; must be 0xFFEF
+
+GOSUB DW_SSI_UNLOCK_ALL
+GOSUB DW_SSI_FLASH_EXIT_4BYTE_MODE
+GOSUB DW_SSI_FLASH_WAIT_READY_FLAG
+GOSUB DW_SSI_FLASH_WAIT_READY_STAT
+
+GOSUB DW_SSI_CMD_READ_ID
+
+IF &OPERATION==0.
+(
+    PRINT "Bulk Erase Start!"
+    GOSUB DW_SSI_FLASH_ERASE_BULK
+
+    PRINT "Erase Done!"
+)
+ELSE IF &OPERATION==1.
+(
+    GOSUB DW_SSI_FLASH_ERASE_BULK
+    PRINT "Erase Done!"
+
+    &start_time=CLOCK.SECONDS()
+    PRINT "Write Start: " CLOCK.TIME()
+
+    GOSUB DW_SSI_FLASH_WRITE_FW "&FW_PATH" 0x0
+
+    &end_time=CLOCK.SECONDS()
+    &duration=&end_time-&start_time
+
+    PRINT "Total Time: &duration sec"
+    PRINT "Write Done!"
+)
+ELSE IF &OPERATION==2.
+(
+    PRINT "Sector Erase start &ERASE_START - &ERASE_END"
+    GOSUB DW_SSI_FLASH_ERASE &ERASE_START &ERASE_END
+
+    PRINT "Sector Erase Done!"
+)
+
+ENDDO
+
+DW_SSI_SER_EN:
+(
+    ENTRY &en
+    GOSUB REG_MODIFY &DW_SSI_SER_OFF &en &DW_SSI_SSIENR_SSIC_EN_MASK
+    GOSUB DW_SSI_EN 1.
+
+    RETURN
+)
+
+DW_SSI_EN:
+(
+    ENTRY &en
+    GOSUB REG_MODIFY &DW_SSI_SSIENR_OFF &en &DW_SSI_SSIENR_SSIC_EN_MASK
+    RETURN
+)
+
+DW_SSI_IRQ_EN:
+(
+    ENTRY &en
+
+    GOSUB REG_MODIFY &DW_SSI_IMR_OFF &en &DW_SSI_IMR_MASK
+    RETURN
+)
+
+DW_SSI_BAUD_SET:
+(
+    ENTRY &div
+    LOCAL &val
+
+    &val=&div<<&DW_SSI_BAUDR_SCKDV_POS
+    GOSUB REG_WRITE &DW_SSI_BAUDR_OFF &val
+    RETURN
+)
+
+DW_SSI_CONFIG:
+(
+    ENTRY &frf &trans_type &addr_l &inst_l &wait_cycles &dfs &tmod &nde
+    LOCAL &val;
+
+    GOSUB DW_SSI_EN 0.
+    GOSUB REG_WRITE &DW_SSI_TXFLR_SET_OFF 0x0
+
+    ; SPI_CTRLR0
+    &val=&trans_type<<&DW_SSI_SPI_CTRLR0_TT_POS
+    &val=&val|(&addr_l<<&DW_SSI_SPI_CTRLR0_ADDR_L_POS)
+    &val=&val|(&inst_l<<&DW_SSI_SPI_CTRLR0_INST_L_POS)
+    &val=&val|(&wait_cycles<<&DW_SSI_SPI_CTRLR0_WAIT_CYCLES_POS)
+
+    GOSUB REG_WRITE &DW_SSI_SPI_CTRLR0_OFF &val
+
+    ; CTRLR0
+    &val=&dfs<<&DW_SSI_CTRLR0_DFS_BIT_POS
+    &val=&val|(&tmod<<&DW_SSI_CTRLR0_TMOD_BIT_POS)
+    &val=&val|(&frf<<&DW_SSI_CTRLR0_SPI_FRF_BIT_POS)
+
+    GOSUB REG_WRITE &DW_SSI_CTRLR0_OFF &val
+
+    ; CTRLR1
+    GOSUB REG_WRITE &DW_SSI_CTRLR1_OFF &nde
+
+    RETURN
+)
+
+DW_SSI_WAIT_INACTIVE:
+(
+    LOCAL &val
+
+    &val=&DW_SSI_SR_BUSY_ACTIVE
+    WHILE &val==&DW_SSI_SR_BUSY_ACTIVE
+    (
+        GOSUB REG_READ &DW_SSI_SR_OFF
+        ENTRY &val
+        &val=(&val)&(&DW_SSI_SR_BUSY_MASK)
+    )
+    RETURN
+)
+
+DW_SSI_WAIT_RX_AVAL:
+(
+    ENTRY &len
+    LOCAL &sr_value &timeout &rx_level
+    &timeout=0.
+
+    WHILE &timeout<500.
+    (
+        GOSUB REG_READ &DW_SSI_RXFLR_OFF
+        ENTRY &rx_level
+        IF &rx_level>=&len
+        (
+            RETURN
+        )
+        WAIT 0.01ms
+        &timeout=&timeout+1.
+    )
+
+    PRINT %WARNING "RX Wait Timeout! No data received from Flash."
+    RETURN
+)
+
+DW_SSI_WAIT_TX_AVAL:
+(
+    ENTRY &len_tx
+    LOCAL &fifomax &curr_val &timeout
+    &fifomax=32.
+    &timeout=0.
+
+    WHILE &timeout<500.
+    (
+        GOSUB REG_READ &DW_SSI_TXFLR_OFF
+        ENTRY &curr_val
+        IF (&fifomax-&curr_val)>=&len_tx
+        (
+            RETURN
+        )
+        WAIT 0.01ms
+        &timeout=&timeout+1.
+    )
+
+    PRINT %ERROR "TX Wait Timeout! FIFO is stuck or Busy."
+    RETURN
+)
+
+DW_SSI_FLASH_SEND_CMD:
+(
+    ENTRY &cmd &addr
+    LOCAL &needed
+    &needed=1.
+
+    IF "&addr"!=""
+    (
+        &needed=4.
+    )
+
+    GOSUB DW_SSI_WAIT_TX_AVAL &needed
+
+    IF "&addr"!=""
+    (
+        GOSUB DW_SSI_WAIT_TX_AVAL 1.
+        GOSUB REG_WRITE &DW_SSI_DR_OFF (&addr>>16.)&0xFF
+
+        GOSUB DW_SSI_WAIT_TX_AVAL 1.
+        GOSUB REG_WRITE &DW_SSI_DR_OFF (&addr>>8.)&0xFF
+
+        GOSUB DW_SSI_WAIT_TX_AVAL 1.
+        GOSUB REG_WRITE &DW_SSI_DR_OFF (&addr)&0xFF
+    )
+    GOSUB DW_SSI_WAIT_INACTIVE
+
+    RETURN
+)
+
+DW_SSI_FLASH_CMD_READ_REG:
+(
+    ENTRY &cmd
+    LOCAL &raw_val &final_val
+
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 0x0 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 0x07 0x3 0.
+
+    GOSUB DW_SSI_SER_EN 1.
+
+    GOSUB REG_WRITE &DW_SSI_DR_OFF &cmd
+
+    GOSUB DW_SSI_WAIT_RX_AVAL 1.
+
+    GOSUB REG_READ &DW_SSI_DR_OFF
+    ENTRY &raw_val
+
+    &final_val=&raw_val&0xFF
+
+    GOSUB DW_SSI_SER_EN 0.
+
+    RETURN &final_val
+)
+
+DW_SSI_FLASH_WAIT_READY_FLAG:
+(
+    LOCAL &timeout
+    &timeout=0.
+
+    WHILE &timeout<100.
+    (
+        GOSUB DW_SSI_FLASH_CMD_READ_REG &FLASH_CMD_READ_FLAG_STATUS
+        ENTRY &val
+
+        PRINT "Time: &timeout Flag Reg(0x70) Read: &val"
+        IF (&val&0x80)==&FLASH_FLAG_STATUS_READY
+        (
+            PRINT "Flash is Ready : read_flag &val"
+            RETURN
+        )
+
+        ;&timeout=&timeout+1.
+    )
+
+    IF &timeout>=100.
+    (
+        PRINT %ERROR "Error: Flash Flag Operation Timeout (30s)!"
+    )
+
+    RETURN
+)
+
+DW_SSI_FLASH_WAIT_READY_STAT:
+(
+    LOCAL &timeout
+    &timeout=0.
+
+    WHILE &timeout<500.
+    (
+        GOSUB DW_SSI_FLASH_CMD_READ_REG &FLASH_CMD_READ_STATUS
+        ENTRY &read_status
+        PRINT "Time: &timeout SR(0x05) Read: &read_status"
+
+        IF (&read_status&0x1)!=0x1
+        (
+            PRINT "Flash is ready : read_stat &read_status"
+            RETURN
+        )
+       ; &timeout=&timeout+1.
+    )
+
+    IF &timeout>=100.
+    (
+        PRINT %ERROR "Error: Flash Status(05h) Timeout (30s)!"
+    )
+
+    RETURN
+)
+
+DW_SSI_FLASH_CMD_WRITE_EN:
+(
+    ENTRY &en
+    LOCAL &cmd &val &timeout
+
+    IF &en==1.
+    (
+        &cmd=&FLASH_CMD_WRITE_EN
+    )
+    ELSE
+    (
+        &cmd=&FLASH_CMD_WRITE_DIS
+    )
+
+    IF &cmd==&FLASH_CMD_WRITE_EN
+    (
+        GOSUB REG_WRITE &DW_SSI_TXFLR_SET_OFF 1.
+        GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 0x0 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 &DW_SSI_CTRLR0_DFS_8_BIT &DW_SSI_CTRLR0_TMOD_TX 0.
+
+        GOSUB DW_SSI_SER_EN 1.
+        GOSUB DW_SSI_FLASH_SEND_CMD &cmd
+
+        &val=0x0
+        &timeout =0.
+
+        WHILE &val!=&FLASH_STATUS_WRITE_EN_LATCH
+        (
+            GOSUB DW_SSI_FLASH_CMD_READ_REG &FLASH_CMD_READ_STATUS
+            ENTRY &reg_temp
+            &val=(&reg_temp)&(&FLASH_STATUS_WRITE_EN_LATCH)
+
+            IF &timeout>100.
+            (
+                PRINT "Error: Write Enable Timeout! Check SPI Connection or Protection."
+                RETURN
+            )
+            &timeout = &timeout+1.
+        )
+    )
+
+    RETURN
+)
+
+DW_SSI_FLASH_CMD_QUAD_IO_MODE:
+(
+    ENTRY &en
+    LOCAL &cmd
+
+    IF &en==1.
+    (
+        &cmd=&FLASH_CMD_ENTER_QUAD_IO_MODE
+    )
+    ELSE
+    (
+        &cmd=&FLASH_CMD_RESET_QUAD_IO_MODE
+    )
+    ; To initiate these commands, the WRITE ENABLE command must not be executed.
+    GOSUB DW_SSI_FLASH_CMD_WRITE_EN 0.
+    GOSUB DW_SSI_FLASH_SEND_CMD &cmd
+    PRINT "ENTER TO QUAD MODE!"
+
+    RETURN
+)
+
+DW_SSI_FLASH_RESET:
+(
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 &DW_SSI_SPI_CTRLR0_ADDR_L0 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 &DW_SSI_CTRLR0_DFS_8_BIT &DW_SSI_CTRLR0_TMOD_TX 0.
+    GOSUB DW_SSI_FLASH_SEND_CMD &FLASH_CMD_RESET_ENABLE
+    GOSUB DW_SSI_FLASH_SEND_CMD &FLASH_CMD_RESET_MEMORY
+
+    RETURN
+)
+
+DW_SSI_FLASH_ERASE_BULK:
+(
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 0. 0. 0. &DW_SSI_CTRLR0_DFS_8_BIT &DW_SSI_CTRLR0_TMOD_TX 0.
+    GOSUB DW_SSI_EN 1.
+    GOSUB DW_SSI_SER_EN 1.
+    GOSUB REG_WRITE &DW_SSI_DR_OFF &FLASH_CMD_ERASE_BULK
+    GOSUB DW_SSI_WAIT_INACTIVE
+    GOSUB DW_SSI_FLASH_WAIT_READY_STAT
+    RETURN
+)
+
+DW_SSI_FLASH_ERASE:
+(
+    ENTRY &offset &sector_size
+    LOCAL &seg_64k &seg_32k &seg_4k &i
+
+    &seg_64k=&sector_size/65536.
+    &seg_32k=(&sector_size%65536.)/32768.
+    &seg_4k=(&sector_size%32768.)/4096.
+
+    &i=0
+    &tmp=&offset
+
+    WHILE &i<&seg_64k
+    (
+        GOSUB DW_SSI_UNLOCK_ALL
+        GOSUB DW_SSI_EN 1.
+        GOSUB DW_SSI_SER_EN 0.
+
+        GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 &DW_SSI_SPI_CTRLR0_ADDR_L24 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 &DW_SSI_CTRLR0_DFS_8_BIT &DW_SSI_CTRLR0_TMOD_TX 0.
+        GOSUB DW_SSI_EN 1.
+
+        GOSUB REG_WRITE &DW_SSI_DR_OFF &FLASH_CMD_ERASE_SECTOR
+        GOSUB REG_WRITE &DW_SSI_DR_OFF &tmp
+
+        GOSUB DW_SSI_SER_EN 1.
+        GOSUB DW_SSI_WAIT_INACTIVE
+
+        PRINT "Erasing 64K Block: " &tmp " (" &i+1. "/" &seg_64k ")"
+
+        &tmp=&tmp+0x10000
+        &i=&i+1
+    )
+
+    &i=0
+    WHILE &i<&seg_32k
+    (
+        GOSUB DW_SSI_UNLOCK_ALL
+        GOSUB DW_SSI_EN 1.
+        GOSUB DW_SSI_SER_EN 0.
+
+        GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 &DW_SSI_SPI_CTRLR0_ADDR_L24 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 &DW_SSI_CTRLR0_DFS_8_BIT &DW_SSI_CTRLR0_TMOD_TX 0.
+        GOSUB DW_SSI_EN 1.
+
+        GOSUB REG_WRITE &DW_SSI_DR_OFF &FLASH_CMD_ERASE_32K_SUBSECTOR
+        GOSUB REG_WRITE &DW_SSI_DR_OFF &tmp
+
+        GOSUB DW_SSI_SER_EN 1.
+        GOSUB DW_SSI_WAIT_INACTIVE
+
+        PRINT "Erasing 32K Subsector at &tmp"
+
+        &tmp=&tmp+0x8000
+        &i=&i+1
+
+    )
+
+    &i=0
+    WHILE &i<&seg_4k
+    (
+         GOSUB DW_SSI_UNLOCK_ALL
+         GOSUB DW_SSI_EN 1.
+         GOSUB DW_SSI_SER_EN 0.
+
+        GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 &DW_SSI_SPI_CTRLR0_ADDR_L24 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 &DW_SSI_CTRLR0_DFS_8_BIT &DW_SSI_CTRLR0_TMOD_TX 0.
+        GOSUB DW_SSI_EN 1.
+        GOSUB REG_WRITE &DW_SSI_DR_OFF &FLASH_CMD_ERASE_4K_SUBSECTOR
+        GOSUB REG_WRITE &DW_SSI_DR_OFF &tmp
+
+        GOSUB DW_SSI_SER_EN 1.
+        GOSUB DW_SSI_WAIT_INACTIVE
+
+        PRINT "Erasing 4K Subsector at &tmp"
+
+        &tmp=&tmp+0x1000
+        &i=&i+1
+
+    )
+
+    RETURN
+)
+
+DW_SSI_FLASH_WRITE_FW:
+(
+    ENTRY &path &start_addr
+    LOCAL &size &iter_cnt &remain &i &offset_FW &fpos &flag_addr_check
+
+    &path=STRing.TRIM(&path)
+    IF !OS.FILE(&path)
+    (
+        PRINT %ERROR "File not found: &path"
+        RETURN
+    )
+
+    &size=OS.FILE.SIZE(&path)
+
+    OPEN #1 "&path" /Read /Binary
+
+    &iter_cnt=&size/256.
+    &offset_FW=&start_addr
+    &fpos=0.
+    &i=0.
+
+    WHILE &i<&iter_cnt
+    (
+        GOSUB DW_SSI_FLASH_WRITE_DR &fpos &offset_FW
+        &fpos=&fpos+256.
+        &offset_FW=&offset_FW+256.
+        &i=&i+1.
+        PRINT "..." (&i*100./&iter_cnt) "%"
+    )
+
+    CLOSE #1
+    RETURN
+)
+
+DW_SSI_FLASH_WRITE_DR:
+(
+    ENTRY &fpos &offset_DR
+    LOCAL &nde_120 &nde_16 &current_offset &tft_high &tft_low
+
+    &nde_120=30.
+    &nde_16=4.
+    &nde_256=64.
+
+    &tft_high=0x1F0000
+    &tft_low=0x050000
+    &tft=0x100000
+
+    &current_offset=&offset_DR
+    GOSUB SUB_WRITE &current_offset &nde_120 &tft_high
+
+    &current_offset=&offset_DR+120.
+    GOSUB SUB_WRITE &current_offset &nde_120 &tft_high
+
+    &current_offset=&offset_DR+240.
+    GOSUB SUB_WRITE &current_offset &nde_16 &tft_low
+
+    RETURN
+)
+
+SUB_WRITE:
+(
+    ENTRY &seg_addr &word_count &word_size
+    LOCAL &j &sr_val &combined_data &nde_val
+
+    &nde_val=&word_count-1.
+    ;unlock
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 0. 0. 0. 0x07 0x1 0.
+    GOSUB DW_SSI_SER_EN 1.
+    GOSUB REG_WRITE &DW_SSI_DR_OFF 0x06
+    GOSUB DW_SSI_SER_EN 0.
+
+    ;write
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_QUAD &DW_SSI_SPI_CTRLR0_TT_0 &DW_SSI_SPI_CTRLR0_ADDR_L24 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 &DW_SSI_CTRLR0_DFS_32_BIT &DW_SSI_CTRLR0_TMOD_TX &nde_val
+    GOSUB DW_SSI_SER_EN 1.
+    GOSUB REG_WRITE &DW_SSI_TXFLR_SET_OFF &word_size
+
+    GOSUB REG_WRITE &DW_SSI_DR_OFF &FLASH_CMD_QUAD_INPUT_FAST_PROGRAM
+    GOSUB REG_WRITE &DW_SSI_DR_OFF &seg_addr
+
+    &j=0.
+    WHILE &j<&word_count
+    (
+        READ #1 &b0
+        READ #1 &b1
+        READ #1 &b2
+        READ #1 &b3
+        &combined_data=(&b0<<24.)|(&b1<<16.)|(&b2<<8.)|&b3
+
+        Data.set eaxi:&WRITE_BASE %L &combined_data
+        &j=&j+1.
+
+    )
+
+    GOSUB DW_SSI_SER_EN 0.
+
+    RETURN
+)
+
+DW_SSI_CMD_READ_ID:
+(
+    LOCAL &val
+
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 0x0 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 &DW_SSI_CTRLR0_DFS_8_BIT 0x2 0.
+
+    GOSUB DW_SSI_SER_EN 1.
+
+    GOSUB REG_WRITE &DW_SSI_DR_OFF &FLASH_CMD_STD_READ_ID
+
+    GOSUB DW_SSI_WAIT_INACTIVE
+    GOSUB DW_SSI_WAIT_RX_AVAL 1.
+
+    GOSUB REG_READ &DW_SSI_DR_OFF
+    ENTRY &val
+
+    PRINT "READ_ID &val"
+
+    GOSUB DW_SSI_SER_EN 0.
+    RETURN
+)
+
+DW_SSI_INIT_QUAD:
+(
+    ENTRY &div
+
+    GOSUB DW_SSI_EN 0.
+    GOSUB DW_SSI_IRQ_EN 0x0
+    GOSUB DW_SSI_BAUD_SET &div
+    GOSUB DW_SSI_EN 1.
+
+    GOSUB DW_SSI_FLASH_CMD_QUAD_IO_MODE 1.
+
+    RETURN
+)
+
+REG_WRITE:
+(
+    ENTRY &offset &val
+    LOCAL &addr
+
+    &addr=&QSPI_BASE_OFF+&offset
+    Data.set eaxi:&addr %L &val
+
+    RETURN
+)
+
+REG_READ:
+(
+    ENTRY &offset
+    LOCAL &addr &val
+
+    &addr=&QSPI_BASE_OFF+&offset
+    &val=Data.Long(eaxi:&addr)
+
+    RETURN &val
+)
+
+REG_MODIFY:
+(
+    ENTRY &offset &val &mask
+    LOCAL &addr &tmp
+
+    GOSUB REG_READ &offset
+    ENTRY &tmp
+    &tmp= (&tmp)&(~&mask)
+    &tmp=&tmp|&val
+
+    GOSUB REG_WRITE &offset &tmp
+
+    RETURN
+)
+
+DW_SSI_FLASH_CMD_READ_NVCR:
+(
+    LOCAL &raw_val &reordered_val
+
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 0x0 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 0x0F 0x2 0.
+
+    GOSUB DW_SSI_SER_EN 1.
+
+    GOSUB REG_WRITE &DW_SSI_DR_OFF &FLASH_CMD_READ_NVCR
+
+    GOSUB DW_SSI_WAIT_RX_AVAL 1.
+
+    GOSUB REG_READ &DW_SSI_DR_OFF
+    ENTRY &raw_val
+
+    GOSUB DW_SSI_SER_EN 0.
+
+    &reordered_val=((&raw_val&0xFF00)>>8.)|((&raw_val&0x00FF)<<8.)
+
+    RETURN &reordered_val
+)
+
+DW_SSI_SET_NV_CONFIG: ;qspi-boot : reset/hold disable.
+(
+    ENTRY &nvcr_val
+    LOCAL &low &high &ordered_val
+
+    GOSUB DW_SSI_FLASH_CMD_WRITE_EN 1.
+
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 0x0 &DW_SSI_SPI_CTRLR0_INST_L8 0x0 0x0F &DW_SSI_CTRLR0_TMOD_TX 0.
+    GOSUB DW_SSI_SER_EN 1.
+
+    GOSUB REG_WRITE &DW_SSI_DR_OFF &FLASH_CMD_WRITE_NVCR
+    &ordered_val=((&nvcr_val&0xFF00)>>8.)|((&nvcr_val&0x00FF)<<8.)
+    GOSUB REG_WRITE &DW_SSI_DR_OFF &ordered_val
+
+    GOSUB DW_SSI_WAIT_INACTIVE
+    GOSUB DW_SSI_SER_EN 0.
+
+    GOSUB DW_SSI_FLASH_WAIT_READY_STAT
+
+    PRINT "New NVCR set to 0x" FORMAT.HEX(4, &nvcr_val)
+    RETURN
+)
+
+
+DW_SSI_UNLOCK_ALL:
+(
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 0. 0. 0. 0x07 0x1 0.
+    GOSUB DW_SSI_SER_EN 1.
+    GOSUB REG_WRITE &DW_SSI_DR_OFF 0x06
+    GOSUB DW_SSI_WAIT_INACTIVE
+
+    GOSUB REG_WRITE &DW_SSI_TXFLR_SET_OFF 2.
+
+    GOSUB REG_WRITE &DW_SSI_DR_OFF 0x01
+    GOSUB REG_WRITE &DW_SSI_DR_OFF 0x00
+    RETURN
+)
+
+DW_SSI_FLASH_EXIT_4BYTE_MODE:
+(
+    GOSUB DW_SSI_CONFIG &DW_SSI_CTRLR0_SPI_FRF_STD &DW_SSI_SPI_CTRLR0_TT_0 0. 0. 0. 0x07 0x1 0.
+    GOSUB DW_SSI_EN 1.
+    GOSUB DW_SSI_SER_EN 1.
+
+    GOSUB REG_WRITE &DW_SSI_DR_OFF 0xE9
+
+    GOSUB DW_SSI_WAIT_INACTIVE
+    GOSUB DW_SSI_EN 0.
+    GOSUB DW_SSI_SER_EN 0.
+
+    PRINT "Exited 4-byte address mode. Back to 3-byte mode."
+    RETURN
+)

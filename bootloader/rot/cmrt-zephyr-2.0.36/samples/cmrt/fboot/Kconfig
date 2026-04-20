@@ -1,0 +1,14 @@
+# Copyright (c) 2023 Cryptography Research, Inc. (CRI)
+
+mainmenu "FBOOT Options"
+
+config MAIN_STACK_SIZE
+       default 13824 if CMRT_SHSIG_XMSS_ENABLE_ALL_MODES
+       default 8192 if CMRT_CALIPTRA_SUPPORT
+       default 8192 if CMRT_FBOOT_HAS_LMS_VERIFY || CMRT_FBOOT_HAS_LMS_HSS_VERIFY || CMRT_FBOOT_HAS_XMSS_VERIFY || CMRT_FBOOT_HAS_XMSS_MT_VERIFY
+       default 2032
+
+config HEAP_MEM_POOL_SIZE
+       default 5120 if CMRT_CALIPTRA_SUPPORT
+
+source "Kconfig.zephyr"

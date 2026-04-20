@@ -1,0 +1,1496 @@
+&RegUtils="../common/RegAccess"
+&W_STAT_CHECK_ENABLE=1.
+
+;SFR Offset
+&CTRLR0=0x0
+&CTRLR1=0x4
+&SSIENR=0x8
+&SER=0x10
+&MWCR=0xC
+&IMR=0x2C
+&BAUDR=0x14
+&TXFTLR=0x18
+&RXFTLR=0x1C
+&RXFLR=0x24
+&SR=0x28
+&DRX=0x60
+&SPI_CTRLR0=0xF4
+&DDR_DRIVE_EDGE=0xF8
+
+&TARGET_SCLK_OUT=5000000.
+&SSI_CLK_FREQ=500000000.
+&SSI_BAUDR=&SSI_CLK_FREQ/&TARGET_SCLK_OUT
+
+;/* CTRLR0 settings */
+&DW_SPI_CTRLR0_SCPH_BIT=(8.)
+&DW_SPI_CTRLR0_SCPOL_BIT=(9.)
+&DW_SPI_CTRLR0_SRL_BIT=(13.)
+
+&DW_SPI_CTRLR0_SCPH=(1<<&DW_SPI_CTRLR0_SCPH_BIT)
+&DW_SPI_CTRLR0_SCPOL=(1<<&DW_SPI_CTRLR0_SCPOL_BIT)
+&DW_SPI_CTRLR0_SRL=(1<<&DW_SPI_CTRLR0_SRL_BIT)
+
+&DW_SPI_CTRLR0_SSI_IS_MST_BIT=(31.)
+&DW_SPI_CTRLR0_SSI_IS_CONTROLLER=(1<<&DW_SPI_CTRLR0_SSI_IS_MST_BIT)
+&DW_SPI_CTRLR0_SSI_IS_TARGET=(0<<&DW_SPI_CTRLR0_SSI_IS_MST_BIT)
+
+&DW_SPI_CTRLR0_SLV_OE_BIT=(12.)
+&DW_SPI_CTRLR0_SLV_OE=(1<<&DW_SPI_CTRLR0_SLV_OE_BIT)
+
+&DW_SPI_CTRLR0_TMOD_BIT=(10.)
+
+&DW_SPI_CTRLR0_TMOD_TX_RX=(0.)
+&DW_SPI_CTRLR0_TMOD_TX=(1<<&DW_SPI_CTRLR0_TMOD_BIT)
+&DW_SPI_CTRLR0_TMOD_RX=(2<<&DW_SPI_CTRLR0_TMOD_BIT)
+&DW_SPI_CTRLR0_TMOD_EEPROM=(3<<&DW_SPI_CTRLR0_TMOD_BIT)
+&DW_SPI_CTRLR0_TMOD_RESET=(3<<&DW_SPI_CTRLR0_TMOD_BIT)
+
+&DW_SPI_CTRLR0_SPI_FRF_BIT=(22.)
+&DW_SPI_CTRLR0_SPI_FRF_STANDARD=(0x00<<&DW_SPI_CTRLR0_SPI_FRF_BIT)
+&DW_SPI_CTRLR0_SPI_FRF_QSPI=(0x2<<&DW_SPI_CTRLR0_SPI_FRF_BIT)
+
+;/* IMR values */
+&DW_SPI_IMR_XRXOIM_BIT=(6.)
+&DW_SPI_IMR_TXUIM_BIT=(7.)
+&DW_SPI_IMR_AXIEM_BIT=(8.)
+&DW_SPI_IMR_SPITEM_BIT=(10.)
+&DW_SPI_IMR_DONEM_BIT=(11.)
+
+;/* SPI_CTRLR0 values */
+&DW_SPI_SPI_CTRLR0_CLK_STRETCH_EN_BIT=(30.)
+&DW_SPI_SPI_CTRLR0_CLK_STRETCH_EN_DISABLE=(1<<&DW_SPI_SPI_CTRLR0_CLK_STRETCH_EN_BIT)
+&DW_SPI_SPI_CTRLR0_CLK_STRETCH_EN_ENABLE=(0x0<<&DW_SPI_SPI_CTRLR0_CLK_STRETCH_EN_BIT)
+
+&DW_SPI_SPI_CTRLR0_WAIT_CYCLES_BIT=(11.)
+&DW_SPI_SPI_CTRLR0_WAIT_CYCLES_4=(0x4<<&DW_SPI_SPI_CTRLR0_WAIT_CYCLES_BIT)
+&DW_SPI_SPI_CTRLR0_WAIT_CYCLES_8=(0x8<<&DW_SPI_SPI_CTRLR0_WAIT_CYCLES_BIT)
+&DW_SPI_SPI_CTRLR0_WAIT_CYCLES_24=(0x18<<&DW_SPI_SPI_CTRLR0_WAIT_CYCLES_BIT)
+
+&DW_SPI_SPI_CTRLR0_INST_L_BIT=(8.)
+&DW_SPI_SPI_CTRLR0_INST_L_8=(0x2<<&DW_SPI_SPI_CTRLR0_INST_L_BIT)
+
+&DW_SPI_SPI_CTRLR0_ADDR_L_BIT=(2.)
+&DW_SPI_SPI_CTRLR0_ADDR_L_24=(0x06<<&DW_SPI_SPI_CTRLR0_ADDR_L_BIT)
+&DW_SPI_SPI_CTRLR0_ADDR_L_0=(0x00<<&DW_SPI_SPI_CTRLR0_ADDR_L_BIT)
+&DW_SPI_SPI_CTRLR0_ADDR_L_8=(0x02<<&DW_SPI_SPI_CTRLR0_ADDR_L_BIT)
+
+&DW_SPI_SPI_CTRLR0_TRANS_TYPE_BIT=(0x0)
+&DW_SPI_SPI_CTRLR0_TRANS_TYPE_TT0=(0x0<<&DW_SPI_SPI_CTRLR0_TRANS_TYPE_BIT)
+&DW_SPI_SPI_CTRLR0_TRANS_TYPE_TT1=(1<<&DW_SPI_SPI_CTRLR0_TRANS_TYPE_BIT)
+&DW_SPI_SPI_CTRLR0_TRANS_TYPE_TT2=(0x2<<&DW_SPI_SPI_CTRLR0_TRANS_TYPE_BIT)
+&DW_SPI_SPI_CTRLR0_TRANS_TYPE=(&DW_SPI_SPI_CTRLR0_TRANS_TYPE_TT2)
+
+&DW_SPI_TXFTLR_BIT=(16.)
+&DW_SPI_TXFTLR_0WORD=(0)
+&DW_SPI_TXFTLR_1WORD=(2.<<&DW_SPI_TXFTLR_BIT)
+&DW_SPI_TXFTLR_16WORD=(17.<<&DW_SPI_TXFTLR_BIT)
+
+&DW_SPI_CTRLR1_BIT=(0)
+&DW_SPI_CTRLR1_NDF_1WORD=(0<<&DW_SPI_CTRLR1_BIT)
+&DW_SPI_CTRLR1_NDF_16WORD=(15.<<&DW_SPI_CTRLR1_BIT)
+
+&DW_SPI_INSTRUCTION_WRITE_1WORD=(0x80)
+&DW_SPI_INSTRUCTION_WRITE_4WORD=(0x81)
+&DW_SPI_INSTRUCTION_WRITE_8WORD=(0x82)
+&DW_SPI_INSTRUCTION_WRITE_16WORD=(0x83)
+&DW_SPI_INSTRUCTION_WRITE_32WORD=(0x84)
+&DW_SPI_INSTRUCTION_WRITE_64WORD=(0x85)
+
+&DW_SPI_INSTRUCTION_WRITE_STATUS_2WAIT=(0xD0)
+
+&DW_SPI_INSTRUCTION_READ_REQ=(0x20)
+&DW_SPI_INSTRUCTION_READ_24WAIT_1WORD=(0x70)
+&DW_SPI_INSTRUCTION_READ_24WAIT_4WORD=(0x71)
+&DW_SPI_INSTRUCTION_READ_24WAIT_8WORD=(0x72)
+&DW_SPI_INSTRUCTION_READ_24WAIT_16WORD=(0x73)
+&DW_SPI_INSTRUCTION_READ_24WAIT_32WORD=(0x74)
+&DW_SPI_INSTRUCTION_READ_24WAIT_64WORD=(0x75)
+
+&DW_SPI_INSTRUCTION_READ_STATUS_0WAIT=(0x40)
+&DW_SPI_INSTRUCTION_READ_STATUS_1WAIT=(0x48)
+&DW_SPI_INSTRUCTION_READ_STATUS_2WAIT=(0x50)
+
+;/* SYSREG address, 0x1E04310004 at ML3_DEV04 temporarily */
+&DW_SPI_SYSREG_ADDRESS=(0x1E04310160)
+
+;/* todo - other DFS */
+&DW_SPI_CTRLR0_DFS_8=(0x07)
+&DW_SPI_CTRLR0_DFS_32=(0x1F)
+
+&DW_SPI_SSIENR_ENABLE=(1)
+&DW_SPI_SSIENR_DISABLE=(0)
+
+;/* SR bits and values */
+&DW_SPI_SR_BUSY_BIT=(0.)
+&DW_SPI_SR_TFNF_BIT=(1.)
+&DW_SPI_SR_RFNE_BIT=(3.)
+
+&DW_SPI_IMR_MASK=(0x0)
+;/* IMR bits (ISR valid as well) */
+&DW_SPI_IMR_TXEIM_BIT=(0.)
+&DW_SPI_IMR_TXOIM_BIT=(1.)
+&DW_SPI_IMR_RXUIM_BIT=(2.)
+&DW_SPI_IMR_RXOIM_BIT=(3.)
+&DW_SPI_IMR_RXFIM_BIT=(4.)
+&DW_SPI_IMR_MSTIM_BIT=(5.)
+
+;/* IMR values */
+&DW_SPI_IMR_TXEIM=(1<<&DW_SPI_IMR_TXEIM_BIT)
+&DW_SPI_IMR_TXOIM=(1<<&DW_SPI_IMR_TXOIM_BIT)
+&DW_SPI_IMR_RXUIM=(1<<&DW_SPI_IMR_RXUIM_BIT)
+&DW_SPI_IMR_RXOIM=(1<<&DW_SPI_IMR_RXOIM_BIT)
+&DW_SPI_IMR_RXFIM=(1<<&DW_SPI_IMR_RXFIM_BIT)
+&DW_SPI_IMR_MSTIM=(1<<&DW_SPI_IMR_MSTIM_BIT)
+
+;/* ISR values (same as IMR) */
+&DW_SPI_ISR_TXEIS=&DW_SPI_IMR_TXEIM
+&DW_SPI_ISR_TXOIS=&DW_SPI_IMR_TXOIM
+&DW_SPI_ISR_RXUIS=&DW_SPI_IMR_RXUIM
+&DW_SPI_ISR_RXOIS=&DW_SPI_IMR_RXOIM
+&DW_SPI_ISR_RXFIS=&DW_SPI_IMR_RXFIM
+&DW_SPI_ISR_MSTIS=&DW_SPI_IMR_MSTIM
+
+&DW_SPI_FIFO_DEPTH=(32.)
+
+&DW_SPI_IMR_UNMASK=(&DW_SPI_IMR_TXEIM|&DW_SPI_IMR_TXOIM|&DW_SPI_IMR_RXUIM|&DW_SPI_IMR_RXOIM|&DW_SPI_IMR_RXFIM)
+
+&DW_SPI_IMR_MASK_TX=(~(&DW_SPI_IMR_TXEIM|&DW_SPI_IMR_TXOIM))
+
+&DW_SPI_IMR_MASK_RX=(~(&DW_SPI_IMR_RXUIM|&DW_SPI_IMR_RXOIM|&DW_SPI_IMR_RXFIM))
+
+&DW_SPI_ISR_ERRORS_MASK=(&DW_SPI_ISR_TXOIS|&DW_SPI_ISR_RXUIS|&DW_SPI_ISR_RXOIS|&DW_SPI_ISR_MSTIS)
+
+;Functions
+&qspi_init=0.
+&qspi_write=1.
+&qspi_read=2.
+
+&g_channel_num=0.
+&g_slave_num=0.
+
+Main:
+IF &driver_func==&qspi_init
+(
+  GOSUB SSI_QSPI_Init
+  GOTO Exit
+)
+IF &driver_func==&qspi_write
+(
+  LOCAL &ret
+
+  ;set upper address
+  ;GOSUB SSI_QSPI_Write &driver_arg0 &DW_SPI_SYSREG_ADDRESS &driver_arg1&0xFC000000 &DW_SPI_INSTRUCTION_WRITE_1WORD
+  PRIVATE &cmd
+  IF &driver_arg3==64.
+  (
+	&cmd=&DW_SPI_INSTRUCTION_WRITE_64WORD
+  )
+  ELSE IF &driver_arg3==32.
+  (
+	&cmd=&DW_SPI_INSTRUCTION_WRITE_32WORD
+  )
+  ELSE IF &driver_arg3==16.
+  (
+	&cmd=&DW_SPI_INSTRUCTION_WRITE_16WORD
+  )
+  ELSE IF &driver_arg3==8.
+  (
+	&cmd=&DW_SPI_INSTRUCTION_WRITE_8WORD
+  )
+  ELSE IF &driver_arg3==4.
+  (
+	&cmd=&DW_SPI_INSTRUCTION_WRITE_4WORD
+  )
+  ELSE
+  (
+	&cmd=&DW_SPI_INSTRUCTION_WRITE_1WORD
+  )
+  GOSUB SSI_QSPI_Write &driver_arg0 &driver_arg1 &driver_arg2 &cmd;slave_num, addr, cmd, data
+
+  GOTO Exit
+)
+IF &driver_func==&qspi_read
+(
+  LOCAL &ret
+  GOSUB SSI_QSPI_Read_1word &driver_arg0 &driver_arg1 &driver_arg2;slave_num addr
+  RETURNVALUES &ret;data
+  &driver_ret=&ret
+  GOTO Exit
+)
+
+Exit:
+ENDDO
+
+SSI_Disable:
+(
+  &common_func=1;RegWrite
+  &common_arg0=&SSIENR
+  &common_arg1=&DW_SPI_SSIENR_DISABLE
+  DO &RegUtils
+
+  RETURN
+)
+
+SSI_Enable:
+(
+  &common_func=1;RegWrite
+  &common_arg0=&SSIENR
+  &common_arg1=&DW_SPI_SSIENR_ENABLE
+  DO &RegUtils
+
+  RETURN
+)
+
+Check_busy:
+(
+  LOCAL &busy
+  &busy=1
+
+  WHILE &busy==1
+  (
+    &common_func=2.;RegRead
+    &common_arg0=&SR
+    &common_arg1=0.
+    DO &RegUtils
+    &busy=(&common_arg1)&1.
+  )
+
+  RETURN
+)
+
+SSI_QSPI_Init:;0
+(
+  GOSUB SSI_Disable
+
+  &common_func=1;RegWrite
+  &common_arg0=&IMR
+  &common_arg1=&DW_SPI_IMR_MASK
+  DO &RegUtils
+
+  &temp=&DW_SPI_CTRLR0_DFS_32|&DW_SPI_CTRLR0_SSI_IS_CONTROLLER|&DW_SPI_CTRLR0_TMOD_TX|&DW_SPI_CTRLR0_SPI_FRF_QSPI
+  &common_func=1;RegWrite
+  &common_arg0=&CTRLR0
+  &common_arg1=&temp
+  DO &RegUtils
+
+  &temp=&DW_SPI_SPI_CTRLR0_INST_L_8|&DW_SPI_SPI_CTRLR0_ADDR_L_24|&DW_SPI_SPI_CTRLR0_TRANS_TYPE
+  &common_func=1;RegWrite
+  &common_arg0=&SPI_CTRLR0
+  &common_arg1=&temp
+  DO &RegUtils
+
+  &common_func=1;RegWrite
+  &common_arg0=&TXFTLR
+  &common_arg1=&DW_SPI_TXFTLR_1WORD
+  DO &RegUtils
+
+  &common_func=1;RegWrite
+  &common_arg0=&BAUDR
+  &common_arg1=&SSI_BAUDR
+  DO &RegUtils
+
+  &common_func=1;RegWrite
+  &common_arg0=&CTRLR1
+  &common_arg1=0
+  DO &RegUtils
+
+  &common_func=1;RegWrite
+  &common_arg0=&DDR_DRIVE_EDGE
+  &common_arg1=0
+  DO &RegUtils
+
+  &common_func=1;RegWrite
+  &common_arg0=&MWCR
+  &common_arg1=0
+  DO &RegUtils
+
+  &common_func=1;RegWrite
+  &common_arg0=&RXFTLR
+  &common_arg1=0
+  DO &RegUtils
+
+  GOSUB SSI_Enable
+
+  RETURN
+)
+
+SER_Enable:
+(
+  ENTRY &slv_num
+  GOSUB Check_busy
+
+  &slv_num=&slv_num-1
+
+  &common_func=3.;RegModify
+  &common_arg0=&SER
+  &common_arg1=(1.<<&slv_num)
+  &common_arg2=(1.<<&slv_num)
+  DO &RegUtils
+
+  RETURN
+)
+
+SER_Disable:
+(
+  ENTRY &slv_num
+  GOSUB Check_busy
+
+  &slv_num=&slv_num-1
+
+  &common_func=3.;RegModify
+  &common_arg0=&SER
+  &common_arg1=0.
+  &common_arg2=~(1.<<&slv_num)
+  DO &RegUtils
+
+  RETURN
+)
+
+Config_WriteMode:
+(
+  ENTRY &txftlr_num
+
+  GOSUB SSI_Disable
+
+  &common_func=3.;RegModify
+  &common_arg0=&CTRLR0
+  &common_arg1=&DW_SPI_CTRLR0_TMOD_TX
+  &common_arg2=(3.<<&DW_SPI_CTRLR0_TMOD_BIT)
+  DO &RegUtils
+
+  &common_func=1.;RegWrite
+  &common_arg0=&SPI_CTRLR0
+  &common_arg1=&DW_SPI_SPI_CTRLR0_INST_L_8|&DW_SPI_SPI_CTRLR0_ADDR_L_24|&DW_SPI_SPI_CTRLR0_TRANS_TYPE
+  DO &RegUtils
+
+  &common_func=1.;RegWrite
+  &common_arg0=&CTRLR1
+  &common_arg1=0
+  DO &RegUtils
+
+  GOSUB SSI_Enable
+
+  &common_func=1.;RegWrite
+  &common_arg0=&TXFTLR
+  &common_arg1=&txftlr_num
+  DO &RegUtils
+
+  RETURN
+)
+
+Config_WriteStatusMode:
+(
+  ENTRY &ndf
+
+  GOSUB SSI_Disable
+
+  &common_func=3.;RegModify
+  &common_arg0=&CTRLR0
+  &common_arg1=&DW_SPI_CTRLR0_TMOD_RX
+  &common_arg2=(3.<<&DW_SPI_CTRLR0_TMOD_BIT)
+  DO &RegUtils
+
+  &common_func=1.;RegWrite
+  &common_arg0=&SPI_CTRLR0
+  &common_arg1=&DW_SPI_SPI_CTRLR0_INST_L_8|&DW_SPI_SPI_CTRLR0_TRANS_TYPE|&DW_SPI_SPI_CTRLR0_WAIT_CYCLES_24
+  DO &RegUtils
+
+  &common_func=1.;RegWrite
+  &common_arg0=&TXFTLR
+  &common_arg1=&DW_SPI_TXFTLR_0WORD
+  DO &RegUtils
+
+  &common_func=1.;RegWrite
+  &common_arg0=&CTRLR1
+  &common_arg1=0.
+  DO &RegUtils
+
+  GOSUB SSI_Enable
+
+  RETURN
+)
+
+Check_Write_Status:
+(
+  ENTRY &slave_num
+  LOCAL &rdata
+
+  GOSUB SER_Enable &slave_num
+
+  GOSUB Config_WriteStatusMode
+
+  &common_func=1;RegWrite
+  &common_arg0=&DRX
+  &common_arg1=&DW_SPI_INSTRUCTION_WRITE_STATUS_2WAIT
+  DO &RegUtils
+
+  GOSUB Check_busy
+
+  &rdata=0
+
+  WHILE &rdata==0
+  (
+    &common_func=2.;RegRead
+    &common_arg0=&RXFLR
+    DO &RegUtils
+    &rdata=&common_arg1&1.
+  )
+
+  &common_func=2;RegRead
+  &common_arg0=&DRX
+  &common_arg1=0
+  DO &RegUtils
+  &rdata=&common_arg1
+
+  GOSUB SER_Disable &slave_num
+
+  RETURN "&rdata"
+)
+
+SSI_QSPI_Write:;1
+(
+  ENTRY &slave_num &w_addr &w_data &w_cmd
+
+  GOSUB SER_Enable &slave_num
+
+  GOSUB Config_WriteMode &DW_SPI_TXFTLR_1WORD
+
+  &common_func=1;RegWrite
+  &common_arg0=&DRX
+  &common_arg1=&w_cmd;&DW_SPI_INSTRUCTION_WRITE
+  DO &RegUtils
+
+  &common_func=1;RegWrite
+  &common_arg0=&DRX
+  &common_arg1=(&w_addr>>2)&0x00ffffff
+  DO &RegUtils
+
+  &common_func=1;RegWrite
+  &common_arg0=&DRX
+  &common_arg1=&w_data
+  DO &RegUtils
+
+  GOSUB Check_busy
+
+  GOSUB SER_Disable &slave_num
+
+  IF &W_STAT_CHECK_ENABLE==1
+  (
+    LOCAL &write_status &w_ready &w_error &retry_cnt
+
+    &write_status=0
+    &w_ready=0
+    &w_error=0
+    &retry_cnt=5.
+    WHILE &write_status==0
+    (
+      &retry_cnt=&retry_cnt-1
+      GOSUB Check_Write_Status &slave_num
+      RETURNVALUES &write_status
+      &w_ready=&write_status&0x80
+      &w_error=&write_status&0x40
+
+      IF &retry_cnt==0
+      (
+        ECHO "Fail getting write status(5 times)"
+        ECHO "addr : " %Hex &w_addr " data : " %Hex &w_data
+        RETURN "-2."
+      )
+    )
+
+    IF &w_error!=0
+    (
+      ECHO "Write Error addr : " %Hex &w_addr " data : " %Hex &w_data
+      RETURN "-1."
+    )
+  )
+
+  RETURN "0."
+)
+
+Config_ReadMode:
+(
+  ENTRY &ndf
+
+  GOSUB SSI_Disable
+
+  &common_func=3.;RegModify
+  &common_arg0=&CTRLR0
+  &common_arg1=&DW_SPI_CTRLR0_TMOD_RX
+  &common_arg2=(3.<<&DW_SPI_CTRLR0_TMOD_BIT)
+  DO &RegUtils
+
+  &common_func=1.;RegWrite
+  &common_arg0=&SPI_CTRLR0
+  &common_arg1=&DW_SPI_SPI_CTRLR0_INST_L_8|&DW_SPI_SPI_CTRLR0_ADDR_L_24|&DW_SPI_SPI_CTRLR0_TRANS_TYPE|&DW_SPI_SPI_CTRLR0_WAIT_CYCLES_24
+  DO &RegUtils
+
+  &common_func=1.;RegWrite
+  &common_arg0=&TXFTLR
+  &common_arg1=&DW_SPI_TXFTLR_0WORD
+  DO &RegUtils
+
+  &common_func=1.;RegWrite
+  &common_arg0=&CTRLR1
+  &common_arg1=&ndf
+  DO &RegUtils
+
+  GOSUB SSI_Enable
+
+  RETURN
+)
+
+SSI_QSPI_Read_1word:;3
+(
+  ENTRY &slave_num &addr &len
+  LOCAL &rdata
+
+  GOSUB SER_Enable &slave_num
+
+  GOSUB Config_ReadMode &DW_SPI_CTRLR1_NDF_1WORD
+
+  &common_func=1;RegWrite
+  &common_arg0=&DRX
+  &common_arg1=&DW_SPI_INSTRUCTION_READ_24WAIT_1WORD
+  DO &RegUtils
+
+  &common_func=1;RegWrite
+  &common_arg0=&DRX
+  &common_arg1=(&addr>>2)&0x00ffffff
+  DO &RegUtils
+
+  GOSUB Check_busy
+
+  &rdata=0
+
+  WHILE &rdata==0
+  (
+    &common_func=2.;RegRead
+    &common_arg0=&RXFLR
+    DO &RegUtils
+    &rdata=&common_arg1&1.
+  )
+
+  &common_func=2;RegRead
+  &common_arg0=&DRX
+  &common_arg1=0
+  DO &RegUtils
+  &rdata=&common_arg1
+
+  GOSUB SER_Disable &slave_num
+
+  RETURN "&rdata"
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

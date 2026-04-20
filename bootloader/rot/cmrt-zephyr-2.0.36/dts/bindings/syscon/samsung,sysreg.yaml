@@ -1,0 +1,18 @@
+# Copyright (c) 2024, SAMSUNG
+# SPDX-License-Identifier: Apache-2.0
+
+description: SAMSUNG SYSREG
+
+compatible: "samsung,sysreg-rot"
+
+include: base.yaml
+
+properties:
+  reg:
+      required: true
+
+  interrupts:
+      required: false
+
+  label:
+      required: true

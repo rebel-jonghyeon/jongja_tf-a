@@ -1,0 +1,23 @@
+# Kconfig - Private config options for MW
+
+mainmenu "MW supervisor"
+
+config CMRT_NUM_CONTAINERS
+       int "Number of containers"
+       default 2
+       range 1 2
+       help
+        Number of supported loadable containers in MW.
+
+
+config CMRT_CONTAINER_STACK_SIZE
+       hex "Container stack size in bytes"
+       default 0x3000
+       help
+          Stack size allocated for each user thread.  This must be larger
+          than PRIVILEGED_STACK_SIZE which is reserved from this area for
+          system call execution.  The remaining size is available for the
+          container's user thread.
+
+
+source "Kconfig.zephyr"

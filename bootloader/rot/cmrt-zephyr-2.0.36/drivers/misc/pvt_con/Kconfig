@@ -1,0 +1,4 @@
+config PVT_SAMSUNG
+	bool "Process Voltage Temperature (PVT) SAMSUNG driver"
+	help
+	  Driver for Samsung PVT

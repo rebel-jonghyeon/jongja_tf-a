@@ -1,0 +1,14 @@
+description: RISC-V CMRT Memory Protection Unit (MPU)
+
+compatible: "rambus,cmrt-mpu"
+
+include: base.yaml
+
+properties:
+    reg:
+      required: true
+
+    num-regions:
+      required: true
+      type: int
+      description: number of MPU regions supported by hardware

@@ -1,0 +1,228 @@
+;The module(cmm) to be executed is determined according to the selected id.
+&synopsys_dwc_ssi_id=0x0
+;&stm32_id=..
+;&at91_id=..
+;....
+
+GLOBAL &g_ip_id ; QSPI master IP
+&g_ip_id=-1
+GLOBAL &g_sfr_base_addr ;SFR base address
+&g_sfr_base_addr=-1
+GLOBAL &g_lib_module
+&g_lib_module=""
+
+&ACK=1
+&NACK=0
+
+;=========================================
+;set global macro
+&g_ip_id=&synopsys_dwc_ssi_id
+;&g_sfr_base_addr=0x1FF9B30000;QSPI3_PERI0 - Slave
+&g_sfr_base_addr=0x1FF9B20000;QSPI2_PERI0 - Master
+;ChDir X:\project\cmm_tools\qspi
+&g_read_buffer="read_buffer.dat"//read output file
+;=========================================
+
+PMACRO.list
+
+IF &g_ip_id==&synopsys_dwc_ssi_id
+(
+  &g_lib_module="synopsys_dwc_ssi_lib"
+)
+;ELSE IF &ip_id==&stm32_id
+;(
+;
+;)
+ELSE
+(
+  print %ERROR &ip_id " is invalid ip_id"
+  ENDDO
+)
+
+Main:
+(
+  AREA
+  AREA.CLEAR
+  LOCAL &adap_func
+  &WRITE=0
+  &READ=1
+  WHILE TRUE()
+  (
+Loop:
+    GOSUB PrintFuncList
+    PRINT "input func num : "
+    ENTER &adap_func
+
+    IF &adap_func==1;init
+    (
+      GOSUB QSPI_Init &ch_num
+    )
+    IF &adap_func==2;Write_1Word
+    (
+      PRIVATE &slave_num
+      PRIVATE &offset
+      PRIVATE &data
+
+      PRINT "input slave_num : "
+      ENTER &slave_num
+
+      PRINT "input addr : "
+      ENTER &offset
+
+      PRINT "input value(4byte) : "
+      ENTER &data
+
+      ;OPEN #1 "write_buffer" /Binary /Create /Write
+      ;WRITEB #1 %Long &data
+      OPEN #1 "write_buffer" /Create /Write
+      WRITE #1 &data
+      CLOSE #1
+
+      GOSUB QSPI_Write &slave_num &offset "write_buffer" 4.
+    )
+    IF &adap_func==3;qspi_read_Nword
+    (
+      PRIVATE &slave_num
+      PRIVATE &offset
+      PRIVATE &len
+
+      PRINT "input slave_num : "
+      ENTER &slave_num
+
+      PRINT "input offset : "
+      ENTER &offset
+
+      ;PRINT "input length : "
+      ;ENTER &len
+
+      GOSUB QSPI_Read &slave_num &offset ;&len
+    )
+    IF &adap_func==4;Write_Buffer
+    (
+      PRIVATE &slave_num
+      PRIVATE &offset
+      PRIVATE &write_buffer_path
+      PRIVATE &len
+
+      PRINT "input slave_num : "
+      ENTER &slave_num
+
+      PRINT "input addr : "
+      ENTER &offset
+
+      PRINT "input write buffer path : "
+      ENTER &write_buffer_path
+
+      PRINT "input len : "
+      ENTER &len
+
+      GOSUB QSPI_Write &slave_num &offset &write_buffer_path &len
+    )
+  )
+)
+ENDDO
+
+PrintFuncList:
+(
+  PRINT
+  PRINT "Current QSPI lib is " "&g_lib_module"
+  PRINT "1. QSPI IP Init"
+  PRINT "2. QSPI_Write_1word"
+  PRINT "3. QSPI_Read_1word"
+  PRINT "4. QSPI_Write_buffer"
+  RETURN
+)
+
+QSPI_Init:
+(
+  ENTRY &ch_num
+  &driver_func=0;Init
+  DO &g_lib_module
+  RETURN
+)
+
+get_w_data_from_buf:
+(
+  ENTRY &fine_no &size
+  PRIVATE &remain_size &shift_cnt &buf &ret
+  IF &size>4
+  (
+    ECHO "Max variable size is 4.(input : " %Hex &size + ")"
+    RETURN "0"
+  )
+  &ret=0.
+  &remain_size=&size
+  &shift_cnt=0.
+
+  WHILE &remain_size>0
+  (
+  READ #&fine_no &buf
+  &ret=&ret|(&buf<<&shift_cnt)
+
+  &shift_cnt=&shift_cnt+8.
+  &remain_size=&remain_size-1.
+  )
+
+  RETURN "&ret"
+)
+
+QSPI_Write:
+(
+  ENTRY &slave_num &offset &path &len
+  PRIVATE &remain_size &word_size
+  PRIVATE &enable_bin_mode
+  LOCAL &driver_func &driver_arg0 &driver_arg1 &driver_arg2 &driver_arg3
+  &enable_bin_mode=0
+
+  IF &enable_bin_mode==1
+    OPEN #1 &path /Binary /Read;overwrite
+  ELSE
+    OPEN #1 &path /Read;overwrite
+
+  &word_size=4.;4byte
+  &driver_func=1;Write
+  &driver_arg0=&slave_num
+  &driver_arg1=&offset
+  &remain_size=&len
+
+  WHILE &remain_size>0
+  (
+    ;to do : It should be improved to use the maximum word cmd for the remaining size.
+    IF &enable_bin_mode==1
+    (
+      GOSUB get_w_data_from_buf 1. &word_size
+      RETURNVALUES &driver_arg2
+    )
+    ELSE
+    (
+      READ #1 &driver_arg2
+      &driver_arg2=0x&driver_arg2
+    )
+    &driver_arg3=1.;write cmd=write 1word
+    DO &g_lib_module
+    &remain_size=&remain_size-(&driver_arg3*&word_size)
+    &driver_arg1=&driver_arg1+(&driver_arg3*&word_size)
+  )
+
+  CLOSE #1
+
+  RETURN
+)
+
+QSPI_Read:
+(
+  ENTRY &slave_num &offset ;&len
+  OPEN #1 "read_buffer" /Create /Write;overwrite
+
+  &driver_func=2;Read_1word
+  &driver_arg0=&slave_num
+  &driver_arg1=&offset
+  &driver_ret=0.
+  DO &g_lib_module
+  WRITEB #1 &driver_ret
+  ECHO %Hex &driver_ret
+
+  CLOSE #1
+  RETURN
+)
+

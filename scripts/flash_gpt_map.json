@@ -1,0 +1,119 @@
+{
+    "title" : "flash map",
+    "reserved1" : [
+        {
+            "name": "otp",
+            "image": "binaries/BootLoader_ROT/sboot.img",
+            "address": "0x0000",
+            "size": 16
+        },
+        {
+            "name": "sboot_n",
+            "image": "binaries/BootLoader_CP/bl1.bin",
+            "address": "0x4000",
+            "size": 64
+        },
+        {
+            "name": "reserved",
+            "image": "",
+            "address": "0x14000",
+            "size": 416
+        },
+        {
+            "name": "partition_info",
+            "image": "",
+            "address": "0x7C000",
+            "size": 16
+        },
+        {
+            "name": "loc",
+            "image": "reserved",
+            "address": "0x0",
+            "size": 512
+        }
+    ],
+    "partition1" : [
+        {
+            "name": "sboot_n",
+            "image": "binaries/BootLoader_CP/bl1.bin",
+            "address": "",
+            "size": 64
+        },
+        {
+            "name": "tboot_s",
+            "image": "binaries/Zephyr_ROT/os.img",
+            "address": "",
+            "size": 256
+        },
+        {
+            "name": "tboot_n",
+            "image": "binaries/BootLoader_CP/bl2.bin",
+            "address": "",
+            "size": 128
+        },
+        {
+            "name": "pcie_rtos",
+            "image": "binaries/FreeRTOS_PCIE/freertos_kernel.bin",
+            "address": "",
+            "size": 256
+        },
+        {
+            "name": "pcie_phy",
+            "image": "binaries/3rd_party/dwc_pcie5_phy_change_endian_with_footer.hex",
+            "address": "",
+            "size": 256
+        },
+        {
+            "name": "ucie_phy",
+            "image": "binaries/3rd_party/ucie_fw.hex",
+            "address": "",
+            "size": 72
+        },
+        {
+            "name": "cp0_bl31",
+            "image": "binaries/BootLoader_CP/bl31.bin",
+            "address": "",
+            "size": 384
+        },
+        {
+            "name": "cp0_rtos",
+            "image": "binaries/FreeRTOS_CP/freertos_kernel.bin",
+            "address": "",
+            "size": 4096
+        },
+        {
+            "name": "cp1_bl31",
+            "image": "binaries/FreeRTOS_CP1/bl31.bin",
+            "address": "",
+            "size": 384
+        },
+        {
+            "name": "cp1_rtos",
+            "image": "binaries/FreeRTOS_CP1/freertos_kernel.bin",
+            "address": "",
+            "size": 1024
+        },
+        {
+            "name": "loc",
+            "image": "scripts/p1.part",
+            "address": "0x80000",
+            "size": 7680
+        }
+    ],
+    "reserved2" : [
+        {
+            "name": "loc",
+            "image": "reserved",
+            "address": "0x800000",
+            "size": 512
+        }
+    ],
+    "partition2": [
+        {
+            "name": "loc",
+            "image": "scripts/p1.part",
+            "address": "0x880000",
+            "size": 7680
+        }
+    ]
+}

@@ -1,0 +1,7 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT Error Aggregator Core
+
+compatible: "rambus,cmrt-eac"
+
+include: rambus,cmrt-hwc.yaml

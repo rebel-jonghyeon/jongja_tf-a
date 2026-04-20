@@ -1,0 +1,8 @@
+# ns-otp.evt1.hex
+
+# non-secure OTP fused data to expose the EVT1 revision info.
+# e.g. of mem.init
+top.dut.BLK_ROT.OTP_CON_SOC_mem_wrapper.sf_otp64kb_cp_s101_ln04lpp_3207000_inst.mem1 ns-otp.evt1.hex
+top.dut1.BLK_ROT.OTP_CON_SOC_mem_wrapper.sf_otp64kb_cp_s101_ln04lpp_3207000_inst.mem1 ns-otp.evt1.hex
+top.dut2.BLK_ROT.OTP_CON_SOC_mem_wrapper.sf_otp64kb_cp_s101_ln04lpp_3207000_inst.mem1 ns-otp.evt1.hex
+top.dut3.BLK_ROT.OTP_CON_SOC_mem_wrapper.sf_otp64kb_cp_s101_ln04lpp_3207000_inst.mem1 ns-otp.evt1.hex

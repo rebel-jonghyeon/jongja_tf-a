@@ -1,0 +1,97 @@
+
+sample_fmc: Simple container demonstrating use of FMC in CMRT
+
+It can read and write FMC feature space address 4, which may or may not
+do something interesting depending on which target the container is run.
+The container is intended to run on Zynq706 FPGA with a bitfile and on QEMU
+which map the FMC feature space address 4 to the four user LEDs.
+
+For more information about the Zynq706 LEDs, see Xilinx Zynq706 Evaluation
+Board User Guide, page 58:
+https://www.xilinx.com/support/documentation/boards_and_kits/zc706/ug954-zc706-eval-board-xc7z045-ap-soc.pdf
+
+To use the container, load it and send it a command file using the
+pmtest tool.
+
+The container parses the command file and acts according to the command.
+The command is a single character, followed by a possible argument. Anything
+after the command and argument is ignored.
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_fmc.img
+
+To send data to container:
+cmtest data -f100 {value}
+
+Five commands are recognized:
+
+1x    Set LEDs state to x; x is a lowercase hex number where each bit corresponds to a single LED.
+2     Get and print LEDs state
+3x    Set GPIO state to x; x is a lowercase hex number where each bit corresponds to a single GPIO.
+4     Get and print GPIO state
+5     set the feature bits register
+
+For example, file with following content:
+
+1a # Set LEDs: ON OFF ON OFF
+
+would set the LEDs and print the output, something like this:
+$ cmtest data -f100 "1a"
+
+[CLO] process_data:102: LED states: ON OFF ON OFF
+
+2 # this is a get command
+
+would print the current LEDs state, something like this:
+$ cmtest data -f100 "2"
+
+[CLO] recv_sic_data:103: LED states: ON OFF ON OFF
+
+Another example :
+
+For example, file with following content:
+
+11 # Set LEDs: OFF OFF OFF ON
+
+would set the LEDs and print the output , something like this:
+$ cmtest data -f100 "11"
+
+[CLO] process_data:102: LED states: OFF OFF OFF ON
+
+Another File with following content:
+
+2 # this is a get command
+
+would print the current LEDs state, something like this:
+
+[CLO] process_data:102: LED states: OFF OFF OFF ON
+$ cmtest data -f100 "2"
+
+Similarly with following content:
+
+3a # Set GPIOs: ON OFF ON OFF
+
+would set the GPIOs and print the output, something like this:
+
+[CLO] process_data:143: LED states: ON OFF ON OFF
+$ cmtest data -f100 "3a"
+
+Another example with following content:
+
+4 # this is a get command
+
+would print the current GPIOs state, something like this:
+$ cmtest data -f100 "4"
+
+[CLO] recv_sic_data:121: LED states: ON OFF ON OFF
+
+5 # this is a set command
+
+would set the feature bits register to value 0x12345678
+$ cmtest data -f100 "5"
+
+Read the value in HLOS
+$ cmrt -c ./board.json sysctl 0x30
+
+To unload container:
+$ mwtest.py -c100 unload

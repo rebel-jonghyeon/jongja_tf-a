@@ -1,0 +1,12 @@
+# Kconfig - Private config options for the Dispatcher supervisor
+
+mainmenu "Dispatcher supervisor"
+
+config SV_PERF_MEAS
+	bool "Enable Supervisor Performance Measures"
+	default y
+	help
+	  Enables logging Supervisor Performance Measures data and
+	  dispatcher-client's 'Perf' option.
+
+source "Kconfig.zephyr"

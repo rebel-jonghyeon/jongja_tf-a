@@ -1,0 +1,228 @@
+# # Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+config CMRT_V1
+	bool "CMRT v1 API"
+	select CMRT_TEEDEV_CRYPTO if TEEFS
+	select CMRT_SAC_ACCESS_FIXUP
+	select CMRT_ECIES
+	select CMRT_FFDH
+	help
+	  This enables CMRT v1 API support. This is an OS-integration
+	  layer which allows applications using CMRT APIs to build on
+	  Zephyr.
+
+if CMRT_V1
+
+DT_CHOSEN_OTP := rambus,otp
+
+config RISCV_OTP_BASE_ADDR
+	hex
+	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_OTP))
+
+DT_CHOSEN_SRAM := zephyr,sram
+
+config RISCV_RAM_BASE_ADDR
+	hex
+	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_SRAM))
+
+config RISCV_RAM_SIZE_KB
+	int
+	default $(dt_chosen_reg_size_int,$(DT_CHOSEN_SRAM),0,K)
+
+DT_CHOSEN_EXTMEM := rambus,extmem
+
+config RISCV_SAC_BASE_ADDR
+	hex
+	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_EXTMEM))
+
+config FPGA_SAC_SIZE
+	hex
+	default FPGA_EXTMEM_SIZE
+
+config CRI_CMRT
+	bool "CRI CMRT drivers"
+	default y
+	select POLL if MULTITHREADING
+
+config CRI_AES_NAME
+	string "Device name for AES"
+	default "aes"
+
+config CRI_CC_NAME
+	string "Device name for CC"
+	default "cc"
+
+config CRI_CCP_NAME
+	string "Device name for CCP"
+	default "ccp"
+
+config CRI_CSHC_NAME
+	string "Device name for CSHC"
+	default "cshc"
+
+config CRI_DMAC_NAME
+	string "Device name for DMAC"
+	default "dmac"
+
+config CRI_EAC_NAME
+	string "Device name for EAC"
+	default "eac"
+
+config CRI_FMC_NAME
+	string "Device name for FMC"
+	default "fmc"
+
+config CMRT_S2HC
+	bool "Enable SHA2 Hash Core (S2HC)"
+	default y if "$(dt_node_has_label_prop,/soc/hc0@20000,s2hc)"
+
+config CMRT_S2HC2
+	bool "Enable second SHA2 Hash Core (S2HC2)"
+	default y if "$(dt_node_has_label_prop,/soc/hc3@26000,s2hc)"
+
+config CMRT_S3HC
+	bool "Enable SHA3 Hash Core (S3HC)"
+	default y if "$(dt_node_has_label_prop,/soc/hc0@20000,s3hc)"
+
+config CMRT_S3HC2
+	bool "Enable second SHA3 Hash Core (S3HC2)"
+	default y if "$(dt_node_has_label_prop,/soc/hc3@26000,s3hc)"
+
+config CRI_HC_NAME
+	string "Device name for HC"
+	default "s3hc" if CMRT_S3HC
+	default "s2hc"
+
+config CRI_HC2_NAME
+	string "Device name for HC2"
+	default "s3hc" if CMRT_S3HC2
+	default "s2hc"
+
+config CRI_KDC_NAME
+	string "Device name for KDC"
+	default "kdc"
+
+config CRI_KTC_NAME
+	string "Device name for KTC"
+	default "ktc"
+
+config CRI_MPU_NAME
+	string "Device name for MPU"
+	default "mpu"
+
+config CRI_OMC_NAME
+	string "Device name for OMC"
+	default "omc"
+
+config CRI_PKE_NAME
+	string "Device name for PKE"
+	default "pke"
+
+config CRI_TMC_NAME
+	string "Device name for TMC"
+	default "tmc"
+
+config CRI_SAC_NAME
+	string "Device name for SAC"
+	default "sac"
+
+config CRI_SIC_NAME
+	string "Device name for SIC"
+	default "sic"
+
+config CRI_SID_NAME
+	string "Device name for SID"
+	default "sid"
+
+config CRI_WHC_NAME
+	string "Device name for WHC"
+	default "whc"
+
+config HEXUTIL_LIBRARY
+	bool "Build hexutil library"
+	default n
+	depends on PRINTK
+
+config TEEDEV_DMAC_BLOCK_SIZE
+	int "DMAC erase block size in log2"
+	depends on CMRT_TEEDEV_DMAC
+	default 10
+
+config TEEDEV_DMAC_PAGE_SIZE
+	int "DMAC write page size in log2"
+	depends on CMRT_TEEDEV_DMAC
+	default 8
+
+config TEEDEV_DMAC_CACHE_PAGES
+	int "Number of pages to keep in cache"
+	depends on CMRT_TEEDEV_DMAC
+	default 1
+
+config TEEDEV_FLASH_BLOCK_SIZE
+	int "FLASH erase block size in log2"
+	depends on CMRT_TEEDEV_FLASH
+	default 12
+
+config TEEDEV_FLASH_PAGE_SIZE
+	int "FLASH write page size in log2"
+	depends on CMRT_TEEDEV_FLASH
+	default 8
+
+config TEEDEV_FLASH_CACHE_PAGES
+	int "Number of pages to keep in cache"
+	depends on CMRT_TEEDEV_FLASH
+	default 4
+
+config CMRT_TEEDEV_RAM
+	bool "TEEDEV RAM support"
+	default n
+
+config TEEDEV_RAM_BLOCK_SIZE
+	int "RAM erase block size in log2"
+	depends on CMRT_TEEDEV_RAM
+	default 10
+
+config TEEDEV_RAM_PAGE_SIZE
+	int "RAM write page size in log2"
+	depends on CMRT_TEEDEV_RAM
+	default 8
+
+config TEEDEV_RAM_CACHE_PAGES
+	int "Number of pages to keep in cache"
+	depends on CMRT_TEEDEV_RAM
+	default 1
+
+config TEEDEV_OTP_BLOCK_SIZE
+	int "OTP erase block size in log2"
+	depends on CMRT_TEEDEV_OTP
+	default 7
+
+config TEEDEV_OTP_PAGE_SIZE
+	int "OTP write page size in log2"
+	depends on CMRT_TEEDEV_OTP
+	default 6
+
+config TEEDEV_OTP_CACHE_PAGES
+	int "Number of pages to keep in cache"
+	depends on CMRT_TEEDEV_OTP
+	default 2
+
+config CRI_FBOOT
+       bool
+       default y if CMRT_FBOOT
+       default n
+
+config CRI_FIPS_140_MODE
+       bool
+       default y if CMRT_FIPS_140_MODE
+       default n
+
+config CRI_SIC_INSTANCES
+	int "Number of SIC instances"
+	default $(dt_node_int_prop_int,/soc/sic@1000,num-instances)
+
+config CMRT_AES_192BIT
+       bool "Enable AES 192bit keys"
+       default $(dt_node_has_bool_prop,/soc/aes@10000,has-192)
+
+endif

@@ -1,0 +1,33 @@
+
+if test "${CMRT_SDK_BASE-}"
+then
+	echo "CMRT_SDK_BASE '$CMRT_SDK_BASE' already defined" >&2
+	echo "Will not (re-)setup environment (use new shell)" >&2
+	return 1
+	exit 1
+fi
+
+CMRT_SDK_BASE=$COMPILER_PATH_ZEPHYR_RISCV
+export CMRT_SDK_BASE
+
+CMRT_SDK_VERSION_CODE=2003600
+export CMRT_SDK_VERSION_CODE
+
+PATH=$CMRT_SDK_BASE/bin:$PATH
+
+RISCV32_TOOLCHAIN_PATH=$CMRT_SDK_BASE
+
+OPENSSL_CONF=$CMRT_SDK_BASE/openssl.cnf
+OPENSSL_ENGINES=$CMRT_SDK_BASE/lib/engines
+
+if test -z "${TERMINFO-}"
+then
+	for _tmp_v in $HOME/.terminfo /etc/terminfo /lib/terminfo \
+		/usr/lib/terminfo /usr/share/terminfo
+	do test ! -d $_tmp_v || TERMINFO=${TERMINFO:+$TERMINFO:}$_tmp_v
+	done
+	unset _tmp_v
+fi
+
+export PATH RISCV32_TOOLCHAIN_PATH
+export OPENSSL_CONF OPENSSL_ENGINES TERMINFO

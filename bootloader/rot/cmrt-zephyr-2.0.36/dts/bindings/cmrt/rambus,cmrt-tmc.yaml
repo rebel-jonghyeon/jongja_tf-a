@@ -1,0 +1,24 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT TRNG Management Core (TMC)
+
+compatible: "rambus,cmrt-tmc"
+
+include: rambus,cmrt-hwc.yaml
+
+properties:
+    eip76-trng:
+      required: false
+      type: boolean
+      description: flag for EIP76 TRNG instead of the default CRNG
+
+    eip76-fros:
+      required: false
+      type: int
+      default: 8
+      description: number of FROs, typically either 8 or 24
+
+    tmc-ext-entropy:
+      required: false
+      type: boolean
+      description: flag for external entropy configuration

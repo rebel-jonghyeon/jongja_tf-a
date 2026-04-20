@@ -1,0 +1,509 @@
+/*
+ * Copyright 2024 Samsung Electronics Co., Ltd. All Rights Reserved.
+ *
+ * PROPRIETARY/CONFIDENTIAL
+ *
+ * This software is the confidential and proprietary information of Samsung
+ * Electronics Co., Ltd. ("Confidential Information"). You shall not disclose such
+ * Confidential Information and shall use it only in accordance with the terms of
+ * the license agreement you entered into with Samsung Electronics Co., Ltd. (“SAMSUNG”).
+ *
+ * SAMSUNG MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF THE SOFTWARE,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
+ *
+ * SAMSUNG SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING,
+ * MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES.
+ */
+
+volatile const struct mmu_region smmu_region_template[] = {
+	/* Format of 'MMU_REGION_FLAT_ENTRY'
+	 * (Name, Physical Address, Size, Attributes)
+	 *
+	 * Attributes
+	 *     MT_P_RW_U_RW  : (MT_RW | MT_RW_AP_ELx | MT_P_EXECUTE_NEVER | MT_U_EXECUTE_NEVER)
+	 *     MT_P_RW_U_NA  : (MT_RW | MT_RW_AP_EL_HIGHER  | MT_P_EXECUTE_NEVER | MT_U_EXECUTE_NEVER)
+	 *     MT_P_RWX_U_NA : (MT_RW | MT_RW_AP_EL_HIGHER | MT_P_EXECUTE | MT_U_EXECUTE)
+	 *     MT_P_RO_U_RO  : (MT_RO | MT_RW_AP_ELx | MT_P_EXECUTE_NEVER | MT_U_EXECUTE_NEVER)
+	 *     MT_P_RO_U_NA  : (MT_RO | MT_RW_AP_EL_HIGHER  | MT_P_EXECUTE_NEVER | MT_U_EXECUTE_NEVER)
+	 *     MT_P_RO_U_RX  : (MT_RO | MT_RW_AP_ELx | MT_P_EXECUTE_NEVER | MT_U_EXECUTE)
+	 *     MT_P_RX_U_RX  : (MT_RO | MT_RW_AP_ELx | MT_P_EXECUTE | MT_U_EXECUTE)
+	 *     MT_P_RX_U_NA  : (MT_RO | MT_RW_AP_EL_HIGHER  | MT_P_EXECUTE | MT_U_EXECUTE_NEVER)
+	 */
+
+	/* Chiplet 0 */
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) BL31:RO - CP0",
+	 *					  0x00000000000ULL,
+	 *					  0x00000010000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) BL31:RW - CP0",
+	 *					  0x00000010000ULL,
+	 *					  0x000001F0000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) FreeRTOS:RO - CP0",
+	 *					  0x00000200000ULL,
+	 *					  0x00000200000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) FreeRTOS:RW Data/BSS - CP0",
+	 *					  0x00000400000ULL,
+	 *					  0x00000200000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) FreeRTOS:RW DMA - CP0",
+	 *					  0x00000600000ULL,
+	 *					  0x00000008000ULL,
+	 *					  MT_NORMAL_NC  | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) FreeRTOS:RW Heap/Stack - CP0",
+	 *					  0x00000608000ULL,
+	 *					  0x0000FDF8000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) MMU_PAGE_TABLES for Driver",
+						  0x00010400000ULL,
+						  0x00003C00000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) SMMU_PAGE_TABLES for PCIe",
+						  0x00014000000ULL,
+						  0x00000100000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) BL31:RO - CP1",
+	 *					  0x00014100000ULL,
+	 *					  0x00000010000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) BL31:RW - CP1",
+	 *					  0x00014110000ULL,
+	 *					  0x000000F0000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) Zepher:RO - CP1",
+						  0x00014200000ULL,
+						  0x00000200000ULL,
+						  MT_NORMAL_NC | MT_P_RX_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) Zepher:RW - CP1",
+						  0x00014400000ULL,
+						  0x00029C00000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) Host RO Region",
+						  0x0003E000000ULL,
+						  0x00001000000ULL,
+						  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) RoT Reserved",
+						  0x0003F000000ULL,
+						  0x00001000000ULL,
+						  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) DRAM User Region",
+						  0x00040000000ULL,
+						  0x008C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) reserved",
+	 *					  0x00900000000ULL,
+	 *					  0x01500000000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) CHIPLET_LOCAL_ALIAS_BASE",
+						  0x01E00000000ULL,
+						  0x00100000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) SP_SHM_PHYSICAL_START",
+						  0x01F00000000ULL,
+						  0x000F0000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 0) PERI_BASE",
+						  0x01FF0000000ULL,
+						  0x00010000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	/* Chiplet 1 */
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) BL31:RO - CP0",
+	 *					  0x02000000000ULL,
+	 *					  0x00000010000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) BL31:RW - CP0",
+	 *					  0x02000010000ULL,
+	 *					  0x000001F0000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) FreeRTOS:RO - CP0",
+	 *					  0x02000200000ULL,
+	 *					  0x00000200000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) FreeRTOS:RW Data/BSS - CP0",
+	 *					  0x02000400000ULL,
+	 *					  0x00000200000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) FreeRTOS:RW DMA - CP0",
+	 *					  0x02000600000ULL,
+	 *					  0x00000008000ULL,
+	 *					  MT_NORMAL_NC  | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) FreeRTOS:RW Heap/Stack - CP0",
+	 *					  0x02000608000ULL,
+	 *					  0x0000FDF8000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) MMU_PAGE_TABLES for Driver",
+						  0x02010400000ULL,
+						  0x00003C00000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) SMMU_PAGE_TABLES for PCIe",
+						  0x02014000000ULL,
+						  0x00000100000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) BL31:RO - CP1",
+	 *					  0x02014100000ULL,
+	 *					  0x00000010000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) BL31:RW - CP1",
+	 *					  0x02014110000ULL,
+	 *					  0x000000F0000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) Zepher:RO - CP1",
+						  0x02014200000ULL,
+						  0x00000200000ULL,
+						  MT_NORMAL_NC | MT_P_RX_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) Zepher:RW - CP1",
+						  0x02014400000ULL,
+						  0x00029C00000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) Host RO Region",
+						  0x0203E000000ULL,
+						  0x00001000000ULL,
+						  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) RoT Reserved",
+						  0x0203F000000ULL,
+						  0x00001000000ULL,
+						  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) DRAM User Region",
+						  0x02040000000ULL,
+						  0x008C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) reserved",
+	 *					  0x02900000000ULL,
+	 *					  0x01500000000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) CHIPLET_LOCAL_ALIAS_BASE",
+						  0x03E00000000ULL,
+						  0x00100000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) SP_SHM_PHYSICAL_START",
+						  0x03F00000000ULL,
+						  0x000F0000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 1) PERI_BASE",
+						  0x03FF0000000ULL,
+						  0x00010000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	/* Chiplet 2 */
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) BL31:RO - CP0",
+	 *					  0x04000000000ULL,
+	 *					  0x00000010000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) BL31:RW - CP0",
+	 *					  0x04000010000ULL,
+	 *					  0x000001F0000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) FreeRTOS:RO - CP0",
+	 *					  0x04000200000ULL,
+	 *					  0x00000200000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) FreeRTOS:RW Data/BSS - CP0",
+	 *					  0x04000400000ULL,
+	 *					  0x00000200000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) FreeRTOS:RW DMA - CP0",
+	 *					  0x04000600000ULL,
+	 *					  0x00000008000ULL,
+	 *					  MT_NORMAL_NC  | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) FreeRTOS:RW Heap/Stack - CP0",
+	 *					  0x04000608000ULL,
+	 *					  0x0000FDF8000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) MMU_PAGE_TABLES for Driver",
+						  0x04010400000ULL,
+						  0x00003C00000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) SMMU_PAGE_TABLES for PCIe",
+						  0x04014000000ULL,
+						  0x00000100000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) BL31:RO - CP1",
+	 *					  0x04014100000ULL,
+	 *					  0x00000010000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) BL31:RW - CP1",
+	 *					  0x04014110000ULL,
+	 *					  0x000000F0000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) Zepher:RO - CP1",
+						  0x04014200000ULL,
+						  0x00000200000ULL,
+						  MT_NORMAL_NC | MT_P_RX_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) Zepher:RW - CP1",
+						  0x04014400000ULL,
+						  0x00029C00000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) Host RO Region",
+						  0x0403E000000ULL,
+						  0x00001000000ULL,
+						  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) RoT Reserved",
+						  0x0403F000000ULL,
+						  0x00001000000ULL,
+						  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) DRAM User Region",
+						  0x04040000000ULL,
+						  0x008C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) reserved",
+	 *					  0x04900000000ULL,
+	 *					  0x01500000000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) CHIPLET_LOCAL_ALIAS_BASE",
+						  0x05E00000000ULL,
+						  0x00100000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) SP_SHM_PHYSICAL_START",
+						  0x05F00000000ULL,
+						  0x000F0000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 2) PERI_BASE",
+						  0x05FF0000000ULL,
+						  0x00010000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	/* Chiplet 3 */
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) BL31:RO - CP0",
+	 *					  0x06000000000ULL,
+	 *					  0x00000010000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) BL31:RW - CP0",
+	 *					  0x06000010000ULL,
+	 *					  0x000001F0000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) FreeRTOS:RO - CP0",
+	 *					  0x06000200000ULL,
+	 *					  0x00000200000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) FreeRTOS:RW Data/BSS - CP0",
+	 *					  0x06000400000ULL,
+	 *					  0x00000200000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) FreeRTOS:RW DMA - CP0",
+	 *					  0x06000600000ULL,
+	 *					  0x00000008000ULL,
+	 *					  MT_NORMAL_NC  | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) FreeRTOS:RW Heap/Stack - CP0",
+	 *					  0x06000608000ULL,
+	 *					  0x0000FDF8000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) MMU_PAGE_TABLES for Driver",
+						  0x06010400000ULL,
+						  0x00003C00000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) SMMU_PAGE_TABLES for PCIe",
+						  0x06014000000ULL,
+						  0x00000100000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) BL31:RO - CP1",
+	 *					  0x06014100000ULL,
+	 *					  0x00000010000ULL,
+	 *					  MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) BL31:RW - CP1",
+	 *					  0x06014110000ULL,
+	 *					  0x000000F0000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) Zepher:RO - CP1",
+						  0x06014200000ULL,
+						  0x00000200000ULL,
+						  MT_NORMAL_NC | MT_P_RX_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) Zepher:RW - CP1",
+						  0x06014400000ULL,
+						  0x00029C00000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) Host RO Region",
+						  0x0603E000000ULL,
+						  0x00001000000ULL,
+						  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) RoT Reserved",
+						  0x0603F000000ULL,
+						  0x00001000000ULL,
+						  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) DRAM User Region",
+						  0x06040000000ULL,
+						  0x008C0000000ULL,
+						  MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) reserved",
+	 *					  0x06900000000ULL,
+	 *					  0x01500000000ULL,
+	 *					  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) CHIPLET_LOCAL_ALIAS_BASE",
+						  0x07E00000000ULL,
+						  0x00100000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) SP_SHM_PHYSICAL_START",
+						  0x07F00000000ULL,
+						  0x000F0000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_FLAT_ENTRY("(HBM:Chiplet 3) PERI_BASE",
+						  0x07FF0000000ULL,
+						  0x00010000000ULL,
+						  MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	/* PCIE */
+	MMU_REGION_FLAT_ENTRY("PCIE_OUTBOUND",
+						  0x08000000000ULL,
+						  0x08000000000ULL,
+						  MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+
+	/* Chiplet x */
+		/* unmapped */
+	/* MMU_REGION_ENTRY("(HBM:Chiplet x) BL31:RO - CP0",
+	 *				 0x00000000000ULL,
+	 *				 0x10000000000ULL,
+	 *				 0x00000010000ULL,
+	 *				 MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_ENTRY("(HBM:Chiplet x) BL31:RW - CP0",
+	 *				 0x00000010000ULL,
+	 *				 0x10000010000ULL,
+	 *				 0x000001F0000ULL,
+	 *				 MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+		/* in mmu_os_ranges */
+	/* MMU_REGION_ENTRY("(HBM:Chiplet x) FreeRTOS:RO - CP0",
+	 *				 0x00000200000ULL,
+	 *				 0x10000200000ULL,
+	 *				 0x00000200000ULL,
+	 *				 MT_NORMAL | MT_P_RX_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_ENTRY("(HBM:Chiplet x) FreeRTOS:RW Data/BSS - CP0",
+	 *				 0x00000400000ULL,
+	 *				 0x10000400000ULL,
+	 *				 0x00000200000ULL,
+	 *				 MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_ENTRY("(HBM:Chiplet x) FreeRTOS:RW DMA - CP0",
+	 *				 0x00000600000ULL,
+	 *				 0x10000600000ULL,
+	 *				 0x00000008000ULL,
+	 *				 MT_NORMAL_NC  | MT_P_RW_U_NA | MT_NS),
+	 */
+	/* MMU_REGION_ENTRY("(HBM:Chiplet x) FreeRTOS:RW Heap/Stack - CP0",
+	 *				 0x00000608000ULL,
+	 *				 0x10000608000ULL,
+	 *				 0x0000FDF8000ULL,
+	 *				 MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_ENTRY("(HBM:Chiplet x) MMU_PAGE_TABLES for Driver",
+					 0x00010400000ULL,
+					 0x10010400000ULL,
+					 0x00003C00000ULL,
+					 MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_ENTRY("(HBM:Chiplet x) SMMU_PAGE_TABLES for PCIe",
+					 0x00014000000ULL,
+					 0x10014000000ULL,
+					 0x00000100000ULL,
+					 MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_ENTRY("(HBM:Chiplet x) BL31:RO - CP1",
+	 *				 0x00014100000ULL,
+	 *				 0x10014100000ULL,
+	 *				 0x00000010000ULL,
+	 *				 MT_NORMAL | MT_P_RX_U_NA | MT_SECURE),
+	 */
+	/* MMU_REGION_ENTRY("(HBM:Chiplet x) BL31:RW - CP1",
+	 *				 0x00014110000ULL,
+	 *				 0x10014110000ULL,
+	 *				 0x000000F0000ULL,
+	 *				 MT_NORMAL | MT_P_RW_U_NA | MT_SECURE),
+	 */
+	MMU_REGION_ENTRY("(HBM:Chiplet x) Zepher:RO - CP1",
+					 0x00014200000ULL,
+					 0x10014200000ULL,
+					 0x00000200000ULL,
+					 MT_NORMAL_NC | MT_P_RX_U_NA | MT_NS),
+	MMU_REGION_ENTRY("(HBM:Chiplet x) Zepher:RW - CP1",
+					 0x00014400000ULL,
+					 0x10014400000ULL,
+					 0x00029C00000ULL,
+					 MT_NORMAL_NC | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_ENTRY("(HBM:Chiplet x) Host RO Region",
+					 0x0003E000000ULL,
+					 0x1003E000000ULL,
+					 0x00001000000ULL,
+					 MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_ENTRY("(HBM:Chiplet x) RoT Reserved",
+					 0x0003F000000ULL,
+					 0x1003F000000ULL,
+					 0x00001000000ULL,
+					 MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_ENTRY("(HBM:Chiplet x) DRAM User Region",
+					 0x00040000000ULL,
+					 0x10040000000ULL,
+					 0x008C0000000ULL,
+					 MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+		/* unmapped */
+	/* MMU_REGION_ENTRY("(HBM:Chiplet x) reserved",
+	 *				 0x00900000000ULL,
+	 *				 0x10900000000ULL,
+	 *				 0x01500000000ULL,
+	 *				 MT_NORMAL | MT_P_RW_U_NA | MT_NS),
+	 */
+	MMU_REGION_ENTRY("(HBM:Chiplet x) CHIPLET_LOCAL_ALIAS_BASE",
+					 0x01E00000000ULL,
+					 0x11E00000000ULL,
+					 0x00100000000ULL,
+					 MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_ENTRY("(HBM:Chiplet x) SP_SHM_PHYSICAL_START",
+					 0x01F00000000ULL,
+					 0x11F00000000ULL,
+					 0x000F0000000ULL,
+					 MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+	MMU_REGION_ENTRY("(HBM:Chiplet x) PERI_BASE",
+					 0x01FF0000000ULL,
+					 0x11FF0000000ULL,
+					 0x00010000000ULL,
+					 MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+};

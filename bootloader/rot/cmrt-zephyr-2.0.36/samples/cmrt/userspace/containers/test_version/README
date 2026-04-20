@@ -1,0 +1,45 @@
+
+test_version: User container to get binary versions of fboot, sboot and mw
+
+Following commands are recognized:
+
+  'f': Get fboot binary version
+  's': Get sboot binary version
+  'm': Get supervisor binary version
+
+Load the container:
+
+$ mwtest.py -c100 run test_version.img
+Sending request to CMRT MW...
+...MW status 0
+
+Get fboot binary version:
+
+$ cmtest data -f100 'f'
+Sending data to CMRT via SIC...
+...received 36 bytes OK
+00000000: 32 30 32 33 2d 30 33 2d  31 33 2d 67 34 32 30 34  |2023-03-13-g4204|
+00000010: 36 36 61 2d 73 79 73 74  65 73 74 2d 64 65 62 75  |66a-systest-debu|
+00000020: 67 00 00 00                                       |g...|
+
+Get sboot binary version:
+
+$ cmtest data -f100 's'
+Sending data to CMRT via SIC...
+...received 36 bytes OK
+00000000: 32 30 32 33 2d 30 33 2d  31 33 2d 67 34 32 30 34  |2023-03-13-g4204|
+00000010: 36 36 61 2d 73 79 73 74  65 73 74 2d 64 65 62 75  |66a-systest-debu|
+00000020: 67 00 00 00                                       |g...|
+
+Get supervisor binary version:
+
+$ cmtest data -f100 'm'
+Sending data to CMRT via SIC...
+...received 36 bytes OK
+00000000: 32 30 32 33 2d 30 33 2d  31 33 2d 67 34 32 30 34  |2023-03-13-g4204|
+00000010: 36 36 61 2d 73 79 73 74  65 73 74 2d 64 65 62 75  |66a-systest-debu|
+00000020: 67 00 00 00                                       |g...|
+
+To unload container:
+
+$ mwtest.py -c100 unload

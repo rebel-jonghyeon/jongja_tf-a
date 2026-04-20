@@ -1,0 +1,27 @@
+# Kconfig - UCU library
+
+#
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI).
+# A license or authorization from CRI is needed to use this file.
+#
+
+menu "Additional libraries"
+
+config CMRT_UCU_LIBRARY
+	bool
+	default y if CMRT_RSA || CMRT_FBOOT_HAS_RSA_VERIFY
+	default n
+	prompt "Build ucu library"
+	help
+	  Build a unified cryptographic utilities library.
+
+config CMRT_ECIES
+	bool "Enable Elliptic Curve Integrated Encryption Scheme (ECIES)"
+	default n
+	select CMRT_AES
+	select CMRT_HC
+	select CMRT_PKE
+	help
+	  Enable Elliptic Curve Integrated Encryption Scheme (ECIES) operations
+
+endmenu

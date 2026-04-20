@@ -1,0 +1,103 @@
+# Kconfig - TEEFS and TEEDEV configuration options
+
+#
+# Copyright (c) 2019-2021 Cryptography Research, Inc. (CRI).
+# A license or authorization from CRI is needed to use this file.
+#
+
+config TEEFS
+	bool
+	prompt "TEEFS Support"
+	default n
+	help
+	  This option enables the TEEFS filesystem.
+
+config TEEFS_MAX_INSTANCES
+	int "Max number of TEEFS instances"
+	depends on TEEFS
+	default 1
+	help
+	  Defines the maximum number of TEEFS instances. One instance is
+	  connected to one device and operates individually. A device is
+	  connected to a mount point and needs to be there before TEEFS
+	  functions will work.
+
+config TEEFS_MAX_PAGES
+	int "Max number of pages in log2"
+	depends on TEEFS
+	default 15
+	help
+	  Valid values are 31, 15 and 7 in log2.
+	  With value 31 TEEFS can have 1 << 31 pages in a filesystem.
+	  With value 15 TEEFS can have 1 << 15 pages in a filesystem.
+	  With value 7 TEEFS can have 1 << 7 pages in a filesystem.
+	  The smaller the value the more space is saved on each page header.
+	  This may have a meaning in small OTP filesystems, for example,
+	  where each byte counts. Note that this is common setting for all
+	  teefs instances. Select the value depending on your use and your
+	  devices.
+
+config TEEFS_MAX_FILES
+	int "Max number of TEEFS file descriptors"
+	depends on TEEFS
+	default 8
+	help
+	  Defines the maximum number of TEEFS pre-allocated file descriptors.
+	  This means the maximum number of open files at once for all TEEFS
+	  instances. File descriptors do not take much memory.
+
+config TEEFS_MAX_DIRS
+	int "Max number of TEEFS directory descriptors"
+	depends on TEEFS
+	default 1
+	help
+	  Defines the maximum number of pre-allocated TEEFS directory
+	  descriptors. This means the maximum number of open directories
+	  at once for all TEEFS instances. Directory descriptors are more
+	  costly in terms of memory usage.
+
+config TEEFS_MAX_PAGE_SIZE
+	int "Max supported page size in log2"
+	depends on TEEFS
+	default 8
+	help
+	  Maximum supported page size. This should be tuned to match the
+	  largest device page size configuration. TEEFS allocates data
+	  structures based on this value.
+
+config TEEFS_MAX_CACHE_PAGES
+	int "Max supported number of pages to keep in cache"
+	depends on TEEFS
+	default 4
+	help
+	  TEEFS works fine with just one cache page. If there's more memory
+	  to spare this can be set larger to reduce the need to read/write
+	  pages from/to the disk device. This should be tuned to match the
+	  largest device cache pages configuration.
+
+config TEEFS_MAX_BAD_BLOCKS
+	int "Reserve for possible bad blocks"
+	depends on TEEFS
+	default 1
+	help
+	  Blocks reserved to go around possible contiguous bad blocks.
+
+config TEEFS_MAX_NAMELEN
+	int "Maximum length reserved for file names"
+	depends on TEEFS
+	range 1 255
+	default 64
+	help
+	  Maximum file name length. Default value is 64 which comes from the
+	  TEE specification. File name will be truncated if first page cannot
+	  fit maximum file name length. This setting should be tuned to fit
+	  the smallest filesystem, like an OTP filesystem, where there is
+	  no space to spare.
+
+config TEEFS_MULTITHREADING
+	bool
+	prompt "TEEFS multithreading support"
+	default y if MULTITHREADING
+	default n
+	help
+	  Enable multithreading support in the TEEFS filesystem.

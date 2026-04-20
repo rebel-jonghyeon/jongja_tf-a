@@ -1,0 +1,49 @@
+
+teefs: Perform teefs operations
+
+Usage:
+
+Two sic flows are used to communicate with this container. The first flow
+sets the current active file to which data will be written. If the file
+already exists in teefs, its contents are returned.
+The second flow (first flow + 1) writes contents to the active file.
+
+cmtest cmd -f{FLOWID} {FILENAME}
+    Set the current active file as FILENAME. If the file
+    already exists, its contents are returned.
+        FLOWID:   The flow id specified when loading the container
+        FILENAME: The name of the file to be set as active
+
+cmtest cmd -f{FLOWID + 1} {DATA}
+    Write data to the current active file.
+        FLOWID + 1: The flow id specified when loading the container, plus one
+        DATA:       The data to be written to the current active file
+
+# Examples
+
+## Load the container
+
+$ mwtest.py -c100 run teefs.img
+
+## Set the current active file (file does not exist)
+
+$ cmtest cmd -f100 test.txt
+Sending data to CMRT via SIC...
+...received 0 bytes OK
+
+## Write data to the current active file
+
+$ cmtest cmd -f101 data
+Sending data to CMRT via SIC...
+...received 0 bytes OK
+
+## Set the current active file (file exists)
+
+$ cmtest cmd -f100 test.txt
+Sending data to CMRT via SIC...
+...received 12 bytes OK
+00000000: 01 00 00 00 04 00 00 00  64 61 74 61              |........data|
+
+## Unload the container
+
+$ mwtest.py -c100 unload

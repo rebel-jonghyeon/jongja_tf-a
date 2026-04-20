@@ -1,0 +1,7 @@
+#include <freedom_metal.h>
+#include <errno.h>
+
+int _chdir(const char *path) {
+	errno = ENOSYS;
+	return -1;
+}

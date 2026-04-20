@@ -1,0 +1,17 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+config BUILD_OUTPUT_BIN
+	default n
+
+config SYS_CLOCK_TICKS_PER_SEC
+	default 100
+
+config COMPRESSED_ISA
+	default y if !CMRT_CFI
+
+config EMBEDDED_ISA
+	def_bool $(dt_node_has_bool_prop,/cpus/cpu@0,embedded)
+	select ARCH_HAS_CUSTOM_ISR
+
+config BOARD
+	default "cmrt_finchley" if BOARD_CMRT_FINCHLEY

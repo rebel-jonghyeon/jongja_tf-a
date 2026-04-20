@@ -1,0 +1,28 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT AES Core (AES)
+
+compatible: "rambus,cmrt-aes"
+
+include: rambus,cmrt-hwc.yaml
+
+properties:
+    has-cmac:
+      required: false
+      type: boolean
+      description: flag to support cmac mode
+
+    has-xts:
+      required: false
+      type: boolean
+      description: flag to support xts mode
+
+    has-ccm:
+      required: false
+      type: boolean
+      description: flag to support ccm mode
+
+    has-192:
+      required: false
+      type: boolean
+      description: flag to support 192bit keys

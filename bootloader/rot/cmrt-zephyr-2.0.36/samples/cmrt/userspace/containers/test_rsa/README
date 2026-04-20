@@ -1,0 +1,170 @@
+
+test_rsa: Perform RSA operations
+
+Currently supported features:
+ - Key generation (no CRT)
+ - PSS signing and verification
+
+Load the container and the following usage will also be shown in the logs:
+
+CI: Usage: cmtest cmd COMMAND [arguments]
+CI: COMMAND: keygen|pss_sign|pss_verify
+
+CI: keygen MODSIZE PUBE
+CI: Generate an RSA keypair.
+CI: Outputs PUBN||PRIVD
+CI: PUBN and PRIVD are MODBITS/8 bytes long
+CI: MODSIZE:  length in bits of the RSA modulus. Must be multiple of 8,
+              maximum is 8192
+CI: PUBE:     RSA public key exponent. Must be 4 bytes long
+
+CI: pss_sign MODSIZE HASHALGO SALTLEN PUBN PUBE PRIVD MSG
+CI: Sign a message or a digest with RSA-PSS.
+CI: Outputs the pss signature, which is MODSIZE/8 bytes long.
+CI: MODSIZE:  length in bits of RSA modulus. See keygen command
+CI: HASHALGO: hash algorithm to use or "prehashed" if msg is a digest
+CI: SALTLEN:  length in bytes of the PSS salt. Can be 0 for deterministic sigs
+CI: PUBN:     n component of pubkey. Must be MODSIZE/8 bytes long
+CI: PUBE:     e component of pubkey (exponent). Must be 4 bytes long
+CI: PRIVD:    d component of private key. Must be MODSIZE/8 bytes long
+CI: MSG:      message (or digest if prehashed) to sign
+CI:           Max len is MODSIZE/8. If prehashed, the len of digest
+              is the hash len
+
+CI: pss_verify MODSIZE HASHALGO SALTLEN PUBN PUBE SIG MSG
+CI: outputs a u32 little-endian value. 0 on valid signature.
+CI: Sign a message or a digest with RSA-PSS.
+CI: MODSIZE:  length in bits of RSA modulus. See keygen command
+CI: HASHALGO: hash algorithm to use or "prehashed" if msg is a digest
+CI: SALTLEN:  length in bytes of the PSS salt. Can be 0 for deterministic sigs
+CI: PUBN:     n component of pubkey. Must be MODSIZE/8 bytes long
+CI: PUBE:     e component of pubkey (exponent). Must be 4 bytes long
+CI: SIG:      pss signature blob, the output of pss_sign
+CI: MSG:      message (or digest if prehashed) to verify with SIG
+CI:           Max len is MODSIZE/8. If prehashed, the len of digest
+              is the hash len
+
+CI: NOTE:     If "-" is provided as SALTLEN, hash len is used as salt len.
+
+CI: oaep_encrypt MODSIZE HASHALGO PUBN PUBE MSG
+CI: Encrypts a message with OAEP RSA.
+CI: Returns an encrypted message with length MODSIZE/8.
+CI: MODSIZE:  length in bits of RSA modulus. See keygen command
+CI: HASHALGO: hash algorithm to use
+CI: PUBN:     n component of pubkey. Must be MODSIZE/8 bytes long
+CI: PUBE:     e component of pubkey (exponent). Must be 4 bytes long
+CI: LABEL:    optional parameter used to add an additional input to
+              the encryption process
+CI: MSG:      message to encrypt with OAEP RSA
+
+CI: oaep_decrypt MODSIZE HASHALGO PUBN PUBE PRIVD ENCMSG
+CI: Decrypts a message previously encrypted with OAEP RSA.
+CI: Returns a plaintext message.
+CI: MODSIZE:  length in bits of RSA modulus. See keygen command
+CI: HASHALGO: hash algorithm to use
+CI: PUBN:     n component of pubkey. Must be MODSIZE/8 bytes long
+CI: PUBE:     e component of pubkey (exponent). Must be 4 bytes long
+CI: PRIVD:    d component of private key. Must be MODSIZE/8 bytes long
+CI: LABEL:    optional parameter used to add an additional input to
+              the encryption process
+CI: ENCMSG:   encrypted message to decrypt
+
+CI: Available HASHALGO:
+
+CI: sha224 (len 28 bytes)
+CI: sha256 (len 32 bytes)
+CI: sha384 (len 48 bytes)
+CI: sha512 (len 64 bytes)
+CI: sha512_224 (len 28 bytes)
+CI: sha512_256 (len 32 bytes)
+CI: sha3_224 (len 28 bytes)
+CI: sha3_256 (len 32 bytes)
+CI: sha3_384 (len 48 bytes)
+CI: sha3_512 (len 64 bytes)
+CI: shake128 (len 16 bytes)
+CI: shake256 (len 32 bytes)
+CI: whirlpool (len 28 bytes)
+
+# Examples
+
+## Load the container
+
+$ mwtest.py -c100 run test_rsa.img
+
+## Generate a key
+
+$ time cmtest cmd -t30000 -f100 keygen 2048 %01000100 > /tmp/key2048
+Sending data to CMRT via SIC...
+...received 512 bytes OK
+
+real    0m21.068s
+
+### Extracting the components of the key
+
+First half of output is PUBN, second half is PRIVD.
+
+$ dd bs=256 count=1 if=/tmp/key2048 of=/tmp/key2048_pubn
+$ dd bs=256 skip=1 count=1 if=/tmp/key2048 of=/tmp/key2048_privd
+
+Notice that PUBN and PRIVD are each modsize bits in length.
+
+$ wc -c /tmp/key2048*
+ 512 /tmp/key2048
+ 256 /tmp/key2048_privd
+ 256 /tmp/key2048_pubn
+
+## Signing a message
+
+Since "-" is provided as the salt length, the hash length will be used
+as salt length, in this case 32. Any value between 0 and 64 (both
+included) is valid. A salt length of 0 will always produce the same
+signature for the same message and key.
+
+If HASHALGO "prehashed" is used, then the message is expected to already
+be a digest, and its length is considered the length of the digest.
+
+$ cmtest cmd -f100 pss_sign 2048 sha256 - %`xxd -p -c256 /tmp/key2048_pubn` %01000100 %`xxd -p -c256 /tmp/key2048_privd` "Hello World" > /tmp/sig
+Sending data to CMRT via SIC...
+...received 256 bytes OK
+
+Note that if you prefix an argument with '%', the cmtest utility hex decodes
+it before sending it to the CMRT.
+
+$ wc -c /tmp/sig
+256 /tmp/sig
+
+## Verifying the signature
+
+$ cmtest cmd -f100 pss_verify 2048 sha256 - %`xxd -p -c256 /tmp/key2048_pubn` %01000100 %`xxd -p -c256 /tmp/sig` "Hello World"
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: 00 00 00 00                                       |....|
+
+The returned value of 0 means the signature is valid.
+With invalid signature the returned value would be nonzero.
+
+$ cmtest cmd -f100 pss_verify 2048 sha256 - %`xxd -p -c256 /tmp/key2048_pubn` %01000100 %`xxd -p -c256 /tmp/sig` "Wrong message"
+
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: ff ff ff ff                                       |....|
+
+## Encrypting a plaintext message
+
+$ cmtest cmd -f100 oaep_encrypt 2048 sha256 %`xxd -p -c256 /tmp/key2048_pubn` %01000100 "label" "plaintext message" > /tmp/encrypted_msg
+Sending data to CMRT via SIC...
+...received 256 bytes OK
+
+## Decrypting an encrypted message
+
+$ cmtest cmd -f100 oaep_decrypt 2048 sha256 %`xxd -p -c256 /tmp/key2048_pubn` %01000100 %`xxd -p -c256 /tmp/key2048_privd` "label" %`xxd -p -c256 /tmp/encrypted_msg` > /tmp/plaintext
+Sending data to CMRT via SIC...
+...received 17 bytes OK
+
+## To verify that the message is correctly decrypted
+
+$ cat /tmp/plaintext
+plaintext message
+
+## To unload container:
+$ mwtest.py -c100 unload

@@ -1,0 +1,99 @@
+; REBEL_Q T32 FW Preload cmm
+
+B::
+
+Reset
+SYStem.RESet
+
+GLOBAL &CHIP_REV &DIRECT_CONNECT &CL_IDX &PROJ_PATH &UCIE_FW_PATH
+ENTRY &CHIP_REV &DIRECT_CONNECT &CL_IDX &PROJ_PATH &UCIE_FW_PATH
+
+PRINT "CHIP_REV: &CHIP_REV DIRECT CONNECT: &DIRECT_CONNECT CL: &CL_IDX PATH: &PROJ_PATH UCIE FW: &UCIE_FW_PATH"
+
+DO T32_GUI.config.cmm &DIRECT_CONNECT &CL_IDX
+
+SYStem.Attach
+
+IF RUN()
+    Break
+
+; Load first sboot_n / tboot_n / FreeRTOS_PCIE binary to SRAM
+PRINT "Load BL1, BL2 and CM7 FreeRTOS binaries"
+Data.LOAD.Binary &PROJ_PATH/binaries/BootLoader_CP/bl1.bin zaxi:0x1e00010000
+Data.LOAD.Binary &PROJ_PATH/binaries/BootLoader_CP/bl2.bin zaxi:0x1e00030000
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_PCIE/freertos_kernel.bin zaxi:0x1e08000000
+
+; Break before UCIe FW loading to UCIe PHY SRAM
+Register.Set PC 0x1e00010000 ; Entry of sboot_n
+Data.LOAD.Elf &PROJ_PATH/binaries/BootLoader_CP/bl1.elf /NoCODE
+Break.Set _bl1_init_blk_rbc
+Go
+
+WAIT.!RUN()
+
+; Load UCIe PHY FW binary to UCIe PHY SRAM
+PRINT "Load UCIe PHY FW"
+IF "&UCIE_FW_PATH"==""
+(
+    PRINT "LOAD UCIe PHY FW"
+
+    IF "&CHIP_REV"=="EVT1"
+    (
+        Data.LOAD.Binary &PROJ_PATH/binaries/3rd_party/ucie/evt1/fw_pls_shape_ovr_ab862.bin zaxi:0x1e05c20000
+    )
+    ELSE
+    (
+        Data.LOAD.Binary &PROJ_PATH/binaries/3rd_party/ucie/evt0/master_rt_9264e.bin zaxi:0x1e05c20000
+    )
+)
+ELSE
+(
+    PRINT "Custom LOAD UCIe PHY FW"
+    Data.LOAD.Binary "&UCIE_FW_PATH" zaxi:0x1e05c20000
+)
+
+Data.LOAD.Elf &PROJ_PATH/binaries/BootLoader_CP/bl2.elf /NoCODE
+Break.Set tzpc_init_sysreg_bl2
+Go
+
+; Wait HBM3e init completion
+PRINT "Wait HBM3e init completion"
+WAIT.!RUN()
+
+; Load BL31/FreeRTOS_CP binaries to each chiplet
+PRINT "Load BL31 and FreeRTOS binaries to each chiplet"
+
+&CL0_BASE=0x0
+&CL1_BASE=0x2000000000
+&CL2_BASE=0x4000000000
+&CL3_BASE=0x6000000000
+
+Data.LOAD.Binary &PROJ_PATH/binaries/BootLoader_CP/bl31.bin zaxi:0x0
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP/freertos_kernel.bin zaxi:0x200000
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP1/bl31.bin zaxi:0x14100000
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP1/freertos_kernel.bin zaxi:0x14200000
+
+Data.LOAD.Binary &PROJ_PATH/binaries/BootLoader_CP/bl31.bin zaxi:(&CL1_BASE+0x0)
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP/freertos_kernel.bin zaxi:(&CL1_BASE+0x200000)
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP1/bl31.bin zaxi:(&CL1_BASE+0x14100000)
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP1/freertos_kernel.bin zaxi:(&CL1_BASE+0x14200000)
+
+Data.LOAD.Binary &PROJ_PATH/binaries/BootLoader_CP/bl31.bin zaxi:(&CL2_BASE+0x0)
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP/freertos_kernel.bin zaxi:(&CL2_BASE+0x200000)
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP1/bl31.bin zaxi:(&CL2_BASE+0x14100000)
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP1/freertos_kernel.bin zaxi:(&CL2_BASE+0x14200000)
+
+Data.LOAD.Binary &PROJ_PATH/binaries/BootLoader_CP/bl31.bin zaxi:(&CL3_BASE+0x0)
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP/freertos_kernel.bin zaxi:(&CL3_BASE+0x200000)
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP1/bl31.bin zaxi:(&CL3_BASE+0x14100000)
+Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_CP1/freertos_kernel.bin zaxi:(&CL3_BASE+0x14200000)
+IF "&CHIP_REV"=="EVT1"
+(
+	Data.LOAD.Binary &PROJ_PATH/binaries/FreeRTOS_PCIE/freertos_kernel.bin zaxi:(&CL3_BASE+0x1FF8000000)
+)
+
+PRINT "Preload Done!"
+
+Go
+
+ENDDO

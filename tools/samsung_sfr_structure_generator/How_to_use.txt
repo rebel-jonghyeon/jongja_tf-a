@@ -1,0 +1,5 @@
+1. This script can be used for excel file which published by samsung.
+2. Copy sfr excel data like "test_template". Only copy register name, offset, field name and range.
+3. Excecute script like below.
+[ex] python3 gen_sfr_header.py {$File_to_generate}
+4. "File_to_generate.h" will be made.

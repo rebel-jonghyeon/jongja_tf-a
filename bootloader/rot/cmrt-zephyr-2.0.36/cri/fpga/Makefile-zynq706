@@ -1,0 +1,11 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI).
+
+# after copied to cmrt-out/Makefile, kernel module build uses next line
+obj-m := cmrt2.o
+
+# dependency and rule for executing ./build-cmrt-ko.sh on demand
+cmrt-out/cmrt2.ko: cmrt2.c
+	LD_LIBRARY_PATH= ./build-cmrt-ko.sh /opt/cmrt/bsp-zc706-zynq7
+
+clean:
+	rm -rf cmrt-out

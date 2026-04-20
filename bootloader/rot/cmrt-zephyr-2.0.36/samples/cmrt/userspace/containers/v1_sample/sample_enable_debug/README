@@ -1,0 +1,6 @@
+
+sample_enable_debug: Show how to enable debug mode
+
+Load user container to enter debug mode:
+
+$ mwtest.py -c100 run sample_enable_debug.img

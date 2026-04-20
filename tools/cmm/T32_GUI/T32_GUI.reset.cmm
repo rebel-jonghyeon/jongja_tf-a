@@ -1,0 +1,22 @@
+; REBEL_Q T32 Attach Device
+
+B::
+
+RESet
+SYStem.RESet
+
+GLOBAL &DIRECT_CONNECT &CL_IDX
+ENTRY &DIRECT_CONNECT &CL_IDX
+
+PRINT "DO Config &DIRECT_CONNECT &CL_IDX"
+DO T32_GUI.config.cmm &DIRECT_CONNECT &CL_IDX
+
+SYStem.Mode Prepare
+
+; Reset device
+PRINT "Reset Device"
+Data.Set ZAXI:0x1E00220400 %LE %Long 0      ; REMAP_NOC
+Data.Set ZAXI:0x1E00220404 %LE %Long 1      ; REMAP_NIC
+Data.Set ZAXI:0x1FF0230400 1
+
+ENDDO

@@ -1,0 +1,19 @@
+ifdef RELEASE_BUILD
+  VERSION_INFO := $(SOURCE_DATE)-g$(SOURCE_COMMIT)
+  ifeq ($(RELEASE_BUILD),BEFORE_BOOT)
+    # Do not disable BEFORE_BOOT configs
+    # BUILD_CONFIG := -DCONFIG_DEBUG=n -DCONFIG_LOG=n -DCONFIG_CONSOLE=n -DCONFIG_RAM_CONSOLE=n -DCONFIG_PRINTK=n -DCONFIG_RELEASE=y -DCONFIG_THREAD_MONITOR=n
+  else
+    # Normally disable also BEFORE_BOOT configs
+	  ifeq ($(RELEASE_BUILD),2)
+	   BUILD_CONFIG := -DCONFIG_TEST_REBEL_H=y
+	  else
+      BUILD_CONFIG :=
+    endif
+  endif
+  BUILDDIR ?= build
+else
+  VERSION_INFO := $(SOURCE_DATE)-g$(SOURCE_COMMIT)-$(BOARD_NAME)-debug
+  BUILD_CONFIG :=
+  BUILDDIR ?= build-dbg
+endif

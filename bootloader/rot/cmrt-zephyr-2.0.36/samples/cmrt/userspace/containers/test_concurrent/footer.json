@@ -1,0 +1,20 @@
+{
+    "container_format_version": 1,
+    "entity": {
+        "caveats": [ 0 ],
+        "SCID": "c0ffbeef"
+    },
+    "container_version": 1,
+    "permissions": {
+        "write_otp_slots": [ ],
+        "write_otp_keys": [ ],
+        "establish_roots": [ ],
+        "obliterate_roots": [ ],
+        "use_special_keys": [ ],
+        "use_otp_keys": [ ],
+        "use_keydests": [ 1 ],
+        "write_feature_block": [ ],
+        "access_otp": [ ],
+        "software_permissions": [ 25 ]
+    }
+}

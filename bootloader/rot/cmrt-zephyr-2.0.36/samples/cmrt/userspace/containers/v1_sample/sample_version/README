@@ -1,0 +1,32 @@
+This is a container to get versions.
+
+Following commands are recognized:
+
+f	Get fboot binary version
+s	Get sboot binary version
+m	Get supervisor binary version
+a	Get tboot OTP version counter
+b	Get supervisor OTP version counter
+
+First load the container
+$ mwtest.py -c100 run sample_version.img
+
+Get fboot binary version
+$ printf 'f' > f
+$ cmtest data -f100 f
+write data...0x064:1...read data...0x064:19...
+00000000: 32 30 32 31 2d 31 31 2d  31 30 2d 67 31 62 62 38  |2021-11-10-g1bb8|
+00000010: 65 30 37                                          |e07|
+OK
+
+15:37:56,654 +0.0063: [CLO] main:86: Sample (version) container starting...
+15:37:56,934 +0.2798: [CLO] main:110: Received sic message from 0x801
+15:37:56,937 +0.0033: [CLO] process_data:57: Fboot version: 2021-11-10-g1bb8e07
+
+Get sboot binary version
+$ printf 's' > s
+$ cmtest data -f100 s
+
+Get supervisor binary version
+$ printf 'm' > m
+$ cmtest data -f100 m

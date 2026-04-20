@@ -1,0 +1,39 @@
+
+test_dma: User container to test the DMA
+
+Message: COPY|FILL|READ|GETBUF [SRC | FILL_DATA] DST DATALEN
+  SRC:       Source data address (copy)
+  FILL_DATA: Fill data value (fill)
+  DST:       Destination address
+  DATALEN:   Data length in bytes
+
+All the data is in little endian format (input and output).
+
+Load the container and see usage in logs:
+$ mwtest.py -c100 run test_dma.img
+$ cmtest log
+
+To copy 32 bytes of data from one address (0x01032D78) to another (0x40000000):
+$ cmtest cmd -f100 COPY 00000040 782D0301 20000000
+Sending data to CMRT via SIC...
+...received 0 bytes OK
+
+To fill 64 bytes of a memory address (0x40000000) with some value (0x11223344):
+$ cmtest cmd -f100 FILL 00000040 33442211 40000000
+Sending data to CMRT via SIC...
+...received 0 bytes OK
+
+To read 16 bytes from a memory address (0x01032D78):
+$ cmtest cmd -f100 READ 782D0301 10000000
+Sending data to CMRT via SIC...
+...received 16 bytes OK
+00000000: 44 33 22 11 44 33 22 11  44 33 22 11 44 33 22 11  |D3".D3".D3".D3".|
+
+To get the container SRAM buffer address:
+$ cmtest cmd -f100 GETBUF
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: 78 2d 03 01                                       |x-..|
+
+To unload container:
+$ mwtest.py -c100 unload

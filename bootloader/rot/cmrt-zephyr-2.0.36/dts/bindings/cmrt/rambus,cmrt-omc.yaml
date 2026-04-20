@@ -1,0 +1,23 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT OTP Memory Controller (OMC)
+
+compatible: "rambus,cmrt-omc"
+
+include: rambus,cmrt-hwc.yaml
+
+properties:
+    layout-version:
+      required: true
+      type: int
+      description: supported hardware layout version
+
+    num-keysplits:
+      required: true
+      type: int
+      description: number of keysplits supported by hardware
+
+    num-roots:
+      required: true
+      type: int
+      description: number of roots supported by hardware

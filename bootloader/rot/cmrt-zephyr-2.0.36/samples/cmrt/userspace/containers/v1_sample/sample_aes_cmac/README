@@ -1,0 +1,36 @@
+
+sample_aes_cmac: Generate AES-CMAC of the data requested with
+                 some hardcoded key in the container
+
+Input required AES-CMAC operation:
+- Key (hardcoded in container)
+- Message
+- Message length (length calculated based input data message )
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_aes_cmac.img
+
+To send data to container:
+$ printf 'Do AES-CMAC operation' > testfile
+$ cmtest data -f100 testfile
+
+The test messages below are from rfc4493.
+Refer https://tools.ietf.org/html/rfc4493#section-4 for more info.
+
+Test message 1:
+$ perl -e 'print pack("H*", @ARGV)' "6bc1bee22e409f96e93d7e117393172a" > testfile16
+$ cmtest data -f100 testfile16
+Expected MAC: 070a16b46b4d4144f79bdd9dd04a287c
+
+Test message 2:
+$ perl -e 'print pack("H*", @ARGV)' "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411" > testfile40
+$ cmtest data -f100 testfile40
+Expected MAC: dfa66747de9ae63030ca32611497c827
+
+Test message 3:
+$ perl -e 'print pack("H*", @ARGV)' "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710" > testfile64
+$ cmtest data -f100 testfile64
+Expected CMAC: 51f0bebf7e3b9d92fc49741779363cfe
+
+To unload container:
+$ mwtest.py -c100 unload

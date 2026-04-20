@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2018-2021 Cryptography Research, Inc. (CRI).
+ * A license or authorization from CRI is needed to use this file.
+ */
+
+#ifndef CMRT_TIMER_REG_H
+#define CMRT_TIMER_REG_H
+
+#include "hwc_reg.h"
+
+#define CMRT_TIMER_BASE           0x00074000UL
+
+#define R_WATCHDOG_CONTROL        0x130UL
+#define R_WATCHDOG_COUNT          0x134UL
+#define R_WATCHDOG_COMPARE        0x138UL
+#define R_WATCHDOG_COMPARE_ADD    0x13CUL
+#define R_WATCHDOG_KEY            0x140UL
+#define R_WATCHDOG_FEED           0x144UL
+#define R_GTIME_COUNT_LOW         0x14CUL
+#define R_GTIME_COUNT_HIGH        0x150UL
+#define R_GTIME_COMPARE_LOW       0x154UL
+#define R_GTIME_COMPARE_HIGH      0x158UL
+#define R_SAFETY_WD_CONTROL       0x15CUL
+#define R_SAFETY_WD_COUNT         0x160UL
+#define R_SAFETY_WD_CMP           0x164UL
+#define R_SAFETY_WD_FEED          0x168UL
+
+#define GTIME_INTERRUPT    (1UL << 0)
+
+#define WATCHDOG_CONTROL_WDSCALE_MASK 0x0000000FUL
+#define WATCHDOG_CONTROL_WDRSTEN      (1UL << 8)
+#define WATCHDOG_CONTROL_WDEN         (1UL << 12)
+#define WATCHDOG_CONTROL_WDENACTIVE   (1UL << 13)
+
+#define WATCHDOG_COMPARE_MASK     0x0000FFFFUL
+#define WATCHDOG_COMPARE_ADD_MASK 0x000003FFUL
+#define WATCHDOG_KEY_VALUE        0xB1215701UL
+#define WATCHDOG_FEED_VALUE       0x0D09F00DUL
+
+#define SAFETY_WD_CONTROL_MASK    0x00000003UL
+#define SAFETY_WD_CONTROL_WDEN_ENABLE  0x00000002UL
+#define SAFETY_WD_CONTROL_WDEN_DISABLE 0x00000001UL
+#define SAFETY_WD_COUNT_MASK      0x0000FFFFUL
+#define SAFETY_WD_CMP_MASK        0x0000FFFFUL
+#define SAFETY_WD_CMP_RESET       0x0000FFFFUL
+
+#endif

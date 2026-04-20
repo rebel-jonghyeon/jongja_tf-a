@@ -1,0 +1,38 @@
+# Copyright (c) 2024, SAMSUNG
+# SPDX-License-Identifier: Apache-2.0
+
+description: SAMSUNG OTP
+
+compatible: "samsung,otp"
+
+include: base.yaml
+
+properties:
+  reg:
+      required: true
+
+  interrupts:
+      required: false
+
+  label:
+      required: true
+
+  ecc_parity_addr_offset:
+      type: int
+      required: true
+
+  bank_num:
+      type: int
+      required: true
+
+  bank_type:
+      type: array
+      required: true
+
+  parity_bank_type:
+      type: array
+      required: true
+
+interrupt-cells:
+    - irq
+

@@ -1,0 +1,180 @@
+/*
+ * Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+ */
+
+/dts-v1/;
+
+#include <riscv32-cmrt.dtsi>
+
+/ {
+	model = "CMRT";
+	compatible = "cmrt";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,flash = &sog;
+		zephyr,sram = &sram;
+		rambus,otp = &otp;
+		rambus,extmem = &extmem;
+		rambus,oec-hc = &hc0;
+		rambus,fboot-hc = &hc0;
+		rambus,pke-hc = &hc0;
+	};
+
+	extdev: extdev@100000 {
+		device_type = "memory";
+		reg = <0x100000 0x40000>;
+	};
+
+	otp: otp@300000 {
+		device_type = "memory";
+		reg = <0x300000 0x4000>;
+	};
+
+	sog: sog@800000 {
+		device_type = "memory";
+		reg = <0x800000 0x20000>;
+	};
+
+	sram: sram@1000000 {
+		device_type = "memory";
+		reg = <0x1000000 0x40000>;
+	};
+
+	pkeram: pkeram@1000000 {
+		device_type = "memory";
+		reg = <0x1000000 0x2000>;
+	};
+
+	extmem: extmem@40000000 {
+		device_type = "memory";
+		reg = <0x40000000 0xc0000000>;
+	};
+
+	aliases {
+		s3hc = &hc0;
+	};
+};
+
+&clint {
+	wdt-hw-start;
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&aes {
+	has-xts;
+	has-ccm;
+	has-cmac;
+	has-192;
+};
+
+&fmc {
+	feature-size = <4>;
+};
+
+&hc0 {
+	label = "s3hc";
+	has-sha-224;
+	has-sha-256;
+	has-sha-384;
+	has-sha-512;
+	has-hmac;
+	has-sha3-224;
+	has-sha3-256;
+	has-sha3-384;
+	has-sha3-512;
+	has-shake256;
+	shake-hw-padding;
+};
+
+&tmc {
+	eip76-trng;
+	eip76-fros = <24>;
+};
+
+&sic {
+	num-custom = <24>;
+	num-instances = <2>;
+	has-boot-control;
+};
+
+&omc {
+	layout-version = <3>;
+};
+
+&plic {
+	status = "okay";
+};
+
+&mailboxm0 {
+	status = "okay";
+};
+
+&mailboxm1 {
+	status = "okay";
+};
+
+&mailboxm2 {
+	status = "okay";
+};
+
+&mailboxp0m5 {
+	status = "okay";
+};
+
+&mailboxp0m6 {
+	status = "okay";
+};
+
+&mailboxp1m50 {
+	status = "okay";
+};
+
+&mailboxp1m51 {
+	status = "okay";
+};
+
+&mailboxp1m60 {
+	status = "okay";
+};
+
+&mailboxp1m61 {
+	status = "okay";
+};
+
+&rotpl330 {
+	status = "okay";
+};
+
+&pvt0 {
+	status = "okay";
+};
+
+&sysregrot {
+	status = "okay";
+};
+
+&otp_soc {
+	status = "okay";
+};
+
+&otp_cpu {
+	status = "okay";
+};
+
+&otp_s0 {
+	status = "okay";
+};
+
+&otp_s1 {
+	status = "okay";
+};
+
+&otp_s2 {
+	status = "okay";
+};
+

@@ -1,0 +1,7 @@
+# Copyright (c) 2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT PDMA Core
+
+compatible: "rambus,cmrt-pdma"
+
+include: rambus,cmrt-hwc.yaml

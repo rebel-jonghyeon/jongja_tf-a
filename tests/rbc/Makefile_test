@@ -1,0 +1,52 @@
+#This makefile makes the examples from the first few chapters with Unity test harness
+
+#Set this to @ to keep the makefile quiet
+SILENCE = @
+
+#---- Outputs ----#
+COMPONENT_NAME = rbc
+
+#--- Inputs ----#
+UNITY_HOME = ../../lib/unity
+PROJECT_HOME_DIR = ../..
+PROJECT_TEST_DIR = .
+COMPILE.cpp = g++ -c
+COMPILE.c = g++ -c
+LINK.o=g++
+UNITY_BUILD_HOME = .
+
+UNITY_CFLAGS += -DUNIT_TEST -DUSE_DILIGENT_PTR
+UNITY_CFLAGS += -DUNITY_FIXTURE_NO_EXTRAS
+UNITY_WARNINGFLAGS = -Wall -Werror -Wno-reorder -Wswitch-default
+#UNITY_WARNINGFLAGS += -Wshadow
+
+SRC_DIRS = \
+	$(PROJECT_HOME_DIR)/drivers/rbc\
+
+TEST_SRC_DIRS = \
+	$(PROJECT_TEST_DIR)/test\
+	$(PROJECT_HOME_DIR)/lib/diligent_ptr\
+	$(UNITY_HOME)\
+
+MOCKS_SRC_DIRS = \
+	$(PROJECT_TEST_DIR)/mocks\
+
+INCLUDE_DIRS =\
+  .\
+  $(UNITY_HOME)\
+  $(PROJECT_HOME_DIR)/tests/common\
+  $(PROJECT_HOME_DIR)/lib/unity\
+  $(PROJECT_HOME_DIR)/lib/diligent_ptr\
+  $(PROJECT_HOME_DIR)/lib/interrupt_test_helper\
+  $(PROJECT_HOME_DIR)/common\
+  $(PROJECT_HOME_DIR)/common/arch/arm64\
+  $(PROJECT_HOME_DIR)/drivers/common\
+  $(PROJECT_HOME_DIR)/drivers/intc\
+  $(PROJECT_HOME_DIR)/drivers/mailbox\
+  $(PROJECT_HOME_DIR)/drivers/pmu\
+  $(PROJECT_HOME_DIR)/drivers/cmu\
+  $(PROJECT_HOME_DIR)/drivers/rbc\
+  $(PROJECT_HOME_DIR)/drivers/rbc/registers\
+  $(PROJECT_HOME_DIR)/mocks\
+
+include $(UNITY_BUILD_HOME)/makefile_worker.mk

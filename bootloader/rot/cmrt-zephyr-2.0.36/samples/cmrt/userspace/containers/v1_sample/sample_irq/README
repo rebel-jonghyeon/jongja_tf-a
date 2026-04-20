@@ -1,0 +1,19 @@
+
+sample_irq: Demonstrate how to wait for SOC interrupts
+
+Container sets IRQ watch on SOC interrupts. And polls for interrupts to
+occur. When a user SOC interrupt occurs, container checks triggered IRQs by
+calling cri_sid_sync().
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_irq.img
+
+Raise SOC interrupt
+$ cmtest irq -m 0x4 cmrt
+
+Example QEMU output for above commands
+1571136152.237594: [CLO] main:59: Container (watch_irq) starting...
+1571136155.277345: [CLO] watch_irqs:49: Poll timeout
+1571136155.750025: sic_get_app: found unused app flowid 0x801
+1571136155.750038: sic_packet_from_application: CMRT_SIC_SOC_INTERRUPT 0x4
+1571136155.751425: [CLO] watch_irqs:46: Triggered IRQs: 0x4

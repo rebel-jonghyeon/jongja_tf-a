@@ -1,0 +1,7 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT DMA Core
+
+compatible: "rambus,cmrt-dmac"
+
+include: rambus,cmrt-hwc.yaml

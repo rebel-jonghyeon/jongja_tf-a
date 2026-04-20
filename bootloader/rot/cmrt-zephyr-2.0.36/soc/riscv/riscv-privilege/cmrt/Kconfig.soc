@@ -1,0 +1,18 @@
+# RISCV_CMRT configuration options
+
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+choice
+	prompt "CMRT implementation"
+	depends on SOC_SERIES_RISCV_CMRT
+
+config SOC_RISCV_CMRT
+	bool "CMRT implementation"
+	select INCLUDE_RESET_VECTOR
+	select ATOMIC_OPERATIONS_C
+	select ARCH_HAS_USERSPACE
+	select ARCH_HAS_SINGLE_THREAD_SUPPORT
+	select POLL if MULTITHREADING
+	select WATCHDOG
+
+endchoice

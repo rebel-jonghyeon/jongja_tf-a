@@ -1,0 +1,27 @@
+
+test_concurrent: Perform a KDC, a PKE, a DMAC and a SIC operation concurrently
+
+The cores are open and polled in a cmrt_sic_wait loop.
+Before the poll loop, a sic receive operation is started. When a sic message
+arrives it is handled inside the loop and echoes back. This handling also
+triggers the remaining operations (one per core). When all operations finish,
+the test exits.
+
+The return code is written to SIC register SCRATCH_0 before exiting the
+container. A value of 0 means success.
+
+The container can be run in TESTED or PROVISIONED or MISSION lifecycle.
+
+To run (load and start) container:
+$ mwtest.py -c100 run test_concurrent.img
+
+Any sic message will trigger all functions to be launched in a wait loop:
+$ cmtest data -f100 "Run tests"
+-- The message should be echoed back.
+
+When the container has exited (use mwtest.py ps to check for flowid 100),
+the return code can be read from SIC:
+$ cmrt sic R_SCRATCH_0
+
+To unload container:
+$ mwtest.py -c100 unload

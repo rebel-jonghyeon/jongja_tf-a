@@ -1,0 +1,16 @@
+add_library(arch_arm64
+	STATIC
+	${CMAKE_CURRENT_SOURCE_DIR}/spinlock.c
+	${CMAKE_CURRENT_SOURCE_DIR}/spinlock.S
+	${CMAKE_CURRENT_SOURCE_DIR}/asm_macros.S
+	${CMAKE_CURRENT_SOURCE_DIR}/context.S
+	${CMAKE_CURRENT_SOURCE_DIR}/cache.S
+	${CMAKE_CURRENT_SOURCE_DIR}/cpu_data.c
+)
+target_include_directories(arch_arm64
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/../arm64
+	${CMAKE_CURRENT_SOURCE_DIR}/../../include
+	${CMAKE_CURRENT_SOURCE_DIR}/../../include/arch
+	${CMAKE_CURRENT_SOURCE_DIR}/../../include/arch/arm64
+)

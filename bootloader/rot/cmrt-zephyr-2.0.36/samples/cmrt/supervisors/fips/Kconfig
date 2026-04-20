@@ -1,0 +1,22 @@
+# Kconfig - Private config options for the FIPS supervisor
+
+mainmenu "FIPS supervisor"
+
+config FIPS_RAM_TEEFS_SIZE
+	hex
+	default 0x8000
+
+config FIPS_OTP_TEEFS_SIZE
+	hex
+	default 0x400
+
+config FIPS_OTP_TMC_PARAM_SIZE
+	hex
+	default 0x8
+
+config MAIN_STACK_SIZE
+       default 13824 if CMRT_SHSIG_XMSS_ENABLE_ALL_MODES
+       default 8192 if CMRT_SHSIG_LIBRARY
+       default 4092
+
+source "Kconfig.zephyr"

@@ -1,0 +1,13 @@
+# Kconfig - CMRT watchdog configuration
+#
+# Copyright (c) 2017-2022 Cryptography Research, Inc. (CRI).
+
+if SOC_SERIES_RISCV_CMRT
+
+config WDT_CMRT
+	bool "Watchdog Driver for CMRT"
+	default y
+	help
+	  Enable watchdog Driver for CMRT.
+
+endif

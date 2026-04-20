@@ -1,0 +1,7 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT Key Transport Core (KDC)
+
+compatible: "rambus,cmrt-ktc"
+
+include: rambus,cmrt-hwc.yaml

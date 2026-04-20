@@ -1,0 +1,18 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT RISC-V CPU (Maui)
+
+compatible: "rambus,cmrt-maui"
+
+include: riscv,cpus.yaml
+
+properties:
+    has-cfi:
+      required: false
+      type: boolean
+      description: CPU enforces control flow integrity
+
+    embedded:
+      required: false
+      type: boolean
+      description: CPU implements (only) RV32E instruction set

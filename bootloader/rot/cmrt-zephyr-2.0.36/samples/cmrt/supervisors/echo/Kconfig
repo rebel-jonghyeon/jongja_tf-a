@@ -1,0 +1,20 @@
+# Kconfig - Private config options for the Echo supervisor
+
+mainmenu "Echo supervisor"
+
+config TEST_USER_THREADS
+       bool "Test static user mode threads"
+       select USERSPACE
+       default n
+
+config TEST_USER_CONTAINERS
+       bool "Test loadable user mode containers"
+       select USERSPACE
+       default n
+
+config TEST_INVALID_SYSCALL
+       bool "Test invalid syscall in user mode thread"
+       select USERSPACE
+       default n
+
+source "Kconfig.zephyr"

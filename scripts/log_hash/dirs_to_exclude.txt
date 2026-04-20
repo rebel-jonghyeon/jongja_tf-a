@@ -1,0 +1,6 @@
+# write directory names here, don't need to be parsed by log_hash work.
+.git
+tools
+cmake
+scripts
+doc

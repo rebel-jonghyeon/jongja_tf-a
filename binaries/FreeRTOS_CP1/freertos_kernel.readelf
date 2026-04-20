@@ -1,0 +1,1656 @@
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF64
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           AArch64
+  Version:                           0x1
+  Entry point address:               0x10014200000
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          1233680 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         1
+  Size of section headers:           64 (bytes)
+  Number of section headers:         176
+  Section header string table index: 175
+
+Section Headers:
+  [Nr] Name              Type             Address           Offset
+       Size              EntSize          Flags  Link  Info  Align
+  [ 0]                   NULL             0000000000000000  00000000
+       0000000000000000  0000000000000000           0     0     0
+  [ 1] .text             PROGBITS         0000010014200000  00010000
+       00000000000105d0  0000000000000000  AX       0     0     2048
+  [ 2] .text.__errno     PROGBITS         00000100142105d0  000205d0
+       000000000000000c  0000000000000000  AX       0     0     16
+  [ 3] .text._printf_r   PROGBITS         00000100142105e0  000205e0
+       0000000000000070  0000000000000000  AX       0     0     16
+  [ 4] .text.printf      PROGBITS         0000010014210650  00020650
+       0000000000000080  0000000000000000  AX       0     0     16
+  [ 5] .text._putchar_r  PROGBITS         00000100142106d0  000206d0
+       0000000000000008  0000000000000000  AX       0     0     16
+  [ 6] .text.putchar     PROGBITS         00000100142106e0  000206e0
+       0000000000000014  0000000000000000  AX       0     0     16
+  [ 7] .text._recla[...] PROGBITS         0000010014210700  00020700
+       00000000000000b0  0000000000000000  AX       0     0     16
+  [ 8] .text.stdio_[...] PROGBITS         00000100142107b0  000207b0
+       000000000000001c  0000000000000000  AX       0     0     16
+  [ 9] .text.cleanu[...] PROGBITS         00000100142107d0  000207d0
+       0000000000000074  0000000000000000  AX       0     0     16
+  [10] .text.__fp_lock   PROGBITS         0000010014210850  00020850
+       0000000000000034  0000000000000000  AX       0     0     16
+  [11] .text.__fp_unlock PROGBITS         0000010014210890  00020890
+       0000000000000034  0000000000000000  AX       0     0     16
+  [12] .text.global[...] PROGBITS         00000100142108d0  000208d0
+       0000000000000158  0000000000000000  AX       0     0     16
+  [13] .text.__sfp       PROGBITS         0000010014210a30  00020a30
+       0000000000000144  0000000000000000  AX       0     0     16
+  [14] .text.__sinit     PROGBITS         0000010014210b80  00020b80
+       0000000000000064  0000000000000000  AX       0     0     16
+  [15] .text.__sfp_[...] PROGBITS         0000010014210bf0  00020bf0
+       000000000000000c  0000000000000000  AX       0     0     16
+  [16] .text.__sfp_[...] PROGBITS         0000010014210c00  00020c00
+       000000000000000c  0000000000000000  AX       0     0     16
+  [17] .text.__fp_l[...] PROGBITS         0000010014210c10  00020c10
+       0000000000000030  0000000000000000  AX       0     0     16
+  [18] .text.__fp_u[...] PROGBITS         0000010014210c40  00020c40
+       0000000000000030  0000000000000000  AX       0     0     16
+  [19] .text._mallo[...] PROGBITS         0000010014210c70  00020c70
+       0000000000000118  0000000000000000  AX       0     0     16
+  [20] .text._free_r     PROGBITS         0000010014210d90  00020d90
+       00000000000002e0  0000000000000000  AX       0     0     16
+  [21] .text.__sread     PROGBITS         0000010014211070  00021070
+       0000000000000050  0000000000000000  AX       0     0     16
+  [22] .text.__seofread  PROGBITS         00000100142110c0  000210c0
+       0000000000000008  0000000000000000  AX       0     0     16
+  [23] .text.__swrite    PROGBITS         00000100142110d0  000210d0
+       000000000000006c  0000000000000000  AX       0     0     16
+  [24] .text.__sseek     PROGBITS         0000010014211140  00021140
+       0000000000000050  0000000000000000  AX       0     0     16
+  [25] .text.__sclose    PROGBITS         0000010014211190  00021190
+       0000000000000008  0000000000000000  AX       0     0     16
+  [26] .text._sbrk_r     PROGBITS         00000100142111a0  000211a0
+       000000000000004c  0000000000000000  AX       0     0     16
+  [27] .text._fwalk[...] PROGBITS         00000100142111f0  000211f0
+       00000000000000a0  0000000000000000  AX       0     0     16
+  [28] .text._write_r    PROGBITS         0000010014211290  00021290
+       0000000000000060  0000000000000000  AX       0     0     16
+  [29] .text._vfprintf_r PROGBITS         00000100142112f0  000212f0
+       00000000000032e4  0000000000000000  AX       0     0     16
+  [30] .text.vfprintf    PROGBITS         00000100142145e0  000245e0
+       0000000000000034  0000000000000000  AX       0     0     16
+  [31] .text.__sbprintf  PROGBITS         0000010014214620  00024620
+       00000000000001c0  0000000000000000  AX       0     0     16
+  [32] .text.__spri[...] PROGBITS         00000100142147e0  000247e0
+       00000000000000d8  0000000000000000  AX       0     0     16
+  [33] .text.__sprint_r  PROGBITS         00000100142148c0  000248c0
+       0000000000000018  0000000000000000  AX       0     0     16
+  [34] .text._vfipr[...] PROGBITS         00000100142148e0  000248e0
+       0000000000001c04  0000000000000000  AX       0     0     16
+  [35] .text.vfiprintf   PROGBITS         00000100142164f0  000264f0
+       0000000000000034  0000000000000000  AX       0     0     16
+  [36] .text._malloc_r   PROGBITS         0000010014216530  00026530
+       00000000000007f4  0000000000000000  AX       0     0     16
+  [37] .text._wcrtomb_r  PROGBITS         0000010014216d30  00026d30
+       0000000000000088  0000000000000000  AX       0     0     16
+  [38] .text.wcrtomb     PROGBITS         0000010014216dc0  00026dc0
+       000000000000009c  0000000000000000  AX       0     0     16
+  [39] .text.__reta[...] PROGBITS         0000010014216e60  00026e60
+       0000000000000004  0000000000000000  AX       0     0     16
+  [40] .text.__reta[...] PROGBITS         0000010014216e70  00026e70
+       0000000000000004  0000000000000000  AX       0     0     16
+  [41] .text.__reta[...] PROGBITS         0000010014216e80  00026e80
+       0000000000000004  0000000000000000  AX       0     0     16
+  [42] .text.__reta[...] PROGBITS         0000010014216e90  00026e90
+       0000000000000004  0000000000000000  AX       0     0     16
+  [43] .text.__reta[...] PROGBITS         0000010014216ea0  00026ea0
+       0000000000000004  0000000000000000  AX       0     0     16
+  [44] .text.__reta[...] PROGBITS         0000010014216eb0  00026eb0
+       0000000000000004  0000000000000000  AX       0     0     16
+  [45] .text.__reta[...] PROGBITS         0000010014216ec0  00026ec0
+       0000000000000008  0000000000000000  AX       0     0     16
+  [46] .text.__reta[...] PROGBITS         0000010014216ed0  00026ed0
+       0000000000000008  0000000000000000  AX       0     0     16
+  [47] .text.__reta[...] PROGBITS         0000010014216ee0  00026ee0
+       0000000000000004  0000000000000000  AX       0     0     16
+  [48] .text.__reta[...] PROGBITS         0000010014216ef0  00026ef0
+       0000000000000004  0000000000000000  AX       0     0     16
+  [49] .text.curren[...] PROGBITS         0000010014216f00  00026f00
+       00000000000000c4  0000000000000000  AX       0     0     16
+  [50] .text.__load[...] PROGBITS         0000010014216fd0  00026fd0
+       0000000000000790  0000000000000000  AX       0     0     16
+  [51] .text.__get_[...] PROGBITS         0000010014217760  00027760
+       000000000000007c  0000000000000000  AX       0     0     16
+  [52] .text._setlo[...] PROGBITS         00000100142177e0  000277e0
+       00000000000003b0  0000000000000000  AX       0     0     16
+  [53] .text.__loca[...] PROGBITS         0000010014217b90  00027b90
+       000000000000000c  0000000000000000  AX       0     0     16
+  [54] .text.setlocale   PROGBITS         0000010014217ba0  00027ba0
+       0000000000000014  0000000000000000  AX       0     0     16
+  [55] .text.__loca[...] PROGBITS         0000010014217bc0  00027bc0
+       0000000000000008  0000000000000000  AX       0     0     16
+  [56] .text._local[...] PROGBITS         0000010014217bd0  00027bd0
+       000000000000000c  0000000000000000  AX       0     0     16
+  [57] .text.localeconv  PROGBITS         0000010014217be0  00027be0
+       000000000000000c  0000000000000000  AX       0     0     16
+  [58] .text._fclose_r   PROGBITS         0000010014217bf0  00027bf0
+       000000000000013c  0000000000000000  AX       0     0     16
+  [59] .text.fclose      PROGBITS         0000010014217d30  00027d30
+       0000000000000010  0000000000000000  AX       0     0     16
+  [60] .text.__swsetup_r PROGBITS         0000010014217d40  00027d40
+       0000000000000130  0000000000000000  AX       0     0     16
+  [61] .text.__smak[...] PROGBITS         0000010014217e70  00027e70
+       0000000000000150  0000000000000000  AX       0     0     16
+  [62] .text.__swha[...] PROGBITS         0000010014217fc0  00027fc0
+       0000000000000094  0000000000000000  AX       0     0     16
+  [63] .text._putc_r     PROGBITS         0000010014218060  00028060
+       00000000000000e0  0000000000000000  AX       0     0     16
+  [64] .text.putc        PROGBITS         0000010014218140  00028140
+       00000000000000e8  0000000000000000  AX       0     0     16
+  [65] .text.__mall[...] PROGBITS         0000010014218230  00028230
+       000000000000000c  0000000000000000  AX       0     0     16
+  [66] .text.__mall[...] PROGBITS         0000010014218240  00028240
+       000000000000000c  0000000000000000  AX       0     0     16
+  [67] .text._wcsrt[...] PROGBITS         0000010014218250  00028250
+       0000000000000010  0000000000000000  AX       0     0     16
+  [68] .text.wcsrtombs   PROGBITS         0000010014218260  00028260
+       0000000000000028  0000000000000000  AX       0     0     16
+  [69] .text.quorem      PROGBITS         0000010014218290  00028290
+       00000000000001a4  0000000000000000  AX       0     0     16
+  [70] .text._dtoa_r     PROGBITS         0000010014218440  00028440
+       0000000000001198  0000000000000000  AX       0     0     16
+  [71] .text.__set_ctype PROGBITS         00000100142195e0  000295e0
+       0000000000000010  0000000000000000  AX       0     0     16
+  [72] .text._close_r    PROGBITS         00000100142195f0  000295f0
+       000000000000004c  0000000000000000  AX       0     0     16
+  [73] .text.__sflush_r  PROGBITS         0000010014219640  00029640
+       0000000000000200  0000000000000000  AX       0     0     16
+  [74] .text._fflush_r   PROGBITS         0000010014219840  00029840
+       00000000000000b8  0000000000000000  AX       0     0     16
+  [75] .text.fflush      PROGBITS         0000010014219900  00029900
+       00000000000000b8  0000000000000000  AX       0     0     16
+  [76] .text.frexp       PROGBITS         00000100142199c0  000299c0
+       0000000000000078  0000000000000000  AX       0     0     16
+  [77] .text.strlcpy     PROGBITS         0000010014219a40  00029a40
+       000000000000003c  0000000000000000  AX       0     0     16
+  [78] .text._strto[...] PROGBITS         0000010014219a80  00029a80
+       0000000000000184  0000000000000000  AX       0     0     16
+  [79] .text._strtol_r   PROGBITS         0000010014219c10  00029c10
+       0000000000000030  0000000000000000  AX       0     0     16
+  [80] .text.strtol_l    PROGBITS         0000010014219c40  00029c40
+       0000000000000048  0000000000000000  AX       0     0     16
+  [81] .text.strtol      PROGBITS         0000010014219c90  00029c90
+       0000000000000048  0000000000000000  AX       0     0     16
+  [82] .text.strncasecmp PROGBITS         0000010014219ce0  00029ce0
+       000000000000007c  0000000000000000  AX       0     0     16
+  [83] .text._findenv_r  PROGBITS         0000010014219d60  00029d60
+       00000000000000fc  0000000000000000  AX       0     0     16
+  [84] .text._getenv_r   PROGBITS         0000010014219e60  00029e60
+       0000000000000018  0000000000000000  AX       0     0     16
+  [85] .text.strncpy     PROGBITS         0000010014219e80  00029e80
+       0000000000000090  0000000000000000  AX       0     0     16
+  [86] .text._fstat_r    PROGBITS         0000010014219f10  00029f10
+       0000000000000050  0000000000000000  AX       0     0     16
+  [87] .text._isatty_r   PROGBITS         0000010014219f60  00029f60
+       000000000000004c  0000000000000000  AX       0     0     16
+  [88] .text._lseek_r    PROGBITS         0000010014219fb0  00029fb0
+       0000000000000054  0000000000000000  AX       0     0     16
+  [89] .text._read_r     PROGBITS         000001001421a010  0002a010
+       0000000000000060  0000000000000000  AX       0     0     16
+  [90] .text.__fputwc    PROGBITS         000001001421a070  0002a070
+       00000000000000e0  0000000000000000  AX       0     0     16
+  [91] .text._fputwc_r   PROGBITS         000001001421a150  0002a150
+       000000000000009c  0000000000000000  AX       0     0     16
+  [92] .text.fputwc      PROGBITS         000001001421a1f0  0002a1f0
+       00000000000000c4  0000000000000000  AX       0     0     16
+  [93] .text._wctomb_r   PROGBITS         000001001421a2c0  0002a2c0
+       0000000000000010  0000000000000000  AX       0     0     16
+  [94] .text.__asci[...] PROGBITS         000001001421a2d0  0002a2d0
+       0000000000000034  0000000000000000  AX       0     0     16
+  [95] .text.__utf8[...] PROGBITS         000001001421a310  0002a310
+       00000000000000e4  0000000000000000  AX       0     0     16
+  [96] .text.__sjis[...] PROGBITS         000001001421a400  0002a400
+       0000000000000084  0000000000000000  AX       0     0     16
+  [97] .text.__eucj[...] PROGBITS         000001001421a490  0002a490
+       00000000000000a8  0000000000000000  AX       0     0     16
+  [98] .text.__jis_[...] PROGBITS         000001001421a540  0002a540
+       00000000000000bc  0000000000000000  AX       0     0     16
+  [99] .text.__sfvw[...] PROGBITS         000001001421a600  0002a600
+       00000000000004cc  0000000000000000  AX       0     0     16
+  [100] .text.__swbuf_r   PROGBITS         000001001421aad0  0002aad0
+       0000000000000138  0000000000000000  AX       0     0     16
+  [101] .text.__swbuf     PROGBITS         000001001421ac10  0002ac10
+       0000000000000014  0000000000000000  AX       0     0     16
+  [102] .text._mbtowc_r   PROGBITS         000001001421ac30  0002ac30
+       0000000000000010  0000000000000000  AX       0     0     16
+  [103] .text.__asci[...] PROGBITS         000001001421ac40  0002ac40
+       0000000000000048  0000000000000000  AX       0     0     16
+  [104] .text.__utf8[...] PROGBITS         000001001421ac90  0002ac90
+       00000000000002b8  0000000000000000  AX       0     0     16
+  [105] .text.__sjis[...] PROGBITS         000001001421af50  0002af50
+       00000000000000cc  0000000000000000  AX       0     0     16
+  [106] .text.__eucj[...] PROGBITS         000001001421b020  0002b020
+       0000000000000124  0000000000000000  AX       0     0     16
+  [107] .text.__jis_[...] PROGBITS         000001001421b150  0002b150
+       00000000000001c0  0000000000000000  AX       0     0     16
+  [108] .text.__asse[...] PROGBITS         000001001421b310  0002b310
+       0000000000000054  0000000000000000  AX       0     0     16
+  [109] .text.__assert    PROGBITS         000001001421b370  0002b370
+       0000000000000014  0000000000000000  AX       0     0     16
+  [110] .text.strcasecmp  PROGBITS         000001001421b390  0002b390
+       000000000000006c  0000000000000000  AX       0     0     16
+  [111] .text.strcat      PROGBITS         000001001421b400  0002b400
+       0000000000000074  0000000000000000  AX       0     0     16
+  [112] .text._Balloc     PROGBITS         000001001421b480  0002b480
+       000000000000008c  0000000000000000  AX       0     0     16
+  [113] .text._Bfree      PROGBITS         000001001421b510  0002b510
+       000000000000001c  0000000000000000  AX       0     0     16
+  [114] .text.__multadd   PROGBITS         000001001421b530  0002b530
+       0000000000000110  0000000000000000  AX       0     0     16
+  [115] .text.__s2b       PROGBITS         000001001421b640  0002b640
+       0000000000000130  0000000000000000  AX       0     0     16
+  [116] .text.__hi0bits   PROGBITS         000001001421b770  0002b770
+       0000000000000080  0000000000000000  AX       0     0     16
+  [117] .text.__lo0bits   PROGBITS         000001001421b7f0  0002b7f0
+       000000000000009c  0000000000000000  AX       0     0     16
+  [118] .text.__i2b       PROGBITS         000001001421b890  0002b890
+       00000000000000b8  0000000000000000  AX       0     0     16
+  [119] .text.__multiply  PROGBITS         000001001421b950  0002b950
+       00000000000001e4  0000000000000000  AX       0     0     16
+  [120] .text.__pow5mult  PROGBITS         000001001421bb40  0002bb40
+       0000000000000120  0000000000000000  AX       0     0     16
+  [121] .text.__lshift    PROGBITS         000001001421bc60  0002bc60
+       0000000000000168  0000000000000000  AX       0     0     16
+  [122] .text.__mcmp      PROGBITS         000001001421bdd0  0002bdd0
+       0000000000000050  0000000000000000  AX       0     0     16
+  [123] .text.__mdiff     PROGBITS         000001001421be20  0002be20
+       0000000000000200  0000000000000000  AX       0     0     16
+  [124] .text.__ulp       PROGBITS         000001001421c020  0002c020
+       0000000000000084  0000000000000000  AX       0     0     16
+  [125] .text.__b2d       PROGBITS         000001001421c0b0  0002c0b0
+       000000000000012c  0000000000000000  AX       0     0     16
+  [126] .text.__d2b       PROGBITS         000001001421c1e0  0002c1e0
+       000000000000013c  0000000000000000  AX       0     0     16
+  [127] .text.__ratio     PROGBITS         000001001421c320  0002c320
+       0000000000000088  0000000000000000  AX       0     0     16
+  [128] .text._mprec[...] PROGBITS         000001001421c3b0  0002c3b0
+       0000000000000030  0000000000000000  AX       0     0     16
+  [129] .text.__copybits  PROGBITS         000001001421c3e0  0002c3e0
+       0000000000000068  0000000000000000  AX       0     0     16
+  [130] .text.__any_on    PROGBITS         000001001421c450  0002c450
+       000000000000006c  0000000000000000  AX       0     0     16
+  [131] .text._calloc_r   PROGBITS         000001001421c4c0  0002c4c0
+       00000000000000c0  0000000000000000  AX       0     0     16
+  [132] .text._wcsnr[...] PROGBITS         000001001421c580  0002c580
+       00000000000001a4  0000000000000000  AX       0     0     16
+  [133] .text._wcsnr[...] PROGBITS         000001001421c730  0002c730
+       0000000000000014  0000000000000000  AX       0     0     16
+  [134] .text.wcsnrtombs  PROGBITS         000001001421c750  0002c750
+       0000000000000038  0000000000000000  AX       0     0     16
+  [135] .text._realloc_r  PROGBITS         000001001421c790  0002c790
+       0000000000000524  0000000000000000  AX       0     0     16
+  [136] .text.__env_lock  PROGBITS         000001001421ccc0  0002ccc0
+       000000000000000c  0000000000000000  AX       0     0     16
+  [137] .text.__env_[...] PROGBITS         000001001421ccd0  0002ccd0
+       000000000000000c  0000000000000000  AX       0     0     16
+  [138] .text._fiprintf_r PROGBITS         000001001421cce0  0002cce0
+       0000000000000068  0000000000000000  AX       0     0     16
+  [139] .text.fiprintf    PROGBITS         000001001421cd50  0002cd50
+       000000000000007c  0000000000000000  AX       0     0     16
+  [140] .text.abort       PROGBITS         000001001421cdd0  0002cdd0
+       0000000000000018  0000000000000000  AX       0     0     16
+  [141] .text._init_[...] PROGBITS         000001001421cdf0  0002cdf0
+       000000000000005c  0000000000000000  AX       0     0     16
+  [142] .text._signal_r   PROGBITS         000001001421ce50  0002ce50
+       0000000000000078  0000000000000000  AX       0     0     16
+  [143] .text._raise_r    PROGBITS         000001001421ced0  0002ced0
+       00000000000000a4  0000000000000000  AX       0     0     16
+  [144] .text.__sigt[...] PROGBITS         000001001421cf80  0002cf80
+       00000000000000c0  0000000000000000  AX       0     0     16
+  [145] .text.raise       PROGBITS         000001001421d040  0002d040
+       00000000000000a4  0000000000000000  AX       0     0     16
+  [146] .text.signal      PROGBITS         000001001421d0f0  0002d0f0
+       0000000000000088  0000000000000000  AX       0     0     16
+  [147] .text._init_[...] PROGBITS         000001001421d180  0002d180
+       0000000000000060  0000000000000000  AX       0     0     16
+  [148] .text.__sigtramp  PROGBITS         000001001421d1e0  0002d1e0
+       00000000000000c0  0000000000000000  AX       0     0     16
+  [149] .text._kill_r     PROGBITS         000001001421d2a0  0002d2a0
+       0000000000000050  0000000000000000  AX       0     0     16
+  [150] .text._getpid_r   PROGBITS         000001001421d2f0  0002d2f0
+       0000000000000004  0000000000000000  AX       0     0     16
+  [151] .text.__trun[...] PROGBITS         000001001421d300  0002d300
+       00000000000003c4  0000000000000000  AX       0     0     16
+  [152] .text.__sfp_[...] PROGBITS         000001001421d6d0  0002d6d0
+       0000000000000070  0000000000000000  AX       0     0     16
+  [153] .init_func        PROGBITS         000001001421d740  0002d740
+       0000000000000020  0000000000000000   A       0     0     8
+  [154] .rodata           PROGBITS         000001001421e000  0002e000
+       0000000000001bd8  0000000000000000  WA       0     0     16
+  [155] .data             PROGBITS         0000010014220000  00030000
+       0000000000009800  0000000000000000  WA       0     0     16
+  [156] .bss              NOBITS           000001001422a000  00039800
+       0000000000030490  0000000000000000  WA       0     0     4096
+  [157] .nocache_data     NOBITS           000001001425c000  00039800
+       0000000000002000  0000000000000000  WA       0     0     1
+  [158] .dma_reserved     NOBITS           000001001425e000  00039800
+       0000000000001000  0000000000000000  WA       0     0     1
+  [159] .dma_smmu_region  NOBITS           000001001425f000  00039800
+       0000000000012000  0000000000000000  WA       0     0     1
+  [160] .dma_smmu_re[...] NOBITS           0000010014271000  00039800
+       0000000000001000  0000000000000000  WA       0     0     1
+  [161] .heap             NOBITS           0000010014272000  00039800
+       0000000008000000  0000000000000000  WA       0     0     8
+  [162] .dyn_heap         NOBITS           000001001c272000  00039800
+       0000000000200000  0000000000000000  WA       0     0     1
+  [163] .debug_info       PROGBITS         0000000000000000  00039800
+       0000000000071674  0000000000000000           0     0     1
+  [164] .debug_abbrev     PROGBITS         0000000000000000  000aae74
+       000000000000d643  0000000000000000           0     0     1
+  [165] .debug_loclists   PROGBITS         0000000000000000  000b84b7
+       0000000000022448  0000000000000000           0     0     1
+  [166] .debug_aranges    PROGBITS         0000000000000000  000da900
+       0000000000002560  0000000000000000           0     0     16
+  [167] .debug_rnglists   PROGBITS         0000000000000000  000dce60
+       0000000000002ae6  0000000000000000           0     0     1
+  [168] .debug_line       PROGBITS         0000000000000000  000df946
+       000000000001c392  0000000000000000           0     0     1
+  [169] .debug_str        PROGBITS         0000000000000000  000fbcd8
+       000000000001d097  0000000000000001  MS       0     0     1
+  [170] .debug_line_str   PROGBITS         0000000000000000  00118d6f
+       0000000000003fbc  0000000000000001  MS       0     0     1
+  [171] .comment          PROGBITS         0000000000000000  0011cd2b
+       0000000000000044  0000000000000001  MS       0     0     1
+  [172] .debug_frame      PROGBITS         0000000000000000  0011cd70
+       0000000000005828  0000000000000000           0     0     8
+  [173] .symtab           SYMTAB           0000000000000000  00122598
+       0000000000007560  0000000000000018          174   729     8
+  [174] .strtab           STRTAB           0000000000000000  00129af8
+       0000000000002c4b  0000000000000000           0     0     1
+  [175] .shstrtab         STRTAB           0000000000000000  0012c743
+       0000000000000bcd  0000000000000000           0     0     1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), p (processor specific)
+
+There are no section groups in this file.
+
+Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  LOAD           0x0000000000010000 0x0000010014200000 0x0000000014200000
+                 0x0000000000029800 0x0000000008272000  RWE    0x10000
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .text .text.__errno .text._printf_r .text.printf .text._putchar_r .text.putchar .text._reclaim_reent .text.stdio_exit_handler .text.cleanup_stdio .text.__fp_lock .text.__fp_unlock .text.global_stdio_init.part.0 .text.__sfp .text.__sinit .text.__sfp_lock_acquire .text.__sfp_lock_release .text.__fp_lock_all .text.__fp_unlock_all .text._malloc_trim_r .text._free_r .text.__sread .text.__seofread .text.__swrite .text.__sseek .text.__sclose .text._sbrk_r .text._fwalk_sglue .text._write_r .text._vfprintf_r .text.vfprintf .text.__sbprintf .text.__sprint_r.part.0 .text.__sprint_r .text._vfiprintf_r .text.vfiprintf .text._malloc_r .text._wcrtomb_r .text.wcrtomb .text.__retarget_lock_init .text.__retarget_lock_init_recursive .text.__retarget_lock_close .text.__retarget_lock_close_recursive .text.__retarget_lock_acquire .text.__retarget_lock_acquire_recursive .text.__retarget_lock_try_acquire .text.__retarget_lock_try_acquire_recursive .text.__retarget_lock_release .text.__retarget_lock_release_recursive .text.currentlocale .text.__loadlocale .text.__get_locale_env .text._setlocale_r .text.__locale_mb_cur_max .text.setlocale .text.__localeconv_l .text._localeconv_r .text.localeconv .text._fclose_r .text.fclose .text.__swsetup_r .text.__smakebuf_r .text.__swhatbuf_r .text._putc_r .text.putc .text.__malloc_lock .text.__malloc_unlock .text._wcsrtombs_r .text.wcsrtombs .text.quorem .text._dtoa_r .text.__set_ctype .text._close_r .text.__sflush_r .text._fflush_r .text.fflush .text.frexp .text.strlcpy .text._strtol_l.part.0 .text._strtol_r .text.strtol_l .text.strtol .text.strncasecmp .text._findenv_r .text._getenv_r .text.strncpy .text._fstat_r .text._isatty_r .text._lseek_r .text._read_r .text.__fputwc .text._fputwc_r .text.fputwc .text._wctomb_r .text.__ascii_wctomb .text.__utf8_wctomb .text.__sjis_wctomb .text.__eucjp_wctomb .text.__jis_wctomb .text.__sfvwrite_r .text.__swbuf_r .text.__swbuf .text._mbtowc_r .text.__ascii_mbtowc .text.__utf8_mbtowc .text.__sjis_mbtowc .text.__eucjp_mbtowc .text.__jis_mbtowc .text.__assert_func .text.__assert .text.strcasecmp .text.strcat .text._Balloc .text._Bfree .text.__multadd .text.__s2b .text.__hi0bits .text.__lo0bits .text.__i2b .text.__multiply .text.__pow5mult .text.__lshift .text.__mcmp .text.__mdiff .text.__ulp .text.__b2d .text.__d2b .text.__ratio .text._mprec_log10 .text.__copybits .text.__any_on .text._calloc_r .text._wcsnrtombs_l .text._wcsnrtombs_r .text.wcsnrtombs .text._realloc_r .text.__env_lock .text.__env_unlock .text._fiprintf_r .text.fiprintf .text.abort .text._init_signal_r .text._signal_r .text._raise_r .text.__sigtramp_r .text.raise .text.signal .text._init_signal .text.__sigtramp .text._kill_r .text._getpid_r .text.__trunctfdf2 .text.__sfp_handle_exceptions .init_func .rodata .data .bss .nocache_data .dma_reserved .dma_smmu_region .dma_smmu_reserved .heap .dyn_heap 
+
+There is no dynamic section in this file.
+
+There are no relocations in this file.
+
+The decoding of unwind sections for machine type AArch64 is not currently supported.
+
+Symbol table '.symtab' contains 1252 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 0000010014200000     0 SECTION LOCAL  DEFAULT    1 .text
+     2: 00000100142105d0     0 SECTION LOCAL  DEFAULT    2 .text.__errno
+     3: 00000100142105e0     0 SECTION LOCAL  DEFAULT    3 .text._printf_r
+     4: 0000010014210650     0 SECTION LOCAL  DEFAULT    4 .text.printf
+     5: 00000100142106d0     0 SECTION LOCAL  DEFAULT    5 .text._putchar_r
+     6: 00000100142106e0     0 SECTION LOCAL  DEFAULT    6 .text.putchar
+     7: 0000010014210700     0 SECTION LOCAL  DEFAULT    7 .text._reclaim_reent
+     8: 00000100142107b0     0 SECTION LOCAL  DEFAULT    8 .text.stdio_exit[...]
+     9: 00000100142107d0     0 SECTION LOCAL  DEFAULT    9 .text.cleanup_stdio
+    10: 0000010014210850     0 SECTION LOCAL  DEFAULT   10 .text.__fp_lock
+    11: 0000010014210890     0 SECTION LOCAL  DEFAULT   11 .text.__fp_unlock
+    12: 00000100142108d0     0 SECTION LOCAL  DEFAULT   12 .text.global_std[...]
+    13: 0000010014210a30     0 SECTION LOCAL  DEFAULT   13 .text.__sfp
+    14: 0000010014210b80     0 SECTION LOCAL  DEFAULT   14 .text.__sinit
+    15: 0000010014210bf0     0 SECTION LOCAL  DEFAULT   15 .text.__sfp_lock[...]
+    16: 0000010014210c00     0 SECTION LOCAL  DEFAULT   16 .text.__sfp_lock[...]
+    17: 0000010014210c10     0 SECTION LOCAL  DEFAULT   17 .text.__fp_lock_all
+    18: 0000010014210c40     0 SECTION LOCAL  DEFAULT   18 .text.__fp_unlock_all
+    19: 0000010014210c70     0 SECTION LOCAL  DEFAULT   19 .text._malloc_trim_r
+    20: 0000010014210d90     0 SECTION LOCAL  DEFAULT   20 .text._free_r
+    21: 0000010014211070     0 SECTION LOCAL  DEFAULT   21 .text.__sread
+    22: 00000100142110c0     0 SECTION LOCAL  DEFAULT   22 .text.__seofread
+    23: 00000100142110d0     0 SECTION LOCAL  DEFAULT   23 .text.__swrite
+    24: 0000010014211140     0 SECTION LOCAL  DEFAULT   24 .text.__sseek
+    25: 0000010014211190     0 SECTION LOCAL  DEFAULT   25 .text.__sclose
+    26: 00000100142111a0     0 SECTION LOCAL  DEFAULT   26 .text._sbrk_r
+    27: 00000100142111f0     0 SECTION LOCAL  DEFAULT   27 .text._fwalk_sglue
+    28: 0000010014211290     0 SECTION LOCAL  DEFAULT   28 .text._write_r
+    29: 00000100142112f0     0 SECTION LOCAL  DEFAULT   29 .text._vfprintf_r
+    30: 00000100142145e0     0 SECTION LOCAL  DEFAULT   30 .text.vfprintf
+    31: 0000010014214620     0 SECTION LOCAL  DEFAULT   31 .text.__sbprintf
+    32: 00000100142147e0     0 SECTION LOCAL  DEFAULT   32 .text.__sprint_r[...]
+    33: 00000100142148c0     0 SECTION LOCAL  DEFAULT   33 .text.__sprint_r
+    34: 00000100142148e0     0 SECTION LOCAL  DEFAULT   34 .text._vfiprintf_r
+    35: 00000100142164f0     0 SECTION LOCAL  DEFAULT   35 .text.vfiprintf
+    36: 0000010014216530     0 SECTION LOCAL  DEFAULT   36 .text._malloc_r
+    37: 0000010014216d30     0 SECTION LOCAL  DEFAULT   37 .text._wcrtomb_r
+    38: 0000010014216dc0     0 SECTION LOCAL  DEFAULT   38 .text.wcrtomb
+    39: 0000010014216e60     0 SECTION LOCAL  DEFAULT   39 .text.__retarget[...]
+    40: 0000010014216e70     0 SECTION LOCAL  DEFAULT   40 .text.__retarget[...]
+    41: 0000010014216e80     0 SECTION LOCAL  DEFAULT   41 .text.__retarget[...]
+    42: 0000010014216e90     0 SECTION LOCAL  DEFAULT   42 .text.__retarget[...]
+    43: 0000010014216ea0     0 SECTION LOCAL  DEFAULT   43 .text.__retarget[...]
+    44: 0000010014216eb0     0 SECTION LOCAL  DEFAULT   44 .text.__retarget[...]
+    45: 0000010014216ec0     0 SECTION LOCAL  DEFAULT   45 .text.__retarget[...]
+    46: 0000010014216ed0     0 SECTION LOCAL  DEFAULT   46 .text.__retarget[...]
+    47: 0000010014216ee0     0 SECTION LOCAL  DEFAULT   47 .text.__retarget[...]
+    48: 0000010014216ef0     0 SECTION LOCAL  DEFAULT   48 .text.__retarget[...]
+    49: 0000010014216f00     0 SECTION LOCAL  DEFAULT   49 .text.currentlocale
+    50: 0000010014216fd0     0 SECTION LOCAL  DEFAULT   50 .text.__loadlocale
+    51: 0000010014217760     0 SECTION LOCAL  DEFAULT   51 .text.__get_loca[...]
+    52: 00000100142177e0     0 SECTION LOCAL  DEFAULT   52 .text._setlocale_r
+    53: 0000010014217b90     0 SECTION LOCAL  DEFAULT   53 .text.__locale_m[...]
+    54: 0000010014217ba0     0 SECTION LOCAL  DEFAULT   54 .text.setlocale
+    55: 0000010014217bc0     0 SECTION LOCAL  DEFAULT   55 .text.__localeconv_l
+    56: 0000010014217bd0     0 SECTION LOCAL  DEFAULT   56 .text._localeconv_r
+    57: 0000010014217be0     0 SECTION LOCAL  DEFAULT   57 .text.localeconv
+    58: 0000010014217bf0     0 SECTION LOCAL  DEFAULT   58 .text._fclose_r
+    59: 0000010014217d30     0 SECTION LOCAL  DEFAULT   59 .text.fclose
+    60: 0000010014217d40     0 SECTION LOCAL  DEFAULT   60 .text.__swsetup_r
+    61: 0000010014217e70     0 SECTION LOCAL  DEFAULT   61 .text.__smakebuf_r
+    62: 0000010014217fc0     0 SECTION LOCAL  DEFAULT   62 .text.__swhatbuf_r
+    63: 0000010014218060     0 SECTION LOCAL  DEFAULT   63 .text._putc_r
+    64: 0000010014218140     0 SECTION LOCAL  DEFAULT   64 .text.putc
+    65: 0000010014218230     0 SECTION LOCAL  DEFAULT   65 .text.__malloc_lock
+    66: 0000010014218240     0 SECTION LOCAL  DEFAULT   66 .text.__malloc_unlock
+    67: 0000010014218250     0 SECTION LOCAL  DEFAULT   67 .text._wcsrtombs_r
+    68: 0000010014218260     0 SECTION LOCAL  DEFAULT   68 .text.wcsrtombs
+    69: 0000010014218290     0 SECTION LOCAL  DEFAULT   69 .text.quorem
+    70: 0000010014218440     0 SECTION LOCAL  DEFAULT   70 .text._dtoa_r
+    71: 00000100142195e0     0 SECTION LOCAL  DEFAULT   71 .text.__set_ctype
+    72: 00000100142195f0     0 SECTION LOCAL  DEFAULT   72 .text._close_r
+    73: 0000010014219640     0 SECTION LOCAL  DEFAULT   73 .text.__sflush_r
+    74: 0000010014219840     0 SECTION LOCAL  DEFAULT   74 .text._fflush_r
+    75: 0000010014219900     0 SECTION LOCAL  DEFAULT   75 .text.fflush
+    76: 00000100142199c0     0 SECTION LOCAL  DEFAULT   76 .text.frexp
+    77: 0000010014219a40     0 SECTION LOCAL  DEFAULT   77 .text.strlcpy
+    78: 0000010014219a80     0 SECTION LOCAL  DEFAULT   78 .text._strtol_l.[...]
+    79: 0000010014219c10     0 SECTION LOCAL  DEFAULT   79 .text._strtol_r
+    80: 0000010014219c40     0 SECTION LOCAL  DEFAULT   80 .text.strtol_l
+    81: 0000010014219c90     0 SECTION LOCAL  DEFAULT   81 .text.strtol
+    82: 0000010014219ce0     0 SECTION LOCAL  DEFAULT   82 .text.strncasecmp
+    83: 0000010014219d60     0 SECTION LOCAL  DEFAULT   83 .text._findenv_r
+    84: 0000010014219e60     0 SECTION LOCAL  DEFAULT   84 .text._getenv_r
+    85: 0000010014219e80     0 SECTION LOCAL  DEFAULT   85 .text.strncpy
+    86: 0000010014219f10     0 SECTION LOCAL  DEFAULT   86 .text._fstat_r
+    87: 0000010014219f60     0 SECTION LOCAL  DEFAULT   87 .text._isatty_r
+    88: 0000010014219fb0     0 SECTION LOCAL  DEFAULT   88 .text._lseek_r
+    89: 000001001421a010     0 SECTION LOCAL  DEFAULT   89 .text._read_r
+    90: 000001001421a070     0 SECTION LOCAL  DEFAULT   90 .text.__fputwc
+    91: 000001001421a150     0 SECTION LOCAL  DEFAULT   91 .text._fputwc_r
+    92: 000001001421a1f0     0 SECTION LOCAL  DEFAULT   92 .text.fputwc
+    93: 000001001421a2c0     0 SECTION LOCAL  DEFAULT   93 .text._wctomb_r
+    94: 000001001421a2d0     0 SECTION LOCAL  DEFAULT   94 .text.__ascii_wctomb
+    95: 000001001421a310     0 SECTION LOCAL  DEFAULT   95 .text.__utf8_wctomb
+    96: 000001001421a400     0 SECTION LOCAL  DEFAULT   96 .text.__sjis_wctomb
+    97: 000001001421a490     0 SECTION LOCAL  DEFAULT   97 .text.__eucjp_wctomb
+    98: 000001001421a540     0 SECTION LOCAL  DEFAULT   98 .text.__jis_wctomb
+    99: 000001001421a600     0 SECTION LOCAL  DEFAULT   99 .text.__sfvwrite_r
+   100: 000001001421aad0     0 SECTION LOCAL  DEFAULT  100 .text.__swbuf_r
+   101: 000001001421ac10     0 SECTION LOCAL  DEFAULT  101 .text.__swbuf
+   102: 000001001421ac30     0 SECTION LOCAL  DEFAULT  102 .text._mbtowc_r
+   103: 000001001421ac40     0 SECTION LOCAL  DEFAULT  103 .text.__ascii_mbtowc
+   104: 000001001421ac90     0 SECTION LOCAL  DEFAULT  104 .text.__utf8_mbtowc
+   105: 000001001421af50     0 SECTION LOCAL  DEFAULT  105 .text.__sjis_mbtowc
+   106: 000001001421b020     0 SECTION LOCAL  DEFAULT  106 .text.__eucjp_mbtowc
+   107: 000001001421b150     0 SECTION LOCAL  DEFAULT  107 .text.__jis_mbtowc
+   108: 000001001421b310     0 SECTION LOCAL  DEFAULT  108 .text.__assert_func
+   109: 000001001421b370     0 SECTION LOCAL  DEFAULT  109 .text.__assert
+   110: 000001001421b390     0 SECTION LOCAL  DEFAULT  110 .text.strcasecmp
+   111: 000001001421b400     0 SECTION LOCAL  DEFAULT  111 .text.strcat
+   112: 000001001421b480     0 SECTION LOCAL  DEFAULT  112 .text._Balloc
+   113: 000001001421b510     0 SECTION LOCAL  DEFAULT  113 .text._Bfree
+   114: 000001001421b530     0 SECTION LOCAL  DEFAULT  114 .text.__multadd
+   115: 000001001421b640     0 SECTION LOCAL  DEFAULT  115 .text.__s2b
+   116: 000001001421b770     0 SECTION LOCAL  DEFAULT  116 .text.__hi0bits
+   117: 000001001421b7f0     0 SECTION LOCAL  DEFAULT  117 .text.__lo0bits
+   118: 000001001421b890     0 SECTION LOCAL  DEFAULT  118 .text.__i2b
+   119: 000001001421b950     0 SECTION LOCAL  DEFAULT  119 .text.__multiply
+   120: 000001001421bb40     0 SECTION LOCAL  DEFAULT  120 .text.__pow5mult
+   121: 000001001421bc60     0 SECTION LOCAL  DEFAULT  121 .text.__lshift
+   122: 000001001421bdd0     0 SECTION LOCAL  DEFAULT  122 .text.__mcmp
+   123: 000001001421be20     0 SECTION LOCAL  DEFAULT  123 .text.__mdiff
+   124: 000001001421c020     0 SECTION LOCAL  DEFAULT  124 .text.__ulp
+   125: 000001001421c0b0     0 SECTION LOCAL  DEFAULT  125 .text.__b2d
+   126: 000001001421c1e0     0 SECTION LOCAL  DEFAULT  126 .text.__d2b
+   127: 000001001421c320     0 SECTION LOCAL  DEFAULT  127 .text.__ratio
+   128: 000001001421c3b0     0 SECTION LOCAL  DEFAULT  128 .text._mprec_log10
+   129: 000001001421c3e0     0 SECTION LOCAL  DEFAULT  129 .text.__copybits
+   130: 000001001421c450     0 SECTION LOCAL  DEFAULT  130 .text.__any_on
+   131: 000001001421c4c0     0 SECTION LOCAL  DEFAULT  131 .text._calloc_r
+   132: 000001001421c580     0 SECTION LOCAL  DEFAULT  132 .text._wcsnrtombs_l
+   133: 000001001421c730     0 SECTION LOCAL  DEFAULT  133 .text._wcsnrtombs_r
+   134: 000001001421c750     0 SECTION LOCAL  DEFAULT  134 .text.wcsnrtombs
+   135: 000001001421c790     0 SECTION LOCAL  DEFAULT  135 .text._realloc_r
+   136: 000001001421ccc0     0 SECTION LOCAL  DEFAULT  136 .text.__env_lock
+   137: 000001001421ccd0     0 SECTION LOCAL  DEFAULT  137 .text.__env_unlock
+   138: 000001001421cce0     0 SECTION LOCAL  DEFAULT  138 .text._fiprintf_r
+   139: 000001001421cd50     0 SECTION LOCAL  DEFAULT  139 .text.fiprintf
+   140: 000001001421cdd0     0 SECTION LOCAL  DEFAULT  140 .text.abort
+   141: 000001001421cdf0     0 SECTION LOCAL  DEFAULT  141 .text._init_signal_r
+   142: 000001001421ce50     0 SECTION LOCAL  DEFAULT  142 .text._signal_r
+   143: 000001001421ced0     0 SECTION LOCAL  DEFAULT  143 .text._raise_r
+   144: 000001001421cf80     0 SECTION LOCAL  DEFAULT  144 .text.__sigtramp_r
+   145: 000001001421d040     0 SECTION LOCAL  DEFAULT  145 .text.raise
+   146: 000001001421d0f0     0 SECTION LOCAL  DEFAULT  146 .text.signal
+   147: 000001001421d180     0 SECTION LOCAL  DEFAULT  147 .text._init_signal
+   148: 000001001421d1e0     0 SECTION LOCAL  DEFAULT  148 .text.__sigtramp
+   149: 000001001421d2a0     0 SECTION LOCAL  DEFAULT  149 .text._kill_r
+   150: 000001001421d2f0     0 SECTION LOCAL  DEFAULT  150 .text._getpid_r
+   151: 000001001421d300     0 SECTION LOCAL  DEFAULT  151 .text.__trunctfdf2
+   152: 000001001421d6d0     0 SECTION LOCAL  DEFAULT  152 .text.__sfp_hand[...]
+   153: 000001001421d740     0 SECTION LOCAL  DEFAULT  153 .init_func
+   154: 000001001421e000     0 SECTION LOCAL  DEFAULT  154 .rodata
+   155: 0000010014220000     0 SECTION LOCAL  DEFAULT  155 .data
+   156: 000001001422a000     0 SECTION LOCAL  DEFAULT  156 .bss
+   157: 000001001425c000     0 SECTION LOCAL  DEFAULT  157 .nocache_data
+   158: 000001001425e000     0 SECTION LOCAL  DEFAULT  158 .dma_reserved
+   159: 000001001425f000     0 SECTION LOCAL  DEFAULT  159 .dma_smmu_region
+   160: 0000010014271000     0 SECTION LOCAL  DEFAULT  160 .dma_smmu_reserved
+   161: 0000010014272000     0 SECTION LOCAL  DEFAULT  161 .heap
+   162: 000001001c272000     0 SECTION LOCAL  DEFAULT  162 .dyn_heap
+   163: 0000000000000000     0 SECTION LOCAL  DEFAULT  163 .debug_info
+   164: 0000000000000000     0 SECTION LOCAL  DEFAULT  164 .debug_abbrev
+   165: 0000000000000000     0 SECTION LOCAL  DEFAULT  165 .debug_loclists
+   166: 0000000000000000     0 SECTION LOCAL  DEFAULT  166 .debug_aranges
+   167: 0000000000000000     0 SECTION LOCAL  DEFAULT  167 .debug_rnglists
+   168: 0000000000000000     0 SECTION LOCAL  DEFAULT  168 .debug_line
+   169: 0000000000000000     0 SECTION LOCAL  DEFAULT  169 .debug_str
+   170: 0000000000000000     0 SECTION LOCAL  DEFAULT  170 .debug_line_str
+   171: 0000000000000000     0 SECTION LOCAL  DEFAULT  171 .comment
+   172: 0000000000000000     0 SECTION LOCAL  DEFAULT  172 .debug_frame
+   173: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS startup.S.o
+   174: 0000010014200000     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   175: 0000010014200070     0 NOTYPE  LOCAL  DEFAULT    1 primary_core
+   176: 00000100142000b8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   177: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS vector.S.o
+   178: 0000010014200800     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   179: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS main_cp1.c
+   180: 000001001421e000     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   181: 0000010014200fa0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   182: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS freedom_metal.c
+   183: 00000100142010a0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   184: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS nanosleep.c
+   185: 0000010014201140     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   186: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_access.c
+   187: 0000010014201170     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   188: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_chdir.c
+   189: 00000100142011a0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   190: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_chmod.c
+   191: 00000100142011d0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   192: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_chown.c
+   193: 0000010014201200     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   194: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_clock_gettime.c
+   195: 0000010014201230     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   196: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_close.c
+   197: 00000100142012c0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   198: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_execve.c
+   199: 00000100142012f0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   200: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_exit.c
+   201: 0000010014201320     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   202: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_faccessat.c
+   203: 0000010014201350     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   204: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_fork.c
+   205: 0000010014201380     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   206: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_fstat.c
+   207: 00000100142013b0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   208: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_fstatat.c
+   209: 00000100142013e0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   210: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_ftime.c
+   211: 0000010014201410     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   212: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_getcwd.c
+   213: 0000010014201440     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   214: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_getpid.c
+   215: 0000010014201470     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   216: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_gettimeofday.c
+   217: 0000010014201480     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   218: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_isatty.c
+   219: 0000010014201510     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   220: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_kill.c
+   221: 0000010014201520     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   222: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_link.c
+   223: 0000010014201550     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   224: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_lseek.c
+   225: 0000010014201580     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   226: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_lstat.c
+   227: 00000100142015b0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   228: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_open.c
+   229: 00000100142015e0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   230: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_openat.c
+   231: 0000010014201610     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   232: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_read.c
+   233: 0000010014201640     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   234: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_sbrk.c
+   235: 0000010014201680     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   236: 0000010014220000     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   237: 0000010014220000     8 OBJECT  LOCAL  DEFAULT  155 __brk
+   238: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_sysconf.c
+   239: 0000010014201720     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   240: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_times.c
+   241: 0000010014201730     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   242: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_unlink.c
+   243: 00000100142017a0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   244: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_utime.c
+   245: 00000100142017d0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   246: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_wait.c
+   247: 0000010014201800     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   248: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sys_write.c
+   249: 0000010014201840     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   250: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS mailbox.c
+   251: 0000010014201900     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   252: 0000010014220008     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   253: 0000010014220008  1120 OBJECT  LOCAL  DEFAULT  155 mailbox_data
+   254: 000001001421d758     0 NOTYPE  LOCAL  DEFAULT  153 $d
+   255: 000001001421d758     8 OBJECT  LOCAL  DEFAULT  153 _init_8
+   256: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS mailbox_cb.c
+   257: 0000010014201f20     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   258: 000001001421e018     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   259: 000001001421ed30     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   260: 000001001421ed30    11 OBJECT  LOCAL  DEFAULT  154 __func__.0
+   261: 000001001422a000     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   262: 000001001422a000     8 OBJECT  LOCAL  DEFAULT  156 user_cb
+   263: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS pmu.c
+   264: 0000010014202040     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   265: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS dw_apb_timer.c
+   266: 0000010014202260     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   267: 0000010014202330    92 FUNC    LOCAL  DEFAULT    1 dw_apb_timer_n_i[...]
+   268: 0000010014220468     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   269: 000001001421d750     0 NOTYPE  LOCAL  DEFAULT  153 $d
+   270: 000001001421d750     8 OBJECT  LOCAL  DEFAULT  153 _init_5
+   271: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS qspi_apb.c
+   272: 0000010014202820     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   273: 0000010014220628     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   274: 000001001421d748     0 NOTYPE  LOCAL  DEFAULT  153 $d
+   275: 000001001421d748     8 OBJECT  LOCAL  DEFAULT  153 _init_1
+   276: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS mt25q_flash.c
+   277: 0000010014202c50     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   278: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS queue.c
+   279: 00000100142072c0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   280: 00000100142072c0   344 FUNC    LOCAL  DEFAULT    1 prvUnlockQueue
+   281: 0000010014207420   368 FUNC    LOCAL  DEFAULT    1 prvCopyDataToQueue
+   282: 0000010014207590    84 FUNC    LOCAL  DEFAULT    1 prvCopyDataFromQueue
+   283: 000001001421e068     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   284: 00000100142212d8     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   285: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS tasks.c
+   286: 0000010014209300     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   287: 0000010014209300   524 FUNC    LOCAL  DEFAULT    1 prvAddCurrentTas[...]
+   288: 0000010014209510   228 FUNC    LOCAL  DEFAULT    1 prvSearchForName[...]
+   289: 0000010014209600    52 FUNC    LOCAL  DEFAULT    1 prvResetNextTask[...]
+   290: 000001001421e0b8     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   291: 0000010014209640   212 FUNC    LOCAL  DEFAULT    1 prvTaskIsTaskSus[...]
+   292: 0000010014209720    72 FUNC    LOCAL  DEFAULT    1 prvPassiveIdleTask
+   293: 0000010014202d40     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   294: 0000010014202d40   788 FUNC    LOCAL  DEFAULT    1 prvYieldForTask
+   295: 0000010014203060   404 FUNC    LOCAL  DEFAULT    1 prvCheckForRunSt[...]
+   296: 0000010014203200   140 FUNC    LOCAL  DEFAULT    1 vTaskEnterCritic[...]
+   297: 0000010014203290   332 FUNC    LOCAL  DEFAULT    1 vTaskExitCritica[...]
+   298: 0000010014209770   660 FUNC    LOCAL  DEFAULT    1 prvCreateTask
+   299: 000001001420b690   320 FUNC    LOCAL  DEFAULT    1 prvIdleTask
+   300: 000001001420b7d0   540 FUNC    LOCAL  DEFAULT    1 prvAddNewTaskToR[...]
+   301: 000001001420d120   300 FUNC    LOCAL  DEFAULT    1 prvListTasksWith[...]
+   302: 000001001421ed40     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   303: 000001001421ed40     8 OBJECT  LOCAL  DEFAULT  154 uxTopUsedPriority
+   304: 0000010014221378     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   305: 0000010014221378     8 OBJECT  LOCAL  DEFAULT  155 xTickCount
+   306: 0000010014221380     8 OBJECT  LOCAL  DEFAULT  155 pxDelayedTaskList
+   307: 0000010014221388     8 OBJECT  LOCAL  DEFAULT  155 pxOverflowDelaye[...]
+   308: 00000100142213b0    40 OBJECT  LOCAL  DEFAULT  155 xSuspendedTaskList
+   309: 00000100142213d8     8 OBJECT  LOCAL  DEFAULT  155 xNextTaskUnblockTime
+   310: 00000100142213e0    40 OBJECT  LOCAL  DEFAULT  155 xPendingReadyList
+   311: 0000010014221408   200 OBJECT  LOCAL  DEFAULT  155 pxReadyTasksLists
+   312: 00000100142214d0     8 OBJECT  LOCAL  DEFAULT  155 uxTopReadyPriority
+   313: 00000100142214d8    32 OBJECT  LOCAL  DEFAULT  155 xYieldPendings
+   314: 00000100142214f8     8 OBJECT  LOCAL  DEFAULT  155 xSchedulerRunning
+   315: 0000010014221500     8 OBJECT  LOCAL  DEFAULT  155 uxSchedulerSuspended
+   316: 0000010014221508     8 OBJECT  LOCAL  DEFAULT  155 uxCurrentNumberO[...]
+   317: 0000010014221510     8 OBJECT  LOCAL  DEFAULT  155 xNumOfOverflows
+   318: 0000010014221518     8 OBJECT  LOCAL  DEFAULT  155 xPendedTicks
+   319: 0000010014221520     8 OBJECT  LOCAL  DEFAULT  155 uxDeletedTasksWa[...]
+   320: 0000010014221528    40 OBJECT  LOCAL  DEFAULT  155 xTasksWaitingTer[...]
+   321: 0000010014221550    40 OBJECT  LOCAL  DEFAULT  155 xDelayedTaskList1
+   322: 0000010014221578    40 OBJECT  LOCAL  DEFAULT  155 xDelayedTaskList2
+   323: 00000100142215a0     8 OBJECT  LOCAL  DEFAULT  155 uxTaskNumber
+   324: 00000100142215a8    32 OBJECT  LOCAL  DEFAULT  155 xIdleTaskHandles
+   325: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS timers.c
+   326: 000001001420ebe0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   327: 000001001420ebe0   216 FUNC    LOCAL  DEFAULT    1 prvInsertTimerIn[...]
+   328: 000001001420ecc0   116 FUNC    LOCAL  DEFAULT    1 prvReloadTimer
+   329: 000001001420ed40   140 FUNC    LOCAL  DEFAULT    1 prvProcessExpire[...]
+   330: 000001001420edd0   188 FUNC    LOCAL  DEFAULT    1 prvSampleTimeNow
+   331: 000001001421e108     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   332: 000001001420ee90   184 FUNC    LOCAL  DEFAULT    1 prvCheckForValid[...]
+   333: 000001001420ef50   844 FUNC    LOCAL  DEFAULT    1 prvTimerTask
+   334: 00000100142215c8     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   335: 00000100142215c8     8 OBJECT  LOCAL  DEFAULT  155 pxOverflowTimerList
+   336: 00000100142215d0     8 OBJECT  LOCAL  DEFAULT  155 pxCurrentTimerList
+   337: 00000100142215d8     8 OBJECT  LOCAL  DEFAULT  155 xLastTime.0
+   338: 00000100142215e0     8 OBJECT  LOCAL  DEFAULT  155 xTimerQueue
+   339: 00000100142215e8    40 OBJECT  LOCAL  DEFAULT  155 xActiveTimerList1
+   340: 0000010014221610    40 OBJECT  LOCAL  DEFAULT  155 xActiveTimerList2
+   341: 0000010014221638     8 OBJECT  LOCAL  DEFAULT  155 xTimerTaskHandle
+   342: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS heap_4.c
+   343: 000001001421e168     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   344: 000001001420faa0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   345: 00000100142038e0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   346: 0000010014221640     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   347: 0000010014221640    16 OBJECT  LOCAL  DEFAULT  155 xStart
+   348: 0000010014221650     8 OBJECT  LOCAL  DEFAULT  155 pxEnd
+   349: 0000010014221658     8 OBJECT  LOCAL  DEFAULT  155 xMinimumEverFree[...]
+   350: 0000010014221660     8 OBJECT  LOCAL  DEFAULT  155 xFreeBytesRemaining
+   351: 0000010014221668     8 OBJECT  LOCAL  DEFAULT  155 xNumberOfSuccess[...]
+   352: 0000010014221670     8 OBJECT  LOCAL  DEFAULT  155 xNumberOfSuccess[...]
+   353: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS list.c
+   354: 0000010014210200     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   355: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS port.c
+   356: 0000010014210340     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   357: 000001001421e1c8     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   358: 00000100142039c0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   359: 000001001422a2d8  8192 OBJECT  LOCAL  DEFAULT  156 uxTimerTaskStack.0
+   360: 000001001421ed48     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   361: 0000010014220668     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   362: 000001001422a008     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   363: 000001001422a050   592 OBJECT  LOCAL  DEFAULT  156 xTimerTaskTCB.1
+   364: 0000010014272000     0 NOTYPE  LOCAL  DEFAULT  161 $d
+   365: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS portASM.S.o
+   366: 0000010014203e00     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   367: 0000010014204508     0 NOTYPE  LOCAL  DEFAULT    1 ullPortTaskHasFP[...]
+   368: 0000010014204500     0 NOTYPE  LOCAL  DEFAULT    1 pxCurrentTCBConst
+   369: 0000010014203ff0     0 NOTYPE  LOCAL  DEFAULT    1 FreeRTOS_Abort
+   370: 0000010014204510     0 NOTYPE  LOCAL  DEFAULT    1 ullPortInterrupt[...]
+   371: 00000100142043d8     0 NOTYPE  LOCAL  DEFAULT    1 Exit_IRQ_No_Cont[...]
+   372: 0000010014204518     0 NOTYPE  LOCAL  DEFAULT    1 ullPortYieldRequ[...]
+   373: 0000010014204500     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   374: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS driver.c
+   375: 000001001421e230     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   376: 0000010014204520     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   377: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS assert.c
+   378: 000001001421e2d0     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   379: 0000010014204660     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   380: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS interrupt.c
+   381: 0000010014204740     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   382: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS gicv3.c
+   383: 0000010014204840     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   384: 0000010014204840    80 FUNC    LOCAL  DEFAULT    1 gic_wait_rwp.isra.0
+   385: 000001001422c2f8     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   386: 000001001421d740     0 NOTYPE  LOCAL  DEFAULT  153 $d
+   387: 000001001421d740     8 OBJECT  LOCAL  DEFAULT  153 _init_0
+   388: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS bakery_lock.c
+   389: 0000010014205060     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   390: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS prep_c.c
+   391: 0000010014205260     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   392: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS FreeRTOS_tick_co[...]
+   393: 0000010014205320     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   394: 0000010014230108     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   395: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS smp.c
+   396: 0000010014205460     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   397: 000001001421e340     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   398: 0000010014230118     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   399: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS smp.S.o
+   400: 00000100142055a0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   401: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS smccc.S.o
+   402: 0000010014205600     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   403: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS printf.c
+   404: 0000010014205620     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   405: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS psci.c
+   406: 0000010014205680     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   407: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS mmu.c
+   408: 0000010014205720     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   409: 0000010014205720    48 FUNC    LOCAL  DEFAULT    1 table_usage
+   410: 0000010014205750   648 FUNC    LOCAL  DEFAULT    1 check_continuous
+   411: 0000010014205a70  1244 FUNC    LOCAL  DEFAULT    1 __add_map.isra.0
+   412: 0000010014232000 0x28000 OBJECT  LOCAL  DEFAULT  156 xlat_tables
+   413: 000001001421e368     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   414: 000001001421ed50     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   415: 0000010014231000     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   416: 0000010014231000    80 OBJECT  LOCAL  DEFAULT  156 xlat_use_count
+   417: 0000010014231050    64 OBJECT  LOCAL  DEFAULT  156 mmu_ptables
+   418: 00000100142066f8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   419: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS generic_timer.c
+   420: 0000010014206700     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   421: 000001001425a000     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   422: 000001001425a000     8 OBJECT  LOCAL  DEFAULT  156 last_cycle
+   423: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS libc_a-strlen.o
+   424: 00000100142067c0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   425: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS errno.c
+   426: 00000100142105d0     0 NOTYPE  LOCAL  DEFAULT    2 $x
+   427: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS printf.c
+   428: 00000100142105e0     0 NOTYPE  LOCAL  DEFAULT    3 $x
+   429: 0000010014210650     0 NOTYPE  LOCAL  DEFAULT    4 $x
+   430: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS libc_a-memcpy.o
+   431: 0000010014206900     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   432: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS putchar.c
+   433: 00000100142106d0     0 NOTYPE  LOCAL  DEFAULT    5 $x
+   434: 00000100142106e0     0 NOTYPE  LOCAL  DEFAULT    6 $x
+   435: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS reent.c
+   436: 0000010014210700     0 NOTYPE  LOCAL  DEFAULT    7 $x
+   437: 000001001425a008     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   438: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS impure.c
+   439: 0000010014220670     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   440: 0000010014220678     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   441: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS findfp.c
+   442: 00000100142107b0     0 NOTYPE  LOCAL  DEFAULT    8 $x
+   443: 00000100142107b0    28 FUNC    LOCAL  DEFAULT    8 stdio_exit_handler
+   444: 00000100142107d0     0 NOTYPE  LOCAL  DEFAULT    9 $x
+   445: 00000100142107d0   116 FUNC    LOCAL  DEFAULT    9 cleanup_stdio
+   446: 0000010014210850     0 NOTYPE  LOCAL  DEFAULT   10 $x
+   447: 0000010014210850    52 FUNC    LOCAL  DEFAULT   10 __fp_lock
+   448: 0000010014210890     0 NOTYPE  LOCAL  DEFAULT   11 $x
+   449: 0000010014210890    52 FUNC    LOCAL  DEFAULT   11 __fp_unlock
+   450: 00000100142108d0     0 NOTYPE  LOCAL  DEFAULT   12 $x
+   451: 00000100142108d0   344 FUNC    LOCAL  DEFAULT   12 global_stdio_ini[...]
+   452: 0000010014210a30     0 NOTYPE  LOCAL  DEFAULT   13 $x
+   453: 0000010014210b80     0 NOTYPE  LOCAL  DEFAULT   14 $x
+   454: 0000010014210bf0     0 NOTYPE  LOCAL  DEFAULT   15 $x
+   455: 0000010014210c00     0 NOTYPE  LOCAL  DEFAULT   16 $x
+   456: 0000010014210c10     0 NOTYPE  LOCAL  DEFAULT   17 $x
+   457: 0000010014210c40     0 NOTYPE  LOCAL  DEFAULT   18 $x
+   458: 00000100142207d0     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   459: 000001001425a010     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   460: 000001001425a238     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   461: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS libc_a-memset.o
+   462: 0000010014206b40     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   463: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS freer.c
+   464: 0000010014210c70     0 NOTYPE  LOCAL  DEFAULT   19 $x
+   465: 0000010014210d90     0 NOTYPE  LOCAL  DEFAULT   20 $x
+   466: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS stdio.c
+   467: 0000010014211070     0 NOTYPE  LOCAL  DEFAULT   21 $x
+   468: 00000100142110c0     0 NOTYPE  LOCAL  DEFAULT   22 $x
+   469: 00000100142110d0     0 NOTYPE  LOCAL  DEFAULT   23 $x
+   470: 0000010014211140     0 NOTYPE  LOCAL  DEFAULT   24 $x
+   471: 0000010014211190     0 NOTYPE  LOCAL  DEFAULT   25 $x
+   472: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sbrkr.c
+   473: 00000100142111a0     0 NOTYPE  LOCAL  DEFAULT   26 $x
+   474: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS fwalk.c
+   475: 00000100142111f0     0 NOTYPE  LOCAL  DEFAULT   27 $x
+   476: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS writer.c
+   477: 0000010014211290     0 NOTYPE  LOCAL  DEFAULT   28 $x
+   478: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS vfprintf.c
+   479: 000001001421ea10     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   480: 00000100142112f0     0 NOTYPE  LOCAL  DEFAULT   29 $x
+   481: 0000010014214620   224 FUNC    LOCAL  DEFAULT   31 __sbprintf
+   482: 000001001421f4a0     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   483: 000001001421f560    16 OBJECT  LOCAL  DEFAULT  154 zeroes.0
+   484: 000001001421f570    16 OBJECT  LOCAL  DEFAULT  154 blanks.1
+   485: 00000100142145e0     0 NOTYPE  LOCAL  DEFAULT   30 $x
+   486: 0000010014214620     0 NOTYPE  LOCAL  DEFAULT   31 $x
+   487: 000001001421f560     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   488: 000001001421f570     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   489: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS vfiprintf.c
+   490: 00000100142147e0     0 NOTYPE  LOCAL  DEFAULT   32 $x
+   491: 00000100142147e0   216 FUNC    LOCAL  DEFAULT   32 __sprint_r.part.0
+   492: 00000100142148c0     0 NOTYPE  LOCAL  DEFAULT   33 $x
+   493: 000001001421ea48     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   494: 00000100142148e0     0 NOTYPE  LOCAL  DEFAULT   34 $x
+   495: 0000010014214700   224 FUNC    LOCAL  DEFAULT   31 __sbprintf
+   496: 000001001421f580     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   497: 000001001421f640    16 OBJECT  LOCAL  DEFAULT  154 zeroes.0
+   498: 000001001421f650    16 OBJECT  LOCAL  DEFAULT  154 blanks.1
+   499: 00000100142164f0     0 NOTYPE  LOCAL  DEFAULT   35 $x
+   500: 0000010014214700     0 NOTYPE  LOCAL  DEFAULT   31 $x
+   501: 000001001421f640     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   502: 000001001421f650     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   503: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS mallocr.c
+   504: 0000010014216530     0 NOTYPE  LOCAL  DEFAULT   36 $x
+   505: 000001001425a240     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   506: 000001001425a268     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   507: 000001001425a270     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   508: 00000100142207e8     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   509: 000001001425a278     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   510: 00000100142207f0     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   511: 0000010014220800     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   512: 000001001421f660     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   513: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS wcrtomb.c
+   514: 0000010014216d30     0 NOTYPE  LOCAL  DEFAULT   37 $x
+   515: 0000010014216dc0     0 NOTYPE  LOCAL  DEFAULT   38 $x
+   516: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS lock.c
+   517: 0000010014216e60     0 NOTYPE  LOCAL  DEFAULT   39 $x
+   518: 0000010014216e70     0 NOTYPE  LOCAL  DEFAULT   40 $x
+   519: 0000010014216e80     0 NOTYPE  LOCAL  DEFAULT   41 $x
+   520: 0000010014216e90     0 NOTYPE  LOCAL  DEFAULT   42 $x
+   521: 0000010014216ea0     0 NOTYPE  LOCAL  DEFAULT   43 $x
+   522: 0000010014216eb0     0 NOTYPE  LOCAL  DEFAULT   44 $x
+   523: 0000010014216ec0     0 NOTYPE  LOCAL  DEFAULT   45 $x
+   524: 0000010014216ed0     0 NOTYPE  LOCAL  DEFAULT   46 $x
+   525: 0000010014216ee0     0 NOTYPE  LOCAL  DEFAULT   47 $x
+   526: 0000010014216ef0     0 NOTYPE  LOCAL  DEFAULT   48 $x
+   527: 000001001425a280     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   528: 000001001425a288     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   529: 000001001425a290     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   530: 000001001425a298     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   531: 000001001425a2a0     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   532: 000001001425a2a8     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   533: 000001001425a2b0     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   534: 000001001425a2b8     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   535: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS locale.c
+   536: 000001001421ea70     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   537: 0000010014216f00     0 NOTYPE  LOCAL  DEFAULT   49 $x
+   538: 0000010014216f00   196 FUNC    LOCAL  DEFAULT   49 currentlocale
+   539: 0000010014221010   231 OBJECT  LOCAL  DEFAULT  155 global_locale_string
+   540: 000001001421ea78     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   541: 0000010014216fd0     0 NOTYPE  LOCAL  DEFAULT   50 $x
+   542: 000001001421f670     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   543: 000001001421eb90     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   544: 0000010014217760     0 NOTYPE  LOCAL  DEFAULT   51 $x
+   545: 000001001421f890    56 OBJECT  LOCAL  DEFAULT  154 categories
+   546: 00000100142177e0     0 NOTYPE  LOCAL  DEFAULT   52 $x
+   547: 000001001425a3a0   224 OBJECT  LOCAL  DEFAULT  156 new_categories.1
+   548: 000001001425a2c0   224 OBJECT  LOCAL  DEFAULT  156 saved_categories.0
+   549: 0000010014217b90     0 NOTYPE  LOCAL  DEFAULT   53 $x
+   550: 0000010014217ba0     0 NOTYPE  LOCAL  DEFAULT   54 $x
+   551: 000001001425a2c0     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   552: 000001001425a3a0     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   553: 0000010014221010     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   554: 000001001421eba0     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   555: 0000010014221100     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   556: 000001001421f6e0     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   557: 00000100142212b0     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   558: 000001001421f890     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   559: 000001001425a480     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   560: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS localeconv.c
+   561: 0000010014217bc0     0 NOTYPE  LOCAL  DEFAULT   55 $x
+   562: 0000010014217bd0     0 NOTYPE  LOCAL  DEFAULT   56 $x
+   563: 0000010014217be0     0 NOTYPE  LOCAL  DEFAULT   57 $x
+   564: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS fclose.c
+   565: 0000010014217bf0     0 NOTYPE  LOCAL  DEFAULT   58 $x
+   566: 0000010014217d30     0 NOTYPE  LOCAL  DEFAULT   59 $x
+   567: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS libc_a-memchr.o
+   568: 0000010014206c80     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   569: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS wsetup.c
+   570: 0000010014217d40     0 NOTYPE  LOCAL  DEFAULT   60 $x
+   571: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS makebuf.c
+   572: 0000010014217e70     0 NOTYPE  LOCAL  DEFAULT   61 $x
+   573: 0000010014217fc0     0 NOTYPE  LOCAL  DEFAULT   62 $x
+   574: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS putc.c
+   575: 0000010014218060     0 NOTYPE  LOCAL  DEFAULT   63 $x
+   576: 0000010014218140     0 NOTYPE  LOCAL  DEFAULT   64 $x
+   577: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS mlock.c
+   578: 0000010014218230     0 NOTYPE  LOCAL  DEFAULT   65 $x
+   579: 0000010014218240     0 NOTYPE  LOCAL  DEFAULT   66 $x
+   580: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS wcsrtombs.c
+   581: 0000010014218250     0 NOTYPE  LOCAL  DEFAULT   67 $x
+   582: 0000010014218260     0 NOTYPE  LOCAL  DEFAULT   68 $x
+   583: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS dtoa.c
+   584: 0000010014218290     0 NOTYPE  LOCAL  DEFAULT   69 $x
+   585: 0000010014218290   420 FUNC    LOCAL  DEFAULT   69 quorem
+   586: 000001001421ec00     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   587: 0000010014218440     0 NOTYPE  LOCAL  DEFAULT   70 $x
+   588: 000001001421f8c8     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   589: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS ctype_.c
+   590: 00000100142195e0     0 NOTYPE  LOCAL  DEFAULT   71 $x
+   591: 000001001421f8f0     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   592: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS closer.c
+   593: 00000100142195f0     0 NOTYPE  LOCAL  DEFAULT   72 $x
+   594: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS fflush.c
+   595: 0000010014219640     0 NOTYPE  LOCAL  DEFAULT   73 $x
+   596: 0000010014219840     0 NOTYPE  LOCAL  DEFAULT   74 $x
+   597: 0000010014219900     0 NOTYPE  LOCAL  DEFAULT   75 $x
+   598: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS s_frexp.c
+   599: 00000100142199c0     0 NOTYPE  LOCAL  DEFAULT   76 $x
+   600: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS strlcpy.c
+   601: 0000010014219a40     0 NOTYPE  LOCAL  DEFAULT   77 $x
+   602: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS strtol.c
+   603: 0000010014219a80     0 NOTYPE  LOCAL  DEFAULT   78 $x
+   604: 0000010014219a80   388 FUNC    LOCAL  DEFAULT   78 _strtol_l.part.0
+   605: 0000010014219c10     0 NOTYPE  LOCAL  DEFAULT   79 $x
+   606: 0000010014219c40     0 NOTYPE  LOCAL  DEFAULT   80 $x
+   607: 0000010014219c90     0 NOTYPE  LOCAL  DEFAULT   81 $x
+   608: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS strncasecmp.c
+   609: 0000010014219ce0     0 NOTYPE  LOCAL  DEFAULT   82 $x
+   610: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS getenv_r.c
+   611: 0000010014219d60     0 NOTYPE  LOCAL  DEFAULT   83 $x
+   612: 0000010014219e60     0 NOTYPE  LOCAL  DEFAULT   84 $x
+   613: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS strncpy.c
+   614: 0000010014219e80     0 NOTYPE  LOCAL  DEFAULT   85 $x
+   615: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS fstatr.c
+   616: 0000010014219f10     0 NOTYPE  LOCAL  DEFAULT   86 $x
+   617: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS isattyr.c
+   618: 0000010014219f60     0 NOTYPE  LOCAL  DEFAULT   87 $x
+   619: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS lseekr.c
+   620: 0000010014219fb0     0 NOTYPE  LOCAL  DEFAULT   88 $x
+   621: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS readr.c
+   622: 000001001421a010     0 NOTYPE  LOCAL  DEFAULT   89 $x
+   623: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS libc_a-strchr.o
+   624: 0000010014206d80     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   625: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS libc_a-strcmp.o
+   626: 0000010014206e80     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   627: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS libc_a-strcpy.o
+   628: 0000010014206fc0     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   629: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS fputwc.c
+   630: 000001001421a070     0 NOTYPE  LOCAL  DEFAULT   90 $x
+   631: 000001001421a150     0 NOTYPE  LOCAL  DEFAULT   91 $x
+   632: 000001001421a1f0     0 NOTYPE  LOCAL  DEFAULT   92 $x
+   633: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS wctomb_r.c
+   634: 000001001421a2c0     0 NOTYPE  LOCAL  DEFAULT   93 $x
+   635: 000001001421a2d0     0 NOTYPE  LOCAL  DEFAULT   94 $x
+   636: 000001001421a310     0 NOTYPE  LOCAL  DEFAULT   95 $x
+   637: 000001001421a400     0 NOTYPE  LOCAL  DEFAULT   96 $x
+   638: 000001001421a490     0 NOTYPE  LOCAL  DEFAULT   97 $x
+   639: 000001001421a540     0 NOTYPE  LOCAL  DEFAULT   98 $x
+   640: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS fvwrite.c
+   641: 000001001421a600     0 NOTYPE  LOCAL  DEFAULT   99 $x
+   642: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS libc_a-strncmp.o
+   643: 0000010014207100     0 NOTYPE  LOCAL  DEFAULT    1 $x
+   644: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS wbuf.c
+   645: 000001001421aad0     0 NOTYPE  LOCAL  DEFAULT  100 $x
+   646: 000001001421ac10     0 NOTYPE  LOCAL  DEFAULT  101 $x
+   647: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS mbtowc_r.c
+   648: 000001001421ac30     0 NOTYPE  LOCAL  DEFAULT  102 $x
+   649: 000001001421ac40     0 NOTYPE  LOCAL  DEFAULT  103 $x
+   650: 000001001421ac90     0 NOTYPE  LOCAL  DEFAULT  104 $x
+   651: 000001001421af50     0 NOTYPE  LOCAL  DEFAULT  105 $x
+   652: 000001001421b020     0 NOTYPE  LOCAL  DEFAULT  106 $x
+   653: 000001001421b150     0 NOTYPE  LOCAL  DEFAULT  107 $x
+   654: 000001001421fa00    72 OBJECT  LOCAL  DEFAULT  154 JIS_action_table
+   655: 000001001421fa50    72 OBJECT  LOCAL  DEFAULT  154 JIS_state_table
+   656: 000001001421fa00     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   657: 000001001421fa50     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   658: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS assert.c
+   659: 000001001421ec90     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   660: 000001001421b310     0 NOTYPE  LOCAL  DEFAULT  108 $x
+   661: 000001001421b370     0 NOTYPE  LOCAL  DEFAULT  109 $x
+   662: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS strcasecmp.c
+   663: 000001001421b390     0 NOTYPE  LOCAL  DEFAULT  110 $x
+   664: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS strcat.c
+   665: 000001001421b400     0 NOTYPE  LOCAL  DEFAULT  111 $x
+   666: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS mprec.c
+   667: 000001001421b480     0 NOTYPE  LOCAL  DEFAULT  112 $x
+   668: 000001001421b510     0 NOTYPE  LOCAL  DEFAULT  113 $x
+   669: 000001001421ec18     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   670: 000001001421b530     0 NOTYPE  LOCAL  DEFAULT  114 $x
+   671: 000001001421b640     0 NOTYPE  LOCAL  DEFAULT  115 $x
+   672: 000001001421b770     0 NOTYPE  LOCAL  DEFAULT  116 $x
+   673: 000001001421b7f0     0 NOTYPE  LOCAL  DEFAULT  117 $x
+   674: 000001001421b890     0 NOTYPE  LOCAL  DEFAULT  118 $x
+   675: 000001001421b950     0 NOTYPE  LOCAL  DEFAULT  119 $x
+   676: 000001001421bb40     0 NOTYPE  LOCAL  DEFAULT  120 $x
+   677: 000001001421fa98    12 OBJECT  LOCAL  DEFAULT  154 p05.0
+   678: 000001001421bc60     0 NOTYPE  LOCAL  DEFAULT  121 $x
+   679: 000001001421bdd0     0 NOTYPE  LOCAL  DEFAULT  122 $x
+   680: 000001001421be20     0 NOTYPE  LOCAL  DEFAULT  123 $x
+   681: 000001001421c020     0 NOTYPE  LOCAL  DEFAULT  124 $x
+   682: 000001001421c0b0     0 NOTYPE  LOCAL  DEFAULT  125 $x
+   683: 000001001421c1e0     0 NOTYPE  LOCAL  DEFAULT  126 $x
+   684: 000001001421c320     0 NOTYPE  LOCAL  DEFAULT  127 $x
+   685: 000001001421c3b0     0 NOTYPE  LOCAL  DEFAULT  128 $x
+   686: 000001001421c3e0     0 NOTYPE  LOCAL  DEFAULT  129 $x
+   687: 000001001421c450     0 NOTYPE  LOCAL  DEFAULT  130 $x
+   688: 000001001421fa98     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   689: 000001001421fab0     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   690: 000001001421fae0     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   691: 000001001421fb10     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   692: 000001001421f8e0     0 NOTYPE  LOCAL  DEFAULT  154 $d
+   693: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS callocr.c
+   694: 000001001421c4c0     0 NOTYPE  LOCAL  DEFAULT  131 $x
+   695: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS wcsnrtombs.c
+   696: 000001001421c580     0 NOTYPE  LOCAL  DEFAULT  132 $x
+   697: 000001001421c730     0 NOTYPE  LOCAL  DEFAULT  133 $x
+   698: 000001001421c750     0 NOTYPE  LOCAL  DEFAULT  134 $x
+   699: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS environ.c
+   700: 00000100142212d0     0 NOTYPE  LOCAL  DEFAULT  155 $d
+   701: 000001001425a488     8 OBJECT  LOCAL  DEFAULT  156 initial_env
+   702: 000001001425a488     0 NOTYPE  LOCAL  DEFAULT  156 $d
+   703: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS reallocr.c
+   704: 000001001421c790     0 NOTYPE  LOCAL  DEFAULT  135 $x
+   705: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS envlock.c
+   706: 000001001421ccc0     0 NOTYPE  LOCAL  DEFAULT  136 $x
+   707: 000001001421ccd0     0 NOTYPE  LOCAL  DEFAULT  137 $x
+   708: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS fiprintf.c
+   709: 000001001421cce0     0 NOTYPE  LOCAL  DEFAULT  138 $x
+   710: 000001001421cd50     0 NOTYPE  LOCAL  DEFAULT  139 $x
+   711: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS abort.c
+   712: 000001001421cdd0     0 NOTYPE  LOCAL  DEFAULT  140 $x
+   713: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS signal.c
+   714: 000001001421cdf0     0 NOTYPE  LOCAL  DEFAULT  141 $x
+   715: 000001001421ce50     0 NOTYPE  LOCAL  DEFAULT  142 $x
+   716: 000001001421ced0     0 NOTYPE  LOCAL  DEFAULT  143 $x
+   717: 000001001421cf80     0 NOTYPE  LOCAL  DEFAULT  144 $x
+   718: 000001001421d040     0 NOTYPE  LOCAL  DEFAULT  145 $x
+   719: 000001001421d0f0     0 NOTYPE  LOCAL  DEFAULT  146 $x
+   720: 000001001421d180     0 NOTYPE  LOCAL  DEFAULT  147 $x
+   721: 000001001421d1e0     0 NOTYPE  LOCAL  DEFAULT  148 $x
+   722: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS signalr.c
+   723: 000001001421d2a0     0 NOTYPE  LOCAL  DEFAULT  149 $x
+   724: 000001001421d2f0     0 NOTYPE  LOCAL  DEFAULT  150 $x
+   725: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS trunctfdf2.c
+   726: 000001001421d300     0 NOTYPE  LOCAL  DEFAULT  151 $x
+   727: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS sfp-exceptions.c
+   728: 000001001421d6d0     0 NOTYPE  LOCAL  DEFAULT  152 $x
+   729: 0000010014204780    76 FUNC    GLOBAL DEFAULT    1 connect_interrup[...]
+   730: 000001001421d6d0   112 FUNC    GLOBAL HIDDEN   152 __sfp_handle_exc[...]
+   731: 00000100142106e0    20 FUNC    GLOBAL DEFAULT    6 putchar
+   732: 000001001421c3b0    48 FUNC    GLOBAL DEFAULT  128 _mprec_log10
+   733: 0000010014204890     8 FUNC    GLOBAL DEFAULT    1 gic_get_active
+   734: 0000010014204690    48 FUNC    GLOBAL DEFAULT    1 assert_with_message
+   735: 0000010014201260    36 FUNC    GLOBAL DEFAULT    1 clock_gettime
+   736: 000001001421c450   108 FUNC    GLOBAL DEFAULT  130 __any_on
+   737: 0000010014219f60    76 FUNC    GLOBAL DEFAULT   87 _isatty_r
+   738: 000001001421fab0    40 OBJECT  GLOBAL DEFAULT  154 __mprec_tinytens
+   739: 000001001420feb0    96 FUNC    GLOBAL DEFAULT    1 pvPortCalloc
+   740: 0000010014202cf0    80 FUNC    GLOBAL DEFAULT    1 erase_flash
+   741: 0000010014206fc0   300 FUNC    GLOBAL DEFAULT    1 strcpy
+   742: 0000010014201470    12 FUNC    GLOBAL DEFAULT    1 _getpid
+   743: 0000010014219fb0    84 FUNC    GLOBAL DEFAULT   88 _lseek_r
+   744: 000001001420a1e0   372 FUNC    GLOBAL DEFAULT    1 vTaskPlaceOnUnor[...]
+   745: 00000100142101e0    12 FUNC    GLOBAL DEFAULT    1 xPortGetFreeHeapSize
+   746: 0000010014271000     0 NOTYPE  GLOBAL DEFAULT  160 dma_smmu_reserve[...]
+   747: 0000010014202080   228 FUNC    GLOBAL DEFAULT    1 pmu_rbc_lpi_entry
+   748: 000001001422a2a8    16 OBJECT  GLOBAL DEFAULT  156 ucRecursionCount[...]
+   749: 0000010014202820    60 FUNC    GLOBAL DEFAULT    1 qspi_apb_enable_[...]
+   750: 00000100142017d0    36 FUNC    GLOBAL DEFAULT    1 _utime
+   751: 000001001420be40   128 FUNC    GLOBAL DEFAULT    1 uxTaskPriorityGet
+   752: 000001001420f2a0   208 FUNC    GLOBAL DEFAULT    1 xTimerCreate
+   753: 000001001421d2a0    80 FUNC    GLOBAL DEFAULT  149 _kill_r
+   754: 0000010014210650   128 FUNC    GLOBAL DEFAULT    4 printf
+   755: 0000010014201720    16 FUNC    WEAK   DEFAULT    1 sysconf
+   756: 000001001425a2b0     1 OBJECT  GLOBAL DEFAULT  156 __lock___atexit_[...]
+   757: 0000010014216d30   136 FUNC    GLOBAL DEFAULT   37 _wcrtomb_r
+   758: 000001001421ce50   120 FUNC    GLOBAL DEFAULT  142 _signal_r
+   759: 000001001420ccf0   388 FUNC    GLOBAL DEFAULT    1 xTaskAbortDelay
+   760: 0000010014211140    80 FUNC    GLOBAL DEFAULT   24 __sseek
+   761: 0000010014210b80   100 FUNC    GLOBAL DEFAULT   14 __sinit
+   762: 000001001420ce80   664 FUNC    GLOBAL DEFAULT    1 vTaskGetInfo
+   763: 000001001421aad0   312 FUNC    GLOBAL DEFAULT  100 __swbuf_r
+   764: 0000010014208f80   164 FUNC    GLOBAL DEFAULT    1 vQueueWaitForMes[...]
+   765: 00000100142177e0   944 FUNC    GLOBAL DEFAULT   52 _setlocale_r
+   766: 0000010014218240    12 FUNC    GLOBAL DEFAULT   66 __malloc_unlock
+   767: 000001001420ca50   420 FUNC    GLOBAL DEFAULT    1 xTaskDelayUntil
+   768: 0000010014204900   236 FUNC    GLOBAL DEFAULT    1 gic_irq_set_priority
+   769: 0000010014272000     0 NOTYPE  GLOBAL DEFAULT  161 dma_smmu_reserved_end
+   770: 000001001425a280     1 OBJECT  GLOBAL DEFAULT  156 __lock___arc4ran[...]
+   771: 0000010014204c30   196 FUNC    GLOBAL DEFAULT    1 cpuif_init
+   772: 00000100142055a0     0 FUNC    GLOBAL DEFAULT    1 GateSmp_tryLock
+   773: 00000100142195e0    16 FUNC    GLOBAL DEFAULT   71 __set_ctype
+   774: 0000010014205650     8 FUNC    GLOBAL DEFAULT    1 vprintf_
+   775: 000001001421ed50   192 OBJECT  GLOBAL DEFAULT  154 mmu_os_ranges
+   776: 0000010014206900     0 FUNC    GLOBAL DEFAULT    1 memmove
+   777: 000001001420dc60   224 FUNC    GLOBAL DEFAULT    1 ulTaskGenericNot[...]
+   778: 0000010014204520   320 FUNC    GLOBAL DEFAULT    1 init_drivers_by_[...]
+   779: 0000010014203440   276 FUNC    GLOBAL DEFAULT    1 vTaskEnterCritical
+   780: 0000010014208080   596 FUNC    GLOBAL DEFAULT    1 xQueueGenericSen[...]
+   781: 0000010014209b60   124 FUNC    GLOBAL DEFAULT    1 pcTaskGetName
+   782: 000001001421b480   140 FUNC    GLOBAL DEFAULT  112 _Balloc
+   783: 0000010014204a30   112 FUNC    GLOBAL DEFAULT    1 gic_irq_enable
+   784: 00000100142105d0    12 FUNC    GLOBAL DEFAULT    2 __errno
+   785: 0000010014216e80     4 FUNC    GLOBAL DEFAULT   41 __retarget_lock_close
+   786: 00000100142054d0   208 FUNC    GLOBAL DEFAULT    1 init_smp
+   787: 0000010014201730   104 FUNC    WEAK   DEFAULT    1 times
+   788: 0000010014217bc0     8 FUNC    GLOBAL DEFAULT   55 __localeconv_l
+   789: 000001001425a238     8 OBJECT  GLOBAL DEFAULT  156 __stdio_exit_handler
+   790: 0000010014202270   184 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_irq[...]
+   791: 000001001421a400   132 FUNC    GLOBAL DEFAULT   96 __sjis_wctomb
+   792: 0000010014219f10    80 FUNC    GLOBAL DEFAULT   86 _fstat_r
+   793: 0000010014205f50  1148 FUNC    GLOBAL DEFAULT    1 setup_page_tables
+   794: 000001001425a008     4 OBJECT  GLOBAL DEFAULT  156 errno
+   795: 0000010014202560    24 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_get[...]
+   796: 00000100142110c0     8 FUNC    GLOBAL DEFAULT   22 __seofread
+   797: 0000010014260000     0 NOTYPE  GLOBAL DEFAULT  159 smmu_cte_end
+   798: 000001001420c080   728 FUNC    GLOBAL DEFAULT    1 vTaskPrioritySet
+   799: 000001001420b670    24 FUNC    GLOBAL DEFAULT    1 vTaskInternalSet[...]
+   800: 0000010014202680   264 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_set[...]
+   801: 0000010014201720    16 FUNC    GLOBAL DEFAULT    1 _sysconf
+   802: 0000010014204b80   136 FUNC    GLOBAL DEFAULT    1 gic_irq_is_enabled
+   803: 0000010014230108    16 OBJECT  GLOBAL DEFAULT  156 isr_flag
+   804: 000001001421a490   168 FUNC    GLOBAL DEFAULT   97 __eucjp_wctomb
+   805: 00000100142104e0   188 FUNC    GLOBAL DEFAULT    1 xPortStartScheduler
+   806: 00000100142106d0     8 FUNC    GLOBAL DEFAULT    5 _putchar_r
+   807: 0000010014205460    28 FUNC    GLOBAL DEFAULT    1 ipi_handler
+   808: 0000010014209a10    28 FUNC    GLOBAL DEFAULT    1 vTaskEndScheduler
+   809: 0000010014206900   556 FUNC    GLOBAL DEFAULT    1 memcpy
+   810: 00000100142055c8     0 FUNC    GLOBAL DEFAULT    1 GateSmp_unlock
+   811: 000001001420a130   164 FUNC    GLOBAL DEFAULT    1 vTaskPlaceOnEventList
+   812: 0000010014204770    16 FUNC    GLOBAL DEFAULT    1 disable_all_inte[...]
+   813: 000001001420e040   524 FUNC    GLOBAL DEFAULT    1 vTaskRemoveFromU[...]
+   814: 0000010014202530    40 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_disable
+   815: 000001001c272000     0 NOTYPE  GLOBAL DEFAULT  162 metal_segment_he[...]
+   816: 00000100142036d0   144 FUNC    GLOBAL DEFAULT    1 vTaskCoreAffinityGet
+   817: 0000010014207bc0   344 FUNC    GLOBAL DEFAULT    1 xQueuePeekFromISR
+   818: 00000100142010b0     8 FUNC    GLOBAL DEFAULT    1 metal_timer_get_[...]
+   819: 0000010014201410    36 FUNC    GLOBAL DEFAULT    1 _ftime
+   820: 0000010014201290    36 FUNC    GLOBAL DEFAULT    1 clock_settime
+   821: 000001001420ff10   700 FUNC    GLOBAL DEFAULT    1 vPortFree
+   822: 0000010014203af0   740 FUNC    GLOBAL DEFAULT    1 vPortRecursiveLock
+   823: 000001001420f5e0    96 FUNC    GLOBAL DEFAULT    1 pcTimerGetName
+   824: 0000010014206760    80 FUNC    GLOBAL DEFAULT    1 generic_timer_init
+   825: 000001001421c320   136 FUNC    GLOBAL DEFAULT  127 __ratio
+   826: 00000100142087a0   940 FUNC    GLOBAL DEFAULT    1 xQueueSemaphoreTake
+   827: 0000010014204660    48 FUNC    GLOBAL DEFAULT    1 assert
+   828: 00000100142092c0     8 FUNC    GLOBAL DEFAULT    1 uxQueueGetQueueNumber
+   829: 000001001420f550   144 FUNC    GLOBAL DEFAULT    1 xTimerPendFuncti[...]
+   830: 0000010014203a60     4 FUNC    GLOBAL DEFAULT    1 vPortValidateInt[...]
+   831: 00000100142105e0   112 FUNC    GLOBAL DEFAULT    3 _printf_r
+   832: 0000010014205030    32 FUNC    GLOBAL DEFAULT    1 gic_in_isr
+   833: 0000010014205630     8 FUNC    GLOBAL DEFAULT    1 sprintf_
+   834: 000001001421ced0   164 FUNC    GLOBAL DEFAULT  143 _raise_r
+   835: 00000100142013b0    36 FUNC    GLOBAL DEFAULT    1 _fstat
+   836: 000001001421b310    84 FUNC    GLOBAL DEFAULT  108 __assert_func
+   837: 000001001421fb10   200 OBJECT  GLOBAL DEFAULT  154 __mprec_tens
+   838: 0000010014230118    16 OBJECT  GLOBAL DEFAULT  156 ulSecondaryHoldingPen
+   839: 00000100142047d0    92 FUNC    GLOBAL DEFAULT    1 connect_interrup[...]
+   840: 0000010014208b50   132 FUNC    GLOBAL DEFAULT    1 xQueueGetMutexHolder
+   841: 0000010014204d70   544 FUNC    GLOBAL DEFAULT    1 dist_init
+   842: 00000100142102b0    44 FUNC    GLOBAL DEFAULT    1 vListInsertEnd
+   843: 000001001425a278     8 OBJECT  GLOBAL DEFAULT  156 __malloc_top_pad
+   844: 000001001420d920   572 FUNC    GLOBAL DEFAULT    1 ulTaskGenericNot[...]
+   845: 000001001421d2f0     4 FUNC    GLOBAL DEFAULT  150 _getpid_r
+   846: 0000010014272000     0 NOTYPE  GLOBAL DEFAULT  161 heap_region_start
+   847: 0000010014217bd0    12 FUNC    GLOBAL DEFAULT   56 _localeconv_r
+   848: 0000010014201230    36 FUNC    GLOBAL DEFAULT    1 clock_getres
+   849: 000001001421b890   184 FUNC    GLOBAL DEFAULT  118 __i2b
+   850: 000001001421a600  1228 FUNC    GLOBAL DEFAULT   99 __sfvwrite_r
+   851: 000001001421cf80   192 FUNC    GLOBAL DEFAULT  144 __sigtramp_r
+   852: 00000100142111a0    76 FUNC    GLOBAL DEFAULT   26 _sbrk_r
+   853: 0000010014201c30    88 FUNC    GLOBAL DEFAULT    1 ipm_samsung_send
+   854: 000001001421d760     0 NOTYPE  GLOBAL DEFAULT  153 end_init_func
+   855: 000001001420e420   340 FUNC    GLOBAL DEFAULT    1 xTaskResumeFromISR
+   856: 000001001421e000     0 NOTYPE  GLOBAL DEFAULT  154 rodata_start
+   857: 0000000000002000     0 NOTYPE  GLOBAL DEFAULT  ABS mmu_page_2mb
+   858: 000001001421a010    96 FUNC    GLOBAL DEFAULT   89 _read_r
+   859: 0000010014210220     8 FUNC    GLOBAL DEFAULT    1 vListInitialiseItem
+   860: 0000010014220468   224 OBJECT  GLOBAL DEFAULT  155 dw_apb_timer_peri0
+   861: 0000010014202260     4 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_def[...]
+   862: 0000010014272000 0x8000000 OBJECT  GLOBAL DEFAULT  161 ucHeap
+   863: 000001001420cc00   240 FUNC    GLOBAL DEFAULT    1 xTaskGetHandle
+   864: 0000010014217bf0   316 FUNC    GLOBAL DEFAULT   58 _fclose_r
+   865: 0000010014207d20   596 FUNC    GLOBAL DEFAULT    1 xQueueReceive
+   866: 00000100142212d8   160 OBJECT  GLOBAL DEFAULT  155 xQueueRegistry
+   867: 0000010014219900   184 FUNC    GLOBAL DEFAULT   75 fflush
+   868: 000001001425a270     8 OBJECT  GLOBAL DEFAULT  156 __malloc_max_sbr[...]
+   869: 000001001420e2e0   148 FUNC    GLOBAL DEFAULT    1 uxTaskPriorityGe[...]
+   870: 0000010014203aa0    40 FUNC    GLOBAL DEFAULT    1 vApplicationGetT[...]
+   871: 0000010014203e00     0 FUNC    GLOBAL DEFAULT    1 FreeRTOS_SWI_Handler
+   872: 0000010014201f30   260 FUNC    GLOBAL DEFAULT    1 default_cb
+   873: 000001001421c0b0   300 FUNC    GLOBAL DEFAULT  125 __b2d
+   874: 000001001420f730     4 FUNC    GLOBAL DEFAULT    1 uxTimerGetReloadMode
+   875: 0000010014208eb0   196 FUNC    GLOBAL DEFAULT    1 pcQueueGetName
+   876: 000001001425a298     1 OBJECT  GLOBAL DEFAULT  156 __lock___env_rec[...]
+   877: 0000010014206700    88 FUNC    GLOBAL DEFAULT    1 arch_timer_updat[...]
+   878: 0000010014204100     0 FUNC    GLOBAL DEFAULT    1 FreeRTOS_IRQ_Handler
+   879: 0000010014201510    12 FUNC    GLOBAL DEFAULT    1 _isatty
+   880: 000001001420f740    96 FUNC    GLOBAL DEFAULT    1 xTimerGetPeriod
+   881: 0000010014220668     8 OBJECT  GLOBAL DEFAULT  155 ullCriticalNesting
+   882: 000001001421c790  1316 FUNC    GLOBAL DEFAULT  135 _realloc_r
+   883: 0000010014219ce0   124 FUNC    GLOBAL DEFAULT   82 strncasecmp
+   884: 0000010014205320   132 FUNC    GLOBAL DEFAULT    1 vSetupTickInterrupt
+   885: 0000010014219c40    72 FUNC    GLOBAL DEFAULT   80 strtol_l
+   886: 000001001421c750    56 FUNC    GLOBAL DEFAULT  134 wcsnrtombs
+   887: 0000010014201db0    52 FUNC    GLOBAL DEFAULT    1 ipm_samsung_regi[...]
+   888: 0000010014271000     0 NOTYPE  GLOBAL DEFAULT  160 dma_smmu_region_end
+   889: 0000010014204750     4 FUNC    GLOBAL DEFAULT    1 enable_dev_interrupt
+   890: 000001001421a150   156 FUNC    GLOBAL DEFAULT   91 _fputwc_r
+   891: 000001001421fae0    40 OBJECT  GLOBAL DEFAULT  154 __mprec_bigtens
+   892: 000001001421b640   304 FUNC    GLOBAL DEFAULT  115 __s2b
+   893: 000001001421cdd0    24 FUNC    GLOBAL DEFAULT  140 abort
+   894: 00000100142015e0    36 FUNC    GLOBAL DEFAULT    1 _open
+   895: 0000010014209c90   152 FUNC    GLOBAL DEFAULT    1 pvTaskGetThreadL[...]
+   896: 00000100142016a0   128 FUNC    GLOBAL DEFAULT    1 _sbrk
+   897: 000001001c272000     0 NOTYPE  GLOBAL DEFAULT  162 dyn_heap_region_start
+   898: 000001001421bdd0    80 FUNC    GLOBAL DEFAULT  122 __mcmp
+   899: 000001001420faa0  1036 FUNC    GLOBAL DEFAULT    1 pvPortMalloc
+   900: 000001001421ee10  1680 OBJECT  GLOBAL DEFAULT  154 mmu_regions
+   901: 000001001421ed48     8 OBJECT  GLOBAL DEFAULT  154 ullMaxAPIPriorityMask
+   902: 0000010014210c10    48 FUNC    GLOBAL DEFAULT   17 __fp_lock_all
+   903: 0000010014205660     8 FUNC    GLOBAL DEFAULT    1 vsnprintf_
+   904: 0000010014208e40   104 FUNC    GLOBAL DEFAULT    1 vQueueDelete
+   905: 0000000000001000     0 NOTYPE  GLOBAL DEFAULT  ABS smmu_cte_size
+   906: 00000100142105a0    48 FUNC    GLOBAL DEFAULT    1 vPortEndScheduler
+   907: 0000010014210200    24 FUNC    GLOBAL DEFAULT    1 vListInitialise
+   908: 0000010014219c90    72 FUNC    GLOBAL DEFAULT   81 strtol
+   909: 000001001421d740     0 NOTYPE  GLOBAL DEFAULT  153 start_init_func
+   910: 0000010014209b20    12 FUNC    GLOBAL DEFAULT    1 xTaskGetTickCount
+   911: 00000100142075f0   868 FUNC    GLOBAL DEFAULT    1 xQueueGenericSend
+   912: 000001001421a540   188 FUNC    GLOBAL DEFAULT   98 __jis_wctomb
+   913: 0000010014201730   104 FUNC    GLOBAL DEFAULT    1 _times
+   914: 00000100142037d0   256 FUNC    GLOBAL DEFAULT    1 vTaskExitCritica[...]
+   915: 0000010014210700   176 FUNC    GLOBAL DEFAULT    7 _reclaim_reent
+   916: 000001001421b770   128 FUNC    GLOBAL DEFAULT  116 __hi0bits
+   917: 0000010014201140    36 FUNC    GLOBAL DEFAULT    1 nanosleep
+   918: 000001001420d250   304 FUNC    GLOBAL DEFAULT    1 uxTaskGetSystemState
+   919: 000001001420e930   668 FUNC    GLOBAL DEFAULT    1 vTaskGenericNoti[...]
+   920: 000001001420b0c0   592 FUNC    GLOBAL DEFAULT    1 xTaskPriorityDis[...]
+   921: 0000010014203760    40 FUNC    GLOBAL DEFAULT    1 vTaskEnterCritic[...]
+   922: 0000010014201130     8 FUNC    GLOBAL DEFAULT    1 metal_tty_putc
+   923: 000001001425a2a0     1 OBJECT  GLOBAL DEFAULT  156 __lock___malloc_[...]
+   924: 0000010014229800     0 NOTYPE  GLOBAL DEFAULT  155 _stack_top
+   925: 000001001425a010   552 OBJECT  GLOBAL DEFAULT  156 __sf
+   926: 0000010014201900   236 FUNC    GLOBAL DEFAULT    1 ipm_samsung_isr
+   927: 0000000000001000     0 NOTYPE  GLOBAL DEFAULT  ABS smmu_cd_size
+   928: 0000010014218060   224 FUNC    GLOBAL DEFAULT   63 _putc_r
+   929: 0000010014205670     8 FUNC    GLOBAL DEFAULT    1 fctprintf
+   930: 000001001420a480   596 FUNC    GLOBAL DEFAULT    1 xTaskRemoveFromE[...]
+   931: 00000100142212d0     8 OBJECT  GLOBAL DEFAULT  155 environ
+   932: 0000010014205260   176 FUNC    GLOBAL DEFAULT    1 primary_prep_c
+   933: 00000100142048a0    12 FUNC    GLOBAL DEFAULT    1 gic_eoi
+   934: 0000010014203a90     4 FUNC    GLOBAL DEFAULT    1 vApplicationTickHook
+   935: 000001001422a2a0     8 OBJECT  GLOBAL DEFAULT  156 GateWord
+   936: 0000010014207960   596 FUNC    GLOBAL DEFAULT    1 xQueuePeek
+   937: 000001001421b400   116 FUNC    GLOBAL DEFAULT  111 strcat
+   938: 0000010014221390    32 OBJECT  GLOBAL DEFAULT  155 pxCurrentTCBs
+   939: 000001001421bb40   288 FUNC    GLOBAL DEFAULT  120 __pow5mult
+   940: 0000010014204b00   128 FUNC    GLOBAL DEFAULT    1 gic_irq_disable
+   941: 0000010014202c50    80 FUNC    GLOBAL DEFAULT    1 read_flash
+   942: 0000010014200ff0    20 FUNC    GLOBAL DEFAULT    1 prvSetupHardware
+   943: 000001001420bc10   548 FUNC    GLOBAL DEFAULT    1 vTaskDelete
+   944: 0000010014216ef0     4 FUNC    GLOBAL DEFAULT   48 __retarget_lock_[...]
+   945: 00000100142056d0    72 FUNC    GLOBAL DEFAULT    1 psci_cpu_off
+   946: 0000000000200000     0 NOTYPE  GLOBAL DEFAULT  ABS dyn_heap_size
+   947: 000001001421f6e0   424 OBJECT  GLOBAL DEFAULT  154 __C_locale
+   948: 0000010014208d80   180 FUNC    GLOBAL DEFAULT    1 vQueueUnregisterQueue
+   949: 0000010014204f90   152 FUNC    GLOBAL DEFAULT    1 gic_init
+   950: 0000010014216ed0     8 FUNC    GLOBAL DEFAULT   46 __retarget_lock_[...]
+   951: 00000100142011a0    36 FUNC    GLOBAL DEFAULT    1 _chdir
+   952: 0000010014200fa0    68 FUNC    GLOBAL DEFAULT    1 vAssertCalled
+   953: 000001001420b610    84 FUNC    GLOBAL DEFAULT    1 pvTaskIncrementM[...]
+   954: 0000010014205210    52 FUNC    GLOBAL DEFAULT    1 rebel_bakery_loc[...]
+   955: 0000010014217760   124 FUNC    GLOBAL DEFAULT   51 __get_locale_env
+   956: 0000010014209be0   172 FUNC    GLOBAL DEFAULT    1 vTaskSetThreadLo[...]
+   957: 0000010014210bf0    12 FUNC    GLOBAL DEFAULT   15 __sfp_lock_acquire
+   958: 0000010014206c80   220 FUNC    GLOBAL DEFAULT    1 memchr
+   959: 000001001c272000     0 NOTYPE  GLOBAL DEFAULT  162 heap_region_end
+   960: 000001001420dde0   468 FUNC    GLOBAL DEFAULT    1 xTaskCheckForTimeOut
+   961: 0000010014210d90   736 FUNC    GLOBAL DEFAULT   20 _free_r
+   962: 000001001420ae30   644 FUNC    GLOBAL DEFAULT    1 xTaskPriorityInherit
+   963: 000001001425e000     0 NOTYPE  GLOBAL DEFAULT  158 dma_mcode_end
+   964: 000001001420fa90     8 FUNC    GLOBAL DEFAULT    1 uxTimerGetTimerNumber
+   965: 0000010014203ae0    12 FUNC    GLOBAL DEFAULT    1 Set_64
+   966: 0000010014217b90    12 FUNC    GLOBAL DEFAULT   53 __locale_mb_cur_max
+   967: 0000010014218250    16 FUNC    GLOBAL DEFAULT   67 _wcsrtombs_r
+   968: 0000010014200000     0 NOTYPE  GLOBAL DEFAULT    1 text_region_start
+   969: 0000010014205600     0 FUNC    GLOBAL DEFAULT    1 arm_smccc_smc
+   970: 000001001420d6b0   612 FUNC    GLOBAL DEFAULT    1 xTaskGenericNoti[...]
+   971: 0000010014203560   368 FUNC    GLOBAL DEFAULT    1 vTaskCoreAffinitySet
+   972: 00000100142212b0    32 OBJECT  GLOBAL DEFAULT  155 __default_locale
+   973: 00000100142207e8     8 OBJECT  GLOBAL DEFAULT  155 __malloc_sbrk_base
+   974: 0000010014200000     0 NOTYPE  GLOBAL DEFAULT    1 _start
+   975: 000001001425f000     0 NOTYPE  GLOBAL DEFAULT  159 smmu_cte_start
+   976: 0000010014209a30   228 FUNC    GLOBAL DEFAULT    1 vTaskSuspendAll
+   977: 000001001420bf40   320 FUNC    GLOBAL DEFAULT    1 eTaskGetState
+   978: 00000100142029a0   680 FUNC    GLOBAL DEFAULT    1 qspi_apb_transfer
+   979: 0000000000004000     0 NOTYPE  GLOBAL DEFAULT  ABS isr_stack_size
+   980: 0000010014201800    36 FUNC    GLOBAL DEFAULT    1 _wait
+   981: 0000010014216ec0     8 FUNC    GLOBAL DEFAULT   45 __retarget_lock_[...]
+   982: 0000010014204740     4 FUNC    GLOBAL DEFAULT    1 set_dev_interrup[...]
+   983: 0000010014209b30    28 FUNC    GLOBAL DEFAULT    1 xTaskGetTickCoun[...]
+   984: 00000100142010c0     8 FUNC    GLOBAL DEFAULT    1 metal_timer_get_[...]
+   985: 0000010014202170   212 FUNC    GLOBAL DEFAULT    1 pmu_rbc_lpi_exit
+   986: 000001001422c2f8    32 OBJECT  GLOBAL DEFAULT  156 gic_rdists
+   987: 0000010014201580    36 FUNC    GLOBAL DEFAULT    1 _lseek
+   988: 000001001425e000     0 NOTYPE  GLOBAL DEFAULT  158 dma_reserved_start
+   989: 000001001421bc60   360 FUNC    GLOBAL DEFAULT  121 __lshift
+   990: 000001001421d0f0   136 FUNC    GLOBAL DEFAULT  146 signal
+   991: 000001001425a490     0 NOTYPE  GLOBAL DEFAULT  156 bss_end
+   992: 00000100142102e0    96 FUNC    GLOBAL DEFAULT    1 uxListRemove
+   993: 000001001421af50   204 FUNC    GLOBAL DEFAULT  105 __sjis_mbtowc
+   994: 0000010014219a40    60 FUNC    GLOBAL DEFAULT   77 strlcpy
+   995: 0000010014207100   436 FUNC    GLOBAL DEFAULT    1 strncmp
+   996: 0000010014218260    40 FUNC    GLOBAL DEFAULT   68 wcsrtombs
+   997: 0000010014202580    24 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_get[...]
+   998: 000001001421b950   484 FUNC    GLOBAL DEFAULT  119 __multiply
+   999: 0000010014219e80   144 FUNC    GLOBAL DEFAULT   85 strncpy
+  1000: 000001001425a240    40 OBJECT  GLOBAL DEFAULT  156 __malloc_current[...]
+  1001: 000001001420c590   320 FUNC    GLOBAL DEFAULT    1 vTaskResume
+  1002: 000001001421c1e0   316 FUNC    GLOBAL DEFAULT  126 __d2b
+  1003: 000001001421b390   108 FUNC    GLOBAL DEFAULT  110 strcasecmp
+  1004: 000001001420a6e0  1616 FUNC    GLOBAL DEFAULT    1 vTaskSwitchContext
+  1005: 000001001420f890   280 FUNC    GLOBAL DEFAULT    1 xTimerGenericCom[...]
+  1006: 000001001420f640   116 FUNC    GLOBAL DEFAULT    1 vTimerSetReloadMode
+  1007: 0000010014201f20    12 FUNC    GLOBAL DEFAULT    1 mailbox_register[...]
+  1008: 00000100142013e0    36 FUNC    GLOBAL DEFAULT    1 _fstatat
+  1009: 000001001420a360   276 FUNC    GLOBAL DEFAULT    1 vTaskPlaceOnEven[...]
+  1010: 000001001422a000     0 NOTYPE  GLOBAL DEFAULT  156 bss_start
+  1011: 000001001422a028     8 OBJECT  GLOBAL DEFAULT  156 ullPortSchedular[...]
+  1012: 00000100142195f0    76 FUNC    GLOBAL DEFAULT   72 _close_r
+  1013: 0000010014220000     0 NOTYPE  GLOBAL DEFAULT  155 data_region_start
+  1014: 0000000000004000     0 NOTYPE  GLOBAL DEFAULT  ABS _stack_size
+  1015: 000001001c472000     0 NOTYPE  GLOBAL DEFAULT  162 dyn_heap_region_end
+  1016: 0000010014202060    24 FUNC    GLOBAL DEFAULT    1 pmu_sw_reset
+  1017: 0000010014205480    68 FUNC    GLOBAL DEFAULT    1 secondary_prep_c
+  1018: 0000010014216e90     4 FUNC    GLOBAL DEFAULT   42 __retarget_lock_[...]
+  1019: 000001001420b5f0    20 FUNC    GLOBAL DEFAULT    1 vTaskSetTaskNumber
+  1020: 0000010014217d40   304 FUNC    GLOBAL DEFAULT   60 __swsetup_r
+  1021: 000001001420c360   560 FUNC    GLOBAL DEFAULT    1 vTaskSuspend
+  1022: 0000010014210a30   324 FUNC    GLOBAL DEFAULT   13 __sfp
+  1023: 000001001421c3e0   104 FUNC    GLOBAL DEFAULT  129 __copybits
+  1024: 000001001420dfc0   116 FUNC    GLOBAL DEFAULT    1 xTaskCatchUpTicks
+  1025: 0000010014209b50    16 FUNC    GLOBAL DEFAULT    1 uxTaskGetNumberO[...]
+  1026: 0000010014220800  2064 OBJECT  GLOBAL DEFAULT  155 __malloc_av_
+  1027: 0000010014201c90   280 FUNC    GLOBAL DEFAULT    1 ipm_samsung_receive
+  1028: 000001001420f500    68 FUNC    GLOBAL DEFAULT    1 xTimerPendFuncti[...]
+  1029: 0000010014211070    80 FUNC    GLOBAL DEFAULT   21 __sread
+  1030: 0000010014201680    20 FUNC    GLOBAL DEFAULT    1 _brk
+  1031: 0000010014260000     0 NOTYPE  GLOBAL DEFAULT  159 smmu_cd_start
+  1032: 0000010014205060   344 FUNC    GLOBAL DEFAULT    1 rebel_bakery_loc[...]
+  1033: 0000010014218230    12 FUNC    GLOBAL DEFAULT   65 __malloc_lock
+  1034: 0000010014219840   184 FUNC    GLOBAL DEFAULT   74 _fflush_r
+  1035: 0000010014205680    80 FUNC    GLOBAL DEFAULT    1 psci_cpu_on
+  1036: 000001001420f9b0   196 FUNC    GLOBAL DEFAULT    1 xTimerGenericCom[...]
+  1037: 000001001421ac90   696 FUNC    GLOBAL DEFAULT  104 __utf8_mbtowc
+  1038: 000001001421c4c0   192 FUNC    GLOBAL DEFAULT  131 _calloc_r
+  1039: 000001001420d380   812 FUNC    GLOBAL DEFAULT    1 xTaskGenericNotify
+  1040: 0000010014201480   136 FUNC    WEAK   DEFAULT    1 gettimeofday
+  1041: 0000010014216eb0     4 FUNC    GLOBAL DEFAULT   44 __retarget_lock_[...]
+  1042: 00000100142046c0    48 FUNC    GLOBAL DEFAULT    1 conditional_assert
+  1043: 000001001420b5c0    40 FUNC    GLOBAL DEFAULT    1 uxTaskGetTaskNumber
+  1044: 0000010014206b40   260 FUNC    GLOBAL DEFAULT    1 memset
+  1045: 0000010014201010   116 FUNC    GLOBAL DEFAULT    1 main
+  1046: 0000010014201550    36 FUNC    GLOBAL DEFAULT    1 _link
+  1047: 000001001420add0    56 FUNC    GLOBAL DEFAULT    1 xTaskGetCurrentT[...]
+  1048: 0000010014204c10    28 FUNC    GLOBAL DEFAULT    1 gic_irq_connect
+  1049: 000001001425a268     8 OBJECT  GLOBAL DEFAULT  156 __malloc_max_tot[...]
+  1050: 0000010014216e70     4 FUNC    GLOBAL DEFAULT   40 __retarget_lock_[...]
+  1051: 000001001421ac10    20 FUNC    GLOBAL DEFAULT  101 __swbuf
+  1052: 00000100142063d0   272 FUNC    GLOBAL DEFAULT    1 va_to_pa
+  1053: 000001001421b020   292 FUNC    GLOBAL DEFAULT  106 __eucjp_mbtowc
+  1054: 0000010014210230   124 FUNC    GLOBAL DEFAULT    1 vListInsert
+  1055: 00000100142010d0     8 FUNC    GLOBAL DEFAULT    1 metal_shutdown
+  1056: 0000010014211190     8 FUNC    GLOBAL DEFAULT   25 __sclose
+  1057: 0000010014217d30    16 FUNC    GLOBAL DEFAULT   59 fclose
+  1058: 000001001420f800   136 FUNC    GLOBAL DEFAULT    1 xTimerCreateTimerTask
+  1059: 00000100142010e0    72 FUNC    GLOBAL DEFAULT    1 metal_mem_scrub
+  1060: 0000010014219c10    48 FUNC    GLOBAL DEFAULT   79 _strtol_r
+  1061: 0000010014219d60   252 FUNC    GLOBAL DEFAULT   83 _findenv_r
+  1062: 0000010014201200    36 FUNC    GLOBAL DEFAULT    1 _chown
+  1063: 0000010014201170    36 FUNC    GLOBAL DEFAULT    1 _access
+  1064: 0000010014218440  4504 FUNC    GLOBAL DEFAULT   70 _dtoa_r
+  1065: 0000010014216530  2036 FUNC    GLOBAL DEFAULT   36 _malloc_r
+  1066: 0000010014220548   224 OBJECT  GLOBAL DEFAULT  155 dw_apb_timer_peri1
+  1067: 000001001421a2d0    52 FUNC    GLOBAL DEFAULT   94 __ascii_wctomb
+  1068: 00000100142092d0     8 FUNC    GLOBAL DEFAULT    1 ucQueueGetQueueType
+  1069: 000001001422c318 15856 OBJECT  GLOBAL DEFAULT  156 isr_table
+  1070: 000001001421a310   228 FUNC    GLOBAL DEFAULT   95 __utf8_wctomb
+  1071: 000001001421cce0   104 FUNC    GLOBAL DEFAULT  138 _fiprintf_r
+  1072: 000001001421d180    96 FUNC    GLOBAL DEFAULT  147 _init_signal
+  1073: 000001001421ccd0    12 FUNC    GLOBAL DEFAULT  137 __env_unlock
+  1074: 0000010014202920   124 FUNC    GLOBAL DEFAULT    1 qspi_apb_init
+  1075: 0000000000008000     0 NOTYPE  GLOBAL DEFAULT  ABS smmu_evtq_size
+  1076: 00000100142084a0   468 FUNC    GLOBAL DEFAULT    1 xQueueReceiveFromISR
+  1077: 000001001421ac30    16 FUNC    GLOBAL DEFAULT  102 _mbtowc_r
+  1078: 0000010014204760    16 FUNC    GLOBAL DEFAULT    1 enable_all_interrupts
+  1079: 000001001420ada0    40 FUNC    GLOBAL DEFAULT    1 xTaskGetCurrentT[...]
+  1080: 0000010014218140   232 FUNC    GLOBAL DEFAULT   64 putc
+  1081: 0000010014209160   232 FUNC    GLOBAL DEFAULT    1 xQueueGenericCreate
+  1082: 00000100142039c0   156 FUNC    GLOBAL DEFAULT    1 FreeRTOS_Tick_Handler
+  1083: 0000010014210c70   280 FUNC    GLOBAL DEFAULT   19 _malloc_trim_r
+  1084: 000001001421c580   420 FUNC    GLOBAL DEFAULT  132 _wcsnrtombs_l
+  1085: 00000100142010a0     8 FUNC    GLOBAL DEFAULT    1 metal_cpu_get_cu[...]
+  1086: 0000010014202ca0    80 FUNC    GLOBAL DEFAULT    1 write_flash
+  1087: 0000010014206e80   308 FUNC    GLOBAL DEFAULT    1 strcmp
+  1088: 0000010014220000     0 NOTYPE  GLOBAL DEFAULT  155 data_start
+  1089: 00000100142033e0    88 FUNC    GLOBAL DEFAULT    1 vTaskYieldWithinAPI
+  1090: 00000100142164f0    52 FUNC    GLOBAL DEFAULT   35 vfiprintf
+  1091: 0000010014216e60     4 FUNC    GLOBAL DEFAULT   39 __retarget_lock_init
+  1092: 0000010014201df0   280 FUNC    GLOBAL DEFAULT    1 ipm_samsung_read
+  1093: 000001001420e580   940 FUNC    GLOBAL DEFAULT    1 xTaskGenericNoti[...]
+  1094: 0000010014201610    36 FUNC    GLOBAL DEFAULT    1 _openat
+  1095: 0000010014200800     0 NOTYPE  GLOBAL DEFAULT    1 _freertos_vector[...]
+  1096: 000001001425c000     0 NOTYPE  GLOBAL DEFAULT  157 data_region_end
+  1097: 0000010014202250    16 FUNC    GLOBAL DEFAULT    1 pmu_get_num_of_s[...]
+  1098: 00000100142092b0     8 FUNC    GLOBAL DEFAULT    1 vQueueSetQueueNumber
+  1099: 00000100142012f0    36 FUNC    GLOBAL DEFAULT    1 _execve
+  1100: 000001001425c000     0 NOTYPE  GLOBAL DEFAULT  157 dma_mcode_start
+  1101: 000001001420c6d0   676 FUNC    GLOBAL DEFAULT    1 xTaskResumeAll
+  1102: 0000010014207ff0   132 FUNC    GLOBAL DEFAULT    1 uxQueueSpacesAva[...]
+  1103: 000001001420ba30   380 FUNC    GLOBAL DEFAULT    1 vTaskStartScheduler
+  1104: 000001001425a480     8 OBJECT  GLOBAL DEFAULT  156 _PathLocale
+  1105: 00000100142011d0    36 FUNC    GLOBAL DEFAULT    1 _chmod
+  1106: 000001001421c730    20 FUNC    GLOBAL DEFAULT  133 _wcsnrtombs_r
+  1107: 000001001422c2d8    32 OBJECT  GLOBAL DEFAULT  156 ullPortInterrupt[...]
+  1108: 0000010014211290    96 FUNC    GLOBAL DEFAULT   28 _write_r
+  1109: 0000010014217ba0    20 FUNC    GLOBAL DEFAULT   54 setlocale
+  1110: 00000100142086f0    92 FUNC    GLOBAL DEFAULT    1 xQueueIsQueueFul[...]
+  1111: 000001001422a030    32 OBJECT  GLOBAL DEFAULT  156 ullPortYieldRequired
+  1112: 000001001420f370    92 FUNC    GLOBAL DEFAULT    1 pvTimerGetTimerID
+  1113: 0000010014205640     8 FUNC    GLOBAL DEFAULT    1 snprintf_
+  1114: 0000010014220670     8 OBJECT  GLOBAL DEFAULT  155 _impure_ptr
+  1115: 00000100142015b0    36 FUNC    GLOBAL DEFAULT    1 _lstat
+  1116: 0000010014206550   424 FUNC    GLOBAL DEFAULT    1 mmu_init
+  1117: 000001001420f7a0    96 FUNC    GLOBAL DEFAULT    1 xTimerGetExpiryTime
+  1118: 0000010014219640   512 FUNC    GLOBAL DEFAULT   73 __sflush_r
+  1119: 0000010014202040    20 FUNC    GLOBAL DEFAULT    1 pmu_get_bootmode
+  1120: 00000100142111f0   160 FUNC    GLOBAL DEFAULT   27 _fwalk_sglue
+  1121: 0000010014202860   188 FUNC    GLOBAL DEFAULT    1 qspi_apb_set
+  1122: 0000010014202800     8 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_get_freq
+  1123: 0000010014216fd0  1936 FUNC    GLOBAL DEFAULT   50 __loadlocale
+  1124: 0000010014261000     0 NOTYPE  GLOBAL DEFAULT  159 smmu_cmdq_start
+  1125: 0000000000001000     0 NOTYPE  GLOBAL DEFAULT  ABS dma_smmu_reserve[...]
+  1126: 00000100142064e0   104 FUNC    GLOBAL DEFAULT    1 is_pa_continuous
+  1127: 000001001421fbd8     0 NOTYPE  GLOBAL DEFAULT  154 rodata_end
+  1128: 0000010014269000     0 NOTYPE  GLOBAL DEFAULT  159 smmu_evtq_start
+  1129: 0000010014202390   300 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_init
+  1130: 000001001421ac40    72 FUNC    GLOBAL DEFAULT  103 __ascii_mbtowc
+  1131: 000001001421c020   132 FUNC    GLOBAL DEFAULT  124 __ulp
+  1132: 0000010014210c40    48 FUNC    GLOBAL DEFAULT   18 __fp_unlock_all
+  1133: 000001001420ae10    32 FUNC    GLOBAL DEFAULT    1 vTaskMissedYield
+  1134: 00000100142017a0    36 FUNC    GLOBAL DEFAULT    1 _unlink
+  1135: 00000100142053c0   132 FUNC    GLOBAL DEFAULT    1 vApplicationIRQH[...]
+  1136: 0000010014201380    36 FUNC    GLOBAL DEFAULT    1 _fork
+  1137: 000001001422a008    32 OBJECT  GLOBAL DEFAULT  156 ullPortTaskHasFP[...]
+  1138: 0000010014207f80   108 FUNC    GLOBAL DEFAULT    1 uxQueueMessagesW[...]
+  1139: 000001001425f000     0 NOTYPE  GLOBAL DEFAULT  159 dma_smmu_region_start
+  1140: 0000010014208c60   276 FUNC    GLOBAL DEFAULT    1 vQueueAddToRegistry
+  1141: 00000100142059e0   136 FUNC    GLOBAL DEFAULT    1 new_table
+  1142: 0000010014209d30  1016 FUNC    GLOBAL DEFAULT    1 xTaskIncrementTick
+  1143: 000001001c472000     0 NOTYPE  GLOBAL DEFAULT  162 metal_segment_he[...]
+  1144: 00000100142053b0     4 FUNC    GLOBAL DEFAULT    1 vClearTickInterrupt
+  1145: 0000010014217be0    12 FUNC    GLOBAL DEFAULT   57 localeconv
+  1146: 0000010014202790   104 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_can[...]
+  1147: 0000010014217fc0   148 FUNC    GLOBAL DEFAULT   62 __swhatbuf_r
+  1148: 00000100142051c0    68 FUNC    GLOBAL DEFAULT    1 rebel_bakery_loc[...]
+  1149: 0000010014201440    36 FUNC    GLOBAL DEFAULT    1 _getcwd
+  1150: 0000010014205620     8 FUNC    GLOBAL DEFAULT    1 printf_
+  1151: 0000010014261000     0 NOTYPE  GLOBAL DEFAULT  159 smmu_cd_end
+  1152: 00000100142207d0    24 OBJECT  GLOBAL DEFAULT  155 __sglue
+  1153: 000001001420bbb0    96 FUNC    GLOBAL DEFAULT    1 xTaskCreateAffin[...]
+  1154: 0000010014209030   292 FUNC    GLOBAL DEFAULT    1 xQueueGenericReset
+  1155: 000001001420f3d0    84 FUNC    GLOBAL DEFAULT    1 vTimerSetTimerID
+  1156: 0000010014201840   184 FUNC    GLOBAL DEFAULT    1 _write
+  1157: 00000100142019f0   260 FUNC    GLOBAL DEFAULT    1 ipm_samsung_init
+  1158: 0000000000008000     0 NOTYPE  GLOBAL DEFAULT  ABS smmu_cmdq_size
+  1159: 000001001421a070   224 FUNC    GLOBAL DEFAULT   90 __fputwc
+  1160: 000001001425a2a8     1 OBJECT  GLOBAL DEFAULT  156 __lock___at_quic[...]
+  1161: 00000100142024c0   104 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_start
+  1162: 0000010014204000     0 FUNC    GLOBAL DEFAULT    1 vPortRestoreTask[...]
+  1163: 0000000000001000     0 NOTYPE  GLOBAL DEFAULT  ABS dma_reserved_size
+  1164: 0000010014203ad0    12 FUNC    GLOBAL DEFAULT    1 Get_64
+  1165: 000001001420b9f0    60 FUNC    GLOBAL DEFAULT    1 xTaskCreate
+  1166: 00000100142101d0     4 FUNC    GLOBAL DEFAULT    1 vPortInitialiseBlocks
+  1167: 000001001420db60   256 FUNC    GLOBAL DEFAULT    1 xTaskGenericNoti[...]
+  1168: 000001001420f430   128 FUNC    GLOBAL DEFAULT    1 xTimerIsTimerActive
+  1169: 00000100142049f0    56 FUNC    GLOBAL DEFAULT    1 gic_irq_route_de[...]
+  1170: 00000100142110d0   108 FUNC    GLOBAL DEFAULT   23 __swrite
+  1171: 0000010014225800     0 NOTYPE  GLOBAL DEFAULT  155 isr_stack_top
+  1172: 00000100142207f0     8 OBJECT  GLOBAL DEFAULT  155 __malloc_trim_th[...]
+  1173: 000001001421cd50   124 FUNC    GLOBAL DEFAULT  139 fiprintf
+  1174: 00000100142025a0   220 FUNC    GLOBAL DEFAULT    1 dw_apb_timer_set[...]
+  1175: 00000100142148e0  7172 FUNC    GLOBAL DEFAULT   34 _vfiprintf_r
+  1176: 000001001421b150   448 FUNC    GLOBAL DEFAULT  107 __jis_mbtowc
+  1177: 000001001421be20   512 FUNC    GLOBAL DEFAULT  123 __mdiff
+  1178: 00000100142046f0    72 FUNC    GLOBAL DEFAULT    1 conditional_asse[...]
+  1179: 0000010014201520    36 FUNC    GLOBAL DEFAULT    1 _kill
+  1180: 0000010014220678   344 OBJECT  GLOBAL DEFAULT  155 _impure_data
+  1181: 000001001420c980   200 FUNC    GLOBAL DEFAULT    1 vTaskDelay
+  1182: 0000010014210c00    12 FUNC    GLOBAL DEFAULT   16 __sfp_lock_release
+  1183: 0000010014201480   136 FUNC    GLOBAL DEFAULT    1 _gettimeofday
+  1184: 000001001420f6c0   112 FUNC    GLOBAL DEFAULT    1 xTimerGetReloadMode
+  1185: 000001001420e250   132 FUNC    GLOBAL DEFAULT    1 xTaskGetSchedule[...]
+  1186: 000001001421e000     0 NOTYPE  GLOBAL DEFAULT  154 text_region_end
+  1187: 000001001421f8f0   257 OBJECT  GLOBAL DEFAULT  154 _ctype_
+  1188: 000001001420b310   676 FUNC    GLOBAL DEFAULT    1 vTaskPriorityDis[...]
+  1189: 0000010014201640    36 FUNC    GLOBAL DEFAULT    1 _read
+  1190: 0000010014216ea0     4 FUNC    GLOBAL DEFAULT   43 __retarget_lock_[...]
+  1191: 0000010014216ee0     4 FUNC    GLOBAL DEFAULT   47 __retarget_lock_[...]
+  1192: 0000010014271000     0 NOTYPE  GLOBAL DEFAULT  159 smmu_evtq_end
+  1193: 00000100142092f0     8 FUNC    GLOBAL DEFAULT    1 uxQueueGetQueueLength
+  1194: 0000010014201320    36 FUNC    GLOBAL DEFAULT    1 _exit
+  1195: 0000010014204aa0    92 FUNC    GLOBAL DEFAULT    1 gic_irq_enable_d[...]
+  1196: 0000000000001000     0 NOTYPE  GLOBAL DEFAULT  ABS mmu_page_size
+  1197: 000001001425a288     1 OBJECT  GLOBAL DEFAULT  156 __lock___dd_hash[...]
+  1198: 0000010014217e70   336 FUNC    GLOBAL DEFAULT   61 __smakebuf_r
+  1199: 000001001425a290     1 OBJECT  GLOBAL DEFAULT  156 __lock___tz_mutex
+  1200: 0000010014203790    52 FUNC    GLOBAL DEFAULT    1 vTaskExitCritical
+  1201: 00000100142067c0   304 FUNC    GLOBAL DEFAULT    1 strlen
+  1202: 0000010014210340   412 FUNC    GLOBAL DEFAULT    1 pxPortInitialiseStack
+  1203: 000001001421cdf0    92 FUNC    GLOBAL DEFAULT  141 _init_signal_r
+  1204: 0000010014208be0   116 FUNC    GLOBAL DEFAULT    1 xQueueGetMutexHo[...]
+  1205: 000001001421b370    20 FUNC    GLOBAL DEFAULT  109 __assert
+  1206: 00000100142038e0   208 FUNC    GLOBAL DEFAULT    1 vPortGetHeapStats
+  1207: 00000100142148c0    24 FUNC    GLOBAL DEFAULT   33 __sprint_r
+  1208: 0000010014206d80   204 FUNC    GLOBAL DEFAULT    1 strchr
+  1209: 0000000000002000     0 NOTYPE  GLOBAL DEFAULT  ABS dma_mcode_region_size
+  1210: 000001001420dd40   148 FUNC    GLOBAL DEFAULT    1 vTaskSetTimeOutState
+  1211: 000001001420f4b0    80 FUNC    GLOBAL DEFAULT    1 xTimerGetTimerDa[...]
+  1212: 000001001420fa80     8 FUNC    GLOBAL DEFAULT    1 vTimerSetTimerNumber
+  1213: 000001001421a2c0    16 FUNC    GLOBAL DEFAULT   93 _wctomb_r
+  1214: 0000010014208750    80 FUNC    GLOBAL DEFAULT    1 uxQueueMessagesW[...]
+  1215: 000001001421ccc0    12 FUNC    GLOBAL DEFAULT  136 __env_lock
+  1216: 0000010014208680   104 FUNC    GLOBAL DEFAULT    1 xQueueIsQueueEmp[...]
+  1217: 00000100142112f0 13028 FUNC    GLOBAL DEFAULT   29 _vfprintf_r
+  1218: 000001001422a2b8    32 OBJECT  GLOBAL DEFAULT  156 ucOwnedByCore
+  1219: 000001001421e000     0 NOTYPE  GLOBAL DEFAULT  154 rodata_region_start
+  1220: 000001001421b7f0   156 FUNC    GLOBAL DEFAULT  117 __lo0bits
+  1221: 0000010014204d00   100 FUNC    GLOBAL DEFAULT    1 rdist_init
+  1222: 00000100142048b0    68 FUNC    GLOBAL DEFAULT    1 gic_raise_sgi
+  1223: 000001001421d1e0   192 FUNC    GLOBAL DEFAULT  148 __sigtramp
+  1224: 0000010014220628    64 OBJECT  GLOBAL DEFAULT  155 qspi_apb_cfg
+  1225: 0000010014220000     0 NOTYPE  GLOBAL DEFAULT  155 rodata_region_end
+  1226: 000001001420ad30   108 FUNC    GLOBAL DEFAULT    1 uxTaskResetEvent[...]
+  1227: 0000010014216dc0   156 FUNC    GLOBAL DEFAULT   38 wcrtomb
+  1228: 0000010014229800     0 NOTYPE  GLOBAL DEFAULT  155 data_end
+  1229: 0000010014209250    96 FUNC    GLOBAL DEFAULT    1 xQueueCreateMutex
+  1230: 00000100142199c0   120 FUNC    GLOBAL DEFAULT   76 frexp
+  1231: 00000100142092e0     8 FUNC    GLOBAL DEFAULT    1 uxQueueGetQueueI[...]
+  1232: 0000010014203a80     8 FUNC    GLOBAL DEFAULT    1 vApplicationPass[...]
+  1233: 0000010014221100   424 OBJECT  GLOBAL DEFAULT  155 __global_locale
+  1234: 0000010014269000     0 NOTYPE  GLOBAL DEFAULT  159 smmu_cmdq_end
+  1235: 000001001420e380   148 FUNC    GLOBAL DEFAULT    1 uxTaskBasePriori[...]
+  1236: 0000010014201350    36 FUNC    GLOBAL DEFAULT    1 _faccessat
+  1237: 00000100142145e0    52 FUNC    GLOBAL DEFAULT   30 vfprintf
+  1238: 0000010014201b00   296 FUNC    GLOBAL DEFAULT    1 ipm_samsung_write
+  1239: 000001001421d300   964 FUNC    GLOBAL HIDDEN   151 __trunctfdf2
+  1240: 000001001425a2b8     1 OBJECT  GLOBAL DEFAULT  156 __lock___sfp_rec[...]
+  1241: 00000100142101f0    12 FUNC    GLOBAL DEFAULT    1 xPortGetMinimumE[...]
+  1242: 000001001420bec0   128 FUNC    GLOBAL DEFAULT    1 uxTaskBasePriorityGet
+  1243: 00000100142082e0   436 FUNC    GLOBAL DEFAULT    1 xQueueGiveFromISR
+  1244: 000001001421a1f0   196 FUNC    GLOBAL DEFAULT   92 fputwc
+  1245: 000001001421d040   164 FUNC    GLOBAL DEFAULT  145 raise
+  1246: 00000100142012c0    36 FUNC    GLOBAL DEFAULT    1 _close
+  1247: 000001001421b530   272 FUNC    GLOBAL DEFAULT  114 __multadd
+  1248: 000001001425f000     0 NOTYPE  GLOBAL DEFAULT  159 dma_reserved_end
+  1249: 000001001421b510    28 FUNC    GLOBAL DEFAULT  113 _Bfree
+  1250: 0000010014219e60    24 FUNC    GLOBAL DEFAULT   84 _getenv_r
+  1251: 0000010014203a70     8 FUNC    GLOBAL DEFAULT    1 vApplicationIdleHook
+
+No version information found in this file.

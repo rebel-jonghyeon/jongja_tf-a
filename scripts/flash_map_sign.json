@@ -1,0 +1,63 @@
+{
+    "title": "flash region",
+    "partition1" : [
+        {
+            "name": "otp",
+            "image": "binaries/BootLoader_ROT/sboot.img",
+            "address": "0x0000",
+            "size": 16
+        },
+        {
+            "name": "sboot_n",
+            "image": "binaries/BootLoader_CP/bl1.sign",
+            "address": "0x4000",
+            "size": 40
+        },
+        {
+            "name": "tboot_s",
+            "image": "binaries/Zephyr_ROT/os.img",
+            "address": "0x10000",
+            "size": 256
+        },
+        {
+            "name": "tboot_n",
+            "image": "binaries/BootLoader_CP/bl2.sign",
+            "address": "0x80000",
+            "size": 128
+        },
+        {
+            "name": "bl31",
+            "image": "binaries/BootLoader_CP/bl31.sign",
+            "address": "0xA0000",
+            "size": 384
+        },
+        {
+            "name": "cp0 rtos",
+            "image": "binaries/FreeRTOS_CP/freertos_kernel.sign",
+            "address": "0x100000",
+            "size": 4096
+        },
+        {
+            "name": "pcie rtos",
+            "image": "binaries/FreeRTOS_PCIE/freertos_kernel.sign",
+            "address": "0x500000",
+            "size": 256
+        },
+        {
+            "name": "pcie phy",
+            "image": "binaries/3rd_party/dwc_pcie5_phy_change_endian_sign.bin",
+            "address": "0x540000",
+            "size": 256
+        },
+        {
+            "name": "ucie phy",
+            "image": "binaries/3rd_party/ucie_fw.hex",
+            "address": "0x580000",
+            "size": 64
+        }
+    ],
+    "partition2": [
+
+    ]
+}
+

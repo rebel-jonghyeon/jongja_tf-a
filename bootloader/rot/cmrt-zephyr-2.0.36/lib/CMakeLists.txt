@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: Apache-2.0
+
+if(NOT CONFIG_EXTERNAL_LIBC)
+add_subdirectory(libc)
+if(CONFIG_CMRT_SHSIG_LMS OR CONFIG_CMRT_SHSIG_XMSS OR CONFIG_CMRT_SHSIG_XMSS_MT)
+add_subdirectory(libshsig)
+endif()
+add_subdirectory_ifdef(CONFIG_CMRT_UCU_LIBRARY libucu)
+add_subdirectory(posix)
+endif()
+add_subdirectory_ifdef(CONFIG_CMRT_CALIPTRA_LIBRARY caliptra)
+add_subdirectory(gui)
+add_subdirectory(os)
+add_subdirectory(util)
+add_subdirectory_ifdef(CONFIG_OPENAMP              open-amp)
+add_subdirectory(gpt)
+add_subdirectory(integrity)

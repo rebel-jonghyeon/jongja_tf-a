@@ -1,0 +1,6 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+config BOARD_CMRT_FINCHLEY
+	bool "CMRT FINCHLEY target"
+	depends on SOC_RISCV_CMRT
+

@@ -1,0 +1,1039 @@
+;
+; .cmm script to fuse .hex file to EVB.flash device via AXI-AP
+;
+
+B::
+RESet
+SYStem.RESet
+
+;
+; Add your local directory path / flash file name
+; After ./build.sh, you'll get a t32_flash_gpt.hex
+;
+
+global &sboot_n
+global &tboot_s
+global &tboot_n
+global &tboot_p0
+global &tboot_p1
+global &tboot_u
+global &bl31_cp0
+global &freertos_cp0
+global &bl31_cp1
+global &freertos_cp1
+
+&sboot_n=1
+&tboot_s=0
+&tboot_n=0
+&tboot_p0=0
+&tboot_p1=0
+&tboot_u=0
+&bl31_cp0=0
+&freertos_cp0=0
+&bl31_cp1=0
+&freertos_cp1=0
+
+global &sboot_n_size
+&sboot_n_size=10000
+global &tboot_s_size
+&tboot_s_size=40000
+global &tboot_n_size
+&tboot_n_size=20000
+global &tboot_p0_size
+&tboot_p0_size=40000
+global &tboot_p1_size
+&tboot_p1_size=40000
+global &tboot_u_size
+&tboot_u_size=20000
+global &bl31_cp0_size
+&bl31_cp0_size=60000
+global &freertos_cp0_size
+&freertos_cp0_size=400000
+global &bl31_cp1_size
+&bl31_cp1_size=60000
+global &freertos_cp1_size
+&freertos_cp1_size=100000
+
+global &sboot_n_offset_1
+global &sboot_n_offset_2
+&sboot_n_offset_1=4000
+&sboot_n_offset_2=90000
+global &tboot_s_offset
+&tboot_s_offset=0xa0000
+global &tboot_n_offset
+&tboot_n_offset=0xe0000
+global &tboot_p0_offset
+&tboot_p0_offset=100000
+global &tboot_p1_offset
+&tboot_p1_offset=140000
+global &tboot_u_offset
+&tboot_u_offset=180000
+global &bl31_cp0_offset
+&bl31_cp0_offset=0x1a0000
+global &freertos_cp0_offset
+&freertos_cp0_offset=200000
+global &bl31_cp1_offset
+&bl31_cp1_offset=600000
+global &freertos_cp1_offset
+&freertos_cp1_offset=660000
+
+global &sboot_n_line_num_1
+&sboot_n_line_num_1=4097.
+global &sboot_n_line_num_2
+&sboot_n_line_num_2=147457.
+global &tboot_s_line_num
+&tboot_s_line_num=163841.
+global &tboot_n_line_num
+&tboot_n_line_num=229377.
+global &tboot_p0_line_num
+&tboot_p0_line_num=262145.
+global &tboot_p1_line_num
+&tboot_p1_line_num=327681.
+global &tboot_u_line_num
+&tboot_u_line_num=393217.
+global &bl31_cp0_line_num
+&bl31_cp0_line_num=425985.
+global &freertos_cp0_line_num
+&freertos_cp0_line_num=524289.
+global &bl31_cp1_line_num
+&bl31_cp1_line_num=1572865.
+global &freertos_cp1_line_num
+&freertos_cp1_line_num=1671169.
+
+global &sboot_n_real_size_1
+global &sboot_n_real_size_2
+global &tboot_s_real_size
+global &tboot_n_real_size
+global &tboot_p0_real_size
+global &tboot_p1_real_size
+global &tboot_u_real_size
+global &bl31_cp0_real_size
+global &freertos_cp0_real_size
+global &bl31_cp1_real_size
+global &freertos_cp1_real_size
+
+global &path
+; set your own t32_flash_gpt.hex file path
+&path="Z:\04_Rebel_H\rebel_fds_collab\" ;; <---- Here
+
+global &flash_filename
+&flash_filename="t32_flash_gpt.hex" ;; <---- Here
+
+; Platform, 1 = ZEBU / 0 = Silicon (default)
+LOCAL &ZEBU
+
+; Chiplet-id of target
+; Xj0* JTAG: per-chiplet standalone
+; Xj1* JTAG PAD route: TDI -> chiplet-0 -> chiplet-2 -> chiplet-3 -> chiplet-1 -> TDO
+
+LOCAL &STANDALONE        ; 0: per-chiplet Xj0*, 1: daisy-chain Xj1* path
+LOCAL &CHIPLET_ID
+
+&ZEBU=0.
+&STANDALONE=1.
+&CHIPLET_ID=0.
+
+IF &ZEBU==1.
+(
+ sys.CONFIG.DEBUGPORT GTL0
+ sys.gtl.modelconfig "NODE=localhost|PORT=20010|TIMEOUT=600000|TRST_USED=1|SRST_USED=0|CLK_RATIO=2|CPU_FREQ_MHZ=5"
+ sys.gtl.LIBname "/user/zebusw/XTOR/S/IP_ROOT_S_2023_03/lib/libxtor_t32_socket_svs.so"
+ sys.gtl.JTAGPROBENAME "JTAGPROBE0"
+ sys.vt.timeintargettime on                                                                                                ; configure usage of model timing
+ sys.vt.pauseintargettime on                                                                                        ; configure usage of model timing
+ sys.vt.hardwaretimeoutscale 100.0
+ sys.gtl.connect
+ sys.vt.timeintargettime on
+ sys.vt.pauseintargettime on
+)
+
+PRINT                        VERSION.SOFTWARE()
+
+; Set DAP's IR/DR POST/PRE value for the target chiplet
+; Chiplet-0 only supported
+IF &STANDALONE==1.
+(
+  SYS.CONFIG DAPIRPRE                0.
+  SYS.CONFIG DAPIRPOST                0.
+  SYS.CONFIG DAPDRPRE                0.
+  SYS.CONFIG DAPDRPOST                0.
+)
+ELSE IF &CHIPLET_ID==0.
+(
+  SYS.CONFIG DAPIRPRE                12.
+  SYS.CONFIG DAPIRPOST                0.
+  SYS.CONFIG DAPDRPRE                3.
+  SYS.CONFIG DAPDRPOST                0.
+)
+ELSE
+(
+  PRINT "Not supported"
+  ENDDO
+)
+
+; Basic setting
+
+SYSTEM.JTAGCLOCK                20MHz
+SYSTEM.CPU                                CORTEXA73
+
+SYSTEM.OPTION        RESBREAK        OFF
+SYSTEM.OPTION        ENRESET                OFF
+SYSTEM.OPTION        TRST                OFF
+SYSTEM.OPTION.MEMSTATUSCHECK ON
+
+; AXI-AP
+SYSTEM.CONFIG.AXIAP1.Base                DP:0x00002000
+
+SYStem.mode Prepare
+
+;
+; Start of QSPI controller
+;
+global &spi_base_addr
+&spi_base_addr=0x1e00500000
+
+&cmu_filename="cmu_rot_setting.cmm"
+
+global &is_cmu_enabled
+&is_cmu_enabled=0
+
+if (file.exist(&cmu_filename))
+(
+  ;do cmu_rot_setting.cmm
+  ;&is_cmu_enabled=1
+)
+
+;GOSUB qspi_init
+
+local &num
+&num=0
+
+local &i
+&i=0
+
+GOSUB get_image_real_size_in_hex_file
+
+if &sboot_n>0.
+(
+  &i=0
+  &num=&sboot_n_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &sboot_n_offset_1+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &sboot_n_offset_1 &sboot_n_real_size_1
+
+  &i=0
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &sboot_n_offset_2+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &sboot_n_offset_2 &sboot_n_real_size_2
+)
+
+if &tboot_s>0.
+(
+  &i=0
+  &num=&tboot_s_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &tboot_s_offset+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &tboot_s_offset &tboot_s_real_size
+)
+
+if &tboot_n>0.
+(
+  &i=0
+  &num=&tboot_n_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &tboot_n_offset+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &tboot_n_offset &tboot_n_real_size
+)
+
+if &tboot_p0>0.
+(
+  &i=0
+  &num=&tboot_p0_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &tboot_p0_offset+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &tboot_p0_offset &tboot_p0_real_size
+)
+
+if &tboot_p1>0.
+(
+  &i=0
+  &num=&tboot_p1_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &tboot_p1_offset+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &tboot_p1_offset &tboot_p1_real_size
+)
+
+if &tboot_u>0.
+(
+  &i=0
+  &num=&tboot_u_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &tboot_u_offset+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &tboot_u_offset &tboot_u_real_size
+)
+
+if &bl31_cp0>0.
+(
+  &i=0
+  &num=&bl31_cp0_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &bl31_cp0_offset+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &bl31_cp0_offset &bl31_cp0_real_size
+)
+
+if &freertos_cp0>0.
+(
+  &i=0
+  &num=&freertos_cp0_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &freertos_cp0_offset+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &freertos_cp0_offset &freertos_cp0_real_size
+)
+
+if &bl31_cp1>0.
+(
+  &i=0
+  &num=&bl31_cp1_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &bl31_cp1_offset+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &bl31_cp1_offset &bl31_cp1_real_size
+)
+
+if &freertos_cp1>0.
+(
+  &i=0
+  &num=&freertos_cp1_size/8000
+  while (&i<&num)
+  (
+    GOSUB erase_flash 52 &freertos_cp1_offset+(8000*&i)
+    &i=&i+1
+  )
+  GOSUB write_flash &freertos_cp1_offset &freertos_cp1_real_size
+)
+
+ENDDO
+
+raw_write_flash:
+  ENTRY &instruction &offset &size
+  ;size 256 fix
+
+  GOSUB write_enable_command
+  ;PRINT "WE(Write Enable) command issued"
+
+  GOSUB check_read_status
+  ENTRY &read_status_value
+
+  LOCAL &write_enable_latch
+  &write_enable_latch=0x2
+
+  LOCAL &loop_count
+  &loop_count=&size/4.
+
+  while (&read_status_value&(&write_enable_latch))!=&write_enable_latch
+  (
+    GOSUB check_read_status
+    ENTRY &read_status_value
+  )
+
+  GOSUB tx_available
+
+  LOCAL &txftlr
+  LOCAL &dw_spi_ctrlr0_addr_l_24
+  LOCAL &dw_spi_ctrlr0_inst_l_8
+  LOCAL &dw_spi_ctrlr0_wait_cycle_0
+  LOCAL &dw_spi_ctrlr0_trans_type_tt0
+  LOCAL &dw_spi_ctrlr0_ddr_disable
+  LOCAL &dw_ctrlr0_dfs_32
+  LOCAL &dw_ctrlr0_tmod_tx
+  LOCAL &dw_ctrlr0_spi_frf_quad
+
+  &txftlr=0x18
+  &dw_spi_ctrlr0_addr_l_24=(0x6<<2.)
+  &dw_spi_ctrlr0_inst_l_8=(0x2<<8.)
+  &dw_spi_ctrlr0_wait_cycle_0=0x0
+  &dw_spi_ctrlr0_trans_type_tt0=0x0
+  &dw_spi_ctrlr0_ddr_disable=0
+  &dw_ctrlr0_dfs_32=0x1f
+  &dw_ctrlr0_tmod_tx=(0x1<<10.)
+  &dw_ctrlr0_spi_frf_quad=(0x2<<22.)
+
+  GOSUB qspi_ssi_disable
+  GOSUB axi_write (&spi_base_addr+&txftlr) 0.
+  GOSUB qspi_config_ssi_controller_with_ndf &dw_spi_ctrlr0_addr_l_24 &dw_spi_ctrlr0_inst_l_8 &dw_spi_ctrlr0_wait_cycle_0 &dw_spi_ctrlr0_trans_type_tt0 &dw_spi_ctrlr0_ddr_disable &dw_ctrlr0_dfs_32 &dw_ctrlr0_tmod_tx &dw_ctrlr0_spi_frf_quad (&loop_count)
+
+  GOSUB qspi_ssi_tx_i_o_d &instruction &offset &loop_count
+  GOSUB check_flash_available
+
+  RETURN
+
+write_flash:
+  ENTRY &image_offset &data_size
+
+  GOSUB qspi_ser_enable
+
+  OPEN #1 &path&flash_filename /Read
+
+  &data_size=&data_size+16.
+
+  LOCAL &write_count
+  &write_count=&data_size/256.
+
+  LOCAL &left_data_size
+  &left_data_size=&data_size%256.
+
+  LOCAL &i
+  &i=0
+
+  LOCAL &image_line
+  &image_line=&image_offset/4.
+
+  while (&i<&image_line)
+  (
+    GOSUB READ_HEXFILE_LINE #1
+    &i=&i+1
+  )
+
+  &i=0
+
+  while (&i<&write_count)
+  (
+    GOSUB raw_write_flash 0x32 &image_offset 256.
+    &image_offset=&image_offset+256.
+    &i=&i+1
+  )
+
+  if &left_data_size>0.
+    GOSUB raw_write_flash 0x32 &image_offset &left_data_size
+
+  GOSUB qspi_ser_disable
+
+  RETURN
+
+READ_HEXFILE_LINE:
+  ENTRY &file
+  read &file %LINE &ln
+  RETURN &ln
+
+get_image_real_size_in_hex_file:
+  local &cur_line
+  local &data
+  &cur_line=1
+
+  OPEN #2 &path&flash_filename /Read
+
+  while (&cur_line<=&sboot_n_line_num_1)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &sboot_n_real_size_1=&data
+
+  while (&cur_line<=&sboot_n_line_num_2)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &sboot_n_real_size_2=&data
+
+  while (&cur_line<=&tboot_s_line_num)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &tboot_s_real_size=&data
+
+  while (&cur_line<=&tboot_n_line_num)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &tboot_n_real_size=&data
+
+  while (&cur_line<=&tboot_p0_line_num)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &tboot_p0_real_size=&data
+
+  while (&cur_line<=&tboot_p1_line_num)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &tboot_p1_real_size=&data
+
+  while (&cur_line<=&tboot_u_line_num)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &tboot_u_real_size=&data
+
+  while (&cur_line<=&bl31_cp0_line_num)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &bl31_cp0_real_size=&data
+
+  while (&cur_line<=&freertos_cp0_line_num)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &freertos_cp0_real_size=&data
+
+  while (&cur_line<=&bl31_cp1_line_num)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &bl31_cp1_real_size=&data
+
+  while (&cur_line<=&freertos_cp1_line_num)
+  (
+    READ #2 %LINE &data
+    &cur_line=&cur_line+1
+  )
+  &freertos_cp1_real_size=&data
+
+  CLOSE #2
+
+  RETURN
+
+qspi_init:
+  GOSUB qspi_int_disable
+  GOSUB qspi_config_xip
+  GOSUB qspi_ssi_enable
+  RETURN
+
+qspi_int_disable:
+  GOSUB qspi_ssi_disable
+  LOCAL &imr
+  &imr=0x2c ; interrupt mask reg
+  GOSUB axi_write (&spi_base_addr+&imr) 0x0
+
+  RETURN
+
+qspi_config_xip:
+  GOSUB qspi_ssi_disable
+
+  LOCAL &baudr
+  &baudr=0x14; baud rate select
+  LOCAL &xip_incr_inst
+  &xip_incr_inst=0x100
+  LOCAL &xip_wrap_inst
+  &xip_wrap_inst=0x104
+  LOCAL &xip_ctrl
+  &xip_ctrl=0x108
+
+  if (&is_cmu_enabled==1)
+  (
+    GOSUB axi_write (&spi_base_addr+&baudr) 0x6
+  )
+  else
+  (
+    ; without cmu init,
+    ; fboot_n(BootROM) is based on 40MHz
+    ; ssi controller is min. div is 1/2. So, spi_clk with flash dev. will be the fastest 20Mhz.
+    GOSUB axi_write (&spi_base_addr+&baudr) 0x2
+  )
+
+  LOCAL &ctrl_val
+  &ctrl_val=0x2|0x4|0x60|0x10000|0x40000|0x80000|0x400000|0x800000|0x10000000|0x400
+
+  GOSUB axi_write (&spi_base_addr+&xip_ctrl) &ctrl_val
+  GOSUB qspi_ssi_enable
+
+tx_available:
+  LOCAL &sr
+  &sr=0x28 ;status register
+
+  GOSUB qspi_check_busy
+
+  LOCAL &dw_sr_tfnf_bit
+  &dw_sr_tfnf_bit=0x2 ; (0x1 <<1)
+
+  GOSUB axi_read (&spi_base_addr+&sr)
+  ENTRY &sr_value
+
+  while ((&sr_value)&(&dw_sr_tfnf_bit))==0
+  (
+    GOSUB axi_read (&spi_base_addr+&sr)
+    ENTRY &sr_value
+  )
+
+  RETURN
+
+rx_available:
+  LOCAL &sr
+  &sr=0x28 ;status register
+
+  LOCAL &dw_sr_rfne_bit
+  &dw_sr_rfne_bit=0x8 ; (0x1 <<3)
+
+  GOSUB axi_read (&spi_base_addr+&sr)
+  ENTRY &sr_value
+
+  while ((&sr_value)&(&dw_sr_rfne_bit))==0
+  (
+    GOSUB axi_read (&spi_base_addr+&sr)
+    ENTRY &sr_value
+  )
+  GOSUB qspi_check_busy
+
+  RETURN
+
+qspi_check_busy:
+  LOCAL &dw_sr_busy_bit;
+  &dw_sr_busy_bit=0x1
+  LOCAL &sr; ; status register 0x28
+  &sr=0x28
+
+  GOSUB axi_read (&spi_base_addr+&sr)
+  ENTRY &sr_value
+
+  while (((&sr_value)&(&dw_sr_busy_bit))==&dw_sr_busy_bit)
+  (
+    GOSUB axi_read (&spi_base_addr+&sr)
+    ENTRY &sr_value
+  )
+
+  RETURN
+
+qspi_ssi_disable:
+  LOCAL &ssienr; ssi enable register
+  &ssienr=0x8
+  LOCAL &ssienr_enable
+  &ssienr_enable=0x1
+  GOSUB axi_read (&spi_base_addr+&ssienr)
+  ENTRY &ssienr_value
+
+  &ssienr_value=(&ssienr_value)&(~&ssienr_enable)
+  GOSUB axi_write (&spi_base_addr+&ssienr) &ssienr_value
+
+  RETURN
+
+qspi_ssi_enable:
+  LOCAL &ssienr; ssi enable register
+  &ssienr=0x8
+  LOCAL &ssienr_enable
+  &ssienr_enable=0x1
+
+  GOSUB axi_write (&spi_base_addr+&ssienr) &ssienr_enable
+  RETURN
+
+qspi_ser_disable:
+  GOSUB qspi_ssi_disable
+
+  LOCAL &ser
+  &ser=0x10 ; target enable register
+
+  GOSUB axi_read (&spi_base_addr+&ser)
+  ENTRY &ser_value
+
+  &ser_value=((&ser_value)&(~0x1))
+  GOSUB axi_write (&spi_base_addr+&ser) &ser_value
+
+  GOSUB qspi_ssi_enable
+  RETURN
+
+qspi_ser_enable:
+  ;GOSUB qspi_check_busy
+  GOSUB qspi_ssi_disable
+
+  LOCAL &ser
+  &ser=0x10 ; target enable register
+
+  GOSUB axi_read (&spi_base_addr+&ser)
+  ENTRY &ser_value
+
+  &ser_value=((&ser_value)|0x1)
+  GOSUB axi_write (&spi_base_addr+&ser) &ser_value
+
+  GOSUB qspi_ssi_enable
+  RETURN
+
+check_read_flag_status:
+  LOCAL &dw_spi_ctrlr0_addr_l_0
+  LOCAL &dw_spi_ctrlr0_inst_l_8
+  LOCAL &dw_spi_ctrlr0_wait_cycle_0
+  LOCAL &dw_spi_ctrlr0_trans_type_tt0
+  LOCAL &dw_spi_ctrlr0_ddr_disable
+  LOCAL &dw_ctrlr0_dfs_8
+  LOCAL &dw_ctrlr0_tmod_rx
+  LOCAL &dw_ctrlr0_spi_frf_standard
+  LOCAL &dw_ctrlr1_ndf_1word
+  LOCAL &txftlr
+
+  &dw_spi_ctrlr0_addr_l_0=0x0
+  &dw_spi_ctrlr0_inst_l_8=(0x2<<8.)
+  &dw_spi_ctrlr0_wait_cycle_0=0x0
+  &dw_spi_ctrlr0_trans_type_tt0=0x0
+  &dw_spi_ctrlr0_ddr_disable=0
+  &dw_ctrlr0_dfs_8=0x7
+  &dw_ctrlr0_tmod_rx=(0x2<<10.)
+  &dw_ctrlr0_spi_frf_standard=0x0
+  &dw_ctrlr1_ndf_1word=0x0
+  &txftlr=0x18
+
+  GOSUB qspi_ssi_disable
+  GOSUB axi_write (&spi_base_addr+&txftlr) 0x10000
+  GOSUB qspi_config_ssi_controller &dw_spi_ctrlr0_addr_l_0 &dw_spi_ctrlr0_inst_l_8 &dw_spi_ctrlr0_wait_cycle_0 &dw_spi_ctrlr0_trans_type_tt0 &dw_spi_ctrlr0_ddr_disable &dw_ctrlr0_dfs_8 &dw_ctrlr0_tmod_rx &dw_ctrlr0_spi_frf_standard &dw_ctrlr1_ndf_1word
+
+  LOCAL &READ_FLAG_STATUS
+  &READ_FLAG_STATUS=0x70
+  GOSUB qspi_ssi_rx_i &READ_FLAG_STATUS
+  ENTRY &read_status_value
+  RETURN &read_status_value
+
+check_read_status:
+  LOCAL &dw_spi_ctrlr0_addr_l_0
+  LOCAL &dw_spi_ctrlr0_inst_l_8
+  LOCAL &dw_spi_ctrlr0_wait_cycle_0
+  LOCAL &dw_spi_ctrlr0_trans_type_tt0
+  LOCAL &dw_spi_ctrlr0_ddr_disable
+  LOCAL &dw_ctrlr0_dfs_8
+  LOCAL &dw_ctrlr0_tmod_rx
+  LOCAL &dw_ctrlr0_spi_frf_standard
+  LOCAL &dw_ctrlr1_ndf_1word
+  LOCAL &txftlr
+
+  &dw_spi_ctrlr0_addr_l_0=0x0
+  &dw_spi_ctrlr0_inst_l_8=(0x2<<8.)
+  &dw_spi_ctrlr0_wait_cycle_0=0x0
+  &dw_spi_ctrlr0_trans_type_tt0=0x0
+  &dw_spi_ctrlr0_ddr_disable=0
+  &dw_ctrlr0_dfs_8=0x7
+  &dw_ctrlr0_tmod_rx=(0x2<<10.)
+  &dw_ctrlr0_spi_frf_standard=0x0
+  &dw_ctrlr1_ndf_1word=0x0
+  &txftlr=0x18
+
+  GOSUB qspi_ssi_disable
+  GOSUB axi_write (&spi_base_addr+&txftlr) 0x10000
+  GOSUB qspi_config_ssi_controller &dw_spi_ctrlr0_addr_l_0 &dw_spi_ctrlr0_inst_l_8 &dw_spi_ctrlr0_wait_cycle_0 &dw_spi_ctrlr0_trans_type_tt0 &dw_spi_ctrlr0_ddr_disable &dw_ctrlr0_dfs_8 &dw_ctrlr0_tmod_rx &dw_ctrlr0_spi_frf_standard &dw_ctrlr1_ndf_1word
+
+  LOCAL &READ_STATUS_COMMAND
+  &READ_STATUS_COMMAND=0x5
+  GOSUB qspi_ssi_rx_i &READ_STATUS_COMMAND
+  ENTRY &read_status_value
+
+  RETURN &read_status_value
+
+qspi_config_ssi_controller:
+  ENTRY &addr &inst &wait_cycle &trans_type &ddr &dfs &tmod &frf &ndf
+
+  GOSUB qspi_ssi_disable
+
+  LOCAL &spi_ctrlr0
+  LOCAL &ctrlr0
+  LOCAL &ctrlr1
+
+  &spi_ctrlr0=0xf4 ; spi control register
+  &ctrlr0=0x0 ; control register 0
+  &ctrlr1=0x4 ; control register 1
+
+  LOCAL &spi_ctrlr0_val
+  LOCAL &ctrlr0_val
+  LOCAL &ctrlr1_val
+  &spi_ctrlr0_val=&addr|&inst|&wait_cycle|&trans_type|&ddr
+
+  GOSUB axi_write (&spi_base_addr+&spi_ctrlr0) &spi_ctrlr0_val
+
+  &ctrlr0_val=&dfs|&tmod|&frf
+  GOSUB axi_write (&spi_base_addr+&ctrlr0) &ctrlr0_val
+
+  &ctrlr1_val=&ndf
+  GOSUB axi_write (&spi_base_addr+&ctrlr1) &ctrlr1_val
+
+  GOSUB qspi_ssi_enable
+
+  RETURN
+
+qspi_config_ssi_controller_with_ndf:
+  ENTRY &addr &inst &wait_cycle &trans_type &ddr &dfs &tmod &frf &ndf
+
+  GOSUB qspi_ssi_disable
+
+  LOCAL &spi_ctrlr0
+  LOCAL &ctrlr0
+  LOCAL &ctrlr1
+  &spi_ctrlr0=0xf4 ; spi control register
+  &ctrlr0=0x0 ;control register0
+  &ctrlr1=0x4 ; controller register1
+
+  LOCAL &spi_ctrlr0_val
+  LOCAL &ctrlr0_val
+  LOCAL &ctrlr1_val
+  LOCAL &clk_stretch_en
+  &clk_stretch_en=0x40000000
+  &spi_ctrlr0_val=&addr|&inst|&wait_cycle|&trans_type|&ddr|&clk_stretch_en
+
+  GOSUB axi_write (&spi_base_addr+&spi_ctrlr0) &spi_ctrlr0_val
+  &ctrlr0_val=&dfs|&tmod|&frf
+  GOSUB axi_write (&spi_base_addr+&ctrlr0) &ctrlr0_val
+
+  &ctrlr1_val=&ndf
+  GOSUB axi_write (&spi_base_addr+&ctrlr1) &ctrlr1_val
+
+  GOSUB qspi_ssi_enable
+
+  RETURN
+
+qspi_ssi_tx_i_o_d:
+  ENTRY &inst &offset &loop_num
+
+  LOCAL &drx_inst
+  &drx_inst=0x60
+
+  GOSUB axi_write (&spi_base_addr+&drx_inst) &inst
+  GOSUB tx_available
+  GOSUB axi_write (&spi_base_addr+&drx_inst) &offset
+
+  LOCAL &i
+  &i=0
+
+  while (&i<&loop_num)
+  (
+    GOSUB READ_HEXFILE_LINE #1
+    ENTRY &buf
+
+    GOSUB axi_write (&spi_base_addr+&drx_inst) &buf
+    &i=&i+1
+  )
+
+  GOSUB qspi_check_busy
+
+  RETURN
+
+qspi_ssi_tx_i_o:
+  ENTRY &inst &offset
+
+  LOCAL &drx_inst
+  &drx_inst=0x60
+
+  GOSUB tx_available
+
+  GOSUB axi_write (&spi_base_addr+&drx_inst) &inst
+  GOSUB axi_write (&spi_base_addr+&drx_inst) &offset
+
+  GOSUB qspi_check_busy
+
+  RETURN
+
+qspi_ssi_tx_i:
+  ENTRY &inst
+
+  LOCAL &drx
+  &drx=0x60; // Data Register
+
+  GOSUB tx_available
+  GOSUB axi_write (&spi_base_addr+&drx) &inst
+  GOSUB qspi_check_busy
+  RETURN
+
+qspi_ssi_rx_i:
+  ENTRY &inst
+
+  LOCAL &drx
+  &drx=0x60; // Data Register
+
+  GOSUB tx_available
+  GOSUB axi_write (&spi_base_addr+&drx) &inst
+  GOSUB rx_available
+
+  GOSUB axi_read (&spi_base_addr+&drx)
+  ENTRY &drx_value
+  RETURN &drx_value
+
+check_flash_available:
+  LOCAL &FLASH_READY
+  &FLASH_READY=0x80
+  GOSUB check_read_flag_status
+  ENTRY &status_value
+
+  while ((&status_value)&(&FLASH_READY))!=&FLASH_READY
+  (
+    GOSUB check_read_flag_status
+    ENTRY &status_value
+  )
+  RETURN
+
+erase_bulk:
+  LOCAL &dw_spi_ctrlr0_addr_l_0
+  LOCAL &dw_spi_ctrlr0_inst_l_8
+  LOCAL &dw_spi_ctrlr0_wait_cycle_0
+  LOCAL &dw_spi_ctrlr0_trans_type_tt0
+  LOCAL &dw_spi_ctrlr0_ddr_disable
+  LOCAL &dw_ctrlr0_dfs_8
+  LOCAL &dw_ctrlr0_tmod_tx
+  LOCAL &dw_ctrlr0_spi_frf_standard
+  LOCAL &dw_ctrlr1_ndf_1word
+  LOCAL &txftlr
+
+  ; inst.(cmd) = 0 / addr = 0 / data = 8bit
+  &dw_spi_ctrlr0_addr_l_0=0x0
+  &dw_spi_ctrlr0_inst_l_8=(0x0<<8.)
+  &dw_spi_ctrlr0_wait_cycle_0=0x0
+  &dw_spi_ctrlr0_trans_type_tt0=0x0
+  &dw_spi_ctrlr0_ddr_disable=0
+  &dw_ctrlr0_dfs_8=0x7
+  &dw_ctrlr0_tmod_tx=(0x1<<10.)
+  &dw_ctrlr0_spi_frf_standard=0x0
+  &dw_ctrlr1_ndf_1word=0x0
+  &txftlr=0x18
+
+  ; Set tx fifo = 0, for cmd-addr-data:1-0-0 format
+  GOSUB qspi_ssi_disable
+  GOSUB axi_write (&spi_base_addr+&txftlr) 0.
+
+  GOSUB qspi_config_ssi_controller &dw_spi_ctrlr0_addr_l_0 &dw_spi_ctrlr0_inst_l_8 &dw_spi_ctrlr0_wait_cycle_0 &dw_spi_ctrlr0_trans_type_tt0 &dw_spi_ctrlr0_ddr_disable &dw_ctrlr0_dfs_8 &dw_ctrlr0_tmod_tx &dw_ctrlr0_spi_frf_standard &dw_ctrlr1_ndf_1word
+
+  GOSUB qspi_ssi_tx_i 0x6 ; write enable command
+  ; Checked. Format 1-0-0, erase all, takes time about 1min on zebu
+  GOSUB qspi_ssi_tx_i 0xC7 ; BULK ERASE command
+  RETURN
+
+write_enable_command:
+  LOCAL &dw_spi_ctrlr0_addr_l_0
+  LOCAL &dw_spi_ctrlr0_inst_l_8
+  LOCAL &dw_spi_ctrlr0_wait_cycle_0
+  LOCAL &dw_spi_ctrlr0_trans_type_tt0
+  LOCAL &dw_spi_ctrlr0_ddr_disable
+  LOCAL &dw_ctrlr0_dfs_8
+  LOCAL &dw_ctrlr0_tmod_tx
+  LOCAL &dw_ctrlr0_spi_frf_standard
+  LOCAL &dw_ctrlr1_ndf_1word
+  LOCAL &txftlr
+
+  ; inst.(cmd) = 0 / addr = 0 / data = 8bit
+  &dw_spi_ctrlr0_addr_l_0=0x0
+  &dw_spi_ctrlr0_inst_l_8=(0x0<<8.)
+  &dw_spi_ctrlr0_wait_cycle_0=0x0
+  &dw_spi_ctrlr0_trans_type_tt0=0x0
+  &dw_spi_ctrlr0_ddr_disable=0
+  &dw_ctrlr0_dfs_8=0x7
+  &dw_ctrlr0_tmod_tx=(0x1<<10.)
+  &dw_ctrlr0_spi_frf_standard=0x0
+  &dw_ctrlr1_ndf_1word=0x0
+  &txftlr=0x18
+
+  ; Set tx fifo = 0, for cmd-addr-data:1-0-0 format
+  GOSUB qspi_ssi_disable
+  GOSUB axi_write (&spi_base_addr+&txftlr) 0.
+
+  GOSUB qspi_config_ssi_controller &dw_spi_ctrlr0_addr_l_0 &dw_spi_ctrlr0_inst_l_8 &dw_spi_ctrlr0_wait_cycle_0 &dw_spi_ctrlr0_trans_type_tt0 &dw_spi_ctrlr0_ddr_disable &dw_ctrlr0_dfs_8 &dw_ctrlr0_tmod_tx &dw_ctrlr0_spi_frf_standard &dw_ctrlr1_ndf_1word
+
+  ; To clean-up un-happy device status
+  GOSUB qspi_ssi_tx_i 0x66 ; RESET Enable
+  GOSUB qspi_ssi_tx_i 0x99 ; RESET Memory
+  GOSUB qspi_ssi_tx_i 0x6 ; write enable command
+
+  ; Checked. Format 1-0-0, erase all, takes time about 1min on zebu
+  ; GOSUB qspi_ssi_tx_i 0xC7 ; BULK ERASE command
+  RETURN
+
+erase_flash:
+  ENTRY &erase_cmd &offset
+
+  GOSUB qspi_ser_enable
+
+  GOSUB write_enable_command
+  PRINT "WE(Write Enable) command issued"
+
+  GOSUB check_read_status
+  ENTRY &read_status_value
+
+  LOCAL &write_enable_latch
+  &write_enable_latch=0x2
+
+  while (&read_status_value&(&write_enable_latch))!=&write_enable_latch
+  (
+    GOSUB check_read_status
+    ENTRY &read_status_value
+  )
+  PRINT "Now Write enable latch = 1 checked"
+
+  LOCAL &dw_spi_ctrlr0_addr_l_0
+  LOCAL &dw_spi_ctrlr0_inst_l_8
+  LOCAL &dw_spi_ctrlr0_wait_cycle_0
+  LOCAL &dw_spi_ctrlr0_trans_type_tt0
+  LOCAL &dw_spi_ctrlr0_ddr_disable
+  LOCAL &dw_ctrlr0_dfs_24
+  LOCAL &dw_ctrlr0_tmod_tx
+  LOCAL &dw_ctrlr0_spi_frf_standard
+  LOCAL &dw_ctrlr1_ndf_1word
+  LOCAL &txftlr
+
+  &dw_spi_ctrlr0_addr_l_0=0x0
+  &dw_spi_ctrlr0_inst_l_8=(0x2<<8.)
+  &dw_spi_ctrlr0_wait_cycle_0=0x0
+  &dw_spi_ctrlr0_trans_type_tt0=0x0
+  &dw_spi_ctrlr0_ddr_disable=0
+  &dw_ctrlr0_dfs_24=0x17
+  &dw_ctrlr0_tmod_tx=(0x1<<10.)
+  &dw_ctrlr0_spi_frf_standard=0x0
+  &dw_ctrlr1_ndf_1word=0x0
+  &txftlr=0x18
+
+  ; Set tx fifo level = 1
+  GOSUB qspi_ssi_disable
+  LOCAL &val
+  &val=0x10000
+  GOSUB axi_write (&spi_base_addr+&txftlr) &val
+
+  GOSUB qspi_config_ssi_controller &dw_spi_ctrlr0_addr_l_0 &dw_spi_ctrlr0_inst_l_8 &dw_spi_ctrlr0_wait_cycle_0 &dw_spi_ctrlr0_trans_type_tt0 &dw_spi_ctrlr0_ddr_disable &dw_ctrlr0_dfs_24 &dw_ctrlr0_tmod_tx &dw_ctrlr0_spi_frf_standard &dw_ctrlr1_ndf_1word
+
+  GOSUB qspi_ssi_tx_i_o &erase_cmd &offset
+
+  GOSUB check_flash_available
+
+  GOSUB qspi_ser_disable
+
+  RETURN
+
+axi_write:
+  LOCAL &addr &val
+  ENTRY &addr &val
+  data.set zaxi:&addr %le %long &val
+  ;PRINT "axi_write: &addr = &val"
+  RETURN
+axi_read:
+  LOCAL &addr
+  ENTRY &addr
+  &value=data.long(zaxi:&addr)
+  ;PRINT "axi_read: &addr = &value"
+  RETURN &value
+

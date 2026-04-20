@@ -1,0 +1,33 @@
+# Copyright (c) 2022 Cryptography Research, Inc. (CRI).
+
+config CMRT_TEEDEV_CRYPTO
+	bool "Enable TEEFS crypto device support"
+	default n
+	select CMRT_AES
+	help
+	  Enable TEEFS crypto device support. It is automatically called
+	  before calling the actual device to read/program a page.
+
+config CMRT_TEEDEV_DMAC
+	bool "Enable TEEFS device support based on DMAC"
+	default n
+	help
+	  Enable TEEFS device support based on DMAC.
+	  TEEFS devices are pseudo devices that typically use another
+	  device driver for low level operations.
+
+config CMRT_TEEDEV_FLASH
+	bool "Enable generic TEEFS Flash device support"
+	default n
+	help
+	  Enable generic TEEFS Flash device support based on Zephyr
+	  Flash API. TEEFS devices are pseudo devices that typically
+	  use another device driver for low level operations.
+
+config CMRT_TEEDEV_OTP
+	bool "Enable TEEFS device support based on OTP"
+	default n
+	help
+	  Enable TEEFS device support based on OTP.
+	  TEEFS devices are pseudo devices that typically use another
+	  device driver for low level operations.

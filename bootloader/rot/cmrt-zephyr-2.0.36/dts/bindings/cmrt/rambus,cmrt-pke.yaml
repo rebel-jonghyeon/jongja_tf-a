@@ -1,0 +1,7 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT Public Key Engine (PKE)
+
+compatible: "rambus,cmrt-pke"
+
+include: rambus,cmrt-hwc.yaml

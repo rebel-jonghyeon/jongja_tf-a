@@ -1,0 +1,18 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT System Interface Core (SIC2) with multi-master support
+
+compatible: "rambus,cmrt-sic2"
+
+include: rambus,cmrt-sic.yaml
+
+properties:
+    num-instances:
+      required: true
+      type: int
+      description: number of messaging instances supported by hardware
+
+    has-boot-control:
+      required: false
+      type: boolean
+      description: flag to support the boot control register

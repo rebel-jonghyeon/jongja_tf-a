@@ -1,0 +1,18 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT Feature Management Core (FMC)
+
+compatible: "rambus,cmrt-fmc"
+
+include: rambus,cmrt-hwc.yaml
+
+properties:
+    tdv-size:
+      required: true
+      type: int
+      description: test and debug vector size in words
+
+    feature-size:
+      required: true
+      type: int
+      description: internal feature space size in words

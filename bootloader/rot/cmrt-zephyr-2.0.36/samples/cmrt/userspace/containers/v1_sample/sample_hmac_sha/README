@@ -1,0 +1,13 @@
+
+sample_hmac_sha: HMAC-SHA256 to generate unique fixed size 256bit hash
+
+Output is a 32 byte hash
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_hmac_sha.img
+
+To send data to container:
+$ cmtest data -f100 "Hash me please"
+
+To unload container:
+$ mwtest.py -c100 unload

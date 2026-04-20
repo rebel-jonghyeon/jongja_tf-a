@@ -1,0 +1,54 @@
+B::
+
+
+;; 3004LS_new#2, LS
+&test_dir="/home/heeyoung/pv_3004LS_rdcd_all_dat"
+
+data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all-_CL0-command_datadb.dat zaxi:0x54200000 /noclear
+data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all--memory_datadb.dat zaxi:0x60000000 /noclear
+
+data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all-_CL1-command_datadb.dat zaxi:0x2054200000 /noclear
+data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all--memory_datadb.dat zaxi:0x2060000000 /noclear
+
+data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all-_CL2-command_datadb.dat zaxi:0x4054200000 /noclear
+data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all--memory_datadb.dat zaxi:0x4060000000 /noclear
+
+data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all-_CL3-command_datadb.dat zaxi:0x6054200000 /noclear
+data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all--memory_datadb.dat zaxi:0x6060000000 /noclear
+
+
+;; 3004_new#2, 3004_nc_rdcd
+;&test_dir="/home/heeyoung/pv_3004L_rdcd_all_dat"
+
+;data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all_CL0-command_datadb.dat zaxi:0x54200000 /noclear
+;data.load.binary &test_dir/test_dir=-home-heeyoung-power_vector_package-pv_3004L_rdcd_all-memory_datadb.dat zaxi:0x60000000 /noclear
+
+
+
+
+;; 3001AF_nc_rcdc
+;&test_dir="/home/heeyoung/pv_3001AF_nc_rdcd"
+
+;data.load.binary &test_dir/test_dir=-home-heeyoung-Downloads-251217_power_vector_dclx2-rebel_power_fp16_mode_2_interDCL_nc_rdcd_CL0-command_datadb.dat zaxi:0x54200000 /noclear
+;data.load.binary &test_dir/test_dir=-home-heeyoung-Downloads-251217_power_vector_dclx2-rebel_power_fp16_mode_2_interDCL_nc_rdcd-memory_datadb.dat zaxi:0x60000000 /noclear
+
+
+
+;; 3003
+;&test_dir="/home/heeyoung/pv_3003"
+
+; power vector 3003
+;data.load.binary &test_dir/rebelh_single_evt0_stc_3003_CL0-command_datadb.dat zaxi:0x54200000 /noclear
+;data.load.binary &test_dir/rebelh_single_evt0_stc_3003-memory_datadb.dat zaxi:0x60000000 /noclear
+
+;data.load.binary &test_dirpower_vector_0812/test_dir=-home-heeyoung-Downloads-250203_power_vector_dclx2-rebel_power_fp16_mode_2h_long_CL1-command_datadb.dat zaxi:0x2054200000 /noclear
+;data.load.binary &test_dirpower_vector_0812/test_dir=-home-heeyoung-Downloads-250203_power_vector_dclx2-rebel_power_fp16_mode_2h_long-memory_datadb.dat zaxi:0x2060000000 /noclear
+
+;data.load.binary &test_dirpower_vector_0812/test_dir=-home-heeyoung-Downloads-250203_power_vector_dclx2-rebel_power_fp16_mode_2h_long_CL2-command_datadb.dat zaxi:0x4054200000 /noclear
+;data.load.binary &test_dirpower_vector_0812/test_dir=-home-heeyoung-Downloads-250203_power_vector_dclx2-rebel_power_fp16_mode_2h_long-memory_datadb.dat zaxi:0x4060000000 /noclear
+
+;data.load.binary &test_dirpower_vector_0812/test_dir=-home-heeyoung-Downloads-250203_power_vector_dclx2-rebel_power_fp16_mode_2h_long_CL3-command_datadb.dat zaxi:0x6054200000 /noclear
+;data.load.binary &test_dirpower_vector_0812/test_dir=-home-heeyoung-Downloads-250203_power_vector_dclx2-rebel_power_fp16_mode_2h_long-memory_datadb.dat zaxi:0x6060000000 /noclear
+
+
+ENDDO

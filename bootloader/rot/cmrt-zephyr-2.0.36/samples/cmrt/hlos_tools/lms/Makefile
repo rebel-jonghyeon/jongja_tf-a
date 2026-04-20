@@ -1,0 +1,84 @@
+BUILDDIR ?= build
+TOOLCHAIN_INSTALL_DIR ?= /opt/cmrt/bsp-zc706-zynq7
+MINGW_INSTALL_DIR ?= /usr/bin
+ZEPHYR_BASE_BUILDDIR ?= $(ZEPHYR_BASE)/$(BUILDDIR)
+
+CROSS_GCC = $(wildcard $(TOOLCHAIN_INSTALL_DIR)/sysroots/x86_64-*-linux/usr/bin/arm-*-linux-gnueabi/arm-*-linux-gnueabi-gcc)
+
+# sudo apt-get install gcc-mingw-w64-x86-64
+MINGW_GCC = $(wildcard $(MINGW_INSTALL_DIR)/x86_64-w64-mingw32-gcc)
+
+all: liblms.so test_lms install \
+     vcu108/liblms.so
+
+# if CROSS_GCC exists, add zynq706/* components to all:
+ifneq ("$(wildcard $(CROSS_GCC))", "")
+all: zynq706/liblms.so zynq706/install
+endif
+
+INCLUDE = -I.
+CFLAGS = -ggdb -std=c99 -O2 -fPIC $(INCLUDE) -Wall -Werror -Wno-deprecated-declarations -fstack-protector
+VERSION_INFO := $(shell set -- `git log -1 --abbrev=7 --format="%ci %h"`;\
+			test "$${4-}" && echo $$1-g$$4 || :)
+
+ifdef VERSION_INFO
+CFLAGS += -DVERSION_INFO='"$(VERSION_INFO)"'
+endif
+
+CC = gcc
+
+FPGAGOALS = zynq706/liblms.so zynq706/test_lms
+
+$(FPGAGOALS): TITARGETOPTS = -march=armv7-a -marm -mfpu=neon -mfloat-abi=hard -mcpu=cortex-a9
+$(FPGAGOALS): SYSROOT = --sysroot $(wildcard $(TOOLCHAIN_INSTALL_DIR)/sysroots/cortexa9hf-neon-*-linux-gnueabi)
+$(FPGAGOALS): CC = $(CROSS_GCC) $(TITARGETOPTS) $(SYSROOT)
+
+
+vcu108 zynq706 mingw:
+	mkdir -p $@
+
+%.o: %.c Makefile
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+vcu108/%.o: %.c Makefile | vcu108
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+zynq706/%.o: %.c Makefile | zynq706
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+mingw/%.o: %.c Makefile | mingw
+	$(MINGW_GCC) -c -o $@ $< $(CFLAGS)
+
+liblms.so: lms_ots.o lms.o lms_py.o
+	$(CC) -shared -Wl,-soname,$(@F) -o $@ $^ -lcrypto
+
+vcu108/liblms.so: vcu108/lms_ots.o vcu108/lms.o vcu108/lms_py.o
+	$(CC) -shared -Wl,-soname,$(@F) -o $@ $^ -lcrypto
+
+zynq706/liblms.so: zynq706/lms_ots.o zynq706/lms.o zynq706/lms_py.o
+	$(CC) -shared -Wl,-soname,$(@F) -o $@ $^ -lcrypto
+
+LDFLAGS_BIN_AMD64 ?=
+
+test_lms: main.o utils.o liblms.so
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS_BIN_AMD64) -L. -llms -lcrypto
+
+install: liblms.so test_lms
+	install -d $(ZEPHYR_BASE_BUILDDIR)/bin
+	install -d $(ZEPHYR_BASE_BUILDDIR)/lib/python
+	install -m 644 liblms.so $(ZEPHYR_BASE_BUILDDIR)/lib
+	install -m 755 lms.py $(ZEPHYR_BASE_BUILDDIR)/lib/python
+	install -m 755 test_lms $(ZEPHYR_BASE_BUILDDIR)/bin
+
+zynq706/install: zynq706/liblms.so
+	install -d $(ZEPHYR_BASE_BUILDDIR)/zynq706
+	install -m 644 zynq706/liblms.so $(ZEPHYR_BASE_BUILDDIR)/zynq706
+	install -m 755 lms.py $(ZEPHYR_BASE_BUILDDIR)/zynq706
+
+.PHONY: clean pristine install zynq706/install
+clean pristine:
+	rm -rf *.o *.so *.a *~ test_lms vcu108/ zynq706/
+	rm -fr $(ZEPHYR_BASE_BUILDDIR)/bin $(ZEPHYR_BASE_BUILDDIR)/lib $(ZEPHYR_BASE_BUILDDIR)/zynq706
+
+.SUFFIXES: # remove default suffix rules
+MAKEFLAGS += --no-builtin-rules --warn-undefined-variables

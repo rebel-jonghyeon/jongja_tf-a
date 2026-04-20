@@ -1,0 +1,202 @@
+/*
+ * Copyright (c) 2020-2023 Cryptography Research, Inc. (CRI).
+ * A license or authorization from CRI is needed to use this file.
+ */
+
+#include <stdalign.h>
+#include <device.h>
+#include <string.h>
+#include <errno.h>
+#include <drivers/cmrt/dd.h>
+#include <drivers/cmrt/pke.h>
+#include <drivers/cmrt/sic.h>
+#include <drivers/cmrt/eac.h>
+#include <drivers/cmrt/omc_reg.h>
+#include <drivers/cmrt/pke4/pke4_reg.h>
+#include "pke_kat.h"
+
+#include <logging/log.h>
+LOG_MODULE_DECLARE(cmrt, CONFIG_CMRT_LOG_LEVEL);
+
+typedef struct ecdh_kat {
+	uint8_t k[28];
+	uint8_t Qx[28];
+	uint8_t Sx[28];
+} ecdh_kat_t;
+
+typedef struct ecdsa_kat {
+	uint8_t k[32];
+	uint8_t Qx[32];
+	uint8_t Qy[32];
+	uint8_t no[64];
+	uint8_t hs[32];
+	uint8_t r[32];
+	uint8_t s[32];
+} ecdsa_kat_t;
+
+typedef struct rsa_kat {
+#ifdef CONFIG_CMRT_FIPS_140_MODE
+	uint32_t bit_length;
+	uint8_t n[256];
+	uint8_t d[256];
+	uint8_t m[256];
+	uint8_t p[256];
+	uint8_t s[256];
+#else
+	uint32_t n[64];
+	uint32_t d[64];
+#endif
+} rsa_kat_t;
+
+#ifdef CONFIG_CMRT_FIPS_140_MODE
+static const ecdsa_kat_t ecdsa_kat_vectors[] = {
+	{
+	 .k =  { 0xda, 0x2e, 0xaa, 0x25, 0xed, 0x8b, 0xd5, 0x40, 0x2b, 0xf3, 0x16,
+		 0xc8, 0xb6, 0xb6, 0xab, 0x00, 0x3f, 0x27, 0x8e, 0x18, 0x1a, 0x2b,
+		 0xd4, 0x45, 0xf0, 0x92, 0x53, 0xb3, 0x50, 0x1d, 0xef, 0x3f },
+	 .Qx = { 0xa4, 0x25, 0x43, 0xe7, 0x30, 0xf1, 0x02, 0xb5, 0xf3, 0x64, 0xd3,
+		 0xe6, 0xbd, 0x83, 0xa6, 0x68, 0x09, 0x7f, 0x07, 0x19, 0x2a, 0xd5,
+		 0x4e, 0xb0, 0xa8, 0x36, 0xa7, 0x8d, 0x25, 0xc8, 0x96, 0xe5 },
+	 .Qy = { 0xc1, 0x30, 0x91, 0x20, 0x28, 0xa7, 0x55, 0x90, 0x98, 0xe5, 0x4c,
+		 0xa0, 0xb3, 0xf0, 0xf9, 0x78, 0x0e, 0x1a, 0x30, 0x70, 0xde, 0x1a,
+		 0x3a, 0xed, 0x78, 0xd5, 0x26, 0xfb, 0x54, 0x70, 0x0e, 0xa1 },
+	 .no = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2d,
+		 0xf0, 0xd3, 0x66, 0xce, 0x6d, 0x00, 0x35, 0x5e, 0x85, 0x4f, 0x36,
+		 0x5e, 0x52, 0x51, 0x4c, 0x3e, 0x7f, 0x33, 0x39, 0xa3, 0x9f, 0x1e,
+		 0x62, 0xeb, 0x9d, 0x24, 0xfe, 0x75, 0xd3, 0x14, 0x9e },
+	 .hs = { 0xda, 0x63, 0x46, 0x17, 0x91, 0xd6, 0x71, 0xa4, 0xc2, 0x99, 0x4d,
+		 0x41, 0xc4, 0x2f, 0x85, 0x10, 0xf3, 0x34, 0x0a, 0x81, 0x95, 0x8f,
+		 0xb8, 0x97, 0xbd, 0x9a, 0x06, 0x1d, 0x34, 0x3c, 0x9c, 0x04 },
+	 .r =  { 0xa4, 0xda, 0x15, 0x89, 0xdc, 0x84, 0x48, 0x6c, 0x70, 0xcf, 0xc2,
+		 0x18, 0xf6, 0x63, 0x33, 0x31, 0x64, 0xc7, 0x88, 0xa5, 0x1f, 0x8d,
+		 0x4d, 0x42, 0x4d, 0xb3, 0xf2, 0x4e, 0x5a, 0xac, 0xe7, 0x0b },
+	 .s =  { 0x3a, 0xd6, 0xab, 0x58, 0x1b, 0xd3, 0xfe, 0x01, 0x7d, 0x56, 0x9a,
+		 0xd2, 0xe5, 0x34, 0x7c, 0xda, 0xfa, 0xb7, 0xe7, 0xab, 0x58, 0x05,
+		 0x00, 0x1b, 0xfe, 0x9d, 0x7b, 0xf1, 0x31, 0xcb, 0xd5, 0x51 }
+	}
+};
+
+#define ECDSA_KAT_VECTORS_COUNT (sizeof(ecdsa_kat_vectors) / sizeof(ecdsa_kat_vectors[0]))
+
+#if defined(CONFIG_CMRT_FBOOT_HAS_ECDSA_FULL) || !defined(CONFIG_CMRT_FBOOT)
+static const ecdh_kat_t ecdh_kat_vectors[] = {
+	{
+	 .k = { 0x11, 0xad, 0x63, 0x91, 0x24, 0x53, 0x4a, 0xfd, 0x3e, 0x83, 0x7e,
+		0x82, 0x1e, 0x37, 0xc3, 0x3f, 0x96, 0x44, 0x49, 0x8c, 0xf8, 0xcf,
+		0xe9, 0x28, 0x68, 0x4b, 0x07, 0x3c },
+	 .Qx = { 0xbb, 0x27, 0xd2, 0xff, 0x14, 0x42, 0x3f, 0x96, 0x60, 0x36, 0x27,
+		 0x68, 0xf1, 0x0b, 0x32, 0xc7, 0x7f, 0x65, 0xd6, 0xb1, 0x11, 0x4e,
+		 0x22, 0x1d, 0xbf, 0xfb, 0x34, 0x6b },
+	 .Sx = { 0xdb, 0x94, 0x8d, 0xc1, 0x53, 0x2d, 0xd6, 0x05, 0xac, 0x34, 0x3e,
+		 0x02, 0x34, 0xc2, 0xf1, 0x95, 0xdb, 0xb2, 0x20, 0xb5, 0x34, 0xa4,
+		 0xf2, 0x9b, 0xde, 0x23, 0x6f, 0x35 }
+	}
+};
+
+#define ECDH_KAT_VECTORS_COUNT (sizeof(ecdh_kat_vectors) / sizeof(ecdh_kat_vectors[0]))
+#endif
+#endif
+
+static int sync(cmrt_pke_t pke, int rc, bool synced)
+{
+	if ((rc == 0) && !synced) {
+		rc = cmrt_pke_sync(pke);
+	}
+	return rc;
+}
+
+static void ecdsa_run_kat(cmrt_pke_t pke, const ecdsa_kat_t *kat, bool synced)
+{
+	alignas(4) uint8_t rp_out[32];
+#if defined(CONFIG_CMRT_FBOOT_HAS_ECDSA_FULL) || !defined(CONFIG_CMRT_FBOOT)
+	alignas(4) uint8_t r_out[32];
+	alignas(4) uint8_t s_out[32];
+#endif
+	cmrt_ecc_curve_t curve = cmrt_pke_get_curve(CMRT_ECC_CURVE_NIST_P256);
+	if (curve == NULL) {
+		cmrt_eac_kat_error(CORE_ID_PKE, -EXDEV, -ENODEV);
+	}
+	int rc = 0;
+#if defined(CONFIG_CMRT_FBOOT_HAS_ECDSA_FULL) || !defined(CONFIG_CMRT_FBOOT)
+	rc = cmrt_pke_ecdsa_sign_extended(pke, curve, kat->k, NULL,
+					  kat->no, kat->hs, 32, r_out, s_out);
+	rc = sync(pke, rc, synced);
+	if (rc != 0) {
+		cmrt_eac_kat_error(CORE_ID_PKE, -EXDEV, rc);
+	}
+#endif
+	rc = cmrt_pke_ecdsa_verify_hash(pke, curve, kat->Qx, kat->Qy, kat->hs,
+					32, kat->r, kat->s, rp_out);
+	rc = sync(pke, rc, synced);
+	if (rc != 0) {
+		cmrt_eac_kat_error(CORE_ID_PKE, -EXDEV, rc);
+	}
+#if defined(CONFIG_CMRT_FBOOT_HAS_ECDSA_FULL) || !defined(CONFIG_CMRT_FBOOT)
+	if ((memcmp(kat->r, r_out, 32) != 0) ||
+	    (memcmp(kat->s, s_out, 32) != 0)) {
+		cmrt_eac_kat_error(CORE_ID_PKE, -EXDEV, -EFAULT);
+	}
+#endif
+	if (memcmp(kat->r, rp_out, 32) != 0) {
+		cmrt_eac_kat_error(CORE_ID_PKE, -EXDEV, -EFAULT);
+	}
+	/* Success if we are here. */
+}
+
+#ifndef CONFIG_CMRT_FBOOT
+static void ecdh_run_kat(cmrt_pke_t pke, const ecdh_kat_t *kat, bool synced)
+{
+	cmrt_ecc_curve_t curve = cmrt_pke_get_curve(CMRT_ECC_CURVE_NIST_P224);
+	if (curve == NULL) {
+		cmrt_eac_kat_error(CORE_ID_PKE, -EXDEV, -ENODEV);
+	}
+	alignas(4) uint8_t output[28];
+	int rc = cmrt_pke_ecdh(pke, curve, kat->k, kat->Qx, output);
+	rc = sync(pke, rc, synced);
+	if (rc != 0) {
+		cmrt_eac_kat_error(CORE_ID_PKE, -EXDEV, rc);
+	}
+	if (memcmp(kat->Sx, output, 28) != 0) {
+		cmrt_eac_kat_error(CORE_ID_PKE, -EXDEV, -EFAULT);
+	}
+	/* Success if we are here. */
+}
+#endif
+
+void pke_open_kat(cmrt_dd_context_t *context)
+{
+	LOG_INF("Running PKE KAT vectors");
+
+	cmrt_pke_t pke = (cmrt_pke_t)context;
+	bool synced = (context->flags & CMRT_O_SYNC) != 0;
+	/* Run the PKE kats and expect output vector match */
+	for (uint32_t i = 0; i < ECDSA_KAT_VECTORS_COUNT; i++) {
+		ecdsa_run_kat(pke, &ecdsa_kat_vectors[i], synced);
+	}
+#ifndef CONFIG_CMRT_FBOOT
+	for (uint32_t i = 0; i < ECDH_KAT_VECTORS_COUNT; i++) {
+		ecdh_run_kat(pke, &ecdh_kat_vectors[i], synced);
+	}
+#endif
+}
+
+int pke_init_kat(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+#ifdef CONFIG_CMRT_FIPS_140_MODE
+	/* Only run in mission and in fips mode. */
+	uint32_t state = sys_read32((mm_reg_t)(CMRT_SIC_BASE+R_DEVICE_LIFECYCLE));
+	uint32_t fips = sys_read32((mm_reg_t)(CMRT_SIC_BASE+R_FIPS_MODE));
+	if (state != DLC_MISSION || (fips & FIPS_MODE_ENTER_FLAG) == 0) {
+		return 0;
+	}
+	cmrt_pke_t pke = cmrt_pke_open(CMRT_O_HWC_FORCE_KAT | CMRT_O_SYNC);
+	if (!cmrt_dd_valid(pke)) {
+		cmrt_eac_kat_error(CORE_ID_PKE, -EXDEV, -ENODEV);
+	}
+	cmrt_pke_close(pke);
+#endif
+	return 0;
+}

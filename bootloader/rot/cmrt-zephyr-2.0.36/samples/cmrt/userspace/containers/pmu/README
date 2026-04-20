@@ -1,0 +1,16 @@
+
+pmu: User container to set pmu to a lower state
+
+To run (load and start) container:
+
+$ mwtest.py -c100 run pmu.img
+
+Run the container to enter CMRT into low power mode:
+
+$ cmtest pmu
+
+CMRT PMU state: IDLE
+
+To unload container:
+
+$ mwtest.py -c100 unload

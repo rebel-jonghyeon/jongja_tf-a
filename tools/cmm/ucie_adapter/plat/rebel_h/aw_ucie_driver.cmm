@@ -1,0 +1,434 @@
+;The module(cmm) to be executed is determined according to the selected id.
+&synopsys_dwc_ssi_id=0x0
+;&stm32_id=..
+;&at91_id=..
+;....
+
+GLOBAL &g_ip_id ; QSPI master IP
+&g_ip_id=-1
+GLOBAL &g_sfr_base_addr ;SFR base address
+&g_sfr_base_addr=-1
+GLOBAL &g_lib_module
+&g_lib_module=""
+
+;=========================================
+;set global macro
+&g_ip_id=&synopsys_dwc_ssi_id
+;&g_sfr_base_addr=0x1FF9B30000;QSPI3_PERI0 - Slave
+&g_sfr_base_addr=0x1FF9B20000;QSPI2_PERI0 - Master
+;ChDir X:\project\cmm_tools\qspi
+&g_read_buffer="read_buffer.dat"//read output file
+;=========================================
+
+&DW_SPI_SYSREG_ADDRESS=0x1E04310160
+
+&RBCH00_CONFIGURATION=0x42C0
+&RBCH01_CONFIGURATION=0x42E0
+&RBCV00_CONFIGURATION=0x4300
+&RBCV01_CONFIGURATION=0x4320
+&RBCV10_CONFIGURATION=0x4340
+&RBCV11_CONFIGURATION=0x4360
+PMACRO.list
+
+IF &g_ip_id==&synopsys_dwc_ssi_id
+(
+  &g_lib_module="../../qspi/synopsys_dwc_ssi_lib"
+)
+;ELSE IF &ip_id==&stm32_id
+;(
+;
+;)
+ELSE
+(
+  print %ERROR &ip_id " is invalid ip_id"
+  ENDDO
+)
+
+Main:
+(
+  AREA
+  AREA.CLEAR
+  LOCAL &adap_func
+  &WRITE=0
+  &READ=1
+  WHILE TRUE()
+  (
+Loop:
+    GOSUB PrintFuncList
+    PRINT "input func num : "
+    ENTER &adap_func
+
+	IF &adap_func==1;PMU_enable_blk_rbc
+    (
+      PRIVATE &slave_num
+
+      PRINT "input slave_num : "
+      ENTER &slave_num
+
+      GOSUB PMU_enable_blk_rbc &slave_num
+    )
+    IF &adap_func==2;Enable_cmu_rbc
+    (
+      PRIVATE &slave_num
+      PRIVATE &base
+
+      PRINT "input slave_num : "
+      ENTER &slave_num
+
+      PRINT "input base addr : "
+      ENTER &base
+      GOSUB Init_cmu_rbc &slave_num &base
+    )
+    IF &adap_func==3;Load_FW
+    (
+      PRIVATE &slave_num
+      PRIVATE &base
+
+      PRINT "input slave_num : "
+      ENTER &slave_num
+
+      PRINT "input base addr : "
+      ENTER &base
+
+      GOSUB Load_FW &slave_num &base
+    )
+    IF &adap_func==4;Enable_ucie_core
+    (
+      PRIVATE &slave_num
+      PRIVATE &base
+
+      PRINT "input slave_num : "
+      ENTER &slave_num
+
+      PRINT "input base addr : "
+      ENTER &base
+
+      GOSUB Enable_ucie_core &slave_num &base
+    )
+    IF &adap_func==5;Dump UCIE_SS MMIO
+    (
+      PRIVATE &chiplet_id
+      PRIVATE &base_addr
+
+      PRINT "input chiplet_id : "
+      ENTER &chiplet_id
+
+      PRINT "input base addr : "
+      ENTER &base_addr
+
+      GOSUB Dump_UCIE_SS_MMIO &chiplet_id &base_addr
+    )
+  )
+
+  ENDDO
+)
+
+PrintFuncList:
+(
+  PRINT
+  PRINT "Current QSPI lib is " "&g_lib_module"
+  PRINT "1. PMU_enable_blk_rbc"
+  PRINT "2. Init cmu_rbc"
+  PRINT "3. Load FW"
+  PRINT "4. Enable ucie core"
+  PRINT "5. Dump UCIE_SS MMIO"
+  RETURN
+)
+
+PMU_enable_local_rbc:
+(
+  ENTRY &base_addr
+
+  &value=Data.Long(zaxi:&base_addr+0x8)
+  &value=&value&~0x20000000
+  Data.set zaxi:&base_addr+0x8 %Long &value
+
+  &value=Data.Long(zaxi:&base_addr+0x0)
+  &value=&value|0x80000000
+  Data.set zaxi:&base_addr+0x0 %Long &value
+
+  &value=0x0
+  WHILE &value!=0xF
+  (
+	&value=Data.Long(zaxi:&base_addr+0x4)
+	&value=&value&0xF
+  )
+  RETURN
+)
+
+PMU_enable_remote_rbc:
+(
+  ENTRY &chiplet_id &base_addr
+  LOCAL &value
+
+  GOSUB QSPI_Write &chiplet_id &DW_SPI_SYSREG_ADDRESS &base_addr&0xFC000000
+
+  GOSUB QSPI_Read &chiplet_id &base_addr+0x8
+  RETURNVALUES &value
+  &value=&value&~0x20000000
+  GOSUB QSPI_Write &chiplet_id &base_addr+0x8 &value
+
+  GOSUB QSPI_Read &chiplet_id &base_addr+0x0
+  RETURNVALUES &value
+  &value=&value|0x80000000
+  GOSUB QSPI_Write &chiplet_id &base_addr+0x0 &value
+
+  &value=0x0
+  WHILE &value!=0xF
+  (
+    GOSUB QSPI_Read &chiplet_id &base_addr+0x4
+    RETURNVALUES &value
+
+	&value=&value&0xF
+  )
+
+  RETURN
+)
+
+PMU_enable_blk_rbc:
+(
+  ENTRY &chiplet_id
+  PRIVATE &baseaddr &value
+  &baseaddr=0x1E00230000
+  &value=0
+
+  IF &chiplet_id==0
+  (
+    GOSUB PMU_enable_local_rbc &baseaddr+&RBCV10_CONFIGURATION
+    GOSUB PMU_enable_local_rbc &baseaddr+&RBCV11_CONFIGURATION
+    GOSUB PMU_enable_local_rbc &baseaddr+&RBCH00_CONFIGURATION
+    GOSUB PMU_enable_local_rbc &baseaddr+&RBCH01_CONFIGURATION
+  )
+  ELSE IF &chiplet_id==1
+  (
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCV00_CONFIGURATION
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCV01_CONFIGURATION
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCH00_CONFIGURATION
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCH01_CONFIGURATION
+  )
+  ELSE IF &chiplet_id==2
+  (
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCV00_CONFIGURATION
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCV01_CONFIGURATION
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCH00_CONFIGURATION
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCH01_CONFIGURATION
+  )
+  ELSE IF &chiplet_id==3
+  (
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCV10_CONFIGURATION
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCV11_CONFIGURATION
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCH00_CONFIGURATION
+    GOSUB PMU_enable_remote_rbc &chiplet_id &baseaddr+&RBCH01_CONFIGURATION
+  )
+
+  RETURN
+)
+
+Init_cmu_rbc:
+(
+  ENTRY &chiplet_id &base_addr
+	IF &chiplet_id!=0
+	(
+          GOSUB QSPI_Write &chiplet_id &DW_SPI_SYSREG_ADDRESS &base_addr&0xFC000000
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&blk_cmu_rbc->rbc_cmu_rbc_controller_option, 0x20000000, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x800 0x20000000
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&blk_cmu_rbc->clk_con_div_div1_rbc_aclk0, 0x00000000, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x1800 0x00000000
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&blk_cmu_rbc->clk_con_div_div1_rbc_pclk, 0x00000000, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x1804 0x00000000
+	  ;qspi_write_1word(qspi_channel, (uint64_t)&blk_cmu_rbc->clk_con_div_div2_rbc_scan_750, 0x00000001, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x180C 0x00000001
+	  ;qspi_write_1word(qspi_channel, (uint64_t)&blk_cmu_rbc->clk_con_div_div3_rbc_scan_500, 0x00000002, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x1808 0x00000002
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&blk_cmu_rbc->pll_con0_pll_ctrl_rbc0, 0x00000010, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x100 0x00000010
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&blk_cmu_rbc->pll_con0_pll_ctrl_rbc2, 0x00000010, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x118 0x00000010
+	)
+	ELSE
+    (
+	  Data.set zaxi:&base_addr+0x800 %Long 0x20000000
+	  Data.set zaxi:&base_addr+0x1800 %Long 0x00000000
+	  Data.set zaxi:&base_addr+0x1804 %Long 0x00000000
+	  Data.set zaxi:&base_addr+0x180C %Long 0x00000001
+	  Data.set zaxi:&base_addr+0x1808 %Long 0x00000002
+	  Data.set zaxi:&base_addr+0x100 %Long 0x00000010
+	  Data.set zaxi:&base_addr+0x118 %Long 0x00000010
+    )
+	RETURN
+)
+
+Load_FW:
+(
+	ENTRY &chiplet_id &base_addr
+	PRIVATE &TBOOT_U_SRC_ADDR &GPT_DEST_SIZE_UCIE &offset &value
+	&TBOOT_U_SRC_ADDR=0x1f80180010
+	&GPT_DEST_SIZE_UCIE=(0x12000)
+	&offset=0x0
+	&value=0x0
+
+	IF &chiplet_id!=0x0
+	(
+          ;qspi_set_upper_addr(qspi_channel, ((uint32_t)base_addr) & 0xFC000000, chiplet_id);
+          GOSUB QSPI_Write &chiplet_id &DW_SPI_SYSREG_ADDRESS &base_addr&0xFC000000
+
+          WHILE &offset<&GPT_DEST_SIZE_UCIE
+          (
+                  &value=Data.Long(zaxi:&TBOOT_U_SRC_ADDR+&offset)
+                  ;qspi_write_16word(qspi_channel, base_addr + offset, src_data, chiplet_id);
+                  GOSUB QSPI_Write &chiplet_id &base_addr+&offset &value
+
+                  IF &offset%0x1000==0
+                          ;INFO("0x%lx\n", base_addr + offset);
+                           ECHO %Hex &offset
+                  &offset=&offset+0x4
+          )
+        )
+        ELSE
+        (
+          WHILE &offset<&GPT_DEST_SIZE_UCIE
+          (
+            &value=Data.Long(zaxi:&TBOOT_U_SRC_ADDR+&offset)
+            Data.set zaxi:&base_addr+&offset %Long &value
+
+            IF &offset%0x800==0
+              ;INFO("0x%lx\n", base_addr + offset);
+              ECHO %Hex &offset
+            &offset=&offset+0x4
+          )
+
+        )
+	RETURN
+)
+
+Enable_ucie_core:
+(
+	ENTRY &chiplet_id &base_addr
+	LOCAL &mcu_ctrl_reset_value
+	&mcu_ctrl_reset_value=0x3ff6
+
+	IF &chiplet_id!=0
+	(
+	  ;qspi_set_upper_addr(qspi_channel, ((uint32_t)base_addr) & 0xFC000000, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &DW_SPI_SYSREG_ADDRESS &base_addr&0xFC000000
+
+	  ;qspi_write_1word(qspi_channel, (uint64_t)&target_ss->dvsec1_reg_reg_global_dvsec1_ucie_link_cap.val,
+	  ;					0x20, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x2000C 0x20
+
+	  ;qspi_write_1word(qspi_channel, (uint64_t)&target_ss->dvsec1_reg_reg_global_dvsec1_ucie_link_cntrl.val,
+	  ;				 0x1400, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x20010 0x1400
+	  ;qspi_write_1word(qspi_channel, (uint64_t)&target_ss->phy_cmn_reg_cmnsoc_reg1.val, 0x101, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x2F084 0x101
+	  ;qspi_write_1word(qspi_channel, (uint64_t)&target_ss->dfx0_reg_clk_ctrl.val, 0x1, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x31800 0x1
+	  ;qspi_write_1word(qspi_channel, (uint64_t)&target_ss->dfx1_reg_clk_ctrl.val, 0x1, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x33800 0x1
+	  ;qspi_write_1word(qspi_channel, (uint64_t)&target_ss->global_reg_cmn_mcu_ctrl.val,
+	  ;				 mcu_ctrl_reset_value, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x2E000 &mcu_ctrl_reset_value
+
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&target_ss->phy_cmn_reg_sram_cfg.val, 0x1, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x2F094 0x1
+
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&target_ss->dfx0_reg_lane_mcu_ctrl.val,
+	  ; 				 mcu_ctrl_reset_value, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x31824 &mcu_ctrl_reset_value
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&target_ss->dfx1_reg_lane_mcu_ctrl.val,
+	  ; 				 mcu_ctrl_reset_value, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x33824 &mcu_ctrl_reset_value
+
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&target_ss->global_reg_cmn_mcu_ctrl.val,
+	  ; 				 mcu_ctrl_reset_value | 0x1, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x2E000 &mcu_ctrl_reset_value|0x1
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&target_ss->dfx0_reg_lane_mcu_ctrl.val,
+	  ; 				 mcu_ctrl_reset_value | 0x1, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x31824 &mcu_ctrl_reset_value|0x1
+	  ; qspi_write_1word(qspi_channel, (uint64_t)&target_ss->dfx1_reg_lane_mcu_ctrl.val,
+	  ; 				 mcu_ctrl_reset_value | 0x1, chiplet_id);
+	  GOSUB QSPI_Write &chiplet_id &base_addr+0x33824 &mcu_ctrl_reset_value|0x1
+	)
+	ELSE
+	(
+	  Data.set zaxi:&base_addr+0x2000C %Long 0x20
+
+	  Data.set zaxi:&base_addr+0x20010 %Long 0x1400
+	  Data.set zaxi:&base_addr+0x2F084 %Long 0x101
+	  Data.set zaxi:&base_addr+0x31800 %Long 0x1
+	  Data.set zaxi:&base_addr+0x33800 %Long 0x1
+	  Data.set zaxi:&base_addr+0x2E000 %Long &mcu_ctrl_reset_value
+
+	  Data.set zaxi:&base_addr+0x2F094 %Long 0x1
+
+	  Data.set zaxi:&base_addr+0x31824 %Long &mcu_ctrl_reset_value
+	  Data.set zaxi:&base_addr+0x33824 %Long &mcu_ctrl_reset_value
+
+	  Data.set zaxi:&base_addr+0x2E000 %Long &mcu_ctrl_reset_value|0x1
+	  Data.set zaxi:&base_addr+0x31824 %Long &mcu_ctrl_reset_value|0x1
+	  Data.set zaxi:&base_addr+0x33824 %Long &mcu_ctrl_reset_value|0x1
+	)
+	RETURN
+)
+
+QSPI_Write:
+(
+  ENTRY &chiplet_id &addr &data
+  LOCAL &driver_func &driver_arg0 &driver_arg1 &driver_arg2 &driver_arg3
+
+  &driver_func=1;Write
+  &driver_arg0=&chiplet_id
+  &driver_arg1=&addr
+  &driver_arg2=&data
+  &driver_arg3=1.;write cmd=write 1word
+  DO &g_lib_module
+
+  RETURN
+)
+
+QSPI_Read:
+(
+  ENTRY &chiplet_id &addr
+
+  &driver_func=2;Read_1word
+  &driver_arg0=&chiplet_id
+  &driver_arg1=&addr
+  &driver_ret=0.
+  DO &g_lib_module
+  RETURN "&driver_ret"
+)
+
+Dump_UCIE_SS_MMIO:
+(
+  ENTRY &chiplet_id &base_addr
+
+  PRIVATE &dump_size &offset &value
+  &dump_size=0x23100
+  &offset=0x0
+  &value=0x0
+  &end_addr=&base_addr+&dump_size
+  &file_name="CHIP#&chiplet_id"+"_dump_"+"&base_addr"+"~&end_addr"
+  &cur_chiplet_id=Data.Long(zaxi:0x1E00220444)
+
+  IF &chiplet_id!=&cur_chiplet_id
+  (
+    GOSUB QSPI_Write &chiplet_id &DW_SPI_SYSREG_ADDRESS &base_addr&0xFC000000
+    OPEN #1 &file_name.bin /Binary /Create /Write
+
+    WHILE &offset<&dump_size
+    (
+      GOSUB QSPI_Read &chiplet_id &base_addr+&offset
+      RETURNVALUES &value
+      WRITEB #1 %Long &value
+      IF &offset%0x100==0
+        ECHO %Hex &offset
+      &offset=&offset+0x4
+    )
+  )
+  ELSE
+  (
+    data.save.binary &file_name.bin zaxi:&base_addr++(&dump_size-1) /SkipErrors
+  )
+  CLOSE #1
+  RETURN
+)

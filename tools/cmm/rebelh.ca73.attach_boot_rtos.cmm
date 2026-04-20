@@ -1,0 +1,148 @@
+B::
+
+RESet
+SYStem.RESet
+
+; Platform, 1 = ZEBU / 0 = Silicon (default)
+LOCAL &ZEBU
+
+; Chiplet-id of target
+; Xj0* JTAG: per-chiplet standalone
+; Xj1* JTAG PAD route: TDI -> chiplet-0 -> chiplet-2 -> chiplet-3 -> chiplet-1 -> TDO
+
+LOCAL &STANDALONE	; 0: per-chiplet Xj0*, 1: daisy-chain Xj1* path
+LOCAL &CHIPLET_ID
+
+&ZEBU=0.
+&STANDALONE=1.
+&CHIPLET_ID=0.
+
+IF &ZEBU==1.
+(
+ sys.CONFIG.DEBUGPORT GTL0
+ sys.gtl.modelconfig "NODE=localhost|PORT=20010|TIMEOUT=600000|TRST_USED=1|SRST_USED=0|CLK_RATIO=2|CPU_FREQ_MHZ=5"
+ sys.gtl.LIBname "/user/zebusw/XTOR/S/IP_ROOT_S_2023_03/lib/libxtor_t32_socket_svs.so"
+ sys.gtl.JTAGPROBENAME "JTAGPROBE0"
+ sys.vt.timeintargettime on                                               ; configure usage of model timing
+ sys.vt.pauseintargettime on                                              ; configure usage of model timing
+ sys.vt.hardwaretimeoutscale 100.0
+ sys.gtl.connect
+ sys.vt.timeintargettime on
+ sys.vt.pauseintargettime on
+)
+
+PRINT			VERSION.SOFTWARE()
+
+; Set DAP's IR/DR POST/PRE value for the target chiplet
+IF &STANDALONE==1.
+(
+  SYS.CONFIG DAPIRPRE		0.
+  SYS.CONFIG DAPIRPOST		0.
+  SYS.CONFIG DAPDRPRE		0.
+  SYS.CONFIG DAPDRPOST		0.
+)
+ELSE IF &CHIPLET_ID==0.
+(
+  SYS.CONFIG DAPIRPRE		12.
+  SYS.CONFIG DAPIRPOST		0.
+  SYS.CONFIG DAPDRPRE		3.
+  SYS.CONFIG DAPDRPOST		0.
+)
+ELSE IF &CHIPLET_ID==1.
+(
+  SYS.CONFIG DAPIRPRE		0.
+  SYS.CONFIG DAPIRPOST		12.
+  SYS.CONFIG DAPDRPRE		0.
+  SYS.CONFIG DAPDRPOST		3.
+)
+ELSE IF &CHIPLET_ID==2.
+(
+  SYS.CONFIG DAPIRPRE		8.
+  SYS.CONFIG DAPIRPOST		4.
+  SYS.CONFIG DAPDRPRE		2.
+  SYS.CONFIG DAPDRPOST		1.
+)
+ELSE IF &CHIPLET_ID==3.
+(
+  SYS.CONFIG DAPIRPRE		4.
+  SYS.CONFIG DAPIRPOST		8.
+  SYS.CONFIG DAPDRPRE		1.
+  SYS.CONFIG DAPDRPOST		2.
+)
+ELSE
+(
+  PRINT "Not supported"
+  ENDDO
+)
+
+; Basic setting
+SYSTEM.JTAGCLOCK		20MHz
+SYSTEM.CPU				CORTEXA73
+
+SYSTEM.OPTION	RESBREAK	OFF
+SYSTEM.OPTION	ENRESET		OFF
+SYSTEM.OPTION 	TRST		OFF
+SYSTEM.OPTION.MEMSTATUSCHECK ON
+
+; APB-AP for CA73 debug
+SYSTEM.CONFIG.APBAP1.Base	DP:0x00004000
+SYSTEM.CONFIG.COREDEBUG.base	APB:0x00810000
+SYSTEM.CONFIG.CTIBASE		APB:0x00820000
+
+; AXI-AP
+SYSTEM.CONFIG.AXIAP1.Base	DP:0x00002000
+
+Break.CONFIG.METHOD Program Onchip
+Break.CONFIG.METHOD Read Onchip
+Break.CONFIG.METHOD Write Onchip
+
+SYStem.up
+
+;;; REMAP NOC - Fake as CL0
+Data.dump ZAXI:0x1E00220444++3 /NoAscii ;; CHIPLET ID
+wait 1.
+Data.Set ZAXI:0x1E00220400 %LE %Long 0 ;; REMAP_NOC
+Data.Set ZAXI:0x1E00220404 %LE %Long 1 ;; REMAP_NIC
+wait 1.
+;;Data.dump ZAXI:0x1FF0220444++3 /NoAscii ;; CHIPLET ID
+;;wait 1.
+;;Data.Set ZAXI:0x1FF0220400 %LE %Long 0 ;; REMAP_NOC
+;;Data.Set ZAXI:0x1FF0220404 %LE %Long 1 ;; REMAP_NIC
+;;wait 1.
+
+Data.Set APB:0x810300 %LE %Long 0 ;; CP0 core0 OSLAR unlock
+wait 500.ms
+;Data.dump APB:0x8100A0++0F /NoAscii /SpotLight ;; CP0 core0 EDPCSR
+
+LOCAL &path_root
+&path_root="/home/rebellions/Silicon_BringUp_data/ty.jeon/fw/rebel_hw_vdk/firmware/rebel_q"
+
+Data.LOAD.Binary &path_root/binaries/FreeRTOS_PCIE/freertos_kernel.bin zaxi:0x1ff8000000
+Data.LOAD.Binary &path_root/binaries/BootLoader_CP/bl1.bin zaxi:0x1e00010000
+Data.LOAD.Binary &path_root/binaries/BootLoader_CP/bl2.bin zaxi:0x1e00030000
+Data.LOAD.Elf    &path_root/binaries/BootLoader_CP/bl2.elf /nocode
+r.set pc 0x1e00010000
+
+print "bl2 load done"
+b.s bl2_load_images /Program /Onchip
+;b.s hbm3_init
+;b.s bl2_main
+go
+wait.!run()
+
+;snoop.pc
+
+Data.LOAD.Binary &path_root/binaries/BootLoader_CP/bl31.bin zaxi:0x0
+Data.LOAD.Binary &path_root/binaries/FreeRTOS_CP/freertos_kernel.bin zaxi:0x200000
+Data.LOAD.Elf    &path_root/binaries/FreeRTOS_CP/freertos_kernel.elf /nocode
+print "rtos load done"
+
+;;; Source PATH
+sYmbol.SourcePATH.SetRecurseDir "../../"
+
+;b.s 0x0
+go main /Onchip
+wait.!run()
+d.l
+
+ENDDO

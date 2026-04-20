@@ -1,0 +1,131 @@
+
+test_ecies: Test ECIES Encrypt and Decrypt modes of operation for
+            input data in the container sample
+
+Input required for ECIES operation:
+- Plain Data to be encrypted
+- Shared info (optional)
+- Tag length (can be 0)
+- Key
+
+Output:
+- Cipher Data
+- Tag (if tag length != 0)
+
+To run (load and start) container:
+$ mwtest.py -c100 run test_ecies.img
+
+Example for for encrypting some data and then decrypting it:
+
+1) Send open command to open ecies context. The argument is 0 for HC
+   and 1 for HC2.
+
+$ cmtest cmd -f100 open 0
+
+2) Send an init command with encrypt op and the recipient's public key.
+   The argument 0 after encrypt is the ECIES mode. See list of modes at the
+   end of this document. The empty argument at the end is the private key,
+   which must be empty ('') for encrypt.
+
+cmtest cmd -f100 init encrypt 0 %d0720dc691aa80096ba32fed1cb97c2b620690d06de0317b8618d5ce65eb728f ''
+00000000: f2 01 07 14 80 b9 97 99  70 e4 a9 30 cc c5 30 1a  |........p..0..0.|
+00000010: 82 c0 18 b3 94 78 ee 0e  72 a7 6c d3 8c c8 7f 7c  |.....x..r.l....||
+
+The output of the init encrypt command is the message's public key, which need
+to be passed to the decrypt command when decrypting.
+
+Note: if you redirect output of cmtest command into a file (or pipe), raw
+      bytes are written, instead of the hexdump.
+
+3) Send the data to encrypt with the update command in chunks of length
+   multiple of 16 (except last one).
+
+$ cmtest cmd -f100 update %41414141414141414141414141414141
+Sending data to CMRT via SIC...
+...received 16 bytes OK
+00000000: e1 40 66 73 8d fc 6a 88  07 71 25 84 70 89 42 ff  |.@fs..j..q%.p.B.|
+
+...
+
+4) Send the last block of data using the final command. If its length is not
+   a multiple of 16, pad it with zeroes. The number in the first argument is
+   the tag length. In this case 16, it could be 0. The last argument is the
+   shared data, which can be empty ('').
+
+cmtest cmd -f100 final 16 %42424242424242424242424242420000 'shared data'
+00000000: 16 4f 86 9d 10 a4 ed 1f  d2 ab 34 d6 7f 36 36 6a  |.O........4..66j|
+00000010: a3 d0 15 da 59 ca 49 b7  b3 be 99 5d 92 6c 55 7d  |....Y.I....].lU}|
+
+The first taglen bytes (16 in this case) is the tag. The rest is the output.
+
+5) Now the ECIES context can be closed.
+
+$ cmtest cmd -f100 close
+
+To decrypt, the operation is identical but the init command must be given the
+message public key instead of the recipient's public key, followed by the
+recipient's private key (which was empty for encrypt).
+
+$ cmtest cmd -f100 open 0
+$ cmtest cmd -f100 init decrypt 0 %f201071480b9979970e4a930ccc5301a82c018b39478ee0e72a76cd38cc87f7c %c9806898a0334916c860748880a541f093b579a9b1f32934d86c363c39800357
+00000000: d0 72 0d c6 91 aa 80 09  6b a3 2f ed 1c b9 7c 2b  |.r......k./...|+|
+00000010: 62 06 90 d0 6d e0 31 7b  86 18 d5 ce 65 eb 72 8f  |b...m.1{....e.r.|
+
+The output must match the recipient's public key.
+
+Now, the sequence of update and last final command can be repeated but the
+ciphertext must be provided. The output will be the cleartext.
+The tag which is part of the output of the final command must match.
+A mismatch means authentication error, for example, different shared info
+provided for encrypt and decrypt.
+
+Note: On receiving data from HLOS, ECIES Encrypt and Decrypt modes of
+operation are verified.
+
+To unload container:
+$ mwtest.py -c100 unload
+
+
+# Appendix. ECIES modes
+
+'0'
+    /** EC: NIST P-256,
+       KDF1 HASH: SHA256
+       AES-CBC: AES-CBC-128
+       HMAC: HMAC-SHA256 */
+    CMRT_ECIES_P256_KDF1_SHA256_AES128_HMAC_SHA256,
+
+'1'
+    /** EC: NIST P-384
+       KDF1 HASH: SHA384
+       AES-CBC: AES-CBC-128
+       HMAC: HMAC-SHA384 */
+    CMRT_ECIES_P384_KDF1_SHA384_AES128_HMAC_SHA384,
+
+'2'
+    /** EC: NIST P-521
+       KDF1 HASH: SHA512
+       AES-CBC: AES-CBC-256
+       HMAC: HMAC-SHA512 */
+    CMRT_ECIES_P521_KDF1_SHA512_AES256_HMAC_SHA512,
+
+'3'
+    /** EC: NIST P-256
+       KDF1 HASH: SHA-3-256
+       AES-CBC: AES-128
+       HMAC: SHA-3-256 */
+    CMRT_ECIES_P256_KDF1_SHA3_256_AES128_HMAC_SHA3_256,
+
+'4'
+    /** EC: NIST P-384
+       KDF1 HASH: SHA-3-384
+       AES-CBC: AES-128
+       HMAC: SHA-3-384 */
+    CMRT_ECIES_P384_KDF1_SHA3_384_AES128_HMAC_SHA3_384,
+
+'5'
+    /** EC: NIST P-521
+       KDF1 HASH: SHA-3-512
+       AES-CBC: AES-128
+       HMAC: SHA-3-512 */
+    CMRT_ECIES_P521_KDF1_SHA3_512_AES256_HMAC_SHA3_512

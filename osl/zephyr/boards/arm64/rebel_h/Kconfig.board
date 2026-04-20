@@ -1,0 +1,7 @@
+# Copyright (c) 2024 Samsung Electronics Co., Ltd.
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_REBEL_H
+	bool "Cortex AArch64 CA73 REBEL_H board"
+	depends on SOC_REBEL_H
+	select ARM64

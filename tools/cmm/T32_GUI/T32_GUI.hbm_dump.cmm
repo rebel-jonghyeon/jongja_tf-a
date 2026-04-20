@@ -1,0 +1,119 @@
+; REBEL_Q T32 Attach Device
+
+B::
+
+RESet
+
+GLOBAL &DIRECT_CONNECT &CL_IDX &HBM_DUMP_PATH
+ENTRY &DIRECT_CONNECT &CL_IDX &HBM_DUMP_PATH
+
+PRINT "DIRECT_CONNECT:" "&DIRECT_CONNECT" "ID:" "&CL_IDX"
+
+; declare
+LOCAL &NUM_CL
+&NUM_CL=4.
+
+LOCAL &CL_OFFSET
+&CL_OFFSET=0x2000000000
+
+LOCAL &NUM_HBM_CH
+&NUM_HBM_CH=16.
+
+LOCAL &CSR_BASE
+&CSR_BASE=0x1FF7400000
+
+LOCAL &PHY_BASE
+&PHY_BASE=0x1FF7800000
+
+LOCAL &ICON_BASE
+&ICON_BASE=0x1FF79F0000
+
+LOCAL &END_CSR_OFFSET
+&END_CSR_OFFSET=0xe804  ; 59396
+
+LOCAL &END_PHY_OFFSET
+&END_PHY_OFFSET=0xfc4   ; 4036
+
+LOCAL &END_ICON_OFFSET
+&END_ICON_OFFSET=0x54c  ; 1356
+
+LOCAL &CSR_CH_OFFSET
+&CSR_CH_OFFSET=0x40000
+
+LOCAL &PHY_CH_OFFSET
+&PHY_CH_OFFSET=0x10000
+
+LOCAL &cl_idx
+LOCAL &hbm3_ch
+LOCAL &file_name
+LOCAL &base
+
+DO T32_GUI.config.cmm &DIRECT_CONNECT &CL_IDX
+
+SYStem.Attach
+
+IF RUN()
+    Break
+
+; Dump CSR
+&cl_idx=0.
+&hbm3_ch=0.
+RePeaT &NUM_CL
+(
+    RePeaT &NUM_HBM_CH
+    (
+        SPRINTF &file_name "cl%d_hbm3_csr_dump_%02d_raw.log" &cl_idx &hbm3_ch
+        &base=(&cl_idx*&CL_OFFSET)+&CSR_BASE+(&CSR_CH_OFFSET*&hbm3_ch)
+        GOSUB DUMP_REG &HBM_DUMP_PATH/&file_name &base &END_CSR_OFFSET
+        &hbm3_ch=&hbm3_ch+1.
+    )
+    &hbm3_ch=0.
+    &cl_idx=&cl_idx+1.
+)
+
+; DUMP PHY
+&cl_idx=0.
+&hbm3_ch=0.
+RePeaT &NUM_CL
+(
+    RePeaT &NUM_HBM_CH
+    (
+        SPRINTF &file_name "cl%d_hbm3_phy_dump_%02d_raw.log" &cl_idx &hbm3_ch
+        &base=(&cl_idx*&CL_OFFSET)+&PHY_BASE+(&PHY_CH_OFFSET*&hbm3_ch)
+        GOSUB DUMP_REG &HBM_DUMP_PATH/&file_name &base &END_PHY_OFFSET
+        &hbm3_ch=&hbm3_ch+1.
+    )
+    &hbm3_ch=0.
+    &cl_idx=&cl_idx+1.
+)
+
+
+; ICON DUMP
+&cl_idx=0.
+RePeaT &NUM_CL
+(
+    SPRINTF &file_name "cl%d_hbm3_icon_dump_raw.log" &cl_idx
+    &base=(&cl_idx*&CL_OFFSET)+&ICON_BASE
+    GOSUB DUMP_REG &HBM_DUMP_PATH/&file_name &base &END_ICON_OFFSET
+
+    &cl_idx=&cl_idx+1.
+)
+
+DIALOG.MESSAGE "All Process Done"
+
+ENDDO
+
+DUMP_REG:
+(
+    LOCAL &path &start_addr &dump_size
+    ENTRY &path &start_addr &dump_size
+
+    PRINT "&path Start"
+    Data.SAVE.Ascii "&path" &start_addr++&dump_size /long
+    PRINT "  -> Saved &path (&dump_size bytes)"
+    PRINT "&path Done"
+
+    RETURN
+)
+
+ENDDO

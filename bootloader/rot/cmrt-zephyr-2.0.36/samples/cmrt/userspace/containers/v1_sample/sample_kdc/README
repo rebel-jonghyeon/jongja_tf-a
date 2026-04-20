@@ -1,0 +1,23 @@
+
+sample_kdc: Show how to use KDC to derive a key from given base key id
+
+The container should be run in MISSION lifecycle. Keysplit can be
+programmed by running the sample_otp_slot container otherwise empty
+keysplit gets used for key derivation.
+
+Note that the field `use_otp_keys` in footer.json must have permit to use the
+key split in question.
+
+To load container:
+$ mwtest.py -c100 run sample_kdc.img
+
+Sending DGOK as base key id to the container triggers the KDC derive:
+$ printf '\000\000\000\000' > testfile
+$ cmtest data -f100 testfile
+
+Sending key split 3 as base key id to the container triggers the KDC derive:
+$ printf '\024\000\000\000' > testfile
+$ cmtest data -f100 testfile
+
+To unload container:
+$ mwtest.py -c100 unload

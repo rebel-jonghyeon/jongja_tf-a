@@ -1,0 +1,22 @@
+
+sample_ecies: Verify ECIES Encrypt and Decrypt modes of operation
+              for input data in the container sample
+
+Input required for ECIES operation:
+- Plain Data to be encrypted
+- Key
+
+Ouput:
+- Cipher Data
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_ecies.img
+
+To send data to container:
+$ cmtest data -f100 'Run tests'
+
+Note: On receiving data from HLOS, ECIES Encrypt and Decrypt modes of
+operation are verified.
+
+To unload container:
+$ mwtest.py -c100 unload

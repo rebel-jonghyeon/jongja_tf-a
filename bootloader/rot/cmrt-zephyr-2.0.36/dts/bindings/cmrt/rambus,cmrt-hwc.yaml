@@ -1,0 +1,14 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: Generic CMRT HW Core
+
+compatible: "rambus,cmrt-hwc"
+
+include: base.yaml
+
+properties:
+    reg:
+      required: true
+
+    label:
+      required: true

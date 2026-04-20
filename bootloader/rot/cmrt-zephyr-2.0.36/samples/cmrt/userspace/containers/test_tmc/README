@@ -1,0 +1,42 @@
+
+test_tmc: Demonstrate the usage of TMC API to get random bytes
+
+To run (load and start) container:
+$ mwtest.py -c100 run test_tmc.img
+
+Usage: {command} {size} [CONFIG] [CONTROL]
+
+command: tmc-set-config
+         tmc-generate
+         tmc-instantiate
+         tmc-reseed-generate
+         tmc-uninstantiate
+         tmc-reseed
+         tmc-health-check
+         tmc-close
+
+tmc-set-config: command used to set TMC Configuration with provided config
+and control values
+Default TMC configuration values are used if configuration is not set
+CONFIG     : EIP-76 Config initialization value (optional)
+CONTROL    : EIP-76 Control initialization value (optional)
+
+size       : Requested random data size in bytes
+
+To set with default TMC configuration
+$ cmtest cmd -f100 tmc-set-config
+Default values are: Control=0x400 config=0xc000102
+
+To set with known TMC configuration
+$ cmtest cmd -f100 tmc-set-config {CONFIG} {CONTROL}
+$ cmtest cmd -f100 tmc-set-config 0xc000102 0x400
+
+To generate random data of 30 bytes
+$ cmtest cmd -f100 tmc-generate 30
+$ cmtest cmd -f100 tmc-reseed-generate 24
+$ cmtest cmd -f100 tmc-reseed 32
+$ cmtest cmd -f100 tmc-generate 10
+$ cmtest cmd -f100 tmc-health-check 32
+
+To unload container:
+$ mwtest.py -c100 unload

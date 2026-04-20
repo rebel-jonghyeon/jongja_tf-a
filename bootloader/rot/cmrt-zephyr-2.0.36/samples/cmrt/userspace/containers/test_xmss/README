@@ -1,0 +1,26 @@
+
+test_xmss: XMSS and XMSS^MT message verification
+
+Input required for XMSS/XMSS^MT operations:
+- public key
+- message
+- message length
+- signature
+
+Output:
+- return value, 0 means success
+
+Load the container and see usage in logs:
+$ mwtest.py -c100 run test_xmss.img
+$ cmtest log
+<...>
+<...>
+
+Example:
+$ cmtest cmd -f100 open 0
+$ cmtest cmd -f100 xmss-verify PK MESSAGE SIGNATURE
+$ cmtest cmd -f100 xmss-mt-verify PK MESSAGE SIGNATURE
+$ cmtest cmd -f100 close 0
+
+To unload container:
+$ mwtest.py -c100 unload

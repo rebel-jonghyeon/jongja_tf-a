@@ -1,0 +1,241 @@
+
+test_ecc: Showcase elliptic curve operations using the PKE core
+
+Load the container and see usage in logs:
+$ mwtest.py -c100 run test_ecc.img
+$ cmtest log
+
+Usage: COMMAND CURVE [options]
+COMMAND:    keygen|sign|verify|ecdh_keygen|ecdh
+CURVE:      ed25519|nist_p224|... see supported curves below
+
+keygen CURVE PRIVKEY
+PRIVKEY:    0x... hex-encoded private key
+
+PRIVKEY DIGEST
+PRIVKEY:   0x... hex-encoded private key
+DIGEST:    0x... hex-encoded digest
+
+PUBKEY SIGN DIGEST
+PUBKEY (ecdsa): 0x... 0x... hex-encoded x and y pubkey components
+PUBKEY (eddsa): 0x... hex encoded y pubkey component
+SIGN:    0x... 0x... hex encoded r and s signature components
+DIGEST:  0x... hex-encoded digest
+
+ecdh_keygen CURVE PRIVKEY
+PRIVKEY:    0x... hex-encoded private key
+
+ecdh CURVE PRIVKEY PEERKEY
+PRIVKEY:    0x... hex-encoded private key
+PEERKEY:    0x... hex-encoded x-component of peer's public key,
+                  (the output of ecdh_keygen)
+
+Note: PRIVKEY, PEERKEY as well as PUBKEY and SIGN components (x, y) must be
+`curvelen' bytes in length (after hex-decoding),
+where `curvelen' is a parameter of the curve.
+
+Supported curves:
+ed25519
+ed448
+secp256k1
+25519
+448
+anssi_frp256v1
+nist_p192
+nist_p224
+nist_p256
+nist_p384
+nist_p521
+brainpool_p192r1
+brainpool_p224r1
+brainpool_p256r1
+brainpool_p320r1
+brainpool_p384r1
+brainpool_p512r1
+brainpool_p192t1
+brainpool_p224t1
+brainpool_p256t1
+brainpool_p320t1
+brainpool_p384t1
+brainpool_p512t1
+
+
+Sign, Verify and Keygen
+-----------------------
+
+Sign and verify the following message:
+
+$ printf 'HELLO' | sha256sum -
+3733cd977ff8eb18b987357e22ced99f46097f31ecb239e878ae63760e83e4d5
+
+$ DIGEST=0x3733cd977ff8eb18b987357e22ced99f46097f31ecb239e878ae63760e83e4d5
+
+The curve chosen is nist_p521. The `curvelen' is 66 bytes for this curve.
+If the length of some key or sig component mismatches the required curve
+length we'll get an error in the log that also tells us the correct `curvelen'.
+
+The digest can be any length and the api will crop it or rehash it
+appropriately.
+
+Generate a random private key and use the keygen command to obtain the
+public key:
+
+$ PRIVKEY=0x`openssl rand -hex 66`
+$ echo $PRIVKEY
+0x64c84c16e4211d26eaf51a36a9ebcdc4836bcf0a47cd1aaefa0905462cd14b30781011c338b3c909e16e0ed666e3df302b1041cd00cdd539f2eea014d432dc80994c
+
+The keygen command is used to obtain the public key:
+
+$ cmtest data -f100 -c ./board.json data -f100 "keygen nist_p521 $PRIVKEY"
+Sending data to CMRT via SIC...
+...received 132 bytes OK
+
+The response is in binary and is the concatenated serialized x and y components
+of the public key, each of `curvelen' (66) bytes long.
+In the debug log we can see the same information in a more convenient format:
+keygen: curve_id=5 curve=0x102206c curvelen=66 scheme=1
+keygen (ecdsa): pub_x: 0x01b3ee3417058a9e8e1ec590fcc1ae443ccf59a7d5d0fc39c8e398c480f999c7d9d1131f1e0972867cbdd226b202c3424a6e6ee40e5c640c92b9c4df681753bc2ee4
+keygen (ecdsa): pub_y: 0x01e6838be44d84349ad14100044f4e4d4ed27dbd275355f9d675263cf7baf88a35e995229701e7f3135bbea44cfd081f70a016256d5b1ed2b1fff243afa0875906bb
+
+$ PUBX=0x01b3ee...
+$ PUBY=0x01e683...
+
+Sign the digest with the private key:
+
+$ cmtest data -f100 "sign nist_p521 $PRIVKEY $DIGEST"
+Sending data to CMRT via SIC...
+...received 132 bytes OK
+
+The response is in binary and is the concatenated serialised r and s
+signature components, each of `curvelen' bytes in length.
+We can also see the signature in the debug log.
+sign: privkey: 0x64c84c16e4211d26eaf51a36a9ebcdc4836bcf0a47cd1aaefa0905462cd14b30781011c338b3c909e16e0ed666e3df302b1041cd00cdd539f2eea014d432dc80994c
+sign: digest: 0x3733cd977ff8eb18b987357e22ced99f46097f31ecb239e878ae63760e83e4d5
+sign: curve_id=5 curve=0x102206c curvelen=66 scheme=1
+sign: sign_r: 0x013eac59846ac181c306f2b6a1607519167716c95d6e2fd2105bd5ae9cb26c8bfdbe7481ad0575c4f143a40fb6d08aa0a2952f6ff4aa620a5e6fb09df74d50767057
+sign: sign_s: 0x01817921ad7a9ff69764d58c0e229dc7858cf7c7e335d6037d97d9059b75147373fe4a255fae483ae2f33d752bdaffdb1fec2c921acbbf7a6787e45eda6a08d6a05e
+
+$ SIGR=0x013eac59846ac181c306f2b6a1607519167716c95d6e2fd2105bd5ae9cb26c8bfdbe7481ad0575c4f143a40fb6d08aa0a2952f6ff4aa620a5e6fb09df74d50767057
+$ SIGS=0x01817921ad7a9ff69764d58c0e229dc7858cf7c7e335d6037d97d9059b75147373fe4a255fae483ae2f33d752bdaffdb1fec2c921acbbf7a6787e45eda6a08d6a05e
+
+Now the signature can be verified using the public key:
+
+$ cmtest data -f100 "verify nist_p521 $PUBX $PUBY $SIGR $SIGS $DIGEST"
+...received 4 bytes OK
+00000000: 00 00 00 00                                       |....|
+
+The response is the result of cmrt_pke_ecdsa or cmrt_pke_sync (for EDDSA).
+It is a serialized C int in machine endian, with value 0 if signature is
+valid or -EINVAL (-22, 0xffffffea) if invalid. Any other value indicates
+an error.
+
+Repeat it, but flip the last bit of the digest to make it invalid:
+
+DIGEST_FAKE=0x3733cd977ff8eb18b987357e22ced99f46097f31ecb239e878ae63760e83e4d4
+$ cmtest data -f100 "verify nist_p521 $PUBX $PUBY $SIGR $SIGS $DIGEST_FAKE"
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: ea ff ff ff                                       |....|
+
+Repeat the process with an Edwards curve, which uses EDDSA and the
+pubkey is only the y point. The `curvelen' of ed25519 is 32:
+
+$ PRIVKEY=0x`openssl rand -hex 32`
+$ echo $PRIVKEY
+0xdf9077a0ca42b38400ad67a5e5999e2a227abeb6b3e3fb4f0eee9c719c53e3b0
+
+$ cmtest data -c ./board.json data -f100 "keygen ed25519 $PRIVKEY"
+Sending data to CMRT via SIC...
+...received 32 bytes OK
+
+keygen (eddsa): pub_y: 0xc6d53606df87d8691158767a714dbe2a3ffd6708dbeb94dd7769ae4b3347ef4c
+
+$ PUBY=0xc6d53606df87d8691158767a714dbe2a3ffd6708dbeb94dd7769ae4b3347ef4c
+
+$ cmtest data -c ./board.json data -f100 "sign ed25519 $PRIVKEY $DIGEST"
+Sending data to CMRT via SIC...
+...received 64 bytes OK
+
+sign: sign_r: 0xf36e0cc5cd514b301be673aa8dc9d7437479b6002c8a306810f3cf7b88e7e861
+sign: sign_s: 0x71b701aa57456b9b2d86cae55d373b349288e3870693c2cd270e3c7536c8f608
+
+$ SIGN_R=0xf36e0cc5cd514b301be673aa8dc9d7437479b6002c8a306810f3cf7b88e7e861
+$ SIGN_S=0x71b701aa57456b9b2d86cae55d373b349288e3870693c2cd270e3c7536c8f608
+$ cmtest data -f100 "verify ed25519 $PUBY $SIGN_R $SIGN_S $DIGEST"
+
+verify: signature is VALID
+
+
+ECDH
+----
+
+Simulate an EC Diffie-Hellman key exchange between two parties Alice
+and Bob.
+
+Each party will generate a matching shared secret using their private key and
+the other party's public key (command "ecdh").
+
+The public key of a corresponding private key is obtained with the ecdh_keygen
+command:
+
+$ ALICE_PRIVKEY=0x`openssl rand -hex 66`
+$ cmtest data -f100 "ecdh_keygen nist_p521 $ALICE_PRIVKEY"
+...received 66 bytes OK
+The response message is the x component of Alice's pubkey, which is
+`curvelen' bytes long.
+
+That is visible in hex in the debug log.
+
+ecdh_keygen: privkey: 0xf6412c09b81e90c3f2efbf2b2a1f866e8386704d05bcefcd432bc40e7237bbb7c4a193e9f1624c003994c2e2340127d70db15e217ad4a752600a71ba4f4e30a16977
+ecdh_keygen: curve_id=5 curve=0x1022c58 curvelen=66
+ecdh_keygen: pub_x: 0x0054c0de26233239ce7fd96f9941398042d56998558b9505057a5627beb5d21b4c67f515113887109982d9e79bf1d55a3186dd8d169689ea3b27ff32693f0762e7e2
+
+$ ALICE_PUBKEY=0x0054c0de...
+Alice communicates this to Bob via a secure channel. This key is persistent:
+
+$ BOB_PRIVKEY=0x`openssl rand -hex 66`
+$ cmtest data -f100 "ecdh_keygen nist_p521 $BOB_PRIVKEY"
+...received 66 bytes OK
+
+ecdh_keygen: privkey: 0x789f8551330e824ec76c20e3e04a097fa16bd338dbd739789e99be3e2118c160bfb89aa0af2293ee2f7db5f4776289eaae03431f5f74ebbc7f9f775ef8ead9ddade1
+ecdh_keygen: curve_id=5 curve=0x1022c58 curvelen=66
+ecdh_keygen: pub_x: 0x00cbb1769644294271383146abfb8b383a51f9c5db507efc53b2a2d71b3dbff34e8dc4e5708aa0a68e820741ad1a532ef50fd009d91c39c9f20e0789cec8b3d28fc8
+
+$ BOB_PUBKEY=0x00cbb176...
+Bob communicates this to Alice via a secure channel. This key is persistent.
+
+Alice and Bob know and trust their peer's PUBKEY and both can generate a
+shared secret offline.
+
+Alice does:
+$ cmtest data -f100 "ecdh nist_p521 $BOB_PRIVKEY $ALICE_PUBKEY"
+...received 66 bytes OK
+
+The received bytes is the shared secret, `curvelen' bytes long, from the log:
+ecdh: shared_secret: 0x0178e6b1f8abe48ecfc1f2b5b8ca327d3f87e4ce7b1bc400d2e28762f668f4c695bb5b6e98a495253fe610fa48998e3c7cfacfdb8e490060094eacbe50d25580160d
+
+Likewise, Bob does:
+$ cmtest data -f100 "ecdh nist_p521 $ALICE_PRIVKEY $BOB_PUBKEY"
+...received 66 bytes OK
+ecdh: shared_secret: 0x0178e6b1f8abe48ecfc1f2b5b8ca327d3f87e4ce7b1bc400d2e28762f668f4c695bb5b6e98a495253fe610fa48998e3c7cfacfdb8e490060094eacbe50d25580160d
+
+The shared secrets computed by both parties match.
+
+In this example the keys are static and trusted. Meaning each party
+knows and trusts the public key of the other party.
+No communication happens for the exchange.
+The exchange happens offline and always generates the same secret.
+
+ECDHE
+-----
+
+If the keys are to be ephemeral, i.e. generated ad-hoc for the exchange
+and communicated to the other party via an insecure medium, then each party
+generates a new private key and sends its corresponding public key to the
+other party via the insecure channel. These ephemeral keys are used for
+computing the shared secret, which will be different every time.
+
+In a real-life scenario, the public keys need to be authenticated in some way to
+avoid an active man-in-the-middle attack. For example, the messages containing
+the public keys can be digitally signed with a trusted certificate. This can
+be simulated by combining the previous example with the sign/verify example.

@@ -1,0 +1,171 @@
+B::
+ENTRY &CLK_SRC
+
+GLOBAL &CMU_ROT_BASE
+&CMU_ROT_BASE=0x1FF0200000
+
+; PLL Registers Offset
+GLOBAL &PLL_LOCKTIME_PLL_ROT_OFF &PLL_CON0_PLL_ROT_OFF &PLL_CON3_PLL_ROT_OFF
+&PLL_LOCKTIME_PLL_ROT_OFF=0x0
+&PLL_CON0_PLL_ROT_OFF=0x100
+&PLL_CON3_PLL_ROT_OFF=0x10C
+
+; Clock Source Constants
+GLOBAL &OSCCLK &PLLCLK
+&OSCCLK=0.
+&PLLCLK=1.
+
+; CLK_CON_DIV Offsets
+GLOBAL &CLK_CON_DIV_DIV2_ROT_ACLK_OFF &CLK_CON_DIV_DIV3_ROT_PCLK_OFF
+GLOBAL &CLK_CON_DIV_DIV7_ROT_PVT_OFF &CLK_CON_DIV_DIV1_ROT_TSCLK_OFF
+GLOBAL &CLK_CON_DIV_DIV4_ROT_OTP_OFF &CLK_CON_DIV_DIV3_ROT_CNTCLK_OFF
+GLOBAL &CLK_CON_DIV_DIV3_ROT_RTCK_OFF
+
+&CLK_CON_DIV_DIV2_ROT_ACLK_OFF=0x1800
+&CLK_CON_DIV_DIV3_ROT_PCLK_OFF=0x1804
+&CLK_CON_DIV_DIV7_ROT_PVT_OFF=0x1808
+&CLK_CON_DIV_DIV4_ROT_OTP_OFF=0x180C
+&CLK_CON_DIV_DIV1_ROT_TSCLK_OFF=0x1810
+&CLK_CON_DIV_DIV3_ROT_CNTCLK_OFF=0x1814
+&CLK_CON_DIV_DIV3_ROT_RTCK_OFF=0x1818
+
+; Main Logic
+IF "&CLK_SRC"=="&OSCCLK"
+(
+    GOSUB SET_PLL_F0434_LOCKTIME 500.
+    GOSUB SET_PLL_F0434_CON0 0. 0. 0.
+    GOSUB SET_PLL_0434_CON3 0.
+
+    GOSUB SET_DIV &CLK_CON_DIV_DIV4_ROT_OTP_OFF 3. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV2_ROT_ACLK_OFF 0. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV7_ROT_PVT_OFF 0. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV3_ROT_PCLK_OFF 0. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV1_ROT_TSCLK_OFF 0. 0x3F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV3_ROT_CNTCLK_OFF 0. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV3_ROT_RTCK_OFF 0. 0x0F
+
+    GOSUB SET_CON0_MUX_SEL &OSCCLK
+    PRINT "SET OSC CLK DONE"
+)
+ELSE
+(
+    GOSUB SET_PLL_F0434_LOCKTIME 500.
+    GOSUB SET_PLL_F0434_CON0 1. 75. 1.
+    GOSUB SET_PLL_0434_CON3 0.
+
+    LOCAL &pll_con0
+    REPEAT
+    (
+        GOSUB REG_READ &PLL_CON0_PLL_ROT_OFF
+        RETURNVALUES &pll_con0
+    )
+    WHILE (&pll_con0&(1.<<29.))==0. ; Wait until bit 29 (STABLE) is 1
+
+    PRINT "PLL ROT is Stable."
+
+    GOSUB SET_DIV &CLK_CON_DIV_DIV4_ROT_OTP_OFF 3. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV2_ROT_ACLK_OFF 1. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV7_ROT_PVT_OFF 6. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV3_ROT_PCLK_OFF 2. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV1_ROT_TSCLK_OFF 0. 0x3F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV3_ROT_CNTCLK_OFF 2. 0x0F
+    GOSUB SET_DIV &CLK_CON_DIV_DIV3_ROT_RTCK_OFF 2. 0x0F
+
+    GOSUB SET_CON0_MUX_SEL &PLLCLK
+    PRINT "SET PLL CLK DONE"
+)
+
+PRINT "DONE SPI_BOOT_CLK"
+ENDDO
+
+; --- Subroutines ---
+
+SET_PLL_F0434_LOCKTIME:
+(
+    ENTRY &locktime
+    GOSUB REG_MODIFY &PLL_LOCKTIME_PLL_ROT_OFF &locktime 0xFFFFF
+    RETURN
+)
+
+SET_PLL_F0434_CON0:
+(
+    ENTRY &p &m &s
+    LOCAL &val
+    &val=(&p<<8.)|(&m<<16.)|(&s<<0.)|(1.<<31.)
+    GOSUB REG_MODIFY &PLL_CON0_PLL_ROT_OFF &val 0x83FF3F07
+    RETURN
+)
+
+SET_PLL_0434_CON3:
+(
+    ENTRY &k
+    GOSUB REG_MODIFY &PLL_CON3_PLL_ROT_OFF &k 0xFFFF
+    RETURN
+)
+
+SET_CON0_MUX_SEL:
+(
+    ENTRY &clk_src
+    LOCAL &pll_con0
+    LOCAL &mux_select &mux_busy
+    &mux_select=0x10 ; Bit 4
+    &mux_busy=0x80   ; Bit 7
+
+    GOSUB REG_READ &PLL_CON0_PLL_ROT_OFF
+    RETURNVALUES &pll_con0
+
+    IF &clk_src==&PLLCLK
+        &pll_con0=&pll_con0|&mux_select
+    ELSE
+        &pll_con0=&pll_con0&(~&mux_select)
+
+    GOSUB REG_WRITE &PLL_CON0_PLL_ROT_OFF &pll_con0
+
+    ; MUX Busy Polling (Samsung Logic: Wait while Busy is 1)
+    REPEAT
+    (
+        GOSUB REG_READ &PLL_CON0_PLL_ROT_OFF
+        RETURNVALUES &pll_con0
+    )
+    WHILE (&pll_con0&0x80)==0x80 ; Bit 7: MUX_BUSY
+
+    RETURN
+)
+
+SET_DIV:
+(
+    ENTRY &offset &val &mask
+    GOSUB REG_MODIFY &offset &val &mask
+    RETURN
+)
+
+REG_WRITE:
+(
+    ENTRY &offset &val
+    LOCAL &addr
+    &addr=&CMU_ROT_BASE+&offset
+    ; Added %le (Little Endian) for hardware consistency
+    Data.set eaxi:&addr %le %Long &val
+    RETURN
+)
+
+REG_READ:
+(
+    ENTRY &offset
+    LOCAL &addr &val
+    &addr=&CMU_ROT_BASE+&offset
+    &val=Data.Long(eaxi:&addr)
+    RETURN "&val"
+)
+
+REG_MODIFY:
+(
+    ENTRY &offset &val &mask
+    LOCAL &tmp
+    GOSUB REG_READ &offset
+    RETURNVALUES &tmp
+    &tmp=(&tmp)&(~&mask)
+    &tmp=&tmp|&val
+    GOSUB REG_WRITE &offset &tmp
+    RETURN
+)

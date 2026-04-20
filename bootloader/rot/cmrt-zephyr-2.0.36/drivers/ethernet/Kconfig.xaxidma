@@ -1,0 +1,68 @@
+# Kconfig - ETX_XAXIDMA configuration options
+
+#
+# Copyright (c) 2020-2023 Cryptography Research, Inc. (CRI).
+# A license or authorization from CRI is needed to use this file.
+#
+
+menuconfig ETH_XAXIDMA
+	bool "Enable Xilinx AXI Ethernet driver."
+	help
+	  Xilinx AXI Ethernet driver with AXI DMA and AXI Intc.
+
+if ETH_XAXIDMA
+
+# Hidden option
+config ETH_NIC_MODEL
+	string
+	default "xlnx.axi-ethernet"
+	help
+	  Tells what Qemu network model to use. This value is given as
+	  a parameter to -nic qemu command line option.
+
+config ETH_XAXIDMA_COALESCE_COUNT
+	int "Interrupt coalesce count"
+	default 1
+	range 1 255
+	help
+	  Interrupt coalesce count is the number of packets that cause an
+	  interrupt to happen. On busy networks setting larger value may
+	  reduce interrupt load in the expence of latency.
+
+config ETH_XAXIDMA_COALESCE_DELAY
+	int "Interrupt coalesce delay"
+	default 0
+	range 0 255
+	help
+	  Interrupt coalesce delay is used to generate interrupts even if the
+	  coalesce count is not yet reached. On busy networks setting larger
+	  value may reduce interrupt load in the expence of latency.
+	  Timer unit is 125 x AXI clock period. Set to non zero value if
+	  interrupt coalesce count is set to larger than 1.
+
+config ETH_XAXIDMA_DMAC_COPY
+	bool "Use DMAC to copy data"
+	depends on CMRT_DMAC
+	default y
+	help
+	  Use DMAC to copy data between SRAM and DRAM. Using DMAC is preferable
+	  in systems with slow DRAM interface because the main CPU is then not
+	  blocked by the data copy.
+
+config ETH_XAXIDMA_DMAC_THRESHOLD
+	int "Use DMAC only for larger packets"
+	depends on ETH_XAXIDMA_DMAC_COPY
+	default 64
+	range 0 1522
+	help
+	  A DMAC threshold can be defined because setting up DMAC requires
+	  time on its own. Copying smaller packets without DMAC may be faster.
+
+config ETH_XAXIDMA_0
+	bool "Ethernet port 0"
+	default y
+	help
+	  Include port 0 driver. Select by default because we only have one
+	  instance at the moment.
+
+endif

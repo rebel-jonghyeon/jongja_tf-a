@@ -1,0 +1,17 @@
+zephyr_library_named(rebel_h_integrity)
+zephyr_library_sources(
+  src/rebel_h_integrity.c
+)
+target_include_directories(
+  rebel_h_integrity
+  PUBLIC
+  include
+  ${ZEPHYR_BASE}/kernel/include
+  ${ZEPHYR_BASE}/samples/cmrt/fboot/include
+  ${ZEPHYR_BASE}/samples/cmrt/fboot/src
+  ${ZEPHYR_BASE}/include
+  ${ZEPHYR_BASE}/lib/gpt/include
+  ${ZEPHYR_BASE}/drivers/dma
+  ${ZEPHYR_BASE}/drivers/cmrt
+  ${ZEPHYR_BASE}/samples/cmrt/sboot/src/drivers/sac
+  )

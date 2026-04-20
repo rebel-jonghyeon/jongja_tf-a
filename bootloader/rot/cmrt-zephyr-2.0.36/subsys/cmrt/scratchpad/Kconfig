@@ -1,0 +1,9 @@
+# Copyright (c) 2020-2022 Cryptography Research, Inc. (CRI).
+
+config CMRT_SCRATCHPAD
+	bool "Enable CMRT scratchpad"
+	default n
+	help
+	  Enable CMRT scratchpad. It can be used as a temporary place for
+	  data like software images, files, etc. Different software modules
+	  can use the scratchpad as data input and output.

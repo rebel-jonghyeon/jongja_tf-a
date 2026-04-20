@@ -1,0 +1,12 @@
+
+
+
+
+
+./test-raw-footer.py freertos_kernel.bin freertos_kernel.raw
+
+./test-image-footer.py ./prikey_ecdsa_p384.pem freertos_kernel.raw ./footer.json freertos_kernel.tmp
+
+
+						freertos_kernel.bin is temp.. for gen_flash.py
+./test-image-header.py freertos_kernel.tmp freertos_kernel.bin

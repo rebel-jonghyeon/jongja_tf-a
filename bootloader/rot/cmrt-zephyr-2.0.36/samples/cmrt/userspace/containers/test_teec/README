@@ -1,0 +1,15 @@
+
+test_teec: Demonstrate trusted communication between
+           HLOS Application(teectest) and CMRT container
+
+teectest is a sample application built using TEE Client API
+which is higher-level API for HLOS Applications.
+
+To run (load and start) container:
+$ mwtest.py -c100 run test_teec.img
+
+To start communication between Trusted Application and HLOS Application:
+$ teectest
+
+To unload container:
+$ mwtest.py -c100 unload

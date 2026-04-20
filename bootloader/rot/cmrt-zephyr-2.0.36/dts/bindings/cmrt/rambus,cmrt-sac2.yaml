@@ -1,0 +1,13 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT 64bit System Aperture Core (SAC2)
+
+compatible: "rambus,cmrt-sac2"
+
+include: rambus,cmrt-hwc.yaml
+
+properties:
+    user-access:
+      type: boolean
+      required: false
+      description: set if HW allows direct user mode access to SAC memory

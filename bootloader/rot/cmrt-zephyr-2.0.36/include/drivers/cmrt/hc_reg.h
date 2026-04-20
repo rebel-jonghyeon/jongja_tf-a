@@ -1,0 +1,85 @@
+/*
+ * Copyright (c) 2018-2023 Cryptography Research, Inc. (CRI).
+ * A license or authorization from CRI is needed to use this file.
+ */
+
+#ifndef CMRT_HC_REG_H
+#define CMRT_HC_REG_H
+
+#include "hwc_reg.h"
+
+#define CMRT_HC_BASE              0x00020000UL
+
+#define HC_STATUS_IDLE_WITH_KEY   0x41UL
+#define HC_STATUS_ACCEPT          0x60UL
+#define HC_STATUS_ACCEPT_LAST     0x64UL
+#define HC_STATUS_RELEASE         0xf0UL
+
+#define HC_ERR_NO_ERROR           0x00UL
+#define HC_ERR_CTRL_ENCODING      0x01UL
+#define HC_ERR_UNEXPECTED_CTRL    0x02UL
+#define HC_ERR_MSG_LEN_EXCEEDED   0x03UL
+#define HC_ERR_INPUT_LAST_BYTE_EN 0x04UL
+#define HC_ERR_NO_KEY_LOADED      0x05UL
+#define HC_ERR_KEY_LEN_EXCEEDED   0x06UL
+#define HC_ERR_CORE_ENCODING      0x07UL
+#define HC_ERR_KEY_SIZE_MISMATCH  0x0aUL
+#define HC_ERR_GLITCH             0x0cUL
+
+#define HC_CONTROL_CMD_MASK       0x000000ffUL
+#define HC_CONTROL_INIT           0x00UL
+#define HC_CONTROL_LOAD_KEY       0x01UL
+#define HC_CONTROL_INVALIDATE_KEY 0x02UL
+#define HC_CONTROL_HASH           0x03UL
+#define HC_CONTROL_HASH_RAW       0x04UL
+#define HC_CONTROL_HMAC           0x05UL
+#define HC_CONTROL_SAVE           0x06UL
+#define HC_CONTROL_RESTORE        0x07UL
+#define HC_CONTROL_HMAC_GET_KEY   0xc0UL
+#define HC_CONTROL_HMAC_EXTENDED  0xc3UL
+#define HC_CONTROL_FLUSH          0xffUL
+
+#define HC_CONTROL_ALGO_MASK      0x00000F00UL
+#define HC_HASH_ALGO_SHIFT        8
+#define HC_HASH_ALGO_SHA_224      (0x0UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHA_256      (0x1UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHA_384      (0x2UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHA_512      (0x3UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHA_512_224  (0x4UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHA_512_256  (0x5UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHA3_224     (0x6UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHA3_256     (0x7UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHA3_384     (0x8UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHA3_512     (0x9UL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHAKE128     (0xAUL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_SHAKE256     (0xBUL << HC_HASH_ALGO_SHIFT)
+#define HC_HASH_ALGO_WHIRLPOOL    (HC_HASH_ALGO_SHA_224)
+
+#define HC_LAST_BLOCK_IS_LAST            0x00010000UL
+#define HC_LAST_BLOCK_BYTE_SELECT_MASK   0x0000000fUL
+
+#define SHA224_BYTES (224u / 8u)
+#define SHA224_WORDS (SHA224_BYTES / 4u)
+#define SHA256_BYTES (256u / 8u)
+#define SHA256_WORDS (SHA256_BYTES / 4u)
+#define SHA384_BYTES (384u / 8u)
+#define SHA384_WORDS (SHA384_BYTES / 4u)
+#define SHA512_BYTES (512u / 8u)
+#define SHA512_WORDS (SHA512_BYTES / 4u)
+
+#define SHA3_224_BYTES (224u / 8u)
+#define SHA3_224_WORDS (SHA3_224_BYTES / 4u)
+#define SHA3_256_BYTES (256u / 8u)
+#define SHA3_256_WORDS (SHA3_256_BYTES / 4u)
+#define SHA3_384_BYTES (384u / 8u)
+#define SHA3_384_WORDS (SHA3_384_BYTES / 4u)
+#define SHA3_512_BYTES (512u / 8u)
+#define SHA3_512_WORDS (SHA3_512_BYTES / 4u)
+
+#define WHIRLPOOL_BYTES (512u / 8u)
+#define WHIRLPOOL_WORDS (WHIRLPOOL_BYTES / 4u)
+
+#define SHAKE128_BLOCKSIZE 168u
+#define SHAKE256_BLOCKSIZE 136u
+
+#endif

@@ -1,0 +1,14 @@
+
+sample_lifecycle: Set device lifecycle
+
+The container can be run in TESTED or PROVISIONED or MISSION lifecycle.
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_lifecycle.img
+
+Send command to set lifecycle to PROVISIONED:
+$ printf "\01\00\00\00" > testfile
+$ cmtest data -f100 testfile
+
+To unload container:
+$ mwtest.py -c100 unload

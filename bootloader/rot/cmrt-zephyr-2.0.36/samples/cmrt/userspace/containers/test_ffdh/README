@@ -1,0 +1,87 @@
+
+test_ffdh: Test FFDH exchange with parameter generation and
+           verification as well as private key generation
+
+Input required for FFDH operation:
+- Parameter size or
+- Parameters
+
+Output:
+- Parameters
+- Public key
+- Shared key
+
+To run (load and start) container:
+$ mwtest.py -c100 run test_ffdh.img
+
+Example for generating parameters of a given size:
+
+1) Send command to generate parameters with given size
+
+$ cmtest cmd -f100 parmgen 1024
+CD: Request from HLOS:
+CD: 00000000 02 00 00 00 07 00 00 00 70 61 72 6d 67 65 6e 00 |........parmgen.|
+CD: 00000010 04 00 00 00 31 30 32 34                         |....1024        |
+CD: pbits: 1024
+CD: generating for 1024
+CD: Params generation succeeded
+CI: Closing PKE context
+CI: Sending response to HLOS of 4 bytes
+CD: Response to HLOS:
+CD: 00000000 00 00 00 00                                     |....            |
+
+Example for verifying parameters:
+
+1) Send command to verify parameters followed with the parameters
+   you wish to verify
+
+$ cmtest cmd -f100 parmset %ffffffffffffffff975c286138426b88faefb2c1264af3c6b283167d83f18ec50520c22ebcfcb53b73ad6f4c1b3bfec38381f2ee32124f8eff8385e99cfe7291612f3428cd0434c0ece2f7cde1fc029e706d0aeec8a7070b19bb7263e7ed56aef44d39dea3424f1d68f4d760b7da6ab9fbe3c8b24ba908d161fb24b382b10abc7a793a484fcaac3035e7ad36a158f11d72e8eff3da89a6e2778be6e0700c4f9835c9577f5e1357b5f31aed3d55656385d06e065f1ff533246165fdd5d51edfd37a61c4ae02b281f6d8750c6363e32f7df93e9b24ce9d93ccfb3364144136e1a995362dce83c5b9d8f13c3d272056dcaf9a4abba25854f8adffffffffffffffff %ffffffffffffffff4b2e94301ca13544fd77d96013a57963d9418bbec178c7e2021061175efeda9db9d637a68d1dffe1c1407977198927c7ffc1c2744e7fb9c8b0171a9466021a6076f1fbe6707e014fb8360577e4d383858c5db9b1f3762b57faa61cef51a1a70e34fa6bb05b6db5dcfd7164d9a55484e8b07d9259c158055ebd3c1da4276556989af3569b50acf80e39f4f779ed4453f1bb457370388627cc9ae4ab3faf89abda798df69eaab2b142683783af8ffa1992b0b2feea6a8fef69bd30625701d9407bec3a86b1b1f197be7c9f4d12e7ce49e6fd19328a209bf0d44a9b16e7c1e25cec789e9e13102bee574da55d512c2afcd6ffffffffffffff7f %02
+CD: Params verification succeeded
+CI: Closing PKE context
+CI: Sending response to HLOS of 4 bytes
+CD: Response to HLOS:
+CD: 00000000 00 00 00 00
+
+Example for doing an exchange:
+
+1) Send command to set parameters followed by the parameters
+
+$ cmtest cmd -f100 parmset %ffffffffffffffff975c286138426b88faefb2c1264af3c6b283167d83f18ec50520c22ebcfcb53b73ad6f4c1b3bfec38381f2ee32124f8eff8385e99cfe7291612f3428cd0434c0ece2f7cde1fc029e706d0aeec8a7070b19bb7263e7ed56aef44d39dea3424f1d68f4d760b7da6ab9fbe3c8b24ba908d161fb24b382b10abc7a793a484fcaac3035e7ad36a158f11d72e8eff3da89a6e2778be6e0700c4f9835c9577f5e1357b5f31aed3d55656385d06e065f1ff533246165fdd5d51edfd37a61c4ae02b281f6d8750c6363e32f7df93e9b24ce9d93ccfb3364144136e1a995362dce83c5b9d8f13c3d272056dcaf9a4abba25854f8adffffffffffffffff %ffffffffffffffff4b2e94301ca13544fd77d96013a57963d9418bbec178c7e2021061175efeda9db9d637a68d1dffe1c1407977198927c7ffc1c2744e7fb9c8b0171a9466021a6076f1fbe6707e014fb8360577e4d383858c5db9b1f3762b57faa61cef51a1a70e34fa6bb05b6db5dcfd7164d9a55484e8b07d9259c158055ebd3c1da4276556989af3569b50acf80e39f4f779ed4453f1bb457370388627cc9ae4ab3faf89abda798df69eaab2b142683783af8ffa1992b0b2feea6a8fef69bd30625701d9407bec3a86b1b1f197be7c9f4d12e7ce49e6fd19328a209bf0d44a9b16e7c1e25cec789e9e13102bee574da55d512c2afcd6ffffffffffffff7f %02
+
+2) Execute the exchange command
+
+$ cmtest cmd -f100 exchange
+CD: Request from HLOS:
+CD: 00000000 01 00 00 00 08 00 00 00 65 78 63 68 61 6e 67 65 |........exchange|
+CD: Privkey_a generation succeeded
+CD: Privkey_b generation succeeded
+CD: pubkey_a: 0x103a384
+CD: Pubkey_a generation succeeded
+CD: Pubkey_b generation succeeded
+CD: Sharedkey_a generation succeeded
+CD: Sharedkey_b generation succeeded
+CI: Closing PKE context
+CI: Sending response to HLOS of 4 bytes
+CD: Response to HLOS:
+CD: 00000000 00 00 00 00                                     |....            |
+
+Example for generating private keys:
+
+1) Send command to set parameters followed by the parameters
+
+$ cmtest cmd -f100 parmset %ffffffffffffffff975c286138426b88faefb2c1264af3c6b283167d83f18ec50520c22ebcfcb53b73ad6f4c1b3bfec38381f2ee32124f8eff8385e99cfe7291612f3428cd0434c0ece2f7cde1fc029e706d0aeec8a7070b19bb7263e7ed56aef44d39dea3424f1d68f4d760b7da6ab9fbe3c8b24ba908d161fb24b382b10abc7a793a484fcaac3035e7ad36a158f11d72e8eff3da89a6e2778be6e0700c4f9835c9577f5e1357b5f31aed3d55656385d06e065f1ff533246165fdd5d51edfd37a61c4ae02b281f6d8750c6363e32f7df93e9b24ce9d93ccfb3364144136e1a995362dce83c5b9d8f13c3d272056dcaf9a4abba25854f8adffffffffffffffff %ffffffffffffffff4b2e94301ca13544fd77d96013a57963d9418bbec178c7e2021061175efeda9db9d637a68d1dffe1c1407977198927c7ffc1c2744e7fb9c8b0171a9466021a6076f1fbe6707e014fb8360577e4d383858c5db9b1f3762b57faa61cef51a1a70e34fa6bb05b6db5dcfd7164d9a55484e8b07d9259c158055ebd3c1da4276556989af3569b50acf80e39f4f779ed4453f1bb457370388627cc9ae4ab3faf89abda798df69eaab2b142683783af8ffa1992b0b2feea6a8fef69bd30625701d9407bec3a86b1b1f197be7c9f4d12e7ce49e6fd19328a209bf0d44a9b16e7c1e25cec789e9e13102bee574da55d512c2afcd6ffffffffffffff7f %02
+
+2) Execute the private key generation command
+
+$ cmtest cmd -f100 privkey
+CD: Request from HLOS:
+CD: 00000000 01 00 00 00 07 00 00 00 70 72 69 76 6b 65 79 00 |........privkey.|
+CD: Privkey generation succeeded
+CI: Closing PKE context
+CE: Privkey generation failed.
+CI: Sending response to HLOS of 4 bytes
+CD: Response to HLOS:
+CD: 00000000 84 9f 03 01                                     |....            |
+
+To unload container:
+$ mwtest.py -c100 unload

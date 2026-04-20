@@ -1,0 +1,25 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT System Interface Core (SIC)
+
+compatible: "rambus,cmrt-sic"
+
+include: [interrupt-controller.yaml, "rambus,cmrt-hwc.yaml"]
+
+properties:
+    num-custom:
+      required: true
+      type: int
+      description: number of custom registers supported by hardware
+
+    num-irqs:
+      required: true
+      type: int
+      description: number of SoC interrupts supported by hardware
+
+    "#interrupt-cells":
+      const: 2
+
+interrupt-cells:
+    - irq
+    - priority

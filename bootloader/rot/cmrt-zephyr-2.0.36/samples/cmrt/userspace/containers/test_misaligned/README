@@ -1,0 +1,131 @@
+
+test_misaligned: Test that exceptions due to misalined accesses
+                 are handled correctly
+
+Usage: cmtest cmd -f100 [options] [parameters]
+
+The permitted options and their corresponding parameters are listed below:
+
+buffer:
+        set [byte array 0 ... 7]
+        reset
+asm:
+    load word:
+        lw [offset 0 to 4] [offset sign 0 (-) to 1 (+)]
+    load word compressed:
+        lw_c [offset 0 to 4] [offset sign 0 (-) to 1 (+)]
+    load word via sp:
+        lwsp [offset 0 to 4] [offset sign 0 (-) to 1 (+)]
+    load half word:
+        lh [offset 0 to 4] [offset sign 0 (-) to 1 (+)]
+    load unsigned half word:
+        lhu [offset 0 to 4] [offset sign 0 (-) to 1 (+)]
+    store word:
+        sw [offset 0 to 4] [offset sign 0 (-) to 1 (+)] [word to store]
+    store word compressed:
+        sw_c [offset 0 to 4] [offset sign 0 (-) to 1 (+)] [word to store]
+    store word via sp:
+        swsp [offset 0 to 4] [offset sign 0 (-) to 1 (+)] [word to store]
+    store half word:
+        sh [offset 0 to 4] [offset sign 0 (-) to 1 (+)] [half word to store]
+mem:
+    copy data between buffers:
+        copy [offset 0 to 1] [offset 0 to 1] [loops 0 to 10000]
+
+Note: all assembly operations are performed on a 64 bits buffer and
+      all offset values are referred to the beginning of the buffer.
+
+Load the user container and see usage in logs:
+
+$ mwtest.py -c100 run test_misaligned.img
+$ cmtest log
+
+Reset the buffer:
+
+$ cmtest cmd -f100 buffer reset
+Sending data to CMRT via SIC...
+...received 8 bytes OK
+00000000: 00 00 00 00 00 00 00 00                           |........|
+
+Set the buffer:
+
+$ cmtest cmd -f100 buffer set %0001020304050607
+Sending data to CMRT via SIC...
+...received 8 bytes OK
+00000000: 00 01 02 03 04 05 06 07                           |........|
+
+Load the first word with positive offset:
+
+$ cmtest cmd -f100 asm lw 0 1
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: 00 01 02 03                                       |....|
+
+Load the second word with negative offset:
+
+$ cmtest cmd -f100 asm lw 4 0
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: 04 05 06 07                                       |....|
+
+Load an unaligned word with negative offset:
+
+$ cmtest cmd -f100 asm lw 1 0
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: 01 02 03 04                                       |....|
+
+Store a word with positive offset:
+
+$ cmtest cmd -f100 asm sw 0 1 0xffffffff
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: ff ff ff ff                                       |....|
+
+Store a word with negative offset:
+
+$ cmtest cmd -f100 asm sw 0 0 0xffffffff
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: ff ff ff ff                                       |....|
+
+Store a word within unaligned address with positive offset:
+
+$ cmtest cmd -f100 asm sw 2 1 0xffffffff
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: ff ff ff ff                                       |....|
+
+Load a signed half-word with positive offset:
+
+$ cmtest cmd -f100 asm lh 0 1
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: ff ff ff ff                                       |....|
+
+Load a unsigned half-word with positive offset:
+
+$ cmtest cmd -f100 asm lh 0 1
+Sending data to CMRT via SIC...
+...received 4 bytes OK
+00000000: ff ff ff ff                                       |....|
+
+Perform 100 32-bits copies between buffers and
+obtain the elapsed time:
+
+$ cmtest cmd -f100 mem copy 0 0 100
+Sending data to CMRT via SIC...
+...received 8 bytes OK
+00000000: 8a fc 08 00 00 00 00 00                           |........|
+
+Perform 100 32 bits copies between buffers (with aligned
+and unaligned address) and obtain the elapsed time:
+
+$ cmtest cmd -f100 mem copy 0 1 100
+Sending data to CMRT via SIC...
+...received 8 bytes OK
+00000000: 8a d8 0d 00 00 00 00 00                           |........|
+
+Unload the user container:
+
+$ mwtest.py -c100 unload

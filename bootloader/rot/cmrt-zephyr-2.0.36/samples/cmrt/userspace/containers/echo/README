@@ -1,0 +1,18 @@
+
+echo: User container to echo back user input
+
+To run (load and start) container:
+
+$ mwtest.py -c100 run echo.img
+
+To send data to the echo container:
+
+$ cmtest cmd -f100 "Hello World"
+Sending data to CMRT via SIC...
+...received 20 bytes OK
+00000000: 01 00 00 00 0b 00 00 00  48 65 6c 6c 6f 20 57 6f  |........Hello Wo|
+00000010: 72 6c 64 00                                       |rld.|
+
+To unload container:
+
+$ mwtest.py -c100 unload

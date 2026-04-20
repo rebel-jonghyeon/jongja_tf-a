@@ -1,0 +1,45 @@
+
+sample_root: Demonstrate root creation at index 3
+
+Two variables, 'pubkey' and 'root_json', are defined in Makefile;  the build
+system uses these to generates cri_root symbol for container, which is passed
+to cri_create_root() call.
+
+Makefile also defines variable 'footer_json'; the build system uses specified
+JSON file to define container permissions.
+
+Although container itself is fairly simple there are several things that should
+align for root creation to succeed.
+- Root slot must be blank i.e. root must not already exist and must not have
+  already been obliterated.
+- In container JSON, specified by 'footer_json'
+        - Caveats should include 1 (silo).
+        - "write_feature_block" permission must include block 0.
+        - "establish_roots" permission must include new root's index (3).
+        - Defined permissions must be less or equal to container's
+          parent root's permissions. Note that variable 'signkey' is not
+          defined, as a result container is signed with default private key,
+          which belongs to default root (that happens to have full permissions).
+- Permissions in JSON specified by 'root_json' must be less or equal to
+  permissions in JSON specified by 'footer_json'.
+
+New root's private and public keys are generated using following commands
+        openssl ecparam -name prime256v1 -genkey -noout -out privkey.pem
+        openssl ec -pubout -in privkey.pem -out pubkey.pem
+
+The generated private key can be assigned to 'signkey' variable in other
+container Makefiles, such containers would then belong to root created by this
+sample container.
+
+To run (load and start) container:
+$ mwtest.py -c100 run sample_root.img
+
+To trigger root creation:
+$ echo > one-byte-file
+$ cmtest data -f100 one-byte-file
+
+If you trigger root creation again, operation would fail as root slot would no
+longer be blank.
+
+To unload container:
+$ mwtest.py -c100 unload

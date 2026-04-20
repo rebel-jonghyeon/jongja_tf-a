@@ -1,0 +1,21 @@
+; REBEL_Q T32 Attach Device
+
+B::
+
+RESet
+
+GLOBAL &DIRECT_CONNECT &CL_IDX
+ENTRY &DIRECT_CONNECT &CL_IDX
+
+PRINT "DIRECT_CONNECT:" "&DIRECT_CONNECT" "ID:" "&CL_IDX"
+
+DO T32_GUI.config.cmm &DIRECT_CONNECT &CL_IDX
+
+SYStem.Attach
+
+IF RUN()
+    Break
+
+List.auto
+
+ENDDO

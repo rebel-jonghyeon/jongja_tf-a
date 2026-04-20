@@ -1,0 +1,7 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT Key Derivation Core (KDC)
+
+compatible: "rambus,cmrt-kdc"
+
+include: rambus,cmrt-hwc.yaml

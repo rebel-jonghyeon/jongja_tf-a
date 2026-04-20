@@ -1,0 +1,7 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT CCP Core (CCP)
+
+compatible: "rambus,cmrt-ccp"
+
+include: rambus,cmrt-hwc.yaml

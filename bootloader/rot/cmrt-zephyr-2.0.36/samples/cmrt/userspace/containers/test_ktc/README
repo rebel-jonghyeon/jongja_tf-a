@@ -1,0 +1,26 @@
+
+test_ktc: Test the KTC to keys to SOC key destination
+
+Load the container and see usage in logs:
+$ mwtest.py -c100 run test_ktc.img
+$ cmtest log
+
+Input required for KTC operations:
+- destination {0-15}
+- key_size up to 4080, must be multiple of 16
+- key
+
+To trigger key transfer:
+
+$ cmtest cmd -f100 open 0
+$ cmtest cmd -f100 transfer_key 2 16 %ABCDEF0123456789
+
+CMRT waits for HLOS to read the key.
+To retrieve the key for the same destination from another
+terminal after sourcing the environment:
+
+$ cmtest ktc -t5000 2
+$ cmtest cmd -f100 close
+
+To unload container:
+$ mwtest.py -c100 unload

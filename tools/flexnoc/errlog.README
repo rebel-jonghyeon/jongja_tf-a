@@ -1,0 +1,93 @@
+# How to use log
+Step 1. When some error happens, ISR will print a set of ErrLogx infor mation and b us group.
+
+Step 2. Open errlog (parser tool), choose group and input the ErrLogx above.
+*) parser: ~/tools/flexnoc/errlog
+
+Step 3. Parser will say the interpreted result like route path / target address, etc..
+
+
+For example,
+chiplet-0's AXI-AP is accessing to chiplet 1's
+BLK_PCIe resource(0x3F_F811_000, Read access, Undefined region)
+
+User will get these info. from the UART terminal,
+```
+NOC Error detected: NOC_C_NBUS_U_DBG, irq: 909
+ErrLog raw data
+  Group: 5) Control Bus
+  ErrLog0: 0x80030000
+  ErrLog1: 0x00d70496
+  ErrLog3: 0x00110000
+  ErrLog4: 0x00000000
+  ErrLog5: 0x00020000
+  ErrLog6: 0x00000496
+
+ErrLog0 data
+  lock   : NOLOCK (0x0)
+  opcode : RD (0x0)
+  errcode: SLV (0x0)
+  length : 4 Bytes
+
+REBELLIONS$
+```
+
+And User will get parsed data from 'errlog' tool like this after putting group/Errlogx data.
+```
+$ ./errlog
+
+==== Rebel NOC Error Logger Group List ================================
+1) Main Bus Read
+2) Main Bus Write
+3) SHM  Bus Read
+4) SHM  Bus Write
+5) Control Bus
+6) PCIE Bus
+Select group : 5	<--- Here
+=====Example==========================================
+Errorlog0 : 80030600 or 0x80030600
+======================================================
+Errorlog0 (0x14) : 0x80030000  <--- Here
+Errorlog1 (0x18) : 0x00d70496
+Errorlog3 (0x20) : 0x00110000
+Errorlog4 (0x24) : 0x00000000
+Errorlog5 (0x28) : 0x00020000
+Errorlog6 (0x2C) : 0x00000496
+Are all configurations correct? 1) Yes 2) No
+1
+========= ErrLog0 ====================================
+Format       : 0x1
+Len1         : 0x3 (4 Byte)
+ErrCode      : 0x0 (SLV)
+Opc          : 0x0 (RD)
+Lock         : 0x0
+========= ErrLog1 ====================================
+Initflow     : 0xd (i_rbcnm_p1(0))
+Targflow     : 0x38 (t_pcie_p(0))
+Targsubrange : 0x2
+Seqid        : 0x96
+========= ErrLog3/4 ==================================
+Address      : 0x3ff8110000
+========= ErrLog5/6 ====================================
+Allocate    : 0x0
+Bufferable  : 0x0
+Instruction : 0x0
+Lookup      : 0x0
+Modifiable  : 0x0
+Nonsecured  : 0x0
+Privileged  : 0x1
+User        : 0x1258000
+========= End ========================================
+##### Continue? 1) Yes 2) No
+```
+
+*) Please note this errlog tool was verified on Linux env.
+
+$ file errlog
+errlog: ELF 64 bit LSB executable, x86 64, version 1 (SYSV), dynamically linked, interpreter
+/lib64/ld linux x86 64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=3e69b368e53905b3c69e39ca185b2cd432dd76cd, not stripped
+
+$ ldd errlog.exe
+linux vdso.so.1 (0x00007ffc497f8000)
+libc.so.6 => /lib/x86_64 linux gnu/libc.so.6 (0x00007b50ff600000)
+/lib64/ld linux x86 64.so.2 (0x00007b50ffa1c000

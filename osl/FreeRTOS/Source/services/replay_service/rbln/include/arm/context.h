@@ -1,0 +1,2 @@
+#define CTX_GPREGS_END		0x0
+#define CTX_ELSTATE_END		0x0

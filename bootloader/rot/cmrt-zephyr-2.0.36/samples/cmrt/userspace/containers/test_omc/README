@@ -1,0 +1,66 @@
+
+test_omc: Exercise OMC/OTP from user container
+
+Commands:
+
+    * Read OMC = reads from OTP memory using OMC api.
+        read omc [offset] [size]
+      where:
+        offset: offset from which to read from.
+        size: size in bytes to read.
+
+    * Read MMR = reads from memory mapped location using direct access.
+        read mmr [address] [size]
+      where:
+        address: address from which to read from.
+        size: size in bytes to read.
+
+    * Write OMC = writes to OTP memory using OMC api.
+        write omc [offset] [value]
+      where:
+        offset: offset to write to.
+        value: value to write.
+
+    * Write MMR = writes to memory mapped location using direct access.
+        write mmr [address] [value]
+      where:
+        address: offset to write to.
+        value: value to write.
+
+    * Root create = creates root in the specified index.
+        root create [index] [hash] [permissions]
+      where:
+        index: index to create into.
+        hash: hash to write.
+        permissions: permissions to write.
+
+    * Root obliterate = obliterates root at the specified index.
+        root obliterate [index]
+      where:
+        index: index to create into.
+
+IMPORTANT: when using these commands, it should be noted that there is a
+limitation in regards the size which can be read and/or written.
+This limitation matches the size of the register which is going to be
+read/written.
+
+Command to load the container:
+
+$ mwtest.py -c 100 run test_omc.img
+
+How to send a command:
+
+$ cmtest cmd -f 100 [command to send]
+
+Example command to create root 6 with hash given a a random value and
+permissions equal to zero:
+
+$ cmtest cmd -f 100 root create 6 %8fa473a673aad565aef729ca680bcbfe3c4fec60f092e7ecd4b651399cf3e90b %000000000000000000000000000000000000000000000000
+
+Example command to obliterate root 6:
+
+$ cmtest cmd -f 100 root obliterate 6
+
+Command to unload the container:
+
+$ mwtest.py -c100 unload

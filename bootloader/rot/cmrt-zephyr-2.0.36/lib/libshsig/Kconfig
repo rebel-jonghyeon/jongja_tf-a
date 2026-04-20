@@ -1,0 +1,59 @@
+# Kconfig - SHSIG library
+
+#
+# Copyright (c) 2023 Cryptography Research, Inc. (CRI).
+# A license or authorization from CRI is needed to use this file.
+#
+
+menu "Library for stateful hash-based signatures"
+
+config CMRT_SHSIG_LIBRARY
+	bool
+	default n
+	prompt "Build shsig library"
+	help
+	  Build a stateful hash-based signatures library.
+
+config CMRT_SHSIG_LMS
+	bool "Enable LMS"
+	default n
+	depends on CMRT_SHSIG_LIBRARY
+	help
+	  Enable Leighton-Micali-Signature (LMS) hash-based signature
+	  scheme operations
+
+config CMRT_SHSIG_LMS_HSS
+	bool "Enable LMS-HSS"
+	default n
+	depends on CMRT_SHSIG_LIBRARY
+	select CMRT_SHSIG_LMS
+	help
+	  Enable Leighton-Micali-Signature (LMS) Hierarchical Signature System
+	  (HSS) hash-based signature scheme operations
+
+config CMRT_SHSIG_XMSS
+	bool "Enable XMSS"
+	default n
+	depends on CMRT_SHSIG_LIBRARY
+	help
+	  Enable eXtended Merkle Signature Scheme (XMSS) operations
+
+config CMRT_SHSIG_XMSS_ENABLE_ALL_MODES
+	bool "Enable support for all xmss modes"
+	default n if CMRT_FBOOT
+	default n
+	depends on CMRT_SHSIG_LIBRARY
+	help
+	  Limits amount of modes and stack usage for xmss operations.
+	  Without this option only sha2-256 modes are available.
+	  When enabled, sha2-512, shake256, shake512 modes can be used.
+
+config CMRT_SHSIG_XMSS_MT
+	bool "Enable XMSS-MT"
+	default n
+	depends on CMRT_SHSIG_LIBRARY
+	select CMRT_SHSIG_XMSS
+	help
+	  Enable a multi-tree variant of XMSS operations
+
+endmenu

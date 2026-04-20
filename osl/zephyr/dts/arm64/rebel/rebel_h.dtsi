@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2024 Samsung Electronics Co., Ltd.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ */
+
+#include <mem.h>
+#include <armv8-a.dtsi>
+#include <zephyr/dt-bindings/interrupt-controller/arm-gic.h>
+
+/ {
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a73";
+			reg = <0>;
+		};
+	};
+
+	timer {
+		compatible = "arm,armv8-timer";
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 14 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 11 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 10 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>;
+	};
+
+	soc {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		interrupt-parent = <&gic>;
+
+		dram0: memory@14200000 {
+			compatible = "mmio-dram";
+			reg = <0x00 0x14200000 0x00 DT_SIZE_M(2)>;
+		};
+
+		gic: interrupt-controller@1ff3800000 {
+			compatible = "arm,gic-v3", "arm,gic";
+			reg = <0x1f 0xf3800000 0x00 0x010000>,
+				  <0x1f 0xf38C0000 0x00 0x200000>;
+			interrupt-controller;
+			#interrupt-cells = <4>;
+			status = "okay";
+		};
+
+		uart1: uart@1ff9850000 {	/* UART1_PERI1 */
+			compatible = "ns16550";
+			reg = <0x1F 0xF9850000 0x00 0x1000>;
+			status = "disabled";
+			clock-frequency = <100000000>;
+			current-speed = <115200>;
+			reg-shift = <2>;
+		};
+	};
+};

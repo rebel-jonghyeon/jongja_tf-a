@@ -1,0 +1,61 @@
+# LEVEL:FUNCTION_NAME
+# 1 : pr_err, 2 : pr_warn, 3 : pr_notice, 4 : pr_info (=printf), 5 : pr_debug
+# want to keep from hashing : pr_nohash
+
+# encoder.py and hash_decoder.py load macros in here.
+# notice : the macros including "." need to be written with "\" (ex : logger.info -> logger\.info )
+
+# ERROR Functions (Level 1)
+1:RLOG_ERR
+1:ERROR
+1:LOG_ERR
+1:LOG_ERRX
+1:PR_ERR
+1:USAGE_ERR
+1:logger\.error
+1:log_err
+1:log_errx
+1:pr_err
+1:usage_err
+1:printf
+
+# WARN Functions (Level 2)
+2:NET_WARN
+2:LOG_WRN
+2:WARN
+2:pr_warn
+
+# NOTICE Functions (Level 3)
+3:pr_notice
+3:NOTICE
+
+# INFO Functions (Level 4)
+4:RLOG_INFO
+4:LOG_INF
+4:NET_INFO
+4:PR_INFO
+4:INFO
+4:PR_FAULT_INFO
+4:logger\.info
+4:log\.info
+4:pr_info
+4:info
+
+
+# DEBUG Functions (Level 5)
+5:RLOG_DBG
+5:RLOG_DEBUG
+5:LOG_DBG
+5:DEBUG
+5:MMU_DEBUG
+5:SPI_DEBUG
+5:PC_DEBUG
+5:logger\.debug
+5:MCT_DEBUG
+5:pr_debug
+5:debug
+
+# VERBOSE Functions (Level 6)
+6:RLOG_VER
+6:VERBOSE
+6:verbose

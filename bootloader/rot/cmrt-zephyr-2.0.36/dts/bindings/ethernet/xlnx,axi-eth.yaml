@@ -1,0 +1,29 @@
+# Copyright (c) 2023 Cryptography Research, Inc. (CRI)
+
+description: Xilinx AXI DMA and Ethernet controller
+
+compatible: "xlnx,axi-eth"
+
+include: ethernet.yaml
+
+properties:
+    reg:
+      required: true
+
+    interrupts:
+      required: true
+
+    clock-frequency:
+      type: int
+      required: true
+      description: AXI clock frequency.
+
+    dma:
+      type: array
+      required: true
+      description: AXI DMA register space
+
+    ddr:
+      type: array
+      required: true
+      description: AXI DDR buffer space

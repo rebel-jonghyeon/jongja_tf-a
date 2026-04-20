@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ASCII"?>
+<com.synopsys.vp.base.vpcfg.core:Configuration xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:com.synopsys.vp.base.vpcfg.core="com.synopsys.vp.base.vpcfg.core.model" description="empty configuration" comment="gen_tool_VPX">
+  <debugInfo traceSimOutput="false" generateUniqueSimOutFile="false" appendSimOutput="true"/>
+  <paramOverrides key="pure_virtual_rebel.CPU_SS.#EXTRA_PROPERTIES#/ImageInfo/initial_image" value="{../../../../../rbln-fw/rebel/binaries/BootLoader_CP/bl1.elf,,,image+symbols,} "/>
+  <paramOverrides key="pure_virtual_rebel.DRAM.#EXTRA_PROPERTIES#/ImageInfo/initial_image" value="{../../../../../rbln-fw/rebel/binaries/BootLoader_CP/bl31.bin,,,image,} {../../../../../rbln-fw/rebel/binaries/FreeRTOS_CP/freertos_kernel.bin,0x200000,,image,} "/>
+  <paramOverrides key="pure_virtual_rebel.SRAM.#EXTRA_PROPERTIES#/ImageInfo/initial_image" value="{../../../../../rbln-fw/rebel/binaries/BootLoader_CP/bl2.bin,0x30000,,image,} "/>
+  <monitorSets name="Default" path="${vpconfigDir}/Default.monitors" chartDisplayScript="">
+    <startTrigger type="TIME" value="0"/>
+  </monitorSets>
+</com.synopsys.vp.base.vpcfg.core:Configuration>

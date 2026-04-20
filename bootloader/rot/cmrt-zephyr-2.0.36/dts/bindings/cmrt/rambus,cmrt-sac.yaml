@@ -1,0 +1,23 @@
+# Copyright (c) 2022-2023 Cryptography Research, Inc. (CRI)
+
+description: CMRT System Aperture Core (SAC)
+
+compatible: "rambus,cmrt-sac"
+
+include: rambus,cmrt-hwc.yaml
+
+properties:
+    num-segments:
+      required: true
+      type: int
+      description: number of SAC segments supported by hardware
+
+    segment0-default:
+      required: true
+      type: int
+      description: default value for SAC segment 0 at boot up
+
+    user-access:
+      type: boolean
+      required: false
+      description: set if HW allows direct user mode access to SAC memory

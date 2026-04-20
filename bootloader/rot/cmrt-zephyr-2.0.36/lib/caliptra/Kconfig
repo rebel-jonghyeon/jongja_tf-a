@@ -1,0 +1,10 @@
+# Copyright (c) 2023 Cryptography Research, Inc. (CRI).
+# A license or authorization from CRI is needed to use this file
+
+config CMRT_CALIPTRA_LIBRARY
+	bool
+	default n
+	prompt "Caliptra support library"
+	select CMRT_UCU_LIBRARY
+	help
+	  Build the Caliptra support library.
