@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2018-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2018-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,6 +11,7 @@
 #include <asm_macros.S>
 #include <common/bl_common.h>
 #include <common/debug.h>
+#include <dsu_macros.S>
 #include <neoverse_e1.h>
 #include <cpu_macros.S>
 #include <plat_macros.S>
@@ -21,6 +26,7 @@
 #error "Neoverse-E1 supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
 #endif
 
+<<<<<<< HEAD
 /*
  * ERRATA_DSU_936184:
  * The errata is defined in dsu_helpers.S and applies to neoverse_e1.
@@ -31,6 +37,21 @@
 .equ erratum_neoverse_e1_936184_wa, errata_dsu_936184_wa
 add_erratum_entry neoverse_e1, ERRATUM(936184), ERRATA_DSU_936184, APPLY_AT_RESET
 
+=======
+cpu_reset_prologue neoverse_e1
+
+workaround_reset_start neoverse_e1, ERRATUM(936184), ERRATA_DSU_936184
+	errata_dsu_936184_wa_impl
+workaround_reset_end neoverse_e1, ERRATUM(936184)
+
+check_erratum_custom_start neoverse_e1, ERRATUM(936184)
+	branch_if_scu_not_present 2f /* label 1 is used in the macro */
+	check_errata_dsu_936184_impl
+	2:
+	ret
+check_erratum_custom_end neoverse_e1, ERRATUM(936184)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 cpu_reset_func_start neoverse_e1
 cpu_reset_func_end neoverse_e1
 
@@ -42,8 +63,11 @@ func neoverse_e1_cpu_pwr_dwn
 	ret
 endfunc neoverse_e1_cpu_pwr_dwn
 
+<<<<<<< HEAD
 errata_report_shim neoverse_e1
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 .section .rodata.neoverse_e1_regs, "aS"
 neoverse_e1_regs:  /* The ascii list of register names to be reported */
 	.asciz	"cpuectlr_el1", ""

@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2020-2023, Arm Limited. All rights reserved.
+=======
+ * Copyright (c) 2020-2025, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -20,6 +24,8 @@
 #if CTX_INCLUDE_AARCH32_REGS == 1
 #error "Rainier CPU supports only AArch64. Compile with CTX_INCLUDE_AARCH32_REGS=0"
 #endif
+
+cpu_reset_prologue rainier
 
 /* --------------------------------------------------
  * Disable speculative loads if Rainier supports
@@ -80,8 +86,11 @@ func rainier_core_pwr_dwn
 	ret
 endfunc rainier_core_pwr_dwn
 
+<<<<<<< HEAD
 errata_report_shim rainier
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides Rainier specific
 	 * register information for crash reporting.

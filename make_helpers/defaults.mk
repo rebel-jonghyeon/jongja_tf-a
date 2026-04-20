@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2016-2023, Arm Limited. All rights reserved.
+# Copyright (c) 2016-2025, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -9,6 +9,9 @@
 # Makefile, after this file is included. This ensures that the former is better
 # poised to handle dependencies, as all build variables would have a default
 # value by then.
+
+# Warning level to give to the compiler
+W				:= 0
 
 # Use T32 by default
 AARCH32_INSTRUCTION_SET		:= T32
@@ -63,6 +66,12 @@ CTX_INCLUDE_AARCH32_REGS	:= 1
 # Include FP registers in cpu context
 CTX_INCLUDE_FPREGS		:= 0
 
+<<<<<<< HEAD
+=======
+# Include SVE registers in cpu context
+CTX_INCLUDE_SVE_REGS		:= 0
+
+>>>>>>> upstream_import/upstream_v2_14_1
 # Debug build
 DEBUG				:= 0
 
@@ -82,9 +91,6 @@ DYN_DISABLE_AUTH		:= 0
 # Enable the Maximum Power Mitigation Mechanism on supporting cores.
 ENABLE_MPMM			:= 0
 
-# Enable MPMM configuration via FCONF.
-ENABLE_MPMM_FCONF		:= 0
-
 # Flag to Enable Position Independant support (PIE)
 ENABLE_PIE			:= 0
 
@@ -103,6 +109,13 @@ ENABLE_STACK_PROTECTOR		:= 0
 # Flag to enable exception handling in EL3
 EL3_EXCEPTION_HANDLING		:= 0
 
+<<<<<<< HEAD
+=======
+# Flag to include all errata for all CPUs TF-A implements workarounds for
+# Its supposed to be used only for testing.
+ENABLE_ERRATA_ALL		:= 0
+
+>>>>>>> upstream_import/upstream_v2_14_1
 # By default BL31 encryption disabled
 ENCRYPT_BL31			:= 0
 
@@ -133,15 +146,27 @@ FIP_NAME			:= fip.bin
 # Default FWU_FIP file name
 FWU_FIP_NAME			:= fwu_fip.bin
 
+# Default BL2 FIP file name
+BL2_FIP_NAME			:= bl2_fip.bin
+
 # By default firmware encryption with SSK
 FW_ENC_STATUS			:= 0
 
 # For Chain of Trust
 GENERATE_COT			:= 0
 
+# Default number of 512 blocks per bitlock
+RME_GPT_BITLOCK_BLOCK		:= 1
+
+# Default maximum size of GPT contiguous block
+RME_GPT_MAX_BLOCK		:= 512
+
 # Hint platform interrupt control layer that Group 0 interrupts are for EL3. By
 # default, they are for Secure EL1.
 GICV2_G0_FOR_EL3		:= 0
+
+# Generic implementation of a GICvX driver
+USE_GIC_DRIVER			:= 0
 
 # Route NS External Aborts to EL3. Disabled by default; External Aborts are handled
 # by lower ELs.
@@ -150,6 +175,16 @@ HANDLE_EA_EL3_FIRST_NS		:= 0
 # Enable Handoff protocol using transfer lists
 TRANSFER_LIST			:= 0
 
+<<<<<<< HEAD
+=======
+# Enable HOB list to generate boot information
+HOB_LIST			:= 0
+
+# Enables support for the gcc compiler option "-mharden-sls=all".
+# By default, disables all SLS hardening.
+HARDEN_SLS			:= 0
+
+>>>>>>> upstream_import/upstream_v2_14_1
 # Secure hash algorithm flag, accepts 3 values: sha256, sha384 and sha512.
 # The default value is sha256.
 HASH_ALG			:= sha256
@@ -172,7 +207,13 @@ endif
 # Option to build TF with Measured Boot support
 MEASURED_BOOT			:= 0
 
-# NS timer register save and restore
+# Option to build TF with Discrete TPM support
+DISCRETE_TPM			:= 0
+
+# Option to enable the DICE Protection Environmnet as a Measured Boot backend
+DICE_PROTECTION_ENVIRONMENT	:=0
+
+# NS timer register save and restore (deprecated)
 NS_TIMER_SWITCH			:= 0
 
 # Include lib/libc in the final image
@@ -191,6 +232,12 @@ PSCI_EXTENDED_STATE_ID		:= 0
 # Enable PSCI OS-initiated mode support
 PSCI_OS_INIT_MODE		:= 0
 
+<<<<<<< HEAD
+=======
+# SMCCC_ARCH_FEATURE_AVAILABILITY support
+ARCH_FEATURE_AVAILABILITY	:= 0
+
+>>>>>>> upstream_import/upstream_v2_14_1
 # By default, BL1 acts as the reset handler, not BL31
 RESET_TO_BL31			:= 0
 
@@ -199,6 +246,9 @@ SAVE_KEYS			:= 0
 
 # Software Delegated Exception support
 SDEI_SUPPORT			:= 0
+
+# Number of UUIDs allowed for a physical partition
+SPMC_AT_EL3_PARTITION_MAX_UUIDS := 4
 
 # True Random Number firmware Interface support
 TRNG_SUPPORT			:= 0
@@ -223,6 +273,14 @@ SEPARATE_NOBITS_REGION		:= 0
 # Put BL2 NOLOAD sections (.bss, stacks, page tables) in a separate memory
 # region, platform Makefile is free to override this value.
 SEPARATE_BL2_NOLOAD_REGION	:= 0
+
+# Put RW DATA sections (.rwdata) in a separate memory region, which may be
+# discontiguous from the rest of BL31.
+SEPARATE_RWDATA_REGION		:= 0
+
+# Put SIMD context data structures in a separate memory region. Platforms
+# have the choice to put it outside of default BSS region of EL3 firmware.
+SEPARATE_SIMD_SECTION		:= 0
 
 # If the BL31 image initialisation code is recalimed after use for the secondary
 # cores stack
@@ -256,6 +314,10 @@ USE_COHERENT_MEM		:= 1
 # Build option to add debugfs support
 USE_DEBUGFS			:= 0
 
+# Build option to enable passing the FDT in x0 to BL33, following the kernel
+# convention.
+USE_KERNEL_DT_CONVENTION	:= 0
+
 # Build option to fconf based io
 ARM_IO_IN_DTB			:= 0
 
@@ -280,9 +342,6 @@ COT				:= tbbr
 
 # Use tbbr_oid.h instead of platform_oid.h
 USE_TBBR_DEFS			:= 1
-
-# Build verbosity
-V				:= 0
 
 # Whether to enable D-Cache early during warm boot. This is usually
 # applicable for platforms wherein interconnect programming is not
@@ -309,13 +368,11 @@ ENABLE_LTO			:= 0
 # CTX_INCLUDE_EL2_REGS.
 CTX_INCLUDE_EL2_REGS		:= 0
 
-# Enable Memory tag extension which is supported for architecture greater
-# than Armv8.5-A
-# By default it is set to "no"
-SUPPORT_STACK_MEMTAG		:= no
-
 # Select workaround for AT speculative behaviour.
 ERRATA_SPECULATIVE_AT		:= 0
+
+# select workaround for SME aborting powerdown
+ERRATA_SME_POWER_DOWN		:= 0
 
 # Trap RAS error record access from Non secure
 RAS_TRAP_NS_ERR_REC_ACCESS	:= 0
@@ -347,8 +404,18 @@ NR_OF_IMAGES_IN_FW_BANK		:= 1
 # Disable Firmware update support by default
 PSA_FWU_SUPPORT			:= 0
 
+<<<<<<< HEAD
 # By default, disable the mocking of RSS provided services
 PLAT_RSS_NOT_SUPPORTED		:= 0
+=======
+# Enable image description in FWU metadata by default when PSA_FWU_SUPPORT
+# is enabled.
+ifeq ($(PSA_FWU_SUPPORT),1)
+PSA_FWU_METADATA_FW_STORE_DESC	:= 1
+else
+PSA_FWU_METADATA_FW_STORE_DESC	:= 0
+endif
+>>>>>>> upstream_import/upstream_v2_14_1
 
 # Dynamic Root of Trust for Measurement support
 DRTM_SUPPORT			:= 0
@@ -367,3 +434,50 @@ PSA_CRYPTO			:= 0
 # Disabled by default because it constitutes an attack vector into TF-A. It
 # should only be enabled if there is a use case for it.
 ENABLE_CONSOLE_GETC		:= 0
+<<<<<<< HEAD
+=======
+
+# Build option to disable EL2 when it is not used.
+# Most platforms switch from EL3 to NS-EL2 and hence the unused NS-EL2
+# functions must be enabled by platforms if they require it.
+# Disabled by default.
+INIT_UNUSED_NS_EL2		:= 0
+
+# Disable including MPAM EL2 registers in context by default since currently
+# it's only enabled for NS world
+CTX_INCLUDE_MPAM_REGS		:= 0
+
+# Enable context memory usage reporting during BL31 setup.
+PLATFORM_REPORT_CTX_MEM_USE	:= 0
+
+# Request a custom addition to the BL31 linker script
+PLAT_EXTRA_LD_SCRIPT		:= 0
+
+# Enable early console
+EARLY_CONSOLE			:= 0
+
+# Allow platforms to save/restore DSU PMU registers over a power cycle.
+# Disabled by default and must be enabled by individual platforms.
+PRESERVE_DSU_PMU_REGS		:= 0
+
+# Enable RMMD to forward attestation requests from RMM to EL3.
+RMMD_ENABLE_EL3_TOKEN_SIGN	:= 0
+
+# Enable RMMD to program and manage IDE Keys at the PCIe Root Port(RP).
+# This flag is temporary and it is expected once the interface is
+# finalized, this flag will be removed.
+RMMD_ENABLE_IDE_KEY_PROG	:= 0
+
+# Live firmware activation support
+LFA_SUPPORT			:= 0
+
+# Enable support for arm DSU driver.
+USE_DSU_DRIVER			:= 0
+
+# Define the separation of BL2 flag, by default it is disabled.
+SEPARATE_BL2_FIP		:=	0
+
+# Disable NUMA awareness for per-CPU framework by default. Platforms should
+# enable this feature by setting PLATFORM_NODE_COUNT > 1
+PLATFORM_NODE_COUNT		:= 1
+>>>>>>> upstream_import/upstream_v2_14_1

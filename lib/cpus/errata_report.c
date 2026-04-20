@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -31,7 +35,11 @@
 /* Errata format: BL stage, CPU, errata ID, message */
 #define ERRATA_FORMAT	"%s: %s: CPU workaround for %s was %s\n"
 
+<<<<<<< HEAD
 #define CVE_FORMAT	"%s: %s: CPU workaround for CVE %u_%u was %s\n"
+=======
+#define CVE_FORMAT	"%s: %s: CPU workaround for CVE %u_%04u was %s\n"
+>>>>>>> upstream_import/upstream_v2_14_1
 #define ERRATUM_FORMAT	"%s: %s: CPU workaround for erratum %u was %s\n"
 
 
@@ -51,9 +59,15 @@ static __unused void print_status(int status, char *cpu_str, uint16_t cve, uint3
 		}
 	} else {
 		if (cve) {
+<<<<<<< HEAD
 			VERBOSE(CVE_FORMAT, BL_STRING, cpu_str, cve, id, "not applied");
 		}  else {
 			VERBOSE(ERRATUM_FORMAT, BL_STRING, cpu_str, id, "not applied");
+=======
+			VERBOSE(CVE_FORMAT, BL_STRING, cpu_str, cve, id, "not applicable");
+		}  else {
+			VERBOSE(ERRATUM_FORMAT, BL_STRING, cpu_str, id, "not applicable");
+>>>>>>> upstream_import/upstream_v2_14_1
 		}
 	}
 }
@@ -63,22 +77,30 @@ void print_errata_status(void) {}
 #else /* !REPORT_ERRATA */
 /*
  * New errata status message printer
+<<<<<<< HEAD
  * The order checking function is hidden behind the FEATURE_DETECTION flag to
  * save space. This functionality is only useful on development and platform
  * bringup builds, when FEATURE_DETECTION should be used anyway
  */
 void __unused generic_errata_report(void)
+=======
+ */
+void generic_errata_report(void)
+>>>>>>> upstream_import/upstream_v2_14_1
 {
 	struct cpu_ops *cpu_ops = get_cpu_ops_ptr();
 	struct erratum_entry *entry = cpu_ops->errata_list_start;
 	struct erratum_entry *end = cpu_ops->errata_list_end;
 	long rev_var = cpu_get_rev_var();
+<<<<<<< HEAD
 #if FEATURE_DETECTION
 	uint32_t last_erratum_id = 0;
 	uint16_t last_cve_yr = 0;
 	bool check_cve = false;
 	bool failed = false;
 #endif /* FEATURE_DETECTION */
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	for (; entry != end; entry += 1) {
 		uint64_t status = entry->check_func(rev_var);
@@ -95,6 +117,7 @@ void __unused generic_errata_report(void)
 		}
 
 		print_status(status, cpu_ops->cpu_str, entry->cve, entry->id);
+<<<<<<< HEAD
 
 #if FEATURE_DETECTION
 		if (entry->cve) {
@@ -124,6 +147,9 @@ void __unused generic_errata_report(void)
 	 */
 	assert(!failed);
 #endif /* FEATURE_DETECTION */
+=======
+	}
+>>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /*
@@ -158,6 +184,7 @@ static __unused int errata_needs_reporting(spinlock_t *lock, uint32_t *reported)
  *   - after cpu_ops have been initialized in per-CPU data.
  */
 void print_errata_status(void)
+<<<<<<< HEAD
 {
 	struct cpu_ops *cpu_ops;
 #ifdef IMAGE_BL1
@@ -190,39 +217,19 @@ void print_errata_status(void)
  * TODO: remove once all cpus have been converted to the new printing method
  */
 void __unused errata_print_msg(unsigned int status, const char *cpu, const char *id)
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 {
-	/* Errata status strings */
-	static const char *const errata_status_str[] = {
-		[ERRATA_NOT_APPLIES] = "not applied",
-		[ERRATA_APPLIES] = "applied",
-		[ERRATA_MISSING] = "missing!"
-	};
-	static const char *const __unused bl_str = BL_STRING;
-	const char *msg __unused;
+#ifdef IMAGE_BL1
+	generic_errata_report();
+#else /* IMAGE_BL1 */
+	struct cpu_ops *cpu_ops = (void *) get_cpu_data(cpu_ops_ptr);
 
+	assert(cpu_ops != NULL);
 
-	assert(status < ARRAY_SIZE(errata_status_str));
-	assert(cpu != NULL);
-	assert(id != NULL);
-
-	msg = errata_status_str[status];
-
-	switch (status) {
-	case ERRATA_NOT_APPLIES:
-		VERBOSE(ERRATA_FORMAT, bl_str, cpu, id, msg);
-		break;
-
-	case ERRATA_APPLIES:
-		INFO(ERRATA_FORMAT, bl_str, cpu, id, msg);
-		break;
-
-	case ERRATA_MISSING:
-		WARN(ERRATA_FORMAT, bl_str, cpu, id, msg);
-		break;
-
-	default:
-		WARN(ERRATA_FORMAT, bl_str, cpu, id, "unknown");
-		break;
+	if (errata_needs_reporting(cpu_ops->errata_lock, cpu_ops->errata_reported)) {
+		generic_errata_report();
 	}
+#endif /* IMAGE_BL1 */
 }
 #endif /* !REPORT_ERRATA */

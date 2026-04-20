@@ -1,6 +1,10 @@
 /*
  * Copyright (c) 2020-2022, ARM Limited and Contributors. All rights reserved.
  * Copyright (c) 2020-2023, Intel Corporation. All rights reserved.
+<<<<<<< HEAD
+=======
+ * Copyright (c) 2024, Altera Corporation. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,13 +14,24 @@
 
 #include "n5x_system_manager.h"
 #include <platform_def.h>
+#include <lib/utils_def.h>
+#include "n5x_system_manager.h"
 
 /* Platform Setting */
+<<<<<<< HEAD
 #define PLATFORM_MODEL						PLAT_SOCFPGA_N5X
 #define BOOT_SOURCE							BOOT_SOURCE_SDMMC
 #define PLAT_PRIMARY_CPU					0
 #define PLAT_CLUSTER_ID_MPIDR_AFF_SHIFT		MPIDR_AFF1_SHIFT
 #define PLAT_CPU_ID_MPIDR_AFF_SHIFT			MPIDR_AFF0_SHIFT
+=======
+#define PLATFORM_MODEL				PLAT_SOCFPGA_N5X
+#define PLAT_PRIMARY_CPU			0
+#define PLAT_CLUSTER_ID_MPIDR_AFF_SHIFT		MPIDR_AFF1_SHIFT
+#define PLAT_CPU_ID_MPIDR_AFF_SHIFT		MPIDR_AFF0_SHIFT
+#define PLAT_HANDOFF_OFFSET			0xFFE3F000
+#define PLAT_TIMER_BASE_ADDR			0xFFD01000
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /* FPGA config helpers */
 #define INTEL_SIP_SMC_FPGA_CONFIG_ADDR		0x400000
@@ -26,19 +41,30 @@
 #define CAD_QSPIDATA_OFST			0xff900000
 #define CAD_QSPI_OFFSET				0xff8d2000
 
+<<<<<<< HEAD
+=======
+/* FIP Setting */
+#define PLAT_FIP_BASE				(0)
+#define PLAT_FIP_MAX_SIZE			(0x1000000)
+
+/* SDMMC Setting */
+#define PLAT_MMC_DATA_BASE			(0xffe3c000)
+#define PLAT_MMC_DATA_SIZE			(0x2000)
+#define SOCFPGA_MMC_BLOCK_SIZE			U(8192)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 /* Register Mapping */
 #define SOCFPGA_CCU_NOC_REG_BASE		U(0xf7000000)
 #define SOCFPGA_F2SDRAMMGR_REG_BASE		U(0xf8024000)
-
 #define SOCFPGA_MMC_REG_BASE			U(0xff808000)
-
 #define SOCFPGA_RSTMGR_REG_BASE			U(0xffd11000)
 #define SOCFPGA_SYSMGR_REG_BASE			U(0xffd12000)
+#define SOCFPGA_ECC_QSPI_REG_BASE		U(0xffa22000)
 
-#define SOCFPGA_L4_PER_SCR_REG_BASE			U(0xffd21000)
-#define SOCFPGA_L4_SYS_SCR_REG_BASE			U(0xffd21100)
-#define SOCFPGA_SOC2FPGA_SCR_REG_BASE			U(0xffd21200)
-#define SOCFPGA_LWSOC2FPGA_SCR_REG_BASE			U(0xffd21300)
+#define SOCFPGA_L4_PER_SCR_REG_BASE		U(0xffd21000)
+#define SOCFPGA_L4_SYS_SCR_REG_BASE		U(0xffd21100)
+#define SOCFPGA_SOC2FPGA_SCR_REG_BASE		U(0xffd21200)
+#define SOCFPGA_LWSOC2FPGA_SCR_REG_BASE		U(0xffd21300)
 
 
 /*******************************************************************************
@@ -65,21 +91,40 @@
 #define DEVICE4_BASE				(0x2000000000)
 #define DEVICE4_SIZE				(0x0100000000)
 
+<<<<<<< HEAD
 #define BL2_BASE		(0xffe00000)
 #define BL2_LIMIT		(0xffe1b000)
 
 #define BL31_BASE		(0x1000)
 #define BL31_LIMIT		(0x81000)
+=======
+#define BL2_BASE				(0xffe00000)
+#define BL2_LIMIT				(0xffe1b000)
+
+#define BL31_BASE				(0x1000)
+#define BL31_LIMIT				(0x81000)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * UART related constants
  ******************************************************************************/
+<<<<<<< HEAD
 #define PLAT_UART0_BASE		(0xFFC02000)
 #define PLAT_UART1_BASE		(0xFFC02100)
+=======
+#define PLAT_UART0_BASE				(0xFFC02000)
+#define PLAT_UART1_BASE				(0xFFC02100)
+
+/*******************************************************************************
+ * WDT related constants
+ ******************************************************************************/
+#define WDT_BASE				(0xFFD00200)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * GIC related constants
  ******************************************************************************/
+<<<<<<< HEAD
 #define PLAT_GIC_BASE			(0xFFFC0000)
 #define PLAT_GICC_BASE			(PLAT_GIC_BASE + 0x2000)
 #define PLAT_GICD_BASE			(PLAT_GIC_BASE + 0x1000)
@@ -87,10 +132,20 @@
 
 #define PLAT_SYS_COUNTER_FREQ_IN_TICKS	(400000000)
 #define PLAT_HZ_CONVERT_TO_MHZ	(1000000)
+=======
+#define PLAT_GIC_BASE				(0xFFFC0000)
+#define PLAT_GICC_BASE				(PLAT_GIC_BASE + 0x2000)
+#define PLAT_GICD_BASE				(PLAT_GIC_BASE + 0x1000)
+#define PLAT_GICR_BASE				0
+
+#define PLAT_SYS_COUNTER_FREQ_IN_TICKS		(400000000)
+#define PLAT_HZ_CONVERT_TO_MHZ			(1000000)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * SDMMC related pointer function
  ******************************************************************************/
+<<<<<<< HEAD
 #define SDMMC_READ_BLOCKS	mmc_read_blocks
 #define SDMMC_WRITE_BLOCKS	mmc_write_blocks
 
@@ -102,5 +157,29 @@
 
 /* Platform specific system counter */
 #define PLAT_SYS_COUNTER_FREQ_IN_MHZ	get_cpu_clk()
+=======
+#define SDMMC_READ_BLOCKS			mmc_read_blocks
+#define SDMMC_WRITE_BLOCKS			mmc_write_blocks
+
+/*******************************************************************************
+ * sysmgr.boot_scratch_cold6 Bits[3:0] is used to indicate L2 reset
+ * is done and HPS should trigger warm reset via RMR_EL3.
+ ******************************************************************************/
+/*
+ * Magic key bits: 4 bits[3:0] from boot scratch register COLD6 are used to
+ * indicate the below requests/status
+ *     0x0       : Default value on reset, not used
+ *     0x1       : L2/warm reset is completed
+ *     0x2 - 0xF : Reserved for future use
+ */
+#define BS_REG_MAGIC_KEYS_MASK			0x0F
+#define BS_REG_MAGIC_KEYS_POS			0x00
+#define L2_RESET_DONE_STATUS			(0x01 << BS_REG_MAGIC_KEYS_POS)
+
+#define L2_RESET_DONE_REG			SOCFPGA_SYSMGR(BOOT_SCRATCH_COLD_6)
+
+/* Platform specific system counter */
+#define PLAT_SYS_COUNTER_FREQ_IN_MHZ		U(400)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* PLAT_SOCFPGA_DEF_H */

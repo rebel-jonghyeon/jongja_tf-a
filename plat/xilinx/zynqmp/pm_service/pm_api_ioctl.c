@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018-2022, Arm Limited and Contributors. All rights reserved.
- * Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Advanced Micro Devices, Inc. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,6 +13,10 @@
 #include <drivers/delay_timer.h>
 #include <lib/mmio.h>
 #include <plat/common/platform.h>
+<<<<<<< HEAD
+=======
+#include <plat_pm_common.h>
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #include "pm_api_clock.h"
 #include "pm_api_ioctl.h"
@@ -61,9 +65,11 @@ static enum pm_ret_status pm_ioctl_get_rpu_oper_mode(uint32_t *mode)
 static enum pm_ret_status pm_ioctl_set_rpu_oper_mode(uint32_t mode)
 {
 	uint32_t val;
+	enum pm_ret_status status = PM_RET_SUCCESS;
 
-	if (mmio_read_32(CRL_APB_RST_LPD_TOP) & CRL_APB_RPU_AMBA_RESET) {
-		return PM_RET_ERROR_ACCESS;
+	if ((mmio_read_32(CRL_APB_RST_LPD_TOP) & CRL_APB_RPU_AMBA_RESET) != 0U) {
+		status = PM_RET_ERROR_ACCESS;
+		goto exit_label;
 	}
 
 	val = mmio_read_32(ZYNQMP_RPU_GLBL_CNTL);
@@ -77,12 +83,14 @@ static enum pm_ret_status pm_ioctl_set_rpu_oper_mode(uint32_t mode)
 		val |= ZYNQMP_TCM_COMB_MASK;
 		val |= ZYNQMP_SLCLAMP_MASK;
 	} else {
-		return PM_RET_ERROR_ARGS;
+		status = PM_RET_ERROR_ARGS;
+		goto exit_label;
 	}
 
 	mmio_write_32(ZYNQMP_RPU_GLBL_CNTL, val);
 
-	return PM_RET_SUCCESS;
+exit_label:
+	return status;
 }
 
 /**
@@ -136,6 +144,7 @@ static enum pm_ret_status pm_ioctl_config_boot_addr(enum pm_node_id nid,
 static enum pm_ret_status pm_ioctl_config_tcm_comb(uint32_t value)
 {
 	uint32_t val;
+	enum pm_ret_status status = PM_RET_SUCCESS;
 
 	val = mmio_read_32(ZYNQMP_RPU_GLBL_CNTL);
 
@@ -144,18 +153,25 @@ static enum pm_ret_status pm_ioctl_config_tcm_comb(uint32_t value)
 	} else if (value == PM_RPU_TCM_COMB) {
 		val |= ZYNQMP_TCM_COMB_MASK;
 	} else {
-		return PM_RET_ERROR_ARGS;
+		status = PM_RET_ERROR_ARGS;
+		goto exit_label;
 	}
 
 	mmio_write_32(ZYNQMP_RPU_GLBL_CNTL, val);
 
-	return PM_RET_SUCCESS;
+exit_label:
+	return status;
 }
 
 /**
  * pm_ioctl_set_tapdelay_bypass() -  Enable/Disable tap delay bypass.
  * @type: Type of tap delay to enable/disable (e.g. QSPI).
  * @value: Enable/Disable.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function enable/disable tap delay bypass.
  *
@@ -163,13 +179,12 @@ static enum pm_ret_status pm_ioctl_config_tcm_comb(uint32_t value)
  *
  */
 static enum pm_ret_status pm_ioctl_set_tapdelay_bypass(uint32_t type,
-						       uint32_t value)
+						       uint32_t value,
+						       uint32_t flag)
 {
-	if ((value != PM_TAPDELAY_BYPASS_ENABLE &&
-	     value != PM_TAPDELAY_BYPASS_DISABLE) || type >= PM_TAPDELAY_MAX) {
-		return PM_RET_ERROR_ARGS;
-	}
+	enum pm_ret_status status = PM_RET_SUCCESS;
 
+<<<<<<< HEAD
 	return pm_mmio_write(IOU_TAPDLY_BYPASS, TAP_DELAY_MASK, value << type);
 }
 
@@ -215,29 +230,28 @@ static enum pm_ret_status pm_ioctl_set_sgmii_mode(enum pm_node_id nid,
 	if (value == PM_SGMII_DISABLE) {
 		mask = GEM_SGMII_MASK << GEM_CLK_CTRL_OFFSET * shift;
 		ret = pm_mmio_write(IOU_GEM_CLK_CTRL, mask, 0U);
+=======
+	if ((((value != PM_TAPDELAY_BYPASS_ENABLE) &&
+	     (value != PM_TAPDELAY_BYPASS_DISABLE)) || (type >= PM_TAPDELAY_MAX))) {
+		status = PM_RET_ERROR_ARGS;
+>>>>>>> upstream_import/upstream_v2_14_1
 	} else {
-		/* Tie the GEM PCS Signal Detect to 1 */
-		mask = SGMII_SD_MASK << SGMII_SD_OFFSET * shift;
-		val = SGMII_PCS_SD_1 << SGMII_SD_OFFSET * shift;
-		ret = pm_mmio_write(IOU_GEM_CTRL, mask, val);
-		if (ret != PM_RET_SUCCESS) {
-			return ret;
-		}
-
-		/* Set the GEM to SGMII mode */
-		mask = GEM_CLK_CTRL_MASK << GEM_CLK_CTRL_OFFSET * shift;
-		val = GEM_RX_SRC_SEL_GTR | GEM_SGMII_MODE;
-		val <<= GEM_CLK_CTRL_OFFSET * shift;
-		ret =  pm_mmio_write(IOU_GEM_CLK_CTRL, mask, val);
+		status = pm_mmio_write(IOU_TAPDLY_BYPASS, TAP_DELAY_MASK,
+				       value << type, flag);
 	}
 
-	return ret;
+	return status;
 }
 
 /**
  * pm_ioctl_sd_dll_reset() -  Reset DLL logic.
  * @nid: Node ID of the device.
  * @type: Reset type.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function resets DLL logic for the SD device.
  *
@@ -245,7 +259,8 @@ static enum pm_ret_status pm_ioctl_set_sgmii_mode(enum pm_node_id nid,
  *
  */
 static enum pm_ret_status pm_ioctl_sd_dll_reset(enum pm_node_id nid,
-						uint32_t type)
+						uint32_t type,
+						uint32_t flag)
 {
 	uint32_t mask, val;
 	enum pm_ret_status ret;
@@ -263,7 +278,7 @@ static enum pm_ret_status pm_ioctl_sd_dll_reset(enum pm_node_id nid,
 	switch (type) {
 	case PM_DLL_RESET_ASSERT:
 	case PM_DLL_RESET_PULSE:
-		ret = pm_mmio_write(ZYNQMP_SD_DLL_CTRL, mask, val);
+		ret = pm_mmio_write(ZYNQMP_SD_DLL_CTRL, mask, val, flag);
 		if (ret != PM_RET_SUCCESS) {
 			return ret;
 		}
@@ -274,7 +289,7 @@ static enum pm_ret_status pm_ioctl_sd_dll_reset(enum pm_node_id nid,
 		mdelay(1);
 		/* Fallthrough */
 	case PM_DLL_RESET_RELEASE:
-		ret = pm_mmio_write(ZYNQMP_SD_DLL_CTRL, mask, 0);
+		ret = pm_mmio_write(ZYNQMP_SD_DLL_CTRL, mask, 0, flag);
 		break;
 	default:
 		ret = PM_RET_ERROR_ARGS;
@@ -289,6 +304,11 @@ static enum pm_ret_status pm_ioctl_sd_dll_reset(enum pm_node_id nid,
  * @nid: Node ID of the device.
  * @type: Type of tap delay to set (input/output).
  * @value: Value to set fot the tap delay.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function sets input/output tap delay for the SD device.
  *
@@ -297,7 +317,8 @@ static enum pm_ret_status pm_ioctl_sd_dll_reset(enum pm_node_id nid,
  */
 static enum pm_ret_status pm_ioctl_sd_set_tapdelay(enum pm_node_id nid,
 						   enum tap_delay_type type,
-						   uint32_t value)
+						   uint32_t value,
+						   uint32_t flag)
 {
 	uint32_t shift;
 	enum pm_ret_status ret;
@@ -313,13 +334,13 @@ static enum pm_ret_status pm_ioctl_sd_set_tapdelay(enum pm_node_id nid,
 		return PM_RET_ERROR_ARGS;
 	}
 
-	ret = pm_mmio_read(ZYNQMP_SD_DLL_CTRL, &val);
+	ret = pm_mmio_read(ZYNQMP_SD_DLL_CTRL, &val, flag);
 	if (ret != PM_RET_SUCCESS) {
 		return ret;
 	}
 
 	if ((val & mask) == 0U) {
-		ret = pm_ioctl_sd_dll_reset(nid, PM_DLL_RESET_ASSERT);
+		ret = pm_ioctl_sd_dll_reset(nid, PM_DLL_RESET_ASSERT, flag);
 		if (ret != PM_RET_SUCCESS) {
 			return ret;
 		}
@@ -327,8 +348,9 @@ static enum pm_ret_status pm_ioctl_sd_set_tapdelay(enum pm_node_id nid,
 
 	if (type == PM_TAPDELAY_INPUT) {
 		ret = pm_mmio_write(ZYNQMP_SD_ITAP_DLY,
-				    (ZYNQMP_SD_ITAPCHGWIN_MASK << shift),
-				    (ZYNQMP_SD_ITAPCHGWIN << shift));
+				    (uint64_t)(ZYNQMP_SD_ITAPCHGWIN_MASK << shift),
+				    (ZYNQMP_SD_ITAPCHGWIN << shift),
+				    flag);
 
 		if (ret != PM_RET_SUCCESS) {
 			goto reset_release;
@@ -336,13 +358,13 @@ static enum pm_ret_status pm_ioctl_sd_set_tapdelay(enum pm_node_id nid,
 
 		if (value == 0U) {
 			ret = pm_mmio_write(ZYNQMP_SD_ITAP_DLY,
-					    (ZYNQMP_SD_ITAPDLYENA_MASK <<
-					     shift), 0);
+					    (uint64_t)(ZYNQMP_SD_ITAPDLYENA_MASK <<
+					     shift), 0, flag);
 		} else {
 			ret = pm_mmio_write(ZYNQMP_SD_ITAP_DLY,
-					    (ZYNQMP_SD_ITAPDLYENA_MASK <<
-					    shift), (ZYNQMP_SD_ITAPDLYENA <<
-					    shift));
+					    (uint64_t)(ZYNQMP_SD_ITAPDLYENA_MASK <<
+					    shift), (uint64_t)(ZYNQMP_SD_ITAPDLYENA <<
+					    shift), flag);
 		}
 
 		if (ret != PM_RET_SUCCESS) {
@@ -350,33 +372,37 @@ static enum pm_ret_status pm_ioctl_sd_set_tapdelay(enum pm_node_id nid,
 		}
 
 		ret = pm_mmio_write(ZYNQMP_SD_ITAP_DLY,
-				    (ZYNQMP_SD_ITAPDLYSEL_MASK << shift),
-				    (value << shift));
+				    (uint64_t)(ZYNQMP_SD_ITAPDLYSEL_MASK << shift),
+				    (value << shift),
+				    flag);
 
 		if (ret != PM_RET_SUCCESS) {
 			goto reset_release;
 		}
 
 		ret = pm_mmio_write(ZYNQMP_SD_ITAP_DLY,
-				    (ZYNQMP_SD_ITAPCHGWIN_MASK << shift), 0);
+				    (uint64_t)(ZYNQMP_SD_ITAPCHGWIN_MASK << shift), 0,
+				    flag);
 	} else if (type == PM_TAPDELAY_OUTPUT) {
 		ret = pm_mmio_write(ZYNQMP_SD_OTAP_DLY,
-				    (ZYNQMP_SD_OTAPDLYENA_MASK << shift), 0);
+				    (uint64_t)(ZYNQMP_SD_OTAPDLYENA_MASK << shift), 0,
+				    flag);
 
 		if (ret != PM_RET_SUCCESS) {
 			goto reset_release;
 		}
 
 		ret = pm_mmio_write(ZYNQMP_SD_OTAP_DLY,
-				    (ZYNQMP_SD_OTAPDLYSEL_MASK << shift),
-				    (value << shift));
+				    (uint64_t)(ZYNQMP_SD_OTAPDLYSEL_MASK << shift),
+				    (value << shift),
+				    flag);
 	} else {
 		ret = PM_RET_ERROR_ARGS;
 	}
 
 reset_release:
 	if ((val & mask) == 0) {
-		(void)pm_ioctl_sd_dll_reset(nid, PM_DLL_RESET_RELEASE);
+		(void)pm_ioctl_sd_dll_reset(nid, PM_DLL_RESET_RELEASE, flag);
 	}
 
 	return ret;
@@ -418,6 +444,11 @@ static enum pm_ret_status pm_ioctl_get_pll_frac_mode
  * pm_ioctl_set_pll_frac_data() -  Ioctl function for setting pll fraction data.
  * @pll: PLL clock id.
  * @data: fraction data.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function sets fraction data.
  * It is valid for fraction mode only.
@@ -426,24 +457,30 @@ static enum pm_ret_status pm_ioctl_get_pll_frac_mode
  *
  */
 static enum pm_ret_status pm_ioctl_set_pll_frac_data
-			(uint32_t pll, uint32_t data)
+			(uint32_t pll, uint32_t data, uint32_t flag)
 {
 	enum pm_node_id pll_nid;
 	enum pm_ret_status status;
 
 	/* Get PLL node ID using PLL clock ID */
 	status = pm_clock_get_pll_node_id(pll, &pll_nid);
-	if (status != PM_RET_SUCCESS) {
-		return status;
+	if (status == PM_RET_SUCCESS) {
+		status = pm_pll_set_parameter(pll_nid, PM_PLL_PARAM_DATA,
+					      data, flag);
 	}
 
-	return pm_pll_set_parameter(pll_nid, PM_PLL_PARAM_DATA, data);
+	return status;
 }
 
 /**
  * pm_ioctl_get_pll_frac_data() -  Ioctl function for getting pll fraction data.
  * @pll: PLL clock id.
  * @data: fraction data.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns fraction data value.
  *
@@ -451,18 +488,19 @@ static enum pm_ret_status pm_ioctl_set_pll_frac_data
  *
  */
 static enum pm_ret_status pm_ioctl_get_pll_frac_data
-			(uint32_t pll, uint32_t *data)
+			(uint32_t pll, uint32_t *data, uint32_t flag)
 {
 	enum pm_node_id pll_nid;
 	enum pm_ret_status status;
 
 	/* Get PLL node ID using PLL clock ID */
 	status = pm_clock_get_pll_node_id(pll, &pll_nid);
-	if (status != PM_RET_SUCCESS) {
-		return status;
+	if (status == PM_RET_SUCCESS) {
+		status = pm_pll_get_parameter(pll_nid, PM_PLL_PARAM_DATA,
+					      data, flag);
 	}
 
-	return pm_pll_get_parameter(pll_nid, PM_PLL_PARAM_DATA, data);
+	return status;
 }
 
 /**
@@ -470,6 +508,11 @@ static enum pm_ret_status pm_ioctl_get_pll_frac_data
  *                        (ggs).
  * @index: GGS register index.
  * @value: Register value to be written.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function writes value to GGS register.
  *
@@ -477,14 +520,19 @@ static enum pm_ret_status pm_ioctl_get_pll_frac_data
  *
  */
 static enum pm_ret_status pm_ioctl_write_ggs(uint32_t index,
-					     uint32_t value)
+					     uint32_t value,
+					     uint32_t flag)
 {
+	enum pm_ret_status ret_status = PM_RET_SUCCESS;
+
 	if (index >= GGS_NUM_REGS) {
-		return PM_RET_ERROR_ARGS;
+		ret_status = PM_RET_ERROR_ARGS;
+	} else {
+		ret_status = pm_mmio_write((uint64_t)GGS_BASEADDR + (index << 2),
+			     0xFFFFFFFFU, value, flag);
 	}
 
-	return pm_mmio_write(GGS_BASEADDR + (index << 2),
-			     0xFFFFFFFFU, value);
+	return ret_status;
 }
 
 /**
@@ -492,6 +540,11 @@ static enum pm_ret_status pm_ioctl_write_ggs(uint32_t index,
  *                       (ggs).
  * @index: GGS register index.
  * @value: Register value.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns GGS register value.
  *
@@ -499,13 +552,19 @@ static enum pm_ret_status pm_ioctl_write_ggs(uint32_t index,
  *
  */
 static enum pm_ret_status pm_ioctl_read_ggs(uint32_t index,
-					    uint32_t *value)
+					    uint32_t *value,
+					    uint32_t flag)
 {
+	enum pm_ret_status ret_status = PM_RET_SUCCESS;
+
 	if (index >= GGS_NUM_REGS) {
-		return PM_RET_ERROR_ARGS;
+		ret_status = PM_RET_ERROR_ARGS;
+	} else {
+		ret_status = pm_mmio_read((uint64_t)GGS_BASEADDR + (index << 2),
+					  value, flag);
 	}
 
-	return pm_mmio_read(GGS_BASEADDR + (index << 2), value);
+	return ret_status;
 }
 
 /**
@@ -513,6 +572,11 @@ static enum pm_ret_status pm_ioctl_read_ggs(uint32_t index,
  *                         storage (pggs).
  * @index: PGGS register index.
  * @value: Register value to be written.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function writes value to PGGS register.
  *
@@ -520,29 +584,41 @@ static enum pm_ret_status pm_ioctl_read_ggs(uint32_t index,
  *
  */
 static enum pm_ret_status pm_ioctl_write_pggs(uint32_t index,
-					      uint32_t value)
+					      uint32_t value,
+					      uint32_t flag)
 {
+	enum pm_ret_status ret_status = PM_RET_SUCCESS;
+
 	if (index >= PGGS_NUM_REGS) {
-		return PM_RET_ERROR_ARGS;
+		ret_status = PM_RET_ERROR_ARGS;
+	} else {
+		ret_status = pm_mmio_write((uint64_t)PGGS_BASEADDR + (index << 2),
+			     0xFFFFFFFFU, value, flag);
 	}
 
-	return pm_mmio_write(PGGS_BASEADDR + (index << 2),
-			     0xFFFFFFFFU, value);
+	return ret_status;
 }
 
 /**
  * pm_ioctl_afi() - Ioctl function for writing afi values.
  * @index: AFI register index.
  * @value: Register value to be written.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
 static enum pm_ret_status pm_ioctl_afi(uint32_t index,
-					      uint32_t value)
+				       uint32_t value,
+				       uint32_t flag)
 {
 	uint32_t mask;
-	uint32_t regarr[] = {0xFD360000U,
+	enum pm_ret_status status = PM_RET_ERROR_ARGS;
+	const uint32_t regarr[] = {0xFD360000U,
 				0xFD360014U,
 				0xFD370000U,
 				0xFD370014U,
@@ -560,17 +636,16 @@ static enum pm_ret_status pm_ioctl_afi(uint32_t index,
 				0xFF419000U,
 				};
 
-	if (index >= ARRAY_SIZE(regarr)) {
-		return PM_RET_ERROR_ARGS;
+	if (index < ARRAY_SIZE(regarr)) {
+		if (index <= AFIFM6_WRCTRL) {
+			mask = FABRIC_WIDTH;
+		} else {
+			mask = 0xf00;
+		}
+		status = pm_mmio_write(regarr[index], mask, value, flag);
 	}
 
-	if (index <= AFIFM6_WRCTRL) {
-		mask = FABRIC_WIDTH;
-	} else {
-		mask = 0xf00;
-	}
-
-	return pm_mmio_write(regarr[index], mask, value);
+	return status;
 }
 
 /**
@@ -578,6 +653,11 @@ static enum pm_ret_status pm_ioctl_afi(uint32_t index,
  *                        storage (pggs).
  * @index: PGGS register index.
  * @value: Register value.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns PGGS register value.
  *
@@ -585,54 +665,72 @@ static enum pm_ret_status pm_ioctl_afi(uint32_t index,
  *
  */
 static enum pm_ret_status pm_ioctl_read_pggs(uint32_t index,
-					     uint32_t *value)
+					     uint32_t *value,
+					     uint32_t flag)
 {
+	enum pm_ret_status status = 0;
+
 	if (index >= PGGS_NUM_REGS) {
-		return PM_RET_ERROR_ARGS;
+		status = PM_RET_ERROR_ARGS;
+	} else {
+		status = pm_mmio_read((uint64_t)PGGS_BASEADDR + (index << 2),
+				      value, flag);
 	}
 
-	return pm_mmio_read(PGGS_BASEADDR + (index << 2), value);
+	return status;
 }
 
 /**
  * pm_ioctl_ulpi_reset() - Ioctl function for performing ULPI reset.
  *
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+ *
+>>>>>>> upstream_import/upstream_v2_14_1
  * Return: Returns status, either success or error+reason.
  *
  * This function peerforms the ULPI reset sequence for resetting
  * the ULPI transceiver.
  */
-static enum pm_ret_status pm_ioctl_ulpi_reset(void)
+static enum pm_ret_status pm_ioctl_ulpi_reset(uint32_t flag)
 {
 	enum pm_ret_status ret;
 
 	ret = pm_mmio_write(CRL_APB_BOOT_PIN_CTRL, CRL_APB_BOOT_PIN_MASK,
-			    ZYNQMP_ULPI_RESET_VAL_HIGH);
+			    ZYNQMP_ULPI_RESET_VAL_HIGH, flag);
 	if (ret != PM_RET_SUCCESS) {
-		return ret;
+		goto exit_label;
 	}
 
 	/* Drive ULPI assert for atleast 1ms */
 	mdelay(1);
 
 	ret = pm_mmio_write(CRL_APB_BOOT_PIN_CTRL, CRL_APB_BOOT_PIN_MASK,
-			    ZYNQMP_ULPI_RESET_VAL_LOW);
+			    ZYNQMP_ULPI_RESET_VAL_LOW, flag);
 	if (ret != PM_RET_SUCCESS) {
-		return ret;
+		goto exit_label;
 	}
 
 	/* Drive ULPI de-assert for atleast 1ms */
 	mdelay(1);
 
 	ret = pm_mmio_write(CRL_APB_BOOT_PIN_CTRL, CRL_APB_BOOT_PIN_MASK,
-			    ZYNQMP_ULPI_RESET_VAL_HIGH);
+			    ZYNQMP_ULPI_RESET_VAL_HIGH, flag);
 
+exit_label:
 	return ret;
 }
 
 /**
  * pm_ioctl_set_boot_health_status() - Ioctl for setting healthy boot status.
  * @value: Value to write.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function sets healthy bit value to indicate boot health status
  * to firmware.
@@ -640,10 +738,11 @@ static enum pm_ret_status pm_ioctl_ulpi_reset(void)
  * Return: Returns status, either success or error+reason.
  *
  */
-static enum pm_ret_status pm_ioctl_set_boot_health_status(uint32_t value)
+static enum pm_ret_status pm_ioctl_set_boot_health_status(uint32_t value,
+							  uint32_t flag)
 {
 	return pm_mmio_write(PMU_GLOBAL_GEN_STORAGE4,
-			     PM_BOOT_HEALTH_STATUS_MASK, value);
+			     PM_BOOT_HEALTH_STATUS_MASK, value, flag);
 }
 
 /**
@@ -653,6 +752,11 @@ static enum pm_ret_status pm_ioctl_set_boot_health_status(uint32_t value)
  * @arg1: Argument 1 to requested IOCTL call.
  * @arg2: Argument 2 to requested IOCTL call.
  * @value: Returned output value.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function calls IOCTL to firmware for device control and configuration.
  *
@@ -663,7 +767,8 @@ enum pm_ret_status pm_api_ioctl(enum pm_node_id nid,
 				uint32_t ioctl_id,
 				uint32_t arg1,
 				uint32_t arg2,
-				uint32_t *value)
+				uint32_t *value,
+				uint32_t flag)
 {
 	enum pm_ret_status ret;
 	uint32_t payload[PAYLOAD_ARG_CNT];
@@ -682,16 +787,13 @@ enum pm_ret_status pm_api_ioctl(enum pm_node_id nid,
 		ret = pm_ioctl_config_tcm_comb(arg1);
 		break;
 	case IOCTL_SET_TAPDELAY_BYPASS:
-		ret = pm_ioctl_set_tapdelay_bypass(arg1, arg2);
-		break;
-	case IOCTL_SET_SGMII_MODE:
-		ret = pm_ioctl_set_sgmii_mode(nid, arg1);
+		ret = pm_ioctl_set_tapdelay_bypass(arg1, arg2, flag);
 		break;
 	case IOCTL_SD_DLL_RESET:
-		ret = pm_ioctl_sd_dll_reset(nid, arg1);
+		ret = pm_ioctl_sd_dll_reset(nid, arg1, flag);
 		break;
 	case IOCTL_SET_SD_TAPDELAY:
-		ret = pm_ioctl_sd_set_tapdelay(nid, arg1, arg2);
+		ret = pm_ioctl_sd_set_tapdelay(nid, arg1, arg2, flag);
 		break;
 	case IOCTL_SET_PLL_FRAC_MODE:
 		ret = pm_ioctl_set_pll_frac_mode(arg1, arg2);
@@ -700,35 +802,35 @@ enum pm_ret_status pm_api_ioctl(enum pm_node_id nid,
 		ret = pm_ioctl_get_pll_frac_mode(arg1, value);
 		break;
 	case IOCTL_SET_PLL_FRAC_DATA:
-		ret = pm_ioctl_set_pll_frac_data(arg1, arg2);
+		ret = pm_ioctl_set_pll_frac_data(arg1, arg2, flag);
 		break;
 	case IOCTL_GET_PLL_FRAC_DATA:
-		ret = pm_ioctl_get_pll_frac_data(arg1, value);
+		ret = pm_ioctl_get_pll_frac_data(arg1, value, flag);
 		break;
 	case IOCTL_WRITE_GGS:
-		ret = pm_ioctl_write_ggs(arg1, arg2);
+		ret = pm_ioctl_write_ggs(arg1, arg2, flag);
 		break;
 	case IOCTL_READ_GGS:
-		ret = pm_ioctl_read_ggs(arg1, value);
+		ret = pm_ioctl_read_ggs(arg1, value, flag);
 		break;
 	case IOCTL_WRITE_PGGS:
-		ret = pm_ioctl_write_pggs(arg1, arg2);
+		ret = pm_ioctl_write_pggs(arg1, arg2, flag);
 		break;
 	case IOCTL_READ_PGGS:
-		ret = pm_ioctl_read_pggs(arg1, value);
+		ret = pm_ioctl_read_pggs(arg1, value, flag);
 		break;
 	case IOCTL_ULPI_RESET:
-		ret = pm_ioctl_ulpi_reset();
+		ret = pm_ioctl_ulpi_reset(flag);
 		break;
 	case IOCTL_SET_BOOT_HEALTH_STATUS:
-		ret = pm_ioctl_set_boot_health_status(arg1);
+		ret = pm_ioctl_set_boot_health_status(arg1, flag);
 		break;
 	case IOCTL_AFI:
-		ret = pm_ioctl_afi(arg1, arg2);
+		ret = pm_ioctl_afi(arg1, arg2, flag);
 		break;
 	default:
 		/* Send request to the PMU */
-		PM_PACK_PAYLOAD5(payload, PM_IOCTL, nid, ioctl_id, arg1, arg2);
+		PM_PACK_PAYLOAD5(payload, flag, PM_IOCTL, nid, ioctl_id, arg1, arg2);
 
 		ret = pm_ipi_send_sync(primary_proc, payload, value, 1);
 		break;
@@ -740,19 +842,27 @@ enum pm_ret_status pm_api_ioctl(enum pm_node_id nid,
 /**
  * tfa_ioctl_bitmask() -  API to get supported IOCTL ID mask.
  * @bit_mask: Returned bit mask of supported IOCTL IDs.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: 0 success, negative value for errors.
  *
  */
+<<<<<<< HEAD
 enum pm_ret_status tfa_ioctl_bitmask(uint32_t *bit_mask)
+=======
+enum pm_ret_status tfa_ioctl_bitmask(uint32_t *bit_mask, uint32_t flag)
+>>>>>>> upstream_import/upstream_v2_14_1
 {
-	uint8_t supported_ids[] = {
+	const uint8_t supported_ids[] = {
 		IOCTL_GET_RPU_OPER_MODE,
 		IOCTL_SET_RPU_OPER_MODE,
 		IOCTL_RPU_BOOT_ADDR_CONFIG,
 		IOCTL_TCM_COMB_CONFIG,
 		IOCTL_SET_TAPDELAY_BYPASS,
-		IOCTL_SET_SGMII_MODE,
 		IOCTL_SD_DLL_RESET,
 		IOCTL_SET_SD_TAPDELAY,
 		IOCTL_SET_PLL_FRAC_MODE,
@@ -768,18 +878,19 @@ enum pm_ret_status tfa_ioctl_bitmask(uint32_t *bit_mask)
 		IOCTL_AFI,
 	};
 	uint8_t i, ioctl_id;
-	int32_t ret;
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	for (i = 0U; i < ARRAY_SIZE(supported_ids); i++) {
 		ioctl_id = supported_ids[i];
 		if (ioctl_id >= 64U) {
-			return PM_RET_ERROR_NOTSUPPORTED;
+			ret = PM_RET_ERROR_NOTSUPPORTED;
+			break;
 		}
-		ret = check_api_dependency(ioctl_id);
+		ret = check_api_dependency(ioctl_id, flag);
 		if (ret == PM_RET_SUCCESS) {
 			bit_mask[ioctl_id / 32U] |= BIT(ioctl_id % 32U);
 		}
 	}
 
-	return PM_RET_SUCCESS;
+	return ret;
 }

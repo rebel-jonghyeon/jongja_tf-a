@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2015-2023, ARM Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Copyright (C) 2017-2023 Nuvoton Ltd.
  *
@@ -30,10 +34,16 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Root of trust key hash lengths
  */
 #define ARM_ROTPK_HEADER_LEN		19
 #define ARM_ROTPK_HASH_LEN		32
+=======
+ * Length of the header for a hashed DER ROTPK.
+ */
+#define ARM_ROTPK_HASH_DER_HEADER_LEN		19
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /* Special value used to verify platform parameters from BL2 to BL31 */
 #define ARM_BL31_PLAT_PARAM_VAL		ULL(0x0f1e2d3c4b5a6978)
@@ -319,7 +329,11 @@
 			BL_RO_DATA_END - BL_RO_DATA_BASE,	\
 			MT_RO_DATA | EL3_PAS)
 #else
+<<<<<<< HEAD
 #define ARM_MAP_BL_RO		MAP_REGION_FLAT(	\
+=======
+#define ARM_MAP_BL_RO_NOT_USED		MAP_REGION_FLAT(	\
+>>>>>>> upstream_import/upstream_v2_14_1
 			BL_CODE_BASE, BL_CODE_END - BL_CODE_BASE,	\
 			MT_CODE | EL3_PAS)
 #endif /* SEPARATE_CODE_AND_RODATA */
@@ -439,7 +453,11 @@
 /******************************************************************************
  * BL2 specific defines.
  *****************************************************************************/
+<<<<<<< HEAD
 #if BL2_AT_EL3
+=======
+#if RESET_TO_BL2
+>>>>>>> upstream_import/upstream_v2_14_1
 /* Put BL2 towards the middle of the Trusted SRAM */
 #define BL2_BASE			(ARM_TRUSTED_SRAM_BASE +	\
 			PLAT_ARM_TRUSTED_SRAM_SIZE >> 1) + 0x2000)
@@ -450,7 +468,11 @@
  */
 #define BL2_BASE			(BL1_RW_BASE - PLAT_ARM_MAX_BL2_SIZE)
 #define BL2_LIMIT			BL1_RW_BASE
+<<<<<<< HEAD
 #endif /* BL2_AT_EL3 */
+=======
+#endif /* RESET_TO_BL2 */
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * BL31 specific defines.
@@ -483,9 +505,15 @@
 #define NEW_SRAM_ALLOCATION
 
 #ifdef NEW_SRAM_ALLOCATION
+<<<<<<< HEAD
 	#define BL31_BASE				0x20001000
 #else
 	#define BL31_BASE				0x20001000
+=======
+	#define BL31_BASE				0x02000000
+#else
+	#define BL31_BASE				0x02001000
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif /* NEW_SRAM_ALLOCATION */
 
 #define BL31_LIMIT			BL2_BASE	/* PLAT_ARM_MAX_BL31_SIZE */
@@ -496,6 +524,7 @@
 #define BL31_PROGBITS_LIMIT		BL2_BASE
 
 /*
+<<<<<<< HEAD
  * For BL2_AT_EL3 make sure the BL31 can grow up until BL2_BASE.
  * This is because in the BL2_AT_EL3 configuration, BL2 is always resident.
  */
@@ -504,6 +533,16 @@
 #else
 #define BL31_LIMIT			(ARM_BL_RAM_BASE + ARM_BL_RAM_SIZE)
 #endif /* BL2_AT_EL3 */
+=======
+ * For RESET_TO_BL2 make sure the BL31 can grow up until BL2_BASE.
+ * This is because in the RESET_TO_BL2 configuration, BL2 is always resident.
+ */
+#if RESET_TO_BL2
+#define BL31_LIMIT			BL2_BASE
+#else
+#define BL31_LIMIT			(ARM_BL_RAM_BASE + ARM_BL_RAM_SIZE)
+#endif /* RESET_TO_BL2 */
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif /* ARM_BL31_IN_DRAM || SEPARATE_NOBITS_REGION */
 
 /*
@@ -511,6 +550,10 @@
  * no SPD and no SPM-MM, as they are the only ones that can be used as BL32.
  */
 #if defined(SPD_none) && !SPM_MM
+<<<<<<< HEAD
+=======
+#error BL32_BASE is not defined
+>>>>>>> upstream_import/upstream_v2_14_1
 #undef BL32_BASE
 #endif /* SPD_none && !SPM_MM */
 

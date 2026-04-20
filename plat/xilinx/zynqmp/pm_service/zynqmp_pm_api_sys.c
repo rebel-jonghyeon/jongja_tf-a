@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013-2022, Arm Limited and Contributors. All rights reserved.
- * Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Advanced Micro Devices, Inc. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,6 +12,7 @@
 
 #include <arch_helpers.h>
 #include <plat/common/platform.h>
+#include <plat_pm_common.h>
 
 #include "pm_api_clock.h"
 #include "pm_api_ioctl.h"
@@ -51,168 +52,160 @@ typedef struct __attribute__((packed)) {
 /* Dependent APIs for TF-A to check their version from firmware */
 static const eemi_api_dependency api_dep_table[] = {
 	{
-		.id = PM_SELF_SUSPEND,
-		.api_id = PM_SELF_SUSPEND,
+		.id = (uint8_t)PM_SELF_SUSPEND,
+		.api_id = (uint8_t)PM_SELF_SUSPEND,
 	},
 	{
-		.id = PM_REQ_WAKEUP,
-		.api_id = PM_REQ_WAKEUP,
+		.id = (uint8_t)PM_REQ_WAKEUP,
+		.api_id = (uint8_t)PM_REQ_WAKEUP,
 	},
 	{
-		.id = PM_ABORT_SUSPEND,
-		.api_id = PM_ABORT_SUSPEND,
+		.id = (uint8_t)PM_SET_WAKEUP_SOURCE,
+		.api_id = (uint8_t)PM_SET_WAKEUP_SOURCE,
 	},
 	{
-		.id = PM_SET_WAKEUP_SOURCE,
-		.api_id = PM_SET_WAKEUP_SOURCE,
+		.id = (uint8_t)PM_SYSTEM_SHUTDOWN,
+		.api_id = (uint8_t)PM_SYSTEM_SHUTDOWN,
 	},
 	{
-		.id = PM_SYSTEM_SHUTDOWN,
-		.api_id = PM_SYSTEM_SHUTDOWN,
+		.id = (uint8_t)PM_GET_API_VERSION,
+		.api_id = (uint8_t)PM_GET_API_VERSION,
 	},
 	{
-		.id = PM_GET_API_VERSION,
-		.api_id = PM_GET_API_VERSION,
+		.id = (uint8_t)PM_CLOCK_ENABLE,
+		.api_id = (uint8_t)PM_PLL_SET_MODE,
 	},
 	{
-		.id = PM_CLOCK_ENABLE,
-		.api_id = PM_PLL_SET_MODE,
+		.id = (uint8_t)PM_CLOCK_ENABLE,
+		.api_id = (uint8_t)PM_CLOCK_ENABLE,
 	},
 	{
-		.id = PM_CLOCK_ENABLE,
-		.api_id = PM_CLOCK_ENABLE,
+		.id = (uint8_t)PM_CLOCK_DISABLE,
+		.api_id = (uint8_t)PM_PLL_SET_MODE,
 	},
 	{
-		.id = PM_CLOCK_DISABLE,
-		.api_id = PM_PLL_SET_MODE,
+		.id = (uint8_t)PM_CLOCK_DISABLE,
+		.api_id = (uint8_t)PM_CLOCK_DISABLE,
 	},
 	{
-		.id = PM_CLOCK_DISABLE,
-		.api_id = PM_CLOCK_DISABLE,
+		.id = (uint8_t)PM_CLOCK_GETSTATE,
+		.api_id = (uint8_t)PM_PLL_GET_MODE,
 	},
 	{
-		.id = PM_CLOCK_GETSTATE,
-		.api_id = PM_PLL_GET_MODE,
+		.id = (uint8_t)PM_CLOCK_GETSTATE,
+		.api_id = (uint8_t)PM_CLOCK_GETSTATE,
 	},
 	{
-		.id = PM_CLOCK_GETSTATE,
-		.api_id = PM_CLOCK_GETSTATE,
+		.id = (uint8_t)PM_CLOCK_SETDIVIDER,
+		.api_id = (uint8_t)PM_PLL_SET_PARAMETER,
 	},
 	{
-		.id = PM_CLOCK_SETDIVIDER,
-		.api_id = PM_PLL_SET_PARAMETER,
+		.id = (uint8_t)PM_CLOCK_SETDIVIDER,
+		.api_id = (uint8_t)PM_CLOCK_SETDIVIDER,
 	},
 	{
-		.id = PM_CLOCK_SETDIVIDER,
-		.api_id = PM_CLOCK_SETDIVIDER,
+		.id = (uint8_t)PM_CLOCK_GETDIVIDER,
+		.api_id = (uint8_t)PM_PLL_GET_PARAMETER,
 	},
 	{
-		.id = PM_CLOCK_GETDIVIDER,
-		.api_id = PM_PLL_GET_PARAMETER,
+		.id = (uint8_t)PM_CLOCK_GETDIVIDER,
+		.api_id = (uint8_t)PM_CLOCK_GETDIVIDER,
 	},
 	{
-		.id = PM_CLOCK_GETDIVIDER,
-		.api_id = PM_CLOCK_GETDIVIDER,
+		.id = (uint8_t)PM_CLOCK_SETPARENT,
+		.api_id = (uint8_t)PM_PLL_SET_PARAMETER,
 	},
 	{
-		.id = PM_CLOCK_SETPARENT,
-		.api_id = PM_PLL_SET_PARAMETER,
+		.id = (uint8_t)PM_CLOCK_SETPARENT,
+		.api_id = (uint8_t)PM_CLOCK_SETPARENT,
 	},
 	{
-		.id = PM_CLOCK_SETPARENT,
-		.api_id = PM_CLOCK_SETPARENT,
+		.id = (uint8_t)PM_CLOCK_GETPARENT,
+		.api_id = (uint8_t)PM_PLL_GET_PARAMETER,
 	},
 	{
-		.id = PM_CLOCK_GETPARENT,
-		.api_id = PM_PLL_GET_PARAMETER,
+		.id = (uint8_t)PM_CLOCK_GETPARENT,
+		.api_id = (uint8_t)PM_CLOCK_GETPARENT,
 	},
 	{
-		.id = PM_CLOCK_GETPARENT,
-		.api_id = PM_CLOCK_GETPARENT,
+		.id = (uint8_t)PM_PLL_SET_PARAMETER,
+		.api_id = (uint8_t)PM_PLL_SET_PARAMETER,
 	},
 	{
-		.id = PM_PLL_SET_PARAMETER,
-		.api_id = PM_PLL_SET_PARAMETER,
+		.id = (uint8_t)PM_PLL_GET_PARAMETER,
+		.api_id = (uint8_t)PM_PLL_GET_PARAMETER,
 	},
 	{
-		.id = PM_PLL_GET_PARAMETER,
-		.api_id = PM_PLL_GET_PARAMETER,
+		.id = (uint8_t)PM_PLL_SET_MODE,
+		.api_id = (uint8_t)PM_PLL_SET_MODE,
 	},
 	{
-		.id = PM_PLL_SET_MODE,
-		.api_id = PM_PLL_SET_MODE,
+		.id = (uint8_t)PM_PLL_GET_MODE,
+		.api_id = (uint8_t)PM_PLL_GET_MODE,
 	},
 	{
-		.id = PM_PLL_GET_MODE,
-		.api_id = PM_PLL_GET_MODE,
+		.id = (uint8_t)PM_REGISTER_ACCESS,
+		.api_id = (uint8_t)PM_MMIO_WRITE,
 	},
 	{
-		.id = PM_REGISTER_ACCESS,
-		.api_id = PM_MMIO_WRITE,
+		.id = (uint8_t)PM_REGISTER_ACCESS,
+		.api_id = (uint8_t)PM_MMIO_READ,
 	},
 	{
-		.id = PM_REGISTER_ACCESS,
-		.api_id = PM_MMIO_READ,
+		.id = (uint8_t)PM_FEATURE_CHECK,
+		.api_id = (uint8_t)PM_FEATURE_CHECK,
 	},
 	{
-		.id = PM_FEATURE_CHECK,
-		.api_id = PM_FEATURE_CHECK,
+		.id = (uint8_t)IOCTL_SET_TAPDELAY_BYPASS,
+		.api_id = (uint8_t)PM_MMIO_WRITE,
 	},
 	{
-		.id = IOCTL_SET_TAPDELAY_BYPASS,
-		.api_id = PM_MMIO_WRITE,
+		.id = (uint8_t)IOCTL_SD_DLL_RESET,
+		.api_id = (uint8_t)PM_MMIO_WRITE,
 	},
 	{
-		.id = IOCTL_SET_SGMII_MODE,
-		.api_id = PM_MMIO_WRITE,
+		.id = (uint8_t)IOCTL_SET_SD_TAPDELAY,
+		.api_id = (uint8_t)PM_MMIO_WRITE,
 	},
 	{
-		.id = IOCTL_SD_DLL_RESET,
-		.api_id = PM_MMIO_WRITE,
+		.id = (uint8_t)IOCTL_SET_SD_TAPDELAY,
+		.api_id = (uint8_t)PM_MMIO_READ,
 	},
 	{
-		.id = IOCTL_SET_SD_TAPDELAY,
-		.api_id = PM_MMIO_WRITE,
+		.id = (uint8_t)IOCTL_SET_PLL_FRAC_DATA,
+		.api_id = (uint8_t)PM_PLL_SET_PARAMETER,
 	},
 	{
-		.id = IOCTL_SET_SD_TAPDELAY,
-		.api_id = PM_MMIO_READ,
+		.id = (uint8_t)IOCTL_GET_PLL_FRAC_DATA,
+		.api_id = (uint8_t)PM_PLL_GET_PARAMETER,
 	},
 	{
-		.id = IOCTL_SET_PLL_FRAC_DATA,
-		.api_id = PM_PLL_SET_PARAMETER,
+		.id = (uint8_t)IOCTL_WRITE_GGS,
+		.api_id = (uint8_t)PM_MMIO_WRITE,
 	},
 	{
-		.id = IOCTL_GET_PLL_FRAC_DATA,
-		.api_id = PM_PLL_GET_PARAMETER,
+		.id = (uint8_t)IOCTL_READ_GGS,
+		.api_id = (uint8_t)PM_MMIO_READ,
 	},
 	{
-		.id = IOCTL_WRITE_GGS,
-		.api_id = PM_MMIO_WRITE,
+		.id = (uint8_t)IOCTL_WRITE_PGGS,
+		.api_id = (uint8_t)PM_MMIO_WRITE,
 	},
 	{
-		.id = IOCTL_READ_GGS,
-		.api_id = PM_MMIO_READ,
+		.id = (uint8_t)IOCTL_READ_PGGS,
+		.api_id = (uint8_t)PM_MMIO_READ,
 	},
 	{
-		.id = IOCTL_WRITE_PGGS,
-		.api_id = PM_MMIO_WRITE,
+		.id = (uint8_t)IOCTL_ULPI_RESET,
+		.api_id = (uint8_t)PM_MMIO_WRITE,
 	},
 	{
-		.id = IOCTL_READ_PGGS,
-		.api_id = PM_MMIO_READ,
+		.id = (uint8_t)IOCTL_SET_BOOT_HEALTH_STATUS,
+		.api_id = (uint8_t)PM_MMIO_WRITE,
 	},
 	{
-		.id = IOCTL_ULPI_RESET,
-		.api_id = PM_MMIO_WRITE,
-	},
-	{
-		.id = IOCTL_SET_BOOT_HEALTH_STATUS,
-		.api_id = PM_MMIO_WRITE,
-	},
-	{
-		.id = IOCTL_AFI,
-		.api_id = PM_MMIO_WRITE,
+		.id = (uint8_t)IOCTL_AFI,
+		.api_id = (uint8_t)PM_MMIO_WRITE,
 	},
 };
 
@@ -220,7 +213,6 @@ static const eemi_api_dependency api_dep_table[] = {
 static const uint8_t tfa_expected_ver_id[] = {
 	[PM_SELF_SUSPEND] = FW_API_BASE_VERSION,
 	[PM_REQ_WAKEUP] = FW_API_BASE_VERSION,
-	[PM_ABORT_SUSPEND] = FW_API_BASE_VERSION,
 	[PM_SET_WAKEUP_SOURCE] = FW_API_BASE_VERSION,
 	[PM_SYSTEM_SHUTDOWN] = FW_API_BASE_VERSION,
 	[PM_GET_API_VERSION] = FW_API_BASE_VERSION,
@@ -260,6 +252,11 @@ uint32_t pm_get_shutdown_scope(void)
  * @latency: Requested maximum wakeup latency (not supported).
  * @state: Requested state.
  * @address: Resume address.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This is a blocking call, it will return only once PMU has responded.
  * On a wakeup, resume address will be automatically set by PMU.
@@ -270,20 +267,27 @@ uint32_t pm_get_shutdown_scope(void)
 enum pm_ret_status pm_self_suspend(enum pm_node_id nid,
 				   uint32_t latency,
 				   uint32_t state,
-				   uintptr_t address)
+				   uintptr_t address,
+				   uint32_t flag)
 {
+	(void)nid;
 	uint32_t payload[PAYLOAD_ARG_CNT];
 	uint32_t cpuid = plat_my_core_pos();
 	const struct pm_proc *proc = pm_get_proc(cpuid);
+
+	if (proc == NULL) {
+		WARN("Failed to get proc %d\n", cpuid);
+		return PM_RET_ERROR_INTERNAL;
+	}
 
 	/*
 	 * Do client specific suspend operations
 	 * (e.g. set powerdown request bit)
 	 */
-	pm_client_suspend(proc, state);
+	pm_client_suspend(proc, state, flag);
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD6(payload, PM_SELF_SUSPEND, proc->node_id, latency,
-			 state, address, (address >> 32));
+	PM_PACK_PAYLOAD6(payload, flag, PM_SELF_SUSPEND, proc->node_id,
+			 latency, state, address, (address >> 32));
 	return pm_ipi_send_sync(proc, payload, NULL, 0);
 }
 
@@ -294,23 +298,32 @@ enum pm_ret_status pm_self_suspend(enum pm_node_id nid,
  * @ack: Flag to specify whether acknowledge is requested.
  * @latency: Requested wakeup latency (not supported).
  * @state: Requested state (not supported).
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
 enum pm_ret_status pm_req_suspend(enum pm_node_id target,
 				  enum pm_request_ack ack,
-				  uint32_t latency, uint32_t state)
+				  uint32_t latency, uint32_t state,
+				  uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD5(payload, PM_REQ_SUSPEND, target, ack, latency, state);
+	PM_PACK_PAYLOAD5(payload, flag, PM_REQ_SUSPEND, target, ack, latency, state);
 	if (ack == REQ_ACK_BLOCKING) {
-		return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+		ret = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 	} else {
-		return pm_ipi_send(primary_proc, payload);
+		ret = pm_ipi_send(primary_proc, payload);
 	}
+
+	return ret;
 }
 
 /**
@@ -321,6 +334,11 @@ enum pm_ret_status pm_req_suspend(enum pm_node_id target,
  * @set_address: Resume address presence indicator.
  *               1 resume address specified, 0 otherwise.
  * @address: Resume address.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This API function is either used to power up another APU core for SMP
  * (by PSCI) or to power up an entirely different PU or subsystem, such
@@ -333,25 +351,28 @@ enum pm_ret_status pm_req_suspend(enum pm_node_id target,
 enum pm_ret_status pm_req_wakeup(enum pm_node_id target,
 				 uint32_t set_address,
 				 uintptr_t address,
-				 enum pm_request_ack ack)
+				 enum pm_request_ack ack,
+				 uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 	uint64_t encoded_address;
-
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	/* encode set Address into 1st bit of address */
 	encoded_address = address;
-	encoded_address |= !!set_address;
+	encoded_address |= (uint32_t)!!set_address;
 
 	/* Send request to the PMU to perform the wake of the PU */
-	PM_PACK_PAYLOAD5(payload, PM_REQ_WAKEUP, target, encoded_address,
+	PM_PACK_PAYLOAD5(payload, flag, PM_REQ_WAKEUP, target, encoded_address,
 			 encoded_address >> 32, ack);
 
 	if (ack == REQ_ACK_BLOCKING) {
-		return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+		ret = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 	} else {
-		return pm_ipi_send(primary_proc, payload);
+		ret = pm_ipi_send(primary_proc, payload);
 	}
+
+	return ret;
 }
 
 /**
@@ -359,33 +380,52 @@ enum pm_ret_status pm_req_wakeup(enum pm_node_id target,
  *                        be powered down forcefully.
  * @target: Node id of the targeted PU or subsystem.
  * @ack: Flag to specify whether acknowledge is requested.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
 enum pm_ret_status pm_force_powerdown(enum pm_node_id target,
-				      enum pm_request_ack ack)
+				      enum pm_request_ack ack,
+				      uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD3(payload, PM_FORCE_POWERDOWN, target, ack);
+	PM_PACK_PAYLOAD3(payload, flag, PM_FORCE_POWERDOWN, target, ack);
 
 	if (ack == REQ_ACK_BLOCKING) {
-		return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+		ret = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 	} else {
-		return pm_ipi_send(primary_proc, payload);
+		ret = pm_ipi_send(primary_proc, payload);
 	}
+
+	return ret;
 }
 
 /**
+<<<<<<< HEAD
  * pm_abort_suspend() - PM call to announce that a prior suspend request
  *                      is to be aborted.
  * @reason: Reason for the abort.
+=======
+ * pm_set_wakeup_source() - PM call to specify the wakeup source while
+ *                          suspended.
+ * @target: Node id of the targeted PU or subsystem.
+ * @wkup_node: Node id of the wakeup peripheral.
+ * @enable: Enable or disable the specified peripheral as wake source.
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
- * Calling PU expects the PMU to abort the initiated suspend procedure.
- * This is a non-blocking call without any acknowledge.
+ * Return: Returns status, either success or error+reason.
  *
+<<<<<<< HEAD
  * Return: Returns status, either success or error+reason
  *
  */
@@ -414,14 +454,17 @@ enum pm_ret_status pm_abort_suspend(enum pm_abort_reason reason)
  *
  * Return: Returns status, either success or error+reason.
  *
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
  */
 enum pm_ret_status pm_set_wakeup_source(enum pm_node_id target,
 					enum pm_node_id wkup_node,
-					uint32_t enable)
+					uint32_t enable,
+					uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
-	PM_PACK_PAYLOAD4(payload, PM_SET_WAKEUP_SOURCE, target, wkup_node,
+	PM_PACK_PAYLOAD4(payload, flag, PM_SET_WAKEUP_SOURCE, target, wkup_node,
 			 enable);
 	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 }
@@ -430,22 +473,30 @@ enum pm_ret_status pm_set_wakeup_source(enum pm_node_id target,
  * pm_system_shutdown() - PM call to request a system shutdown or restart.
  * @type: Shutdown or restart? 0=shutdown, 1=restart, 2=setscope.
  * @subtype: Scope: 0=APU-subsystem, 1=PS, 2=system.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
-enum pm_ret_status pm_system_shutdown(uint32_t type, uint32_t subtype)
+enum pm_ret_status pm_system_shutdown(uint32_t type, uint32_t subtype,
+				      uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
-	if (type == PMF_SHUTDOWN_TYPE_SETSCOPE_ONLY) {
+	if (type == (uint32_t)PMF_SHUTDOWN_TYPE_SETSCOPE_ONLY) {
 		/* Setting scope for subsequent PSCI reboot or shutdown */
 		pm_shutdown_scope = subtype;
-		return PM_RET_SUCCESS;
+	} else {
+		PM_PACK_PAYLOAD3(payload, flag, PM_SYSTEM_SHUTDOWN, type, subtype);
+		ret = pm_ipi_send_non_blocking(primary_proc, payload);
 	}
 
-	PM_PACK_PAYLOAD3(payload, PM_SYSTEM_SHUTDOWN, type, subtype);
-	return pm_ipi_send_non_blocking(primary_proc, payload);
+	return ret;
 }
 
 /* APIs for managing PM slaves: */
@@ -456,6 +507,11 @@ enum pm_ret_status pm_system_shutdown(uint32_t type, uint32_t subtype)
  * @capabilities: Requested capabilities of the slave.
  * @qos: Quality of service (not supported).
  * @ack: Flag to specify whether acknowledge is requested.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -463,17 +519,21 @@ enum pm_ret_status pm_system_shutdown(uint32_t type, uint32_t subtype)
 enum pm_ret_status pm_req_node(enum pm_node_id nid,
 			       uint32_t capabilities,
 			       uint32_t qos,
-			       enum pm_request_ack ack)
+			       enum pm_request_ack ack,
+			       uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
-	PM_PACK_PAYLOAD5(payload, PM_REQ_NODE, nid, capabilities, qos, ack);
+	PM_PACK_PAYLOAD5(payload, flag, PM_REQ_NODE, nid, capabilities, qos, ack);
 
 	if (ack == REQ_ACK_BLOCKING) {
-		return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+		ret = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 	} else {
-		return pm_ipi_send(primary_proc, payload);
+		ret = pm_ipi_send(primary_proc, payload);
 	}
+
+	return ret;
 }
 
 /**
@@ -482,6 +542,11 @@ enum pm_ret_status pm_req_node(enum pm_node_id nid,
  * @capabilities: Requested capabilities of the slave.
  * @qos: Quality of service (not supported).
  * @ack: Flag to specify whether acknowledge is requested.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This API function is to be used for slaves a PU already has requested.
  *
@@ -491,18 +556,22 @@ enum pm_ret_status pm_req_node(enum pm_node_id nid,
 enum pm_ret_status pm_set_requirement(enum pm_node_id nid,
 				      uint32_t capabilities,
 				      uint32_t qos,
-				      enum pm_request_ack ack)
+				      enum pm_request_ack ack,
+				      uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
-	PM_PACK_PAYLOAD5(payload, PM_SET_REQUIREMENT, nid, capabilities, qos,
+	PM_PACK_PAYLOAD5(payload, flag, PM_SET_REQUIREMENT, nid, capabilities, qos,
 			 ack);
 
 	if (ack == REQ_ACK_BLOCKING) {
-		return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+		ret = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 	} else {
-		return pm_ipi_send(primary_proc, payload);
+		ret = pm_ipi_send(primary_proc, payload);
 	}
+
+	return ret;
 }
 
 /* Miscellaneous API functions */
@@ -510,17 +579,24 @@ enum pm_ret_status pm_set_requirement(enum pm_node_id nid,
 /**
  * pm_get_api_version() - Get version number of PMU PM firmware.
  * @version: Returns 32-bit version number of PMU Power Management Firmware.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
-enum pm_ret_status pm_get_api_version(uint32_t *version)
+enum pm_ret_status pm_get_api_version(uint32_t *version, uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret;
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD1(payload, PM_GET_API_VERSION);
-	return pm_ipi_send_sync(primary_proc, payload, version, 1);
+	PM_PACK_PAYLOAD1(payload, flag, PM_GET_API_VERSION);
+	ret = pm_ipi_send_sync(primary_proc, payload, version, 1);
+	return ret;
 }
 
 /**
@@ -530,16 +606,22 @@ enum pm_ret_status pm_get_api_version(uint32_t *version)
  *            [0] - Current power state of the node
  *            [1] - Current requirements for the node (slave nodes only)
  *            [2] - Current usage status for the node (slave nodes only)
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
 enum pm_ret_status pm_get_node_status(enum pm_node_id nid,
-				      uint32_t *ret_buff)
+				      uint32_t *ret_buff,
+				      uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
-	PM_PACK_PAYLOAD2(payload, PM_GET_NODE_STATUS, nid);
+	PM_PACK_PAYLOAD2(payload, flag, PM_GET_NODE_STATUS, nid);
 	return pm_ipi_send_sync(primary_proc, payload, ret_buff, 3);
 }
 
@@ -548,6 +630,11 @@ enum pm_ret_status pm_get_node_status(enum pm_node_id nid,
  * @address: Address to write to.
  * @mask: Mask to apply.
  * @value: Value to write.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to PM-related control registers
  * that may not be directly accessible by a particular PU.
@@ -557,12 +644,13 @@ enum pm_ret_status pm_get_node_status(enum pm_node_id nid,
  */
 enum pm_ret_status pm_mmio_write(uintptr_t address,
 				 uint32_t mask,
-				 uint32_t value)
+				 uint32_t value,
+				 uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD4(payload, PM_MMIO_WRITE, address, mask, value);
+	PM_PACK_PAYLOAD4(payload, flag, PM_MMIO_WRITE, address, mask, value);
 	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 }
 
@@ -570,6 +658,11 @@ enum pm_ret_status pm_mmio_write(uintptr_t address,
  * pm_mmio_read() - Read value from protected mmio.
  * @address: Address to write to.
  * @value: Value to write.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to PM-related control registers
  * that may not be directly accessible by a particular PU.
@@ -577,12 +670,12 @@ enum pm_ret_status pm_mmio_write(uintptr_t address,
  * Return: Returns status, either success or error+reason.
  *
  */
-enum pm_ret_status pm_mmio_read(uintptr_t address, uint32_t *value)
+enum pm_ret_status pm_mmio_read(uintptr_t address, uint32_t *value, uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD2(payload, PM_MMIO_READ, address);
+	PM_PACK_PAYLOAD2(payload, flag, PM_MMIO_READ, address);
 	return pm_ipi_send_sync(primary_proc, payload, value, 1);
 }
 
@@ -594,6 +687,11 @@ enum pm_ret_status pm_mmio_read(uintptr_t address, uint32_t *value)
  * @address_high: higher 32-bit Linear memory space address.
  * @size: Number of 32bit words.
  * @flags: Additional flags or settings for the fpga operation.
+<<<<<<< HEAD
+=======
+ * @security_flag: 0 - Call from secure source.
+ *		   1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
@@ -601,19 +699,25 @@ enum pm_ret_status pm_mmio_read(uintptr_t address, uint32_t *value)
 enum pm_ret_status pm_fpga_load(uint32_t address_low,
 				uint32_t address_high,
 				uint32_t size,
-				uint32_t flags)
+				uint32_t flags,
+				uint32_t security_flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD5(payload, PM_FPGA_LOAD, address_high, address_low,
-						size, flags);
+	PM_PACK_PAYLOAD5(payload, security_flag, PM_FPGA_LOAD, address_high,
+			 address_low, size, flags);
 	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 }
 
 /**
  * pm_fpga_get_status() - Read value from fpga status register.
  * @value: Value to read.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to the xilfpga library to get
  * the fpga status.
@@ -621,28 +725,33 @@ enum pm_ret_status pm_fpga_load(uint32_t address_low,
  * Return: Returns status, either success or error+reason.
  *
  */
-enum pm_ret_status pm_fpga_get_status(uint32_t *value)
+enum pm_ret_status pm_fpga_get_status(uint32_t *value, uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD1(payload, PM_FPGA_GET_STATUS);
+	PM_PACK_PAYLOAD1(payload, flag, PM_FPGA_GET_STATUS);
 	return pm_ipi_send_sync(primary_proc, payload, value, 1);
 }
 
 /**
  * pm_get_chipid() - Read silicon ID registers.
  * @value: Buffer for return values. Must be large enough to hold 8 bytes.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns silicon ID registers.
  *
  */
-enum pm_ret_status pm_get_chipid(uint32_t *value)
+enum pm_ret_status pm_get_chipid(uint32_t *value, uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD1(payload, PM_GET_CHIPID);
+	PM_PACK_PAYLOAD1(payload, flag, PM_GET_CHIPID);
 	return pm_ipi_send_sync(primary_proc, payload, value, 2);
 }
 
@@ -652,6 +761,11 @@ enum pm_ret_status pm_get_chipid(uint32_t *value)
  * @address_high: higher 32-bit Linear memory space address.
  * @size: Number of 32bit words.
  * @flags: Additional flags or settings for the fpga operation.
+<<<<<<< HEAD
+=======
+ * @security_flag: 0 - Call from secure source.
+ *		   1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to the xilsecure library to load the
  * authenticated, encrypted, and authenticated/encrypted images.
@@ -660,15 +774,16 @@ enum pm_ret_status pm_get_chipid(uint32_t *value)
  *
  */
 enum pm_ret_status pm_secure_rsaaes(uint32_t address_low,
-				uint32_t address_high,
-				uint32_t size,
-				uint32_t flags)
+				    uint32_t address_high,
+				    uint32_t size,
+				    uint32_t flags,
+				    uint32_t security_flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD5(payload, PM_SECURE_RSA_AES, address_high, address_low,
-			 size, flags);
+	PM_PACK_PAYLOAD5(payload, security_flag, PM_SECURE_RSA_AES, address_high,
+			 address_low, size, flags);
 	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 }
 
@@ -677,6 +792,11 @@ enum pm_ret_status pm_secure_rsaaes(uint32_t address_low,
  * @address_low: lower 32-bit address of the AesParams structure.
  * @address_high: higher 32-bit address of the AesParams structure.
  * @value: Returned output value.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to the xilsecure library to
  * encrypt/decrypt data blobs.
@@ -686,12 +806,13 @@ enum pm_ret_status pm_secure_rsaaes(uint32_t address_low,
  */
 enum pm_ret_status pm_aes_engine(uint32_t address_high,
 				 uint32_t address_low,
-				 uint32_t *value)
+				 uint32_t *value,
+				 uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD3(payload, PM_SECURE_AES, address_high, address_low);
+	PM_PACK_PAYLOAD3(payload, flag, PM_SECURE_AES, address_high, address_low);
 	return pm_ipi_send_sync(primary_proc, payload, value, 1);
 }
 
@@ -707,13 +828,16 @@ enum pm_ret_status pm_aes_engine(uint32_t address_high,
 enum pm_ret_status pm_get_callbackdata(uint32_t *data, size_t count)
 {
 	enum pm_ret_status ret = PM_RET_SUCCESS;
+
 	/* Return if interrupt is not from PMU */
-	if (!pm_ipi_irq_status(primary_proc)) {
-		return ret;
+	if ((pm_ipi_irq_status(primary_proc) == 0U)) {
+		goto exit_label;
 	}
 
 	ret = pm_ipi_buff_read_callb(data, count);
 	pm_ipi_irq_clear(primary_proc);
+
+exit_label:
 	return ret;
 }
 
@@ -724,6 +848,11 @@ enum pm_ret_status pm_get_callbackdata(uint32_t *data, size_t count)
  * @arg1: Argument 1 to requested IOCTL call.
  * @arg2: Argument 2 to requested IOCTL call.
  * @value: Returned output value.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function calls IOCTL to firmware for device control and configuration.
  *
@@ -734,9 +863,10 @@ enum pm_ret_status pm_ioctl(enum pm_node_id nid,
 			    uint32_t ioctl_id,
 			    uint32_t arg1,
 			    uint32_t arg2,
-			    uint32_t *value)
+			    uint32_t *value,
+			    uint32_t flag)
 {
-	return pm_api_ioctl(nid, ioctl_id, arg1, arg2, value);
+	return pm_api_ioctl(nid, ioctl_id, arg1, arg2, value, flag);
 }
 
 /**
@@ -744,31 +874,41 @@ enum pm_ret_status pm_ioctl(enum pm_node_id nid,
  * @id: API ID to check.
  * @version: Returned supported API version.
  * @len: Number of words to be returned.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
 static enum pm_ret_status fw_api_version(uint32_t id, uint32_t *version,
-					 uint32_t len)
+					 uint32_t len, uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
-	PM_PACK_PAYLOAD2(payload, PM_FEATURE_CHECK, id);
+	PM_PACK_PAYLOAD2(payload, flag, PM_FEATURE_CHECK, id);
 	return pm_ipi_send_sync(primary_proc, payload, version, len);
 }
 
 /**
  * check_api_dependency() -  API to check dependent EEMI API version.
  * @id: EEMI API ID to check.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
-enum pm_ret_status check_api_dependency(uint8_t id)
+enum pm_ret_status check_api_dependency(uint8_t id, uint32_t flag)
 {
 	uint8_t i;
-	uint32_t version;
-	int ret;
+	uint32_t version_type;
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	for (i = 0U; i < ARRAY_SIZE(api_dep_table); i++) {
 		if (api_dep_table[i].id == id) {
@@ -777,19 +917,26 @@ enum pm_ret_status check_api_dependency(uint8_t id)
 			}
 
 			ret = fw_api_version(api_dep_table[i].api_id,
-					     &version, 1);
+					     &version_type, 1, flag);
 			if (ret != PM_RET_SUCCESS) {
-				return ret;
+				goto exit_label;
 			}
 
 			/* Check if fw version matches TF-A expected version */
+<<<<<<< HEAD
 			if (version != tfa_expected_ver_id[api_dep_table[i].api_id]) {
 				return PM_RET_ERROR_NOTSUPPORTED;
+=======
+			if (version_type != tfa_expected_ver_id[api_dep_table[i].api_id]) {
+				ret = PM_RET_ERROR_NOTSUPPORTED;
+				goto exit_label;
+>>>>>>> upstream_import/upstream_v2_14_1
 			}
 		}
 	}
 
-	return PM_RET_SUCCESS;
+exit_label:
+	return ret;
 }
 
 /**
@@ -804,20 +951,30 @@ enum pm_ret_status check_api_dependency(uint8_t id)
 static enum pm_ret_status feature_check_tfa(uint32_t api_id, uint32_t *version,
 					    uint32_t *bit_mask)
 {
+	enum pm_ret_status ret = PM_RET_ERROR_NO_FEATURE;
+
 	switch (api_id) {
 	case PM_QUERY_DATA:
 		*version = TFA_API_QUERY_DATA_VERSION;
 		bit_mask[0] = (uint32_t)(PM_QUERY_FEATURE_BITMASK);
 		bit_mask[1] = (uint32_t)(PM_QUERY_FEATURE_BITMASK >> 32);
-		return PM_RET_SUCCESS;
+		ret = PM_RET_SUCCESS;
+		break;
 	case PM_GET_CALLBACK_DATA:
 	case PM_GET_TRUSTZONE_VERSION:
 	case PM_SET_SUSPEND_MODE:
 		*version = TFA_API_BASE_VERSION;
+<<<<<<< HEAD
 		return PM_RET_SUCCESS;
+=======
+		ret = PM_RET_SUCCESS;
+		break;
+>>>>>>> upstream_import/upstream_v2_14_1
 	default:
-		return PM_RET_ERROR_NO_FEATURE;
+		break;
 	}
+
+	return ret;
 }
 
 /**
@@ -832,10 +989,11 @@ static enum pm_ret_status feature_check_tfa(uint32_t api_id, uint32_t *version,
 static enum pm_ret_status get_tfa_version_for_partial_apis(uint32_t api_id,
 							   uint32_t *version)
 {
+	enum pm_ret_status ret = PM_RET_ERROR_ARGS;
+
 	switch (api_id) {
 	case PM_SELF_SUSPEND:
 	case PM_REQ_WAKEUP:
-	case PM_ABORT_SUSPEND:
 	case PM_SET_WAKEUP_SOURCE:
 	case PM_SYSTEM_SHUTDOWN:
 	case PM_GET_API_VERSION:
@@ -852,13 +1010,21 @@ static enum pm_ret_status get_tfa_version_for_partial_apis(uint32_t api_id,
 	case PM_PLL_GET_MODE:
 	case PM_REGISTER_ACCESS:
 		*version = TFA_API_BASE_VERSION;
+<<<<<<< HEAD
 		return PM_RET_SUCCESS;
+=======
+		ret = PM_RET_SUCCESS;
+		break;
+>>>>>>> upstream_import/upstream_v2_14_1
 	case PM_FEATURE_CHECK:
 		*version = FW_API_VERSION_2;
-		return PM_RET_SUCCESS;
+		ret = PM_RET_SUCCESS;
+		break;
 	default:
-		return PM_RET_ERROR_ARGS;
+		break;
 	}
+
+	return ret;
 }
 
 /**
@@ -866,19 +1032,25 @@ static enum pm_ret_status get_tfa_version_for_partial_apis(uint32_t api_id,
  *                           TF-A and firmware both.
  * @api_id: API ID to check.
  * @version: Returned supported API version.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
 static enum pm_ret_status feature_check_partial(uint32_t api_id,
-						uint32_t *version)
+						uint32_t *version,
+						uint32_t flag)
 {
 	uint32_t status;
+	uint32_t ret = PM_RET_ERROR_NO_FEATURE;
 
 	switch (api_id) {
 	case PM_SELF_SUSPEND:
 	case PM_REQ_WAKEUP:
-	case PM_ABORT_SUSPEND:
 	case PM_SET_WAKEUP_SOURCE:
 	case PM_SYSTEM_SHUTDOWN:
 	case PM_GET_API_VERSION:
@@ -895,14 +1067,22 @@ static enum pm_ret_status feature_check_partial(uint32_t api_id,
 	case PM_PLL_GET_MODE:
 	case PM_REGISTER_ACCESS:
 	case PM_FEATURE_CHECK:
-		status = check_api_dependency(api_id);
+		status = check_api_dependency(api_id, flag);
 		if (status != PM_RET_SUCCESS) {
-			return status;
+			ret = status;
+		} else {
+			ret = get_tfa_version_for_partial_apis(api_id, version);
 		}
+<<<<<<< HEAD
 		return get_tfa_version_for_partial_apis(api_id, version);
+=======
+		break;
+>>>>>>> upstream_import/upstream_v2_14_1
 	default:
-		return PM_RET_ERROR_NO_FEATURE;
+		break;
 	}
+
+	return ret;
 }
 
 /**
@@ -911,40 +1091,51 @@ static enum pm_ret_status feature_check_partial(uint32_t api_id,
  * @version: Returned supported API version.
  * @bit_mask: Returned supported IOCTL id version.
  * @len: Number of bytes to be returned in bit_mask variable.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
 enum pm_ret_status pm_feature_check(uint32_t api_id, uint32_t *version,
-				    uint32_t *bit_mask, uint8_t len)
+				    uint32_t *bit_mask, uint8_t len,
+				    uint32_t flag)
 {
-	uint32_t ret_payload[PAYLOAD_ARG_CNT] = {0U};
-	uint32_t status;
+	uint32_t ret_payload[RET_PAYLOAD_ARG_CNT] = {0U};
+	enum pm_ret_status status;
 
 	/* Get API version implemented in TF-A */
 	status = feature_check_tfa(api_id, version, bit_mask);
 	if (status != PM_RET_ERROR_NO_FEATURE) {
-		return status;
+		goto exit_label;
 	}
 
 	/* Get API version implemented by firmware and TF-A both */
+<<<<<<< HEAD
 	status = feature_check_partial(api_id, version);
+=======
+	status = feature_check_partial(api_id, version, flag);
+>>>>>>> upstream_import/upstream_v2_14_1
 	if (status != PM_RET_ERROR_NO_FEATURE) {
-		return status;
+		goto exit_label;
 	}
 
 	/* Get API version implemented by firmware */
-	status = fw_api_version(api_id, ret_payload, 3);
+	status = fw_api_version(api_id, ret_payload, 3, flag);
 	/* IOCTL call may return failure whose ID is not implemented in
 	 * firmware but implemented in TF-A
 	 */
-	if ((api_id != PM_IOCTL) && (status != PM_RET_SUCCESS)) {
-		return status;
+	if ((api_id != (uint32_t)PM_IOCTL) && (status != PM_RET_SUCCESS)) {
+		goto exit_label;
 	}
 
 	*version = ret_payload[0];
 
 	/* Update IOCTL bit mask which are implemented in TF-A */
+<<<<<<< HEAD
 	if ((api_id == PM_IOCTL) || (api_id == PM_GET_OP_CHARACTERISTIC)) {
 		if (len < 2) {
 			return PM_RET_ERROR_ARGS;
@@ -954,11 +1145,24 @@ enum pm_ret_status pm_feature_check(uint32_t api_id, uint32_t *version,
 		if (api_id == PM_IOCTL) {
 			/* Get IOCTL's implemented by TF-A */
 			status = tfa_ioctl_bitmask(bit_mask);
+=======
+	if ((api_id == (uint32_t)PM_IOCTL) || (api_id == (uint32_t)PM_GET_OP_CHARACTERISTIC)) {
+		if (len < 2U) {
+			status = PM_RET_ERROR_ARGS;
+			goto exit_label;
+		}
+		bit_mask[0] = ret_payload[1];
+		bit_mask[1] = ret_payload[2];
+		if (api_id == (uint32_t)PM_IOCTL) {
+			/* Get IOCTL's implemented by TF-A */
+			status = tfa_ioctl_bitmask(bit_mask, flag);
+>>>>>>> upstream_import/upstream_v2_14_1
 		}
 	} else {
 		/* Requires for MISRA */
 	}
 
+exit_label:
 	return status;
 }
 
@@ -1095,13 +1299,19 @@ static enum pm_ret_status pm_clock_get_attributes(uint32_t clock_id,
  * pm_clock_gate() - Configure clock gate.
  * @clock_id: Id of the clock to be configured.
  * @enable: Flag 0=disable (gate the clock), !0=enable (activate the clock).
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Error if an argument is not valid or status as returned by the
  *         PM controller (PMU).
  *
  */
 static enum pm_ret_status pm_clock_gate(uint32_t clock_id,
-					uint8_t enable)
+					uint8_t enable,
+					uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 	enum pm_ret_status status;
@@ -1110,17 +1320,17 @@ static enum pm_ret_status pm_clock_gate(uint32_t clock_id,
 	/* Check if clock ID is valid and return an error if it is not */
 	status = pm_clock_id_is_valid(clock_id);
 	if (status != PM_RET_SUCCESS) {
-		return status;
+		goto exit_label;
 	}
 
-	if (enable) {
+	if (enable != 0U) {
 		api_id = PM_CLOCK_ENABLE;
 	} else {
 		api_id = PM_CLOCK_DISABLE;
 	}
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD2(payload, api_id, clock_id);
+	PM_PACK_PAYLOAD2(payload, flag, api_id, clock_id);
 	status = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 
 	/* If action fails due to the lack of permissions filter the error */
@@ -1128,12 +1338,18 @@ static enum pm_ret_status pm_clock_gate(uint32_t clock_id,
 		status = PM_RET_SUCCESS;
 	}
 
+exit_label:
 	return status;
 }
 
 /**
  * pm_clock_enable() - Enable the clock for given id.
  * @clock_id: Id of the clock to be enabled.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to enable the clock
  * including peripherals and PLL clocks.
@@ -1142,23 +1358,32 @@ static enum pm_ret_status pm_clock_gate(uint32_t clock_id,
  *         pm_clock_gate.
  *
  */
-enum pm_ret_status pm_clock_enable(uint32_t clock_id)
+enum pm_ret_status pm_clock_enable(uint32_t clock_id, uint32_t flag)
 {
 	struct pm_pll *pll;
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	/* First try to handle it as a PLL */
 	pll = pm_clock_get_pll(clock_id);
-	if (pll) {
-		return pm_clock_pll_enable(pll);
+	if (pll != NULL) {
+		ret = pm_clock_pll_enable(pll, flag);
+	} else {
+
+		/* It's an on-chip clock, PMU should configure clock's gate */
+		ret = pm_clock_gate(clock_id, 1, flag);
 	}
 
-	/* It's an on-chip clock, PMU should configure clock's gate */
-	return pm_clock_gate(clock_id, 1);
+	return ret;
 }
 
 /**
  * pm_clock_disable - Disable the clock for given id.
  * @clock_id: Id of the clock to be disable.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to disable the clock
  * including peripherals and PLL clocks.
@@ -1167,24 +1392,33 @@ enum pm_ret_status pm_clock_enable(uint32_t clock_id)
  *         pm_clock_gate
  *
  */
-enum pm_ret_status pm_clock_disable(uint32_t clock_id)
+enum pm_ret_status pm_clock_disable(uint32_t clock_id, uint32_t flag)
 {
 	struct pm_pll *pll;
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	/* First try to handle it as a PLL */
 	pll = pm_clock_get_pll(clock_id);
-	if (pll) {
-		return pm_clock_pll_disable(pll);
+	if (pll != NULL) {
+		ret = pm_clock_pll_disable(pll, flag);
+	} else {
+
+		/* It's an on-chip clock, PMU should configure clock's gate */
+		ret = pm_clock_gate(clock_id, 0, flag);
 	}
 
-	/* It's an on-chip clock, PMU should configure clock's gate */
-	return pm_clock_gate(clock_id, 0);
+	return ret;
 }
 
 /**
  * pm_clock_getstate - Get the clock state for given id.
  * @clock_id: Id of the clock to be queried.
  * @state: 1/0 (Enabled/Disabled).
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to get the state of clock
  * including peripherals and PLL clocks.
@@ -1193,7 +1427,8 @@ enum pm_ret_status pm_clock_disable(uint32_t clock_id)
  *
  */
 enum pm_ret_status pm_clock_getstate(uint32_t clock_id,
-				     uint32_t *state)
+				     uint32_t *state,
+				     uint32_t flag)
 {
 	struct pm_pll *pll;
 	uint32_t payload[PAYLOAD_ARG_CNT];
@@ -1201,24 +1436,33 @@ enum pm_ret_status pm_clock_getstate(uint32_t clock_id,
 
 	/* First try to handle it as a PLL */
 	pll = pm_clock_get_pll(clock_id);
-	if (pll)
-		return pm_clock_pll_get_state(pll, state);
-
+	if (pll != NULL) {
+		status = pm_clock_pll_get_state(pll, state, flag);
+		goto exit_label;
+	}
 	/* Check if clock ID is a valid on-chip clock */
 	status = pm_clock_id_is_valid(clock_id);
 	if (status != PM_RET_SUCCESS) {
-		return status;
+		goto exit_label;
 	}
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD2(payload, PM_CLOCK_GETSTATE, clock_id);
-	return pm_ipi_send_sync(primary_proc, payload, state, 1);
+	PM_PACK_PAYLOAD2(payload, flag, PM_CLOCK_GETSTATE, clock_id);
+	status = pm_ipi_send_sync(primary_proc, payload, state, 1);
+
+exit_label:
+	return status;
 }
 
 /**
  * pm_clock_setdivider - Set the clock divider for given id.
  * @clock_id: Id of the clock.
  * @divider: divider value.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to set divider for any clock
  * to achieve desired rate.
@@ -1227,7 +1471,8 @@ enum pm_ret_status pm_clock_getstate(uint32_t clock_id,
  *
  */
 enum pm_ret_status pm_clock_setdivider(uint32_t clock_id,
-				       uint32_t divider)
+				       uint32_t divider,
+				       uint32_t flag)
 {
 	enum pm_ret_status status;
 	enum pm_node_id nid;
@@ -1240,13 +1485,15 @@ enum pm_ret_status pm_clock_setdivider(uint32_t clock_id,
 	/* Get PLL node ID using PLL clock ID */
 	status = pm_clock_get_pll_node_id(clock_id, &nid);
 	if (status == PM_RET_SUCCESS) {
-		return pm_pll_set_parameter(nid, PM_PLL_PARAM_FBDIV, divider);
+		status = pm_pll_set_parameter(nid, PM_PLL_PARAM_FBDIV, divider,
+					      flag);
+		goto exit_label;
 	}
 
 	/* Check if clock ID is a valid on-chip clock */
 	status = pm_clock_id_is_valid(clock_id);
 	if (status != PM_RET_SUCCESS) {
-		return status;
+		goto exit_label;
 	}
 
 	if (div0 == (divider & div0)) {
@@ -1256,18 +1503,27 @@ enum pm_ret_status pm_clock_setdivider(uint32_t clock_id,
 		div_id = PM_CLOCK_DIV1_ID;
 		val = (divider & ~div1) >> 16;
 	} else {
-		return PM_RET_ERROR_ARGS;
+		status = PM_RET_ERROR_ARGS;
+		goto exit_label;
 	}
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD4(payload, PM_CLOCK_SETDIVIDER, clock_id, div_id, val);
-	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+	PM_PACK_PAYLOAD4(payload, flag, PM_CLOCK_SETDIVIDER, clock_id, div_id, val);
+	status = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+
+exit_label:
+	return status;
 }
 
 /**
  * pm_clock_getdivider - Get the clock divider for given id.
  * @clock_id: Id of the clock.
  * @divider: divider value.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to get divider values
  * for any clock.
@@ -1276,9 +1532,10 @@ enum pm_ret_status pm_clock_setdivider(uint32_t clock_id,
  *
  */
 enum pm_ret_status pm_clock_getdivider(uint32_t clock_id,
-				       uint32_t *divider)
+				       uint32_t *divider,
+				       uint32_t flag)
 {
-	enum pm_ret_status status;
+	enum pm_ret_status status = PM_RET_SUCCESS;
 	enum pm_node_id nid;
 	uint32_t payload[PAYLOAD_ARG_CNT];
 	uint32_t val;
@@ -1286,37 +1543,39 @@ enum pm_ret_status pm_clock_getdivider(uint32_t clock_id,
 	/* Get PLL node ID using PLL clock ID */
 	status = pm_clock_get_pll_node_id(clock_id, &nid);
 	if (status == PM_RET_SUCCESS) {
-		return pm_pll_get_parameter(nid, PM_PLL_PARAM_FBDIV, divider);
+		status = pm_pll_get_parameter(nid, PM_PLL_PARAM_FBDIV, divider,
+					      flag);
+		goto exit_label;
 	}
 
 	/* Check if clock ID is a valid on-chip clock */
 	status = pm_clock_id_is_valid(clock_id);
 	if (status != PM_RET_SUCCESS) {
-		return status;
+		goto exit_label;
 	}
 
-	if (pm_clock_has_div(clock_id, PM_CLOCK_DIV0_ID)) {
+	if ((pm_clock_has_div(clock_id, PM_CLOCK_DIV0_ID)) != 0U) {
 		/* Send request to the PMU to get div0 */
-		PM_PACK_PAYLOAD3(payload, PM_CLOCK_GETDIVIDER, clock_id,
+		PM_PACK_PAYLOAD3(payload, flag, PM_CLOCK_GETDIVIDER, clock_id,
 				 PM_CLOCK_DIV0_ID);
 		status = pm_ipi_send_sync(primary_proc, payload, &val, 1);
 		if (status != PM_RET_SUCCESS) {
-			return status;
+			goto exit_label;
 		}
 		*divider = val;
 	}
 
-	if (pm_clock_has_div(clock_id, PM_CLOCK_DIV1_ID)) {
+	if ((pm_clock_has_div(clock_id, PM_CLOCK_DIV1_ID)) != 0U) {
 		/* Send request to the PMU to get div1 */
-		PM_PACK_PAYLOAD3(payload, PM_CLOCK_GETDIVIDER, clock_id,
+		PM_PACK_PAYLOAD3(payload, flag, PM_CLOCK_GETDIVIDER, clock_id,
 				 PM_CLOCK_DIV1_ID);
 		status = pm_ipi_send_sync(primary_proc, payload, &val, 1);
 		if (status != PM_RET_SUCCESS) {
-			return status;
+			goto exit_label;
 		}
 		*divider |= val << 16;
 	}
-
+exit_label:
 	return status;
 }
 
@@ -1324,6 +1583,11 @@ enum pm_ret_status pm_clock_getdivider(uint32_t clock_id,
  * pm_clock_setparent - Set the clock parent for given id.
  * @clock_id: Id of the clock.
  * @parent_index: Index of the parent clock into clock's parents array.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to set parent for any clock.
  *
@@ -1331,7 +1595,8 @@ enum pm_ret_status pm_clock_getdivider(uint32_t clock_id,
  *
  */
 enum pm_ret_status pm_clock_setparent(uint32_t clock_id,
-				      uint32_t parent_index)
+				      uint32_t parent_index,
+				      uint32_t flag)
 {
 	struct pm_pll *pll;
 	uint32_t payload[PAYLOAD_ARG_CNT];
@@ -1339,25 +1604,35 @@ enum pm_ret_status pm_clock_setparent(uint32_t clock_id,
 
 	/* First try to handle it as a PLL */
 	pll = pm_clock_get_pll_by_related_clk(clock_id);
-	if (pll) {
-		return pm_clock_pll_set_parent(pll, clock_id, parent_index);
+	if (pll != NULL) {
+		status = pm_clock_pll_set_parent(pll, clock_id, parent_index,
+						 flag);
+		goto exit_label;
 	}
 
 	/* Check if clock ID is a valid on-chip clock */
 	status = pm_clock_id_is_valid(clock_id);
 	if (status != PM_RET_SUCCESS) {
-		return status;
+		goto exit_label;
 	}
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD3(payload, PM_CLOCK_SETPARENT, clock_id, parent_index);
-	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+	PM_PACK_PAYLOAD3(payload, flag, PM_CLOCK_SETPARENT, clock_id, parent_index);
+	status = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+
+exit_label:
+	return status;
 }
 
 /**
  * pm_clock_getparent - Get the clock parent for given id.
  * @clock_id: Id of the clock.
  * @parent_index: parent index.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function is used by master to get parent index
  * for any clock.
@@ -1366,7 +1641,8 @@ enum pm_ret_status pm_clock_setparent(uint32_t clock_id,
  *
  */
 enum pm_ret_status pm_clock_getparent(uint32_t clock_id,
-				      uint32_t *parent_index)
+				      uint32_t *parent_index,
+				      uint32_t flag)
 {
 	struct pm_pll *pll;
 	uint32_t payload[PAYLOAD_ARG_CNT];
@@ -1374,19 +1650,24 @@ enum pm_ret_status pm_clock_getparent(uint32_t clock_id,
 
 	/* First try to handle it as a PLL */
 	pll = pm_clock_get_pll_by_related_clk(clock_id);
-	if (pll) {
-		return pm_clock_pll_get_parent(pll, clock_id, parent_index);
+	if (pll != NULL) {
+		status = pm_clock_pll_get_parent(pll, clock_id, parent_index,
+						 flag);
+		goto exit_label;
 	}
 
 	/* Check if clock ID is a valid on-chip clock */
 	status = pm_clock_id_is_valid(clock_id);
 	if (status != PM_RET_SUCCESS) {
-		return status;
+		goto exit_label;
 	}
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD2(payload, PM_CLOCK_GETPARENT, clock_id);
-	return pm_ipi_send_sync(primary_proc, payload, parent_index, 1);
+	PM_PACK_PAYLOAD2(payload, flag, PM_CLOCK_GETPARENT, clock_id);
+	status = pm_ipi_send_sync(primary_proc, payload, parent_index, 1);
+
+exit_label:
+	return status;
 }
 
 /**
@@ -1506,87 +1787,97 @@ static enum pm_ret_status pm_pinctrl_get_pin_groups(uint32_t pin_id,
  * @arg2: Argument 2 to requested IOCTL call.
  * @arg3: Argument 3 to requested IOCTL call.
  * @data: Returned output data.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns requested data.
  *
  */
 void pm_query_data(enum pm_query_ids qid, uint32_t arg1, uint32_t arg2,
-		   uint32_t arg3, uint32_t *data)
+		   uint32_t arg3, uint32_t *data, uint32_t flag)
 {
+	(void)arg3;
+	(void)flag;
+
 	switch (qid) {
 	case PM_QID_CLOCK_GET_NAME:
 		pm_clock_get_name(arg1, (char *)data);
 		break;
 	case PM_QID_CLOCK_GET_TOPOLOGY:
-		data[0] = pm_clock_get_topology(arg1, arg2, &data[1]);
+		data[0] = (uint32_t)pm_clock_get_topology(arg1, arg2, &data[1]);
 		break;
 	case PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS:
-		data[0] = pm_clock_get_fixedfactor_params(arg1, &data[1],
+		data[0] = (uint32_t)pm_clock_get_fixedfactor_params(arg1, &data[1],
 							  &data[2]);
 		break;
 	case PM_QID_CLOCK_GET_PARENTS:
-		data[0] = pm_clock_get_parents(arg1, arg2, &data[1]);
+		data[0] = (uint32_t)pm_clock_get_parents(arg1, arg2, &data[1]);
 		break;
 	case PM_QID_CLOCK_GET_ATTRIBUTES:
-		data[0] = pm_clock_get_attributes(arg1, &data[1]);
+		data[0] = (uint32_t)pm_clock_get_attributes(arg1, &data[1]);
 		break;
 	case PM_QID_PINCTRL_GET_NUM_PINS:
-		data[0] = pm_pinctrl_get_num_pins(&data[1]);
+		data[0] = (uint32_t)pm_pinctrl_get_num_pins(&data[1]);
 		break;
 	case PM_QID_PINCTRL_GET_NUM_FUNCTIONS:
-		data[0] = pm_pinctrl_get_num_functions(&data[1]);
+		data[0] = (uint32_t)pm_pinctrl_get_num_functions(&data[1]);
 		break;
 	case PM_QID_PINCTRL_GET_NUM_FUNCTION_GROUPS:
-		data[0] = pm_pinctrl_get_num_function_groups(arg1, &data[1]);
+		data[0] = (uint32_t)pm_pinctrl_get_num_function_groups(arg1, &data[1]);
 		break;
 	case PM_QID_PINCTRL_GET_FUNCTION_NAME:
 		pm_pinctrl_get_function_name(arg1, (char *)data);
 		break;
 	case PM_QID_PINCTRL_GET_FUNCTION_GROUPS:
-		data[0] = pm_pinctrl_get_function_groups(arg1, arg2,
+		data[0] = (uint32_t)pm_pinctrl_get_function_groups(arg1, arg2,
 							 (uint16_t *)&data[1]);
 		break;
 	case PM_QID_PINCTRL_GET_PIN_GROUPS:
-		data[0] = pm_pinctrl_get_pin_groups(arg1, arg2,
+		data[0] = (uint32_t)pm_pinctrl_get_pin_groups(arg1, arg2,
 						    (uint16_t *)&data[1]);
 		break;
 	case PM_QID_CLOCK_GET_NUM_CLOCKS:
-		data[0] = pm_clock_get_num_clocks(&data[1]);
+		data[0] = (uint32_t)pm_clock_get_num_clocks(&data[1]);
 		break;
 
 	case PM_QID_CLOCK_GET_MAX_DIVISOR:
-		data[0] = pm_clock_get_max_divisor(arg1, arg2, &data[1]);
+		data[0] = (uint32_t)pm_clock_get_max_divisor(arg1, (uint8_t)arg2, &data[1]);
 		break;
 	default:
-		data[0] = PM_RET_ERROR_ARGS;
+		data[0] = (uint32_t)PM_RET_ERROR_ARGS;
 		WARN("Unimplemented query service call: 0x%x\n", qid);
 		break;
 	}
 }
 
 enum pm_ret_status pm_sha_hash(uint32_t address_high,
-				    uint32_t address_low,
-				    uint32_t size,
-				    uint32_t flags)
+			       uint32_t address_low,
+			       uint32_t size,
+			       uint32_t flags,
+			       uint32_t security_flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD5(payload, PM_SECURE_SHA, address_high, address_low,
-				 size, flags);
+	PM_PACK_PAYLOAD5(payload, security_flag, PM_SECURE_SHA, address_high,
+			 address_low, size, flags);
 	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 }
 
 enum pm_ret_status pm_rsa_core(uint32_t address_high,
-				    uint32_t address_low,
-				    uint32_t size,
-				    uint32_t flags)
+			       uint32_t address_low,
+			       uint32_t size,
+			       uint32_t flags,
+			       uint32_t security_flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD5(payload, PM_SECURE_RSA, address_high, address_low,
-				 size, flags);
+	PM_PACK_PAYLOAD5(payload, security_flag, PM_SECURE_RSA, address_high,
+			 address_low, size, flags);
 	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
 }
 
@@ -1594,13 +1885,14 @@ enum pm_ret_status pm_secure_image(uint32_t address_low,
 				   uint32_t address_high,
 				   uint32_t key_lo,
 				   uint32_t key_hi,
-				   uint32_t *value)
+				   uint32_t *value,
+				   uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD5(payload, PM_SECURE_IMAGE, address_high, address_low,
-			 key_hi, key_lo);
+	PM_PACK_PAYLOAD5(payload, flag, PM_SECURE_IMAGE, address_high,
+			 address_low, key_hi, key_lo);
 	return pm_ipi_send_sync(primary_proc, payload, value, 2);
 }
 
@@ -1613,6 +1905,11 @@ enum pm_ret_status pm_secure_image(uint32_t address_low,
  *		   0 -- Configuration Register readback.
  *		   1 -- Configuration Data readback.
  * @value: Value to read.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function provides access to the xilfpga library to read
  * the PL configuration.
@@ -1624,12 +1921,13 @@ enum pm_ret_status pm_fpga_read(uint32_t reg_numframes,
 				uint32_t address_low,
 				uint32_t address_high,
 				uint32_t readback_type,
-				uint32_t *value)
+				uint32_t *value,
+				uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD5(payload, PM_FPGA_READ, reg_numframes, address_low,
+	PM_PACK_PAYLOAD5(payload, flag, PM_FPGA_READ, reg_numframes, address_low,
 			 address_high, readback_type);
 	return pm_ipi_send_sync(primary_proc, payload, value, 1);
 }
@@ -1639,6 +1937,11 @@ enum pm_ret_status pm_fpga_read(uint32_t reg_numframes,
  * @nid: Node id of the target PLL.
  * @param_id: ID of the PLL parameter.
  * @value: Parameter value to be set.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Setting the parameter will have physical effect once the PLL mode is set to
  * integer or fractional.
@@ -1649,23 +1952,30 @@ enum pm_ret_status pm_fpga_read(uint32_t reg_numframes,
  */
 enum pm_ret_status pm_pll_set_parameter(enum pm_node_id nid,
 					enum pm_pll_param param_id,
-					uint32_t value)
+					uint32_t value,
+					uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret = 0;
 
 	/* Check if given node ID is a PLL node */
-	if (nid < NODE_APLL || nid > NODE_IOPLL) {
-		return PM_RET_ERROR_ARGS;
+	if ((nid < NODE_APLL) || (nid > NODE_IOPLL)) {
+		ret = PM_RET_ERROR_ARGS;
+		goto exit_label;
 	}
 
 	/* Check if parameter ID is valid and return an error if it's not */
 	if (param_id >= PM_PLL_PARAM_MAX) {
-		return PM_RET_ERROR_ARGS;
+		ret = PM_RET_ERROR_ARGS;
+		goto exit_label;
 	}
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD4(payload, PM_PLL_SET_PARAMETER, nid, param_id, value);
-	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+	PM_PACK_PAYLOAD4(payload, flag, PM_PLL_SET_PARAMETER, nid, param_id, value);
+	ret = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+
+exit_label:
+	return ret;
 }
 
 /**
@@ -1673,6 +1983,11 @@ enum pm_ret_status pm_pll_set_parameter(enum pm_node_id nid,
  * @nid: Node id of the target PLL.
  * @param_id: ID of the PLL parameter.
  * @value: Location to store the parameter value.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Error if an argument is not valid or status as returned by the
  *         PM controller (PMU).
@@ -1680,29 +1995,40 @@ enum pm_ret_status pm_pll_set_parameter(enum pm_node_id nid,
  */
 enum pm_ret_status pm_pll_get_parameter(enum pm_node_id nid,
 					enum pm_pll_param param_id,
-					uint32_t *value)
+					uint32_t *value, uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	/* Check if given node ID is a PLL node */
-	if (nid < NODE_APLL || nid > NODE_IOPLL) {
-		return PM_RET_ERROR_ARGS;
+	if ((nid < NODE_APLL) || (nid > NODE_IOPLL)) {
+		ret = PM_RET_ERROR_ARGS;
+		goto exit_label;
 	}
 
 	/* Check if parameter ID is valid and return an error if it's not */
 	if (param_id >= PM_PLL_PARAM_MAX) {
-		return PM_RET_ERROR_ARGS;
+		ret = PM_RET_ERROR_ARGS;
+		goto exit_label;
 	}
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD3(payload, PM_PLL_GET_PARAMETER, nid, param_id);
-	return pm_ipi_send_sync(primary_proc, payload, value, 1);
+	PM_PACK_PAYLOAD3(payload, flag, PM_PLL_GET_PARAMETER, nid, param_id);
+	ret = pm_ipi_send_sync(primary_proc, payload, value, 1);
+
+exit_label:
+	return ret;
 }
 
 /**
  * pm_pll_set_mode() - Set the PLL mode.
  * @nid: Node id of the target PLL.
  * @mode: PLL mode to be set.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * If reset mode is set the PM controller will first bypass the PLL and then
  * assert the reset. If integer or fractional mode is set the PM controller will
@@ -1713,46 +2039,62 @@ enum pm_ret_status pm_pll_get_parameter(enum pm_node_id nid,
  *         PM controller (PMU).
  *
  */
-enum pm_ret_status pm_pll_set_mode(enum pm_node_id nid, enum pm_pll_mode mode)
+enum pm_ret_status pm_pll_set_mode(enum pm_node_id nid, enum pm_pll_mode mode,
+				   uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	/* Check if given node ID is a PLL node */
-	if (nid < NODE_APLL || nid > NODE_IOPLL) {
-		return PM_RET_ERROR_ARGS;
+	if ((nid < NODE_APLL) || (nid > NODE_IOPLL)) {
+		ret = PM_RET_ERROR_ARGS;
+		goto exit_label;
 	}
 
 	/* Check if PLL mode is valid */
 	if (mode >= PM_PLL_MODE_MAX) {
-		return PM_RET_ERROR_ARGS;
+		ret = PM_RET_ERROR_ARGS;
+		goto exit_label;
 	}
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD3(payload, PM_PLL_SET_MODE, nid, mode);
-	return pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+	PM_PACK_PAYLOAD3(payload, flag, PM_PLL_SET_MODE, nid, mode);
+	ret = pm_ipi_send_sync(primary_proc, payload, NULL, 0);
+
+exit_label:
+	return ret;
 }
 
 /**
  * pm_pll_get_mode() - Get the PLL mode.
  * @nid: Node id of the target PLL.
  * @mode: Location to store the mode of the PLL.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Error if an argument is not valid or status as returned by the
  *         PM controller (PMU).
  *
  */
-enum pm_ret_status pm_pll_get_mode(enum pm_node_id nid, enum pm_pll_mode *mode)
+enum pm_ret_status pm_pll_get_mode(enum pm_node_id nid, enum pm_pll_mode *mode,
+				   uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
+	enum pm_ret_status ret = PM_RET_SUCCESS;
 
 	/* Check if given node ID is a PLL node */
-	if (nid < NODE_APLL || nid > NODE_IOPLL) {
-		return PM_RET_ERROR_ARGS;
+	if ((nid < NODE_APLL) || (nid > NODE_IOPLL)) {
+		ret = PM_RET_ERROR_ARGS;
+	} else {
+		/* Send request to the PMU */
+		PM_PACK_PAYLOAD2(payload, flag, PM_PLL_GET_MODE, nid);
+		ret = pm_ipi_send_sync(primary_proc, payload, mode, 1);
 	}
 
-	/* Send request to the PMU */
-	PM_PACK_PAYLOAD2(payload, PM_PLL_GET_MODE, nid);
-	return pm_ipi_send_sync(primary_proc, payload, mode, 1);
+	return ret;
 }
 
 /**
@@ -1762,6 +2104,11 @@ enum pm_ret_status pm_pll_get_mode(enum pm_node_id nid, enum pm_pll_mode *mode)
  * @mask: Mask value to be used while writing value.
  * @value: Value to be written to register.
  * @out: Returned output data.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function returns requested data.
  *
@@ -1772,7 +2119,8 @@ enum pm_ret_status pm_register_access(uint32_t register_access_id,
 				      uint32_t address,
 				      uint32_t mask,
 				      uint32_t value,
-				      uint32_t *out)
+				      uint32_t *out,
+				      uint32_t flag)
 {
 	enum pm_ret_status ret;
 
@@ -1780,21 +2128,24 @@ enum pm_ret_status pm_register_access(uint32_t register_access_id,
 			((CSUDMA_BASE & address) != CSUDMA_BASE) &&
 			((RSA_CORE_BASE & address) != RSA_CORE_BASE) &&
 			((PMU_GLOBAL_BASE & address) != PMU_GLOBAL_BASE)) {
-		return PM_RET_ERROR_ACCESS;
+		ret = PM_RET_ERROR_ACCESS;
+		goto exit_label;
 	}
 
 	switch (register_access_id) {
 	case CONFIG_REG_WRITE:
-		ret = pm_mmio_write(address, mask, value);
+		ret = pm_mmio_write(address, mask, value, flag);
 		break;
 	case CONFIG_REG_READ:
-		ret = pm_mmio_read(address, out);
+		ret = pm_mmio_read(address, out, flag);
 		break;
 	default:
 		ret = PM_RET_ERROR_ARGS;
 		WARN("Unimplemented register_access call\n\r");
 		break;
 	}
+
+exit_label:
 	return ret;
 }
 
@@ -1805,18 +2156,24 @@ enum pm_ret_status pm_register_access(uint32_t register_access_id,
  * @address_low: lower 32-bit Linear memory space address.
  * @address_high: higher 32-bit Linear memory space address.
  * @value: Returned output value.
+<<<<<<< HEAD
+=======
+ * @flag: 0 - Call from secure source.
+ *	  1 - Call from non-secure source.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: Returns status, either success or error+reason.
  *
  */
 enum pm_ret_status pm_efuse_access(uint32_t address_high,
 				   uint32_t address_low,
-				   uint32_t *value)
+				   uint32_t *value,
+				   uint32_t flag)
 {
 	uint32_t payload[PAYLOAD_ARG_CNT];
 
 	/* Send request to the PMU */
-	PM_PACK_PAYLOAD3(payload, PM_EFUSE_ACCESS, address_high, address_low);
+	PM_PACK_PAYLOAD3(payload, flag, PM_EFUSE_ACCESS, address_high, address_low);
 
 	return pm_ipi_send_sync(primary_proc, payload, value, 1);
 }

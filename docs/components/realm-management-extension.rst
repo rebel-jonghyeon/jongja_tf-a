@@ -35,9 +35,8 @@ memory regions as Root or Realm respectively.
 
 Changes to context management
 *******************************
-A new CPU context for the Realm world has been added. The existing
-:ref:`CPU context management API<PSCI Library Integration guide for Armv8-A
-AArch32 systems>` can be used to manage Realm context.
+A new CPU context for the Realm world has been added. The existing can be used
+to manage Realm context.
 
 Boot flow changes
 *******************
@@ -92,34 +91,28 @@ and uses it as the R-EL2 payload.
 Building and running TF-A with RME
 ----------------------------------
 
-This section describes how you can build and run TF-A with RME enabled.
-We assume you have read the :ref:`Prerequisites` to build TF-A.
+The recommended procedure for building and running an RME enabled reference
+platform is by the use of `Shrinkwrap`_.
 
-The following instructions show you how to build and run TF-A with RME
-on FVP for two scenarios:
+The tool offers examples of Three-worlds and Four-worlds configurations for
+running on the *FVP_Base_RevC-2xAEMvA* model.
 
-- Three-world execution:  This is the configuration to use if Secure
-  world functionality is not needed. TF-A is tested with the following
-  software entities in each world as listed below:
+- Three-world execution: this is the configuration to use if Secure
+  world functionality is not needed.
 
-  - NS Host (RME capable Linux or TF-A Tests),
-  - Root (TF-A)
-  - R-EL2 (`RMM`_ or TRP)
+- Four-world execution: this is the configuration to use if both Secure
+  and Realm world functionality is needed.
 
-- Four-world execution: This is the configuration to use if both Secure
-  and Realm world functionality is needed. TF-A is tested with the following
-  software entities in each world as listed below:
+TF-A is tested with the following software entities in each world as listed below:
 
-  - NS Host (RME capable Linux or TF-A Tests),
-  - Root (TF-A)
-  - R-EL2 (`RMM`_ or TRP)
-  - S-EL2 (Hafnium SPM)
+  - NS Host (RME capable Linux),
+  - EL3 Root (TF-A)
+  - R-EL2 (`RMM`_)
+  - S-EL2 (`SPM`_ / Hafnium) in a 4-worlds configuration
 
-To run the tests, you need an FVP model. Please use the :ref:`latest version
-<Arm Fixed Virtual Platforms (FVP)>` of *FVP_Base_RevC-2xAEMvA* model. If NS
-Host is Linux, then the below instructions assume that a suitable RME enabled
-kernel image and associated root filesystem are available.
+Additionally, the TF-RMM project documentation has the specific `Shrinkwrap guide`_.
 
+<<<<<<< HEAD
 Three-world execution
 *********************
 
@@ -409,12 +402,14 @@ Use the following arguments in addition to the FVP options mentioned in
  -C pci.pci_smmuv3.mmu.SMMU_S_IDR1=0xA0000002   \
  -C pci.pci_smmuv3.mmu.SMMU_S_IDR2=0            \
  -C pci.pci_smmuv3.mmu.SMMU_S_IDR3=0
+=======
+TF-A CI pipeline includes coverage for building TF-A along with TF-RMM and SPM/Hafnium
+for running 3 worlds and 4 worlds configurations. In those cases, the normal world payload
+and test suite originates from TF-a-tests project.
+>>>>>>> upstream_import/upstream_v2_14_1
 
 .. _Arm Confidential Compute Architecture (Arm CCA): https://www.arm.com/why-arm/architecture/security-features/arm-confidential-compute-architecture
-.. _Arm Architecture Models website: https://developer.arm.com/tools-and-software/simulation-models/fixed-virtual-platforms/arm-ecosystem-models
-.. _TF-A Getting Started: https://trustedfirmware-a.readthedocs.io/en/latest/getting_started/index.html
-.. _TF-A Tests: https://trustedfirmware-a-tests.readthedocs.io/en/latest
-.. _TFTF Getting Started: https://trustedfirmware-a-tests.readthedocs.io/en/latest/getting_started/index.html
-.. _Hafnium SPM: https://www.trustedfirmware.org/projects/hafnium
-.. _RMM Getting Started: https://tf-rmm.readthedocs.io/en/latest/getting_started/index.html
+.. _SPM: https://www.trustedfirmware.org/projects/hafnium/
 .. _RMM: https://www.trustedfirmware.org/projects/tf-rmm/
+.. _Shrinkwrap: https://shrinkwrap.docs.arm.com/en/latest/
+.. _Shrinkwrap guide: https://tf-rmm.readthedocs.io/en/latest/getting_started/building-with-shrinkwrap.html

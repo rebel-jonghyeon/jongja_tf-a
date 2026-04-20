@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -118,8 +122,7 @@ func sp_min_entrypoint
 	mov	r1, r10
 	mov	r2, r11
 	mov	r3, r12
-	bl	sp_min_early_platform_setup2
-	bl	sp_min_plat_arch_setup
+	bl	sp_min_setup
 
 	/* Jump to the main function */
 	bl	sp_min_main
@@ -138,6 +141,11 @@ func sp_min_entrypoint
 
 	ldr	r0, =__BSS_START__
 	ldr	r1, =__BSS_END__
+	sub	r1, r1, r0
+	bl	clean_dcache_range
+
+	ldr	r0, =__PER_CPU_START__
+	ldr	r1, =__PER_CPU_END__
 	sub	r1, r1, r0
 	bl	clean_dcache_range
 
@@ -192,7 +200,7 @@ func sp_min_handle_smc
 	 */
 	ldrd	r4, r5, [sp], #8
 	bl	_cpu_data
-	strd	r4, r5, [r0, #CPU_DATA_PMF_TS0_OFFSET]
+	strd	r4, r5, [r0, #CPU_DATA_CPU_DATA_PMF_TS]
 
 	/* Restore handle */
 	mov	r2, r6

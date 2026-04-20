@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2021-2023, STMicroelectronics - All Rights Reserved
+=======
+ * Copyright (c) 2021-2024, STMicroelectronics - All Rights Reserved
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -27,12 +31,20 @@ static io_block_spec_t gpt_block_spec = {
 };
 #endif
 
+<<<<<<< HEAD
 #if (STM32MP_SDMMC || STM32MP_EMMC || STM32MP_SPI_NOR) && PSA_FWU_SUPPORT
+=======
+#if PSA_FWU_SUPPORT
+>>>>>>> upstream_import/upstream_v2_14_1
 static io_block_spec_t metadata_block_spec = {
 	.offset = 0,    /* To be filled at runtime */
 	.length = 0,    /* To be filled at runtime */
 };
+<<<<<<< HEAD
 #endif /* (STM32MP_SDMMC || STM32MP_EMMC || STM32MP_SPI_NOR) && PSA_FWU_SUPPORT */
+=======
+#endif /* PSA_FWU_SUPPORT */
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /* By default, STM32 platforms load images from the FIP */
 struct plat_io_policy policies[MAX_NUMBER_IDS] = {
@@ -58,7 +70,11 @@ struct plat_io_policy policies[MAX_NUMBER_IDS] = {
 		.check = open_storage
 	},
 #endif
+<<<<<<< HEAD
 #if (STM32MP_SDMMC || STM32MP_EMMC || STM32MP_SPI_NOR) && PSA_FWU_SUPPORT
+=======
+#if PSA_FWU_SUPPORT
+>>>>>>> upstream_import/upstream_v2_14_1
 	[FWU_METADATA_IMAGE_ID] = {
 		.dev_handle = &storage_dev_handle,
 		.image_spec = (uintptr_t)&metadata_block_spec,
@@ -71,10 +87,20 @@ struct plat_io_policy policies[MAX_NUMBER_IDS] = {
 		.img_type_guid = NULL_GUID,
 		.check = open_storage
 	},
+<<<<<<< HEAD
 #endif /* (STM32MP_SDMMC || STM32MP_EMMC || STM32MP_SPI_NOR) && PSA_FWU_SUPPORT */
+=======
+#endif /* PSA_FWU_SUPPORT */
+>>>>>>> upstream_import/upstream_v2_14_1
 };
 
 #define DEFAULT_UUID_NUMBER	U(7)
+
+#ifdef __aarch64__
+#define BL31_UUID_NUMBER	U(2)
+#else
+#define BL31_UUID_NUMBER	U(0)
+#endif
 
 #if TRUSTED_BOARD_BOOT
 #define TBBR_UUID_NUMBER	U(6)
@@ -82,8 +108,16 @@ struct plat_io_policy policies[MAX_NUMBER_IDS] = {
 #define TBBR_UUID_NUMBER	U(0)
 #endif
 
+#if STM32MP_DDR_FIP_IO_STORAGE
+#define DDR_FW_UUID_NUMBER	U(1)
+#else
+#define DDR_FW_UUID_NUMBER	U(0)
+#endif
+
 #define FCONF_ST_IO_UUID_NUMBER	(DEFAULT_UUID_NUMBER + \
-				 TBBR_UUID_NUMBER)
+				 BL31_UUID_NUMBER + \
+				 TBBR_UUID_NUMBER + \
+				 DDR_FW_UUID_NUMBER)
 
 static io_uuid_spec_t fconf_stm32mp_uuids[FCONF_ST_IO_UUID_NUMBER];
 static OBJECT_POOL_ARRAY(fconf_stm32mp_uuids_pool, fconf_stm32mp_uuids);
@@ -95,7 +129,14 @@ struct policies_load_info {
 
 /* image id to property name table */
 static const struct policies_load_info load_info[FCONF_ST_IO_UUID_NUMBER] = {
+#if STM32MP_DDR_FIP_IO_STORAGE
+	{DDR_FW_ID, "ddr_fw_uuid"},
+#endif
 	{FW_CONFIG_ID, "fw_cfg_uuid"},
+#ifdef __aarch64__
+	{BL31_IMAGE_ID, "bl31_uuid"},
+	{SOC_FW_CONFIG_ID, "soc_fw_cfg_uuid"},
+#endif
 	{BL32_IMAGE_ID, "bl32_uuid"},
 	{BL32_EXTRA1_IMAGE_ID, "bl32_extra1_uuid"},
 	{BL32_EXTRA2_IMAGE_ID, "bl32_extra2_uuid"},

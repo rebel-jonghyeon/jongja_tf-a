@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,6 +8,7 @@
 
 #include <arch.h>
 #include <common/asm_macros_common.S>
+#include <lib/cpus/cpu_ops.h>
 #include <lib/spinlock.h>
 
 /*
@@ -225,18 +226,11 @@
 	.endm
 
 	/*
-	 * With RAS extension executes esb instruction, else NOP
-	 */
-	.macro esb
-	.inst	0xd503221f
-	.endm
-
-	/*
 	 * Helper macro to read system register value into x0
 	 */
 	.macro	read reg:req
 #if ENABLE_BTI
-	bti	j
+	BTI	j
 #endif
 	mrs	x0, \reg
 	ret
@@ -247,7 +241,7 @@
 	 */
 	.macro	write reg:req
 #if ENABLE_BTI
-	bti	j
+	BTI	j
 #endif
 	msr	\reg, x1
 	ret
@@ -265,12 +259,21 @@
 	msr	SYSREG_SB, xzr
 	.endm
 
+	.macro psb_csync
+	hint #17 /* use the hint synonym for compatibility */
+	.endm
+
+	.macro tsb_csync
+	hint #18 /* use the hint synonym for compatibility */
+	.endm
+
 	/*
 	 * Macro for using speculation barrier instruction introduced by
 	 * FEAT_SB, if it's enabled.
 	 */
 	.macro speculation_barrier
-#if ENABLE_FEAT_SB
+	/* fallback to the old slower variant for FEAT_STATE_CHECKED */
+#if ENABLE_FEAT_SB == 1
 	sb_barrier_insn
 #else
 	dsb	sy
@@ -279,17 +282,20 @@
 	.endm
 
 	/*
+	 * Clear Branch History instruction, translates to NOP on CPUs
+	 * that don't implement the clrbhb instruction.
+	 */
+	.macro clrbhb
+	hint	#22
+	.endm
+
+	/*
 	 * Macro for mitigating against speculative execution beyond ERET. Uses the
 	 * speculation barrier instruction introduced by FEAT_SB, if it's enabled.
 	 */
 	.macro exception_return
 	eret
-#if ENABLE_FEAT_SB
-	sb_barrier_insn
-#else
-	dsb	nsh
-	isb
-#endif
+	speculation_barrier
 	.endm
 
 	/*
@@ -317,4 +323,94 @@
 #endif
 	.endm
 
+	/*
+<<<<<<< HEAD
+	 * Macro to unmask External Aborts by changing PSTATE.A bit.
+	 * Put explicit synchronization event to ensure newly unmasked interrupt
+	 * is taken immediately.
+	 */
+	.macro  unmask_async_ea
+	msr     daifclr, #DAIF_ABT_BIT
+	isb
+	.endm
+
+	/* Macro for error synchronization on exception boundries.
+	 * With FEAT_RAS enabled, it is assumed that FEAT_IESB is also present
+	 * and enabled.
+	 * FEAT_IESB provides an implicit error synchronization event at exception
+	 * entry and exception return, so there is no need for any explicit instruction.
+	 */
+	.macro synchronize_errors
+#if !ENABLE_FEAT_RAS
+	/* Complete any stores that may return an abort */
+	dsb	sy
+	/* Synchronise the CPU context with the completion of the dsb */
+	isb
+#endif
+	.endm
+
+=======
+	 * Helper macro to instruction adr <reg>, <symbol> where <symbol> is
+	 * within the range +/- 4 GB.
+	 */
+	.macro adr_l, dst, sym
+	adrp	\dst, \sym
+	add	\dst, \dst, :lo12:\sym
+	.endm
+
+	/*
+	* is_feat_XYZ_present_asm - Set flags and reg if FEAT_XYZ
+	* is enabled at runtime.
+	*
+	* Arguments:
+	* reg: Register for temporary use.
+	*
+	* Clobbers: reg
+	*/
+	.macro is_feat_sysreg128_present_asm reg:req
+	mrs	\reg, ID_AA64ISAR2_EL1
+	ands	\reg, \reg, #(ID_AA64ISAR2_SYSREG128_MASK << ID_AA64ISAR2_SYSREG128_SHIFT)
+	.endm
+
+	.macro is_feat_pauth_present_asm reg:req, clobber:req
+	mrs	\reg, ID_AA64ISAR1_EL1
+	mov_imm	\clobber, ((ID_AA64ISAR1_GPI_MASK << ID_AA64ISAR1_GPI_SHIFT) \
+			 | (ID_AA64ISAR1_GPA_MASK << ID_AA64ISAR1_GPA_SHIFT) \
+			 | (ID_AA64ISAR1_API_MASK << ID_AA64ISAR1_API_SHIFT) \
+			 | (ID_AA64ISAR1_APA_MASK << ID_AA64ISAR1_APA_SHIFT))
+	tst	\reg, \clobber
+	.endm
+
+	.macro is_feat_sctlr2_present_asm reg:req
+	mrs	\reg, ID_AA64MMFR3_EL1
+	ands	\reg, \reg, #(ID_AA64MMFR3_EL1_SCTLR2_MASK << ID_AA64MMFR3_EL1_SCTLR2_SHIFT)
+	.endm
+
+	.macro is_feat_sme_present_asm reg:req
+	mrs	\reg, id_aa64pfr1_el1
+	ands	\reg, \reg, #(ID_AA64PFR1_EL1_SME_MASK << ID_AA64PFR1_EL1_SME_SHIFT)
+	.endm
+
+.macro call_reset_handler
+#if defined(IMAGE_BL1) || defined(IMAGE_BL31) || (defined(IMAGE_BL2) && RESET_TO_BL2)
+	/* ---------------------------------------------------------------------
+	 * It is a cold boot.
+	 * Perform any processor specific actions upon reset e.g. cache, TLB
+	 * invalidations etc.
+	 * ---------------------------------------------------------------------
+	 */
+	/* The plat_reset_handler can clobber x0 - x18, x30 */
+	bl	plat_reset_handler
+
+	/* Get the matching cpu_ops pointer */
+	bl	get_cpu_ops_ptr
+
+	/* Get the cpu_ops reset handler */
+	ldr	x2, [x0, #CPU_RESET_FUNC]
+
+	/* The cpu_ops reset handler can clobber x0 - x19, x30 */
+	blr	x2
+#endif
+.endm
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif /* ASM_MACROS_S */

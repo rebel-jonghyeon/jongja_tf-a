@@ -7,6 +7,7 @@
 #ifndef PLATFORM_DEF_H
 #define PLATFORM_DEF_H
 
+<<<<<<< HEAD
 #include <arch.h>
 #include <plat/common/common_def.h>
 
@@ -175,6 +176,9 @@
 
 #define K3_GIC_BASE	0x01800000
 #define K3_GIC_SIZE	0x200000
+=======
+#include <ti_platform_defs.h>
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #if !K3_SEC_PROXY_LITE
 #define SEC_PROXY_DATA_BASE	0x32C00000
@@ -194,8 +198,5 @@
 
 #define SEC_PROXY_TIMEOUT_US		1000000
 #define SEC_PROXY_MAX_MESSAGE_SIZE	56
-
-#define TI_SCI_HOST_ID			10
-#define TI_SCI_MAX_MESSAGE_SIZE		52
 
 #endif /* PLATFORM_DEF_H */

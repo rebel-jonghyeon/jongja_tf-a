@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,6 +18,7 @@
 #include <arch.h>
 #include <arch_helpers.h>
 #include <common/bl_common.h>
+#include <common/build_message.h>
 #include <common/debug.h>
 #include <common/runtime_svc.h>
 #include <context.h>
@@ -66,7 +71,7 @@ void *smc_get_next_ctx(void)
  * for the calling CPU that was set as the context for the specified security
  * state. NULL is returned if no such structure has been specified.
  ******************************************************************************/
-void *cm_get_context(uint32_t security_state)
+void *cm_get_context(size_t security_state)
 {
 	assert(security_state == NON_SECURE);
 	return sp_min_cpu_ctx_ptr[plat_my_core_pos()];
@@ -89,7 +94,7 @@ void cm_set_context(void *context, uint32_t security_state)
  * specified.
  ******************************************************************************/
 void *cm_get_context_by_index(unsigned int cpu_idx,
-				unsigned int security_state)
+				size_t security_state)
 {
 	assert(security_state == NON_SECURE);
 	return sp_min_cpu_ctx_ptr[cpu_idx];
@@ -112,6 +117,7 @@ static void copy_cpu_ctx_to_smc_stx(const regs_t *cpu_reg_ctx,
 	next_smc_ctx->r0 = read_ctx_reg(cpu_reg_ctx, CTX_GPREG_R0);
 	next_smc_ctx->r1 = read_ctx_reg(cpu_reg_ctx, CTX_GPREG_R1);
 	next_smc_ctx->r2 = read_ctx_reg(cpu_reg_ctx, CTX_GPREG_R2);
+	next_smc_ctx->r3 = read_ctx_reg(cpu_reg_ctx, CTX_GPREG_R3);
 	next_smc_ctx->lr_mon = read_ctx_reg(cpu_reg_ctx, CTX_LR);
 	next_smc_ctx->spsr_mon = read_ctx_reg(cpu_reg_ctx, CTX_SPSR);
 	next_smc_ctx->scr = read_ctx_reg(cpu_reg_ctx, CTX_SCR);
@@ -125,7 +131,7 @@ static void copy_cpu_ctx_to_smc_stx(const regs_t *cpu_reg_ctx,
 static void sp_min_prepare_next_image_entry(void)
 {
 	entry_point_info_t *next_image_info;
-	cpu_context_t *ctx = cm_get_context(NON_SECURE);
+	regs_t *gpregs = get_regs_ctx(cm_get_context(NON_SECURE));
 	u_register_t ns_sctlr;
 
 	/* Program system registers to proceed to non-secure */
@@ -140,13 +146,13 @@ static void sp_min_prepare_next_image_entry(void)
 	smc_set_next_ctx(NON_SECURE);
 
 	/* Copy r0, lr and spsr from cpu context to SMC context */
-	copy_cpu_ctx_to_smc_stx(get_regs_ctx(cm_get_context(NON_SECURE)),
+	copy_cpu_ctx_to_smc_stx(gpregs,
 			smc_get_next_ctx());
 
 	/* Temporarily set the NS bit to access NS SCTLR */
 	write_scr(read_scr() | SCR_NS_BIT);
 	isb();
-	ns_sctlr = read_ctx_reg(get_regs_ctx(ctx), CTX_NS_SCTLR);
+	ns_sctlr = read_ctx_reg(gpregs, CTX_NS_SCTLR);
 	write_sctlr(ns_sctlr);
 	isb();
 
@@ -170,12 +176,26 @@ uintptr_t get_arm_std_svc_args(unsigned int svc_mask)
 }
 
 /******************************************************************************
+ * The SP_MIN setup function. Calls platforms init functions
+ *****************************************************************************/
+void sp_min_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2,
+		  u_register_t arg3)
+{
+	/* Enable early console if EARLY_CONSOLE flag is enabled */
+	plat_setup_early_console();
+
+	/* Perform early platform-specific setup */
+	sp_min_early_platform_setup2(arg0, arg1, arg2, arg3);
+	sp_min_plat_arch_setup();
+}
+
+/******************************************************************************
  * The SP_MIN main function. Do the platform and PSCI Library setup. Also
  * initialize the runtime service framework.
  *****************************************************************************/
 void sp_min_main(void)
 {
-	NOTICE("SP_MIN: %s\n", version_string);
+	NOTICE("SP_MIN: %s\n", build_version_string);
 	NOTICE("SP_MIN: %s\n", build_message);
 
 	/* Perform the SP_MIN platform setup */
@@ -198,6 +218,7 @@ void sp_min_main(void)
 	sp_min_plat_runtime_setup();
 
 	console_flush();
+	console_switch_state(CONSOLE_FLAG_RUNTIME);
 }
 
 /******************************************************************************
@@ -209,23 +230,23 @@ void sp_min_main(void)
 void sp_min_warm_boot(void)
 {
 	smc_ctx_t *next_smc_ctx;
-	cpu_context_t *ctx = cm_get_context(NON_SECURE);
+	regs_t *gpregs = get_regs_ctx(cm_get_context(NON_SECURE));
 	u_register_t ns_sctlr;
 
-	psci_warmboot_entrypoint();
+	psci_warmboot_entrypoint(plat_my_core_pos());
 
 	smc_set_next_ctx(NON_SECURE);
 
 	next_smc_ctx = smc_get_next_ctx();
 	zeromem(next_smc_ctx, sizeof(smc_ctx_t));
 
-	copy_cpu_ctx_to_smc_stx(get_regs_ctx(cm_get_context(NON_SECURE)),
+	copy_cpu_ctx_to_smc_stx(gpregs,
 			next_smc_ctx);
 
 	/* Temporarily set the NS bit to access NS SCTLR */
 	write_scr(read_scr() | SCR_NS_BIT);
 	isb();
-	ns_sctlr = read_ctx_reg(get_regs_ctx(ctx), CTX_NS_SCTLR);
+	ns_sctlr = read_ctx_reg(gpregs, CTX_NS_SCTLR);
 	write_sctlr(ns_sctlr);
 	isb();
 

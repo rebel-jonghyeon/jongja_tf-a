@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -17,6 +17,7 @@ MEMORY {
 }
 
 SECTIONS {
+<<<<<<< HEAD
 
     .smmu_reserved : {
         . = ORIGIN(RAM0);
@@ -27,6 +28,8 @@ SECTIONS {
     } >RAM0
 
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
     RAM_REGION_START = ORIGIN(RAM);
     RAM_REGION_LENGTH = LENGTH(RAM);
     . = BL2_BASE;
@@ -36,13 +39,12 @@ SECTIONS {
 
 #if SEPARATE_CODE_AND_RODATA
     .text . : {
+        ASSERT(. == ALIGN(PAGE_SIZE),
+        ".text address is not aligned on a page boundary.");
+
         __TEXT_START__ = .;
 
-#if ENABLE_RME
-        *bl2_rme_entrypoint.o(.text*)
-#else /* ENABLE_RME */
         *bl2_entrypoint.o(.text*)
-#endif /* ENABLE_RME */
 
         *(SORT_BY_ALIGNMENT(.text*))
         *(.vectors)
@@ -76,6 +78,9 @@ SECTIONS {
     } >RAM
 #else /* SEPARATE_CODE_AND_RODATA */
     .ro . : {
+        ASSERT(. == ALIGN(PAGE_SIZE),
+        ".ro address is not aligned on a page boundary.");
+
         __RO_START__ = .;
 
         *bl2_entrypoint.o(.text*)

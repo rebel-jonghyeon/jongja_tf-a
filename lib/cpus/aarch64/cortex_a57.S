@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2014-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2014-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  * Copyright (c) 2020, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -13,6 +17,7 @@
 #include <cpu_macros.S>
 #include <plat_macros.S>
 
+<<<<<<< HEAD
 	/* ---------------------------------------------
 	 * Disable L1 data cache and unified L2 cache
 	 * ---------------------------------------------
@@ -22,6 +27,9 @@ func cortex_a57_disable_dcache
 	isb
 	ret
 endfunc cortex_a57_disable_dcache
+=======
+cpu_reset_prologue cortex_a57
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ---------------------------------------------
 	 * Disable all types of L2 prefetches.
@@ -63,6 +71,7 @@ func cortex_a57_disable_ext_debug
 	ret
 endfunc cortex_a57_disable_ext_debug
 
+<<<<<<< HEAD
 /*
  * Disable the over-read from the LDNP/STNP instruction. The SDEN doesn't
  * provide and erratum number, so assign it an obvious 1
@@ -113,6 +122,63 @@ workaround_reset_start cortex_a57, ERRATUM(826977), ERRATA_A57_826977
 	sysreg_bit_set CORTEX_A57_CPUACTLR_EL1, CORTEX_A57_CPUACTLR_EL1_GRE_NGRE_AS_NGNRE
 workaround_reset_end cortex_a57, ERRATUM(826977)
 
+=======
+/* Erratum entry and check function for SMCCC_ARCH_WORKAROUND_3 */
+add_erratum_entry cortex_a57, ERRATUM(ARCH_WORKAROUND_3), WORKAROUND_CVE_2022_23960
+
+check_erratum_chosen cortex_a57, ERRATUM(ARCH_WORKAROUND_3), WORKAROUND_CVE_2022_23960
+
+/*
+ * Disable the over-read from the LDNP/STNP instruction. The SDEN doesn't
+ * provide and erratum number, so assign it an obvious 99999
+ */
+workaround_reset_start cortex_a57, ERRATUM(99999), A57_DISABLE_NON_TEMPORAL_HINT
+	sysreg_bit_set CORTEX_A57_CPUACTLR_EL1, CORTEX_A57_CPUACTLR_EL1_DIS_OVERREAD
+workaround_reset_end cortex_a57, ERRATUM(99999)
+
+check_erratum_ls cortex_a57, ERRATUM(99999), CPU_REV(1, 2)
+
+workaround_reset_start cortex_a57, ERRATUM(806969), ERRATA_A57_806969
+	sysreg_bit_set CORTEX_A57_CPUACTLR_EL1, CORTEX_A57_CPUACTLR_EL1_NO_ALLOC_WBWA
+workaround_reset_end cortex_a57, ERRATUM(806969)
+
+check_erratum_ls cortex_a57, ERRATUM(806969), CPU_REV(0, 0)
+
+/* erratum always worked around, but report it correctly */
+check_erratum_ls cortex_a57, ERRATUM(813419), CPU_REV(0, 0)
+add_erratum_entry cortex_a57, ERRATUM(813419), ERRATUM_ALWAYS_CHOSEN
+
+workaround_reset_start cortex_a57, ERRATUM(813420), ERRATA_A57_813420
+	sysreg_bit_set CORTEX_A57_CPUACTLR_EL1, CORTEX_A57_CPUACTLR_EL1_DCC_AS_DCCI
+workaround_reset_end cortex_a57, ERRATUM(813420)
+
+check_erratum_ls cortex_a57, ERRATUM(813420), CPU_REV(0, 0)
+
+workaround_reset_start cortex_a57, ERRATUM(814670), ERRATA_A57_814670
+	sysreg_bit_set CORTEX_A57_CPUACTLR_EL1, CORTEX_A57_CPUACTLR_EL1_DIS_DMB_NULLIFICATION
+workaround_reset_end cortex_a57, ERRATUM(814670)
+
+check_erratum_ls cortex_a57, ERRATUM(814670), CPU_REV(0, 0)
+
+workaround_runtime_start cortex_a57, ERRATUM(817169), ERRATA_A57_817169
+	/* Invalidate any TLB address */
+	mov	x0, #0
+	tlbi	vae3, x0
+workaround_runtime_end cortex_a57, ERRATUM(817169), NO_ISB
+
+check_erratum_ls cortex_a57, ERRATUM(817169), CPU_REV(0, 1)
+
+workaround_reset_start cortex_a57, ERRATUM(826974), ERRATA_A57_826974
+	sysreg_bit_set CORTEX_A57_CPUACTLR_EL1, CORTEX_A57_CPUACTLR_EL1_DIS_LOAD_PASS_DMB
+workaround_reset_end cortex_a57, ERRATUM(826974)
+
+check_erratum_ls cortex_a57, ERRATUM(826974), CPU_REV(1, 1)
+
+workaround_reset_start cortex_a57, ERRATUM(826977), ERRATA_A57_826977
+	sysreg_bit_set CORTEX_A57_CPUACTLR_EL1, CORTEX_A57_CPUACTLR_EL1_GRE_NGRE_AS_NGNRE
+workaround_reset_end cortex_a57, ERRATUM(826977)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 check_erratum_ls cortex_a57, ERRATUM(826977), CPU_REV(1, 1)
 
 workaround_reset_start cortex_a57, ERRATUM(828024), ERRATA_A57_828024
@@ -150,7 +216,11 @@ check_erratum_ls cortex_a57, ERRATUM(859972), CPU_REV(1, 3)
 
 check_erratum_chosen cortex_a57, ERRATUM(1319537), ERRATA_A57_1319537
 /* erratum has no workaround in the cpu. Generic code must take care */
+<<<<<<< HEAD
 add_erratum_entry cortex_a57, ERRATUM(1319537), ERRATA_A57_1319537, NO_APPLY_AT_RESET
+=======
+add_erratum_entry cortex_a57, ERRATUM(1319537), ERRATA_A57_1319537
+>>>>>>> upstream_import/upstream_v2_14_1
 
 workaround_reset_start cortex_a57, CVE(2017, 5715), WORKAROUND_CVE_2017_5715
 #if IMAGE_BL31
@@ -184,11 +254,14 @@ cpu_reset_func_start cortex_a57
 	/* Enable the SMP bit. */
 	sysreg_bit_set CORTEX_A57_ECTLR_EL1, CORTEX_A57_ECTLR_SMP_BIT
 cpu_reset_func_end cortex_a57
+<<<<<<< HEAD
 
 func check_smccc_arch_workaround_3
 	mov	x0, #ERRATA_APPLIES
 	ret
 endfunc check_smccc_arch_workaround_3
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ----------------------------------------------------
 	 * The CPU Ops core power down function for Cortex-A57.
@@ -196,12 +269,6 @@ endfunc check_smccc_arch_workaround_3
 	 */
 func cortex_a57_core_pwr_dwn
 	mov	x18, x30
-
-	/* ---------------------------------------------
-	 * Turn off caches.
-	 * ---------------------------------------------
-	 */
-	bl	cortex_a57_disable_dcache
 
 	/* ---------------------------------------------
 	 * Disable the L2 prefetches.
@@ -236,12 +303,6 @@ endfunc cortex_a57_core_pwr_dwn
 	 */
 func cortex_a57_cluster_pwr_dwn
 	mov	x18, x30
-
-	/* ---------------------------------------------
-	 * Turn off caches.
-	 * ---------------------------------------------
-	 */
-	bl	cortex_a57_disable_dcache
 
 	/* ---------------------------------------------
 	 * Disable the L2 prefetches.
@@ -284,8 +345,11 @@ func cortex_a57_cluster_pwr_dwn
 	b	cortex_a57_disable_ext_debug
 endfunc cortex_a57_cluster_pwr_dwn
 
+<<<<<<< HEAD
 errata_report_shim cortex_a57
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides cortex_a57 specific
 	 * register information for crash reporting.
@@ -307,10 +371,13 @@ func cortex_a57_cpu_reg_dump
 	ret
 endfunc cortex_a57_cpu_reg_dump
 
-declare_cpu_ops_wa cortex_a57, CORTEX_A57_MIDR, \
+declare_cpu_ops cortex_a57, CORTEX_A57_MIDR, \
 	cortex_a57_reset_func, \
+<<<<<<< HEAD
 	check_erratum_cortex_a57_5715, \
 	CPU_NO_EXTRA2_FUNC, \
 	check_smccc_arch_workaround_3, \
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	cortex_a57_core_pwr_dwn, \
 	cortex_a57_cluster_pwr_dwn

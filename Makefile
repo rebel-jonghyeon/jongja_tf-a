@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -8,8 +8,14 @@
 # Trusted Firmware Version
 #
 VERSION_MAJOR			:= 2
+<<<<<<< HEAD
 VERSION_MINOR			:= 9
 VERSION_PATCH			:= 0
+=======
+VERSION_MINOR			:= 14
+# VERSION_PATCH is only used for LTS releases
+VERSION_PATCH			:= 1
+>>>>>>> upstream_import/upstream_v2_14_1
 VERSION				:= ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 
 # Default goal is build all images
@@ -22,18 +28,36 @@ MAKEOVERRIDES =
 
 MAKE_HELPERS_DIRECTORY := make_helpers/
 include ${MAKE_HELPERS_DIRECTORY}build_macros.mk
-include ${MAKE_HELPERS_DIRECTORY}build_env.mk
+include ${MAKE_HELPERS_DIRECTORY}build-rules.mk
+include ${MAKE_HELPERS_DIRECTORY}common.mk
 
 ################################################################################
 # Default values for build configurations, and their dependencies
 ################################################################################
 
 include ${MAKE_HELPERS_DIRECTORY}defaults.mk
+# Include the CPU specific operations makefile, which provides default
+# values for all CPU errata workarounds and CPU specific optimisations.
+# This can be overridden by the platform.
+include lib/cpus/cpu-ops.mk
+
+PLAT				:= ${DEFAULT_PLAT}
+include ${MAKE_HELPERS_DIRECTORY}plat_helpers.mk
+
+# To be able to set platform specific defaults
+ifneq ($(PLAT_DEFAULTS_MAKEFILE_FULL),)
+include ${PLAT_DEFAULTS_MAKEFILE_FULL}
+endif
+
+################################################################################
+# Configure the toolchains used to build TF-A and its tools
+################################################################################
+
+include ${MAKE_HELPERS_DIRECTORY}toolchain.mk
 
 # Assertions enabled for DEBUG builds by default
 ENABLE_ASSERTIONS		:= ${DEBUG}
 ENABLE_PMF			:= ${ENABLE_RUNTIME_INSTRUMENTATION}
-PLAT				:= ${DEFAULT_PLAT}
 
 ################################################################################
 # Checkpatch script options
@@ -41,15 +65,11 @@ PLAT				:= ${DEFAULT_PLAT}
 
 CHECKCODE_ARGS		:=	--no-patch
 # Do not check the coding style on imported library files or documentation files
-INC_ARM_DIRS_TO_CHECK	:=	$(sort $(filter-out                     \
-					include/drivers/arm/cryptocell,	\
-					$(wildcard include/drivers/arm/*)))
-INC_ARM_DIRS_TO_CHECK	+=	include/drivers/arm/cryptocell/*.h
 INC_DRV_DIRS_TO_CHECK	:=	$(sort $(filter-out			\
 					include/drivers/arm,		\
 					$(wildcard include/drivers/*)))
 INC_LIB_DIRS_TO_CHECK	:=	$(sort $(filter-out			\
-					include/lib/libfdt		\
+					lib/libfdt		\
 					include/lib/libc,		\
 					$(wildcard include/lib/*)))
 INC_DIRS_TO_CHECK	:=	$(sort $(filter-out			\
@@ -79,6 +99,7 @@ CHECK_PATHS		:=	${ROOT_DIRS_TO_CHECK}			\
 # Process build options
 ################################################################################
 
+<<<<<<< HEAD
 # Verbose flag
 ifeq (${V},0)
 	Q:=@
@@ -92,10 +113,86 @@ endif
 ifneq ($(findstring s,$(filter-out --%,$(MAKEFLAGS))),)
 	Q:=@
 	ECHO:=$(ECHO_QUIET)
+=======
+ifeq ($(verbose),)
+	CHECKCODE_ARGS	+=	--no-summary --terse
 endif
 
-export Q ECHO
+################################################################################
+# Auxiliary tools (fiptool, cert_create, etc)
+################################################################################
 
+# Variables for use with Certificate Generation Tool
+CRTTOOLPATH		?=	tools/cert_create
+CRTTOOL			?=	${BUILD_PLAT}/${CRTTOOLPATH}/cert_create$(.exe)
+
+# Variables for use with Firmware Encryption Tool
+ENCTOOLPATH		?=	tools/encrypt_fw
+ENCTOOL			?=	${BUILD_PLAT}/${ENCTOOLPATH}/encrypt_fw$(.exe)
+
+# Variables for use with Firmware Image Package
+FIPTOOLPATH		?=	tools/fiptool
+FIPTOOL			?=	${BUILD_PLAT}/${FIPTOOLPATH}/fiptool$(.exe)
+
+# Variables for use with sptool
+SPTOOLPATH		?=	tools/sptool
+SPTOOL			?=	${SPTOOLPATH}/sptool.py
+SP_MK_GEN		?=	${SPTOOLPATH}/sp_mk_generator.py
+SP_DTS_LIST_FRAGMENT	?=	${BUILD_PLAT}/sp_list_fragment.dts
+
+# Variables for use with sptool
+TLCTOOL 		?=	poetry run tlc
+
+# Variables for use with ROMLIB
+ROMLIBPATH		?=	lib/romlib
+
+# Variable for use with Python
+PYTHON			?=	python3
+
+# Variables for use with documentation build using Sphinx tool
+DOCS_PATH		?=	docs
+
+# Process Debug flag
+ifneq (${DEBUG}, 0)
+	BUILD_TYPE	:=	debug
+	# Use LOG_LEVEL_INFO by default for debug builds
+	LOG_LEVEL	:=	40
+else
+	BUILD_TYPE	:=	release
+	# Use LOG_LEVEL_NOTICE by default for release builds
+	LOG_LEVEL	:=	20
+endif #(Debug)
+
+# Default build string (git branch and commit)
+ifeq (${BUILD_STRING},)
+	BUILD_STRING  :=  $(shell git describe --always --dirty --tags 2> /dev/null)
+endif
+VERSION_STRING    :=  v${VERSION}(${BUILD_TYPE}):${BUILD_STRING}
+
+# Setting W is quite verbose and most warnings will be pre-existing issues
+# outside of the contributor's control. Don't fail the build on them so warnings
+# can be seen and hopefully addressed
+ifdef W
+	ifneq (${W},0)
+		E	 ?= 0
+	endif
+endif
+
+################################################################################
+# Setup ARCH_MAJOR/MINOR before parsing arch_features.
+################################################################################
+ifeq (${ENABLE_RME},1)
+	ARM_ARCH_MAJOR := 9
+	ARM_ARCH_MINOR := 2
+>>>>>>> upstream_import/upstream_v2_14_1
+endif
+
+################################################################################
+# Common sources and include directories
+################################################################################
+include lib/compiler-rt/compiler-rt.mk
+
+<<<<<<< HEAD
 ################################################################################
 # Toolchain
 ################################################################################
@@ -415,6 +512,16 @@ endif
 # Common sources and include directories
 ################################################################################
 include lib/compiler-rt/compiler-rt.mk
+=======
+# Allow overriding the timestamp, for example for reproducible builds, or to
+# synchronize timestamps across multiple projects.
+# This must be set to a C string (including quotes where applicable).
+BUILD_MESSAGE_TIMESTAMP ?= __TIME__", "__DATE__
+
+DEFINES += -DBUILD_MESSAGE_TIMESTAMP='$(BUILD_MESSAGE_TIMESTAMP)'
+DEFINES += -DBUILD_MESSAGE_VERSION_STRING='"$(VERSION_STRING)"'
+DEFINES += -DBUILD_MESSAGE_VERSION='"$(VERSION)"'
+>>>>>>> upstream_import/upstream_v2_14_1
 
 BL_COMMON_SOURCES	+=	common/bl_common.c			\
 				common/tf_log.c				\
@@ -429,7 +536,11 @@ BL_COMMON_SOURCES	+=	common/bl_common.c			\
 				plat/common/${ARCH}/platform_helpers.S	\
 				${COMPILER_RT_SRCS}
 
+<<<<<<< HEAD
 ifeq ($(notdir $(CC)),armclang)
+=======
+ifeq ($($(ARCH)-cc-id),arm-clang)
+>>>>>>> upstream_import/upstream_v2_14_1
 	BL_COMMON_SOURCES	+=	lib/${ARCH}/armclang_printf.S
 endif
 
@@ -442,21 +553,153 @@ INCLUDES		+=	-Iinclude				\
 				-Iinclude/lib/cpus/${ARCH}		\
 				-Iinclude/lib/el3_runtime/${ARCH}	\
 				${PLAT_INCLUDES}			\
+<<<<<<< HEAD
 				${SPD_INCLUDES}				\
 				-I../../../common
+
+include common/backtrace/backtrace.mk
+
+=======
+				${SPD_INCLUDES}
 
 include common/backtrace/backtrace.mk
 
 ################################################################################
 # Generic definitions
 ################################################################################
-include ${MAKE_HELPERS_DIRECTORY}plat_helpers.mk
 
 ifeq (${BUILD_BASE},)
      BUILD_BASE		:=	./build
 endif
 BUILD_PLAT		:=	$(abspath ${BUILD_BASE})/${PLAT}/${BUILD_TYPE}
 
+SPDS			:=	$(sort $(filter-out none, $(patsubst services/spd/%,%,$(wildcard services/spd/*))))
+
+# Platforms providing their own TBB makefile may override this value
+INCLUDE_TBBR_MK		:=	1
+
+################################################################################
+# Include SPD Makefile if one has been specified
+################################################################################
+
+ifneq (${SPD},none)
+	ifeq (${SPD},spmd)
+	# SPMD is located in std_svc directory
+		SPD_DIR := std_svc
+
+		ifeq ($(SPMD_SPM_AT_SEL2),1)
+			CTX_INCLUDE_EL2_REGS := 1
+		endif
+
+		ifneq ($(SP_LAYOUT_FILE),)
+		BL2_ENABLE_SP_LOAD := 1
+		endif
+	else
+		# All other SPDs in spd directory
+		SPD_DIR := spd
+	endif #(SPD)
+
+	# We expect to locate an spd.mk under the specified SPD directory
+	SPD_MAKE	:=	$(wildcard services/${SPD_DIR}/${SPD}/${SPD}.mk)
+
+	ifeq (${SPD_MAKE},)
+                $(error Error: No services/${SPD_DIR}/${SPD}/${SPD}.mk located)
+	endif
+        $(info Including ${SPD_MAKE})
+        include ${SPD_MAKE}
+
+	# If there's BL32 companion for the chosen SPD, we expect that the SPD's
+	# Makefile would set NEED_BL32 to "yes". In this case, the build system
+	# supports two mutually exclusive options:
+	# * BL32 is built from source: then BL32_SOURCES must contain the list
+	#   of source files to build BL32
+	# * BL32 is a prebuilt binary: then BL32 must point to the image file
+	#   that will be included in the FIP
+	# If both BL32_SOURCES and BL32 are defined, the binary takes precedence
+	# over the sources.
+endif #(SPD=none)
+
+################################################################################
+# Include the platform specific Makefile after the SPD Makefile (the platform
+# makefile may use all previous definitions in this file)
+################################################################################
+include ${PLAT_MAKEFILE_FULL}
+
+################################################################################
+# Setup arch_features based on ARM_ARCH_MAJOR, ARM_ARCH_MINOR provided from
+# platform.
+################################################################################
+
+include ${MAKE_HELPERS_DIRECTORY}arch_features.mk
+################################################################################
+# Process BRANCH_PROTECTION value and set
+# Pointer Authentication and Branch Target Identification flags
+################################################################################
+ifeq (${BRANCH_PROTECTION},0)
+	# Default value turns off all types of branch protection
+	BP_OPTION := none
+else ifneq (${ARCH},aarch64)
+        $(error BRANCH_PROTECTION requires AArch64)
+else ifeq (${BRANCH_PROTECTION},1)
+	# Enables all types of branch protection features
+	BP_OPTION := standard
+	ENABLE_BTI := 1
+	ENABLE_PAUTH := 1
+else ifeq (${BRANCH_PROTECTION},2)
+	# Return address signing to its standard level
+	BP_OPTION := pac-ret
+	ENABLE_PAUTH := 1
+else ifeq (${BRANCH_PROTECTION},3)
+	# Extend the signing to include leaf functions
+	BP_OPTION := pac-ret+leaf
+	ENABLE_PAUTH := 1
+else ifeq (${BRANCH_PROTECTION},4)
+	# Turn on branch target identification mechanism
+	BP_OPTION := bti
+	ENABLE_BTI := 1
+else ifeq (${BRANCH_PROTECTION},5)
+	# Turn on branch target identification mechanism
+	BP_OPTION := standard
+	ENABLE_BTI := 2
+	ENABLE_PAUTH := 2
+else
+        $(error Unknown BRANCH_PROTECTION value ${BRANCH_PROTECTION})
+endif #(BRANCH_PROTECTION)
+
+ifneq ($(ENABLE_PAUTH),0)
+	CTX_INCLUDE_PAUTH_REGS	:= ${ENABLE_PAUTH}
+endif
+
+# Pointer Authentication sources
+ifneq (${ENABLE_PAUTH},0)
+# arm/common/aarch64/arm_pauth.c contains a sample platform hook to complete the
+# Pauth support. As it's not secure, it must be reimplemented for real platforms
+	BL_COMMON_SOURCES	+=	lib/extensions/pauth/pauth.c
+endif
+
+>>>>>>> upstream_import/upstream_v2_14_1
+################################################################################
+# RME dependent flags configuration, Enable optional features for RME.
+################################################################################
+<<<<<<< HEAD
+include ${MAKE_HELPERS_DIRECTORY}plat_helpers.mk
+=======
+# FEAT_RME
+ifeq (${ENABLE_RME},1)
+	# RMM relies on SMCCC_ARCH_FEATURE_AVAILABILITY to discover EL3 enablement
+	ARCH_FEATURE_AVAILABILITY := 1
+
+	# RME requires el2 context to be saved for now.
+	CTX_INCLUDE_EL2_REGS := 1
+	CTX_INCLUDE_AARCH32_REGS := 0
+	CTX_INCLUDE_PAUTH_REGS := 1
+>>>>>>> upstream_import/upstream_v2_14_1
+
+	ifneq ($(ENABLE_FEAT_MPAM), 0)
+		CTX_INCLUDE_MPAM_REGS := 1
+	endif
+
+<<<<<<< HEAD
 SPDS			:=	$(sort $(filter-out none, $(patsubst services/spd/%,%,$(wildcard services/spd/*))))
 
 # Platforms providing their own TBB makefile may override this value
@@ -585,13 +828,30 @@ ifeq (${ENABLE_PAUTH}, 1)
 # arm/common/aarch64/arm_pauth.c contains a sample platform hook to complete the
 # Pauth support. As it's not secure, it must be reimplemented for real platforms
 	BL_COMMON_SOURCES	+=	lib/extensions/pauth/pauth_helpers.S
+=======
+	# RME enables CSV2_2 extension by default.
+	ENABLE_FEAT_CSV2_2 = 1
+endif #(FEAT_RME)
+
+################################################################################
+# Include rmmd Makefile if RME is enabled
+################################################################################
+ifneq (${ENABLE_RME},0)
+include services/std_svc/rmmd/rmmd.mk
+$(warning "RME is an experimental feature")
+>>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 ################################################################################
-# Include the platform specific Makefile after the SPD Makefile (the platform
-# makefile may use all previous definitions in this file)
+# Make 128-Bit sysreg read/writes availabe when FEAT_D128 is enabled.
 ################################################################################
+<<<<<<< HEAD
 include ${PLAT_MAKEFILE_FULL}
+=======
+ifneq (${ENABLE_FEAT_D128}, 0)
+        BL_COMMON_SOURCES       +=      lib/extensions/sysreg128/sysreg128.S
+endif
+>>>>>>> upstream_import/upstream_v2_14_1
 
 ################################################################################
 # Setup arch_features based on ARM_ARCH_MAJOR, ARM_ARCH_MINOR provided from
@@ -714,6 +974,7 @@ endif
 # is required by lowe ELs. Currently only NS requires this support.
 ifeq ($(HANDLE_EA_EL3_FIRST_NS),1)
 	FFH_SUPPORT := 1
+<<<<<<< HEAD
 else
 	FFH_SUPPORT := 0
 endif
@@ -734,10 +995,13 @@ endif #(PIE_FOUND)
 
 ifneq ($(findstring gcc,$(notdir $(LD))),)
 	PIE_LDFLAGS	+=	-Wl,-pie -Wl,--no-dynamic-linker
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 else
-	PIE_LDFLAGS	+=	-pie --no-dynamic-linker
+	FFH_SUPPORT := 0
 endif
 
+<<<<<<< HEAD
 ifeq ($(ENABLE_PIE),1)
 	ifeq ($(RESET_TO_BL2),1)
 		ifneq ($(BL2_IN_XIP_MEM),1)
@@ -779,6 +1043,16 @@ endif
 # This can be overridden by the platform.
 include lib/cpus/cpu-ops.mk
 
+=======
+ifneq ($(filter 1,${ERRATA_A53_1530924} ${ERRATA_A55_1530923}	\
+        ${ERRATA_A57_1319537} ${ERRATA_A65_1541130} ${ERRATA_A65AE_1638571}	\
+		${ERRATA_A72_1319367} ${ERRATA_A76_1165522}),)
+ERRATA_SPECULATIVE_AT	:= 1
+else
+ERRATA_SPECULATIVE_AT	:= 0
+endif
+
+>>>>>>> upstream_import/upstream_v2_14_1
 ################################################################################
 # Build `AARCH32_SP` as BL32 image for AArch32
 ################################################################################
@@ -804,10 +1078,16 @@ ifeq (${OVERRIDE_LIBC},0)
 include lib/libc/libc.mk
 endif
 
+ifneq (${USE_GIC_DRIVER},0)
+include drivers/arm/gic/gic.mk
+endif
+
 ################################################################################
 # Check incompatible options and dependencies
 ################################################################################
+include ${MAKE_HELPERS_DIRECTORY}constraints.mk
 
+<<<<<<< HEAD
 # USE_DEBUGFS experimental feature recommended only in debug builds
 ifeq (${USE_DEBUGFS},1)
         ifeq (${DEBUG},1)
@@ -1055,6 +1335,24 @@ ENABLE_FEAT_SB		=	$(if $(findstring sb,${arch-features}),1,0)
 ifeq ($(PSA_CRYPTO),1)
         $(info PSA_CRYPTO is an experimental feature)
 endif
+=======
+# The cert_create tool cannot generate certificates individually, so we use the
+# target 'certificates' to create them all
+ifneq (${GENERATE_COT},0)
+    FIP_DEPS += certificates
+    FWU_FIP_DEPS += fwu_certificates
+    BL2_FIP_DEPS += bl2_certificates
+endif
+
+ifneq (${DECRYPTION_SUPPORT},none)
+	ENC_ARGS += -f ${FW_ENC_STATUS}
+	ENC_ARGS += -k ${ENC_KEY}
+	ENC_ARGS += -n ${ENC_NONCE}
+	FIP_DEPS += enctool
+	FWU_FIP_DEPS += enctool
+	BL2_FIP_DEPS += enctool
+endif #(DECRYPTION_SUPPORT)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 ################################################################################
 # Process platform overrideable behaviour
@@ -1106,6 +1404,7 @@ endif #(ARCH=aarch64)
 
 # Process TBB related flags
 ifneq (${GENERATE_COT},0)
+<<<<<<< HEAD
 	# Common cert_create options
 	ifneq (${CREATE_KEYS},0)
                 $(eval CRT_ARGS += -n)
@@ -1119,6 +1418,23 @@ ifneq (${GENERATE_COT},0)
 	ifeq (${INCLUDE_TBBR_MK},1)
                 include make_helpers/tbbr/tbbr_tools.mk
 	endif
+=======
+    # Common cert_create options
+    ifneq (${CREATE_KEYS},0)
+        $(eval CRT_ARGS += -n)
+        $(eval FWU_CRT_ARGS += -n)
+        $(eval BL2_CRT_ARGS += -n)
+        ifneq (${SAVE_KEYS},0)
+            $(eval CRT_ARGS += -k)
+            $(eval FWU_CRT_ARGS += -k)
+            $(eval BL2_CRT_ARGS += -k)
+        endif
+    endif
+    # Include TBBR makefile (unless the platform indicates otherwise)
+    ifeq (${INCLUDE_TBBR_MK},1)
+        include make_helpers/tbbr/tbbr_tools.mk
+    endif
+>>>>>>> upstream_import/upstream_v2_14_1
 endif #(GENERATE_COT)
 
 ifneq (${FIP_ALIGN},0)
@@ -1165,24 +1481,43 @@ $(eval $(call assert_booleans,\
 	ALLOW_RO_XLAT_TABLES \
 	BL2_ENABLE_SP_LOAD \
 	COLD_BOOT_SINGLE_CPU \
+<<<<<<< HEAD
 	CREATE_KEYS \
 	CTX_INCLUDE_AARCH32_REGS \
 	CTX_INCLUDE_FPREGS \
 	CTX_INCLUDE_EL2_REGS \
+=======
+	$(CPU_FLAG_LIST) \
+	CREATE_KEYS \
+	CTX_INCLUDE_AARCH32_REGS \
+	CTX_INCLUDE_FPREGS \
+	CTX_INCLUDE_SVE_REGS \
+	CTX_INCLUDE_EL2_REGS \
+	CTX_INCLUDE_MPAM_REGS \
+>>>>>>> upstream_import/upstream_v2_14_1
 	DEBUG \
 	DYN_DISABLE_AUTH \
 	EL3_EXCEPTION_HANDLING \
 	ENABLE_AMU_AUXILIARY_COUNTERS \
+<<<<<<< HEAD
 	ENABLE_AMU_FCONF \
 	AMU_RESTRICT_COUNTERS \
 	ENABLE_ASSERTIONS \
 	ENABLE_FEAT_SB \
+=======
+	AMU_RESTRICT_COUNTERS \
+	ENABLE_ASSERTIONS \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ENABLE_PIE \
 	ENABLE_PMF \
 	ENABLE_PSCI_STAT \
 	ENABLE_RUNTIME_INSTRUMENTATION \
 	ENABLE_SME_FOR_SWD \
 	ENABLE_SVE_FOR_SWD \
+<<<<<<< HEAD
+=======
+	ENABLE_FEAT_GCIE \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ENABLE_FEAT_RAS	\
 	FFH_SUPPORT	\
 	ERROR_DEPRECATED \
@@ -1190,21 +1525,44 @@ $(eval $(call assert_booleans,\
 	GENERATE_COT \
 	GICV2_G0_FOR_EL3 \
 	HANDLE_EA_EL3_FIRST_NS \
+<<<<<<< HEAD
 	HW_ASSISTED_COHERENCY \
 	MEASURED_BOOT \
+=======
+	HARDEN_SLS \
+	HW_ASSISTED_COHERENCY \
+	MEASURED_BOOT \
+	DISCRETE_TPM \
+	DICE_PROTECTION_ENVIRONMENT \
+	RMMD_ENABLE_EL3_TOKEN_SIGN \
+	RMMD_ENABLE_IDE_KEY_PROG \
+>>>>>>> upstream_import/upstream_v2_14_1
 	DRTM_SUPPORT \
 	NS_TIMER_SWITCH \
 	OVERRIDE_LIBC \
 	PL011_GENERIC_UART \
+<<<<<<< HEAD
 	PLAT_RSS_NOT_SUPPORTED \
 	PROGRAMMABLE_RESET_ADDRESS \
 	PSCI_EXTENDED_STATE_ID \
 	PSCI_OS_INIT_MODE \
+=======
+	PLAT_EXTRA_LD_SCRIPT \
+	PROGRAMMABLE_RESET_ADDRESS \
+	PSCI_EXTENDED_STATE_ID \
+	PSCI_OS_INIT_MODE \
+	ARCH_FEATURE_AVAILABILITY \
+>>>>>>> upstream_import/upstream_v2_14_1
 	RESET_TO_BL31 \
 	SAVE_KEYS \
 	SEPARATE_CODE_AND_RODATA \
 	SEPARATE_BL2_NOLOAD_REGION \
 	SEPARATE_NOBITS_REGION \
+<<<<<<< HEAD
+=======
+	SEPARATE_RWDATA_REGION \
+	SEPARATE_SIMD_SECTION \
+>>>>>>> upstream_import/upstream_v2_14_1
 	SPIN_ON_BL1_EXIT \
 	SPM_MM \
 	SPMC_AT_EL3 \
@@ -1215,6 +1573,10 @@ $(eval $(call assert_booleans,\
 	TRUSTED_BOARD_BOOT \
 	USE_COHERENT_MEM \
 	USE_DEBUGFS \
+<<<<<<< HEAD
+=======
+	USE_KERNEL_DT_CONVENTION \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ARM_IO_IN_DTB \
 	SDEI_IN_FCONF \
 	SEC_INT_DESC_IN_FCONF \
@@ -1228,19 +1590,38 @@ $(eval $(call assert_booleans,\
 	ENCRYPT_BL31 \
 	ENCRYPT_BL32 \
 	ERRATA_SPECULATIVE_AT \
+<<<<<<< HEAD
+=======
+	ERRATA_SME_POWER_DOWN \
+>>>>>>> upstream_import/upstream_v2_14_1
 	RAS_TRAP_NS_ERR_REC_ACCESS \
 	COT_DESC_IN_DTB \
 	USE_SP804_TIMER \
 	PSA_FWU_SUPPORT \
+<<<<<<< HEAD
 	ENABLE_MPMM \
 	ENABLE_MPMM_FCONF \
+=======
+	PSA_FWU_METADATA_FW_STORE_DESC \
+	ENABLE_MPMM \
+>>>>>>> upstream_import/upstream_v2_14_1
 	FEATURE_DETECTION \
 	TRNG_SUPPORT \
+	ENABLE_ERRATA_ALL \
 	ERRATA_ABI_SUPPORT \
 	ERRATA_NON_ARM_INTERCONNECT \
 	CONDITIONAL_CMO \
 	PSA_CRYPTO	\
 	ENABLE_CONSOLE_GETC \
+<<<<<<< HEAD
+=======
+	INIT_UNUSED_NS_EL2	\
+	PLATFORM_REPORT_CTX_MEM_USE \
+	EARLY_CONSOLE \
+	PRESERVE_DSU_PMU_REGS \
+	HOB_LIST \
+	LFA_SUPPORT \
+>>>>>>> upstream_import/upstream_v2_14_1
 )))
 
 # Numeric_Flags
@@ -1250,14 +1631,19 @@ $(eval $(call assert_numerics,\
 	ARM_ARCH_MINOR \
 	BRANCH_PROTECTION \
 	CTX_INCLUDE_PAUTH_REGS \
+<<<<<<< HEAD
 	CTX_INCLUDE_MTE_REGS \
 	CTX_INCLUDE_NEVE_REGS \
 	CRYPTO_SUPPORT \
+=======
+	CTX_INCLUDE_NEVE_REGS \
+>>>>>>> upstream_import/upstream_v2_14_1
 	DISABLE_MTPMU \
 	ENABLE_BRBE_FOR_NS \
 	ENABLE_TRBE_FOR_NS \
 	ENABLE_BTI \
 	ENABLE_PAUTH \
+<<<<<<< HEAD
 	ENABLE_FEAT_AMU \
 	ENABLE_FEAT_AMUv1p1 \
 	ENABLE_FEAT_CSV2_2 \
@@ -1266,18 +1652,59 @@ $(eval $(call assert_numerics,\
 	ENABLE_FEAT_FGT \
 	ENABLE_FEAT_HCX \
 	ENABLE_FEAT_PAN \
+=======
+	ENABLE_FEAT_PAUTH_LR \
+	ENABLE_FEAT_AIE \
+	ENABLE_FEAT_AMU \
+	ENABLE_FEAT_AMUv1p1 \
+	ENABLE_FEAT_CLRBHB \
+	ENABLE_FEAT_CPA2 \
+	ENABLE_FEAT_CSV2_2 \
+	ENABLE_FEAT_CSV2_3 \
+	ENABLE_FEAT_DEBUGV8P9 \
+	ENABLE_FEAT_DIT \
+	ENABLE_FEAT_ECV \
+	ENABLE_FEAT_EBEP \
+	ENABLE_FEAT_FGT \
+	ENABLE_FEAT_FGT2 \
+	ENABLE_FEAT_FGWTE3 \
+	ENABLE_FEAT_FPMR \
+	ENABLE_FEAT_HCX \
+	ENABLE_FEAT_IDTE3 \
+	ENABLE_FEAT_LS64_ACCDATA \
+	ENABLE_FEAT_MEC \
+	ENABLE_FEAT_MOPS \
+	ENABLE_FEAT_MTE2 \
+	ENABLE_FEAT_PAN \
+	ENABLE_FEAT_PFAR \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ENABLE_FEAT_RNG \
 	ENABLE_FEAT_RNG_TRAP \
 	ENABLE_FEAT_SEL2 \
 	ENABLE_FEAT_TCR2 \
+<<<<<<< HEAD
+=======
+	ENABLE_FEAT_THE \
+	ENABLE_FEAT_SB \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ENABLE_FEAT_S2PIE \
 	ENABLE_FEAT_S1PIE \
 	ENABLE_FEAT_S2POE \
 	ENABLE_FEAT_S1POE \
+<<<<<<< HEAD
 	ENABLE_FEAT_GCS \
 	ENABLE_FEAT_VHE \
 	ENABLE_FEAT_MTE_PERM \
 	ENABLE_FEAT_MPAM \
+=======
+	ENABLE_FEAT_SCTLR2 \
+	ENABLE_FEAT_D128 \
+	ENABLE_FEAT_RME_GDI \
+	ENABLE_FEAT_GCS \
+	ENABLE_FEAT_VHE \
+	ENABLE_FEAT_MPAM \
+	ENABLE_FEAT_MPAM_PE_BW_CTRL \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ENABLE_RME \
 	ENABLE_SPE_FOR_NS \
 	ENABLE_SYS_REG_TRACE_FOR_NS \
@@ -1288,10 +1715,15 @@ $(eval $(call assert_numerics,\
 	FW_ENC_STATUS \
 	NR_OF_FW_BANKS \
 	NR_OF_IMAGES_IN_FW_BANK \
+<<<<<<< HEAD
+=======
+	SPMC_AT_EL3_PARTITION_MAX_UUIDS \
+>>>>>>> upstream_import/upstream_v2_14_1
 	TWED_DELAY \
 	ENABLE_FEAT_TWED \
 	SVE_VECTOR_LEN \
 	IMPDEF_SYSREG_TRAP \
+	W \
 )))
 
 ifdef KEY_SIZE
@@ -1315,6 +1747,7 @@ $(eval $(call add_defines,\
 	ARM_ARCH_MINOR \
 	BL2_ENABLE_SP_LOAD \
 	COLD_BOOT_SINGLE_CPU \
+<<<<<<< HEAD
 	CTX_INCLUDE_AARCH32_REGS \
 	CTX_INCLUDE_FPREGS \
 	CTX_INCLUDE_PAUTH_REGS \
@@ -1322,20 +1755,49 @@ $(eval $(call add_defines,\
 	CTX_INCLUDE_MTE_REGS \
 	CTX_INCLUDE_EL2_REGS \
 	CTX_INCLUDE_NEVE_REGS \
+=======
+	$(CPU_FLAG_LIST) \
+	CTX_INCLUDE_AARCH32_REGS \
+	CTX_INCLUDE_FPREGS \
+	CTX_INCLUDE_SVE_REGS \
+	CTX_INCLUDE_PAUTH_REGS \
+	CTX_INCLUDE_MPAM_REGS \
+	EL3_EXCEPTION_HANDLING \
+	CTX_INCLUDE_EL2_REGS \
+	CTX_INCLUDE_NEVE_REGS \
+	DEBUG \
+>>>>>>> upstream_import/upstream_v2_14_1
 	DECRYPTION_SUPPORT_${DECRYPTION_SUPPORT} \
 	DISABLE_MTPMU \
 	ENABLE_FEAT_AMU \
 	ENABLE_AMU_AUXILIARY_COUNTERS \
+<<<<<<< HEAD
 	ENABLE_AMU_FCONF \
 	AMU_RESTRICT_COUNTERS \
 	ENABLE_ASSERTIONS \
 	ENABLE_BTI \
 	ENABLE_FEAT_MPAM \
 	ENABLE_PAUTH \
+=======
+	AMU_RESTRICT_COUNTERS \
+	ENABLE_ASSERTIONS \
+	ENABLE_BTI \
+	ENABLE_FEAT_DEBUGV8P9 \
+	ENABLE_FEAT_IDTE3 \
+	ENABLE_FEAT_MPAM \
+	ENABLE_FEAT_MPAM_PE_BW_CTRL \
+	ENABLE_PAUTH \
+	ENABLE_FEAT_PAUTH_LR \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ENABLE_PIE \
 	ENABLE_PMF \
 	ENABLE_PSCI_STAT \
 	ENABLE_RME \
+<<<<<<< HEAD
+=======
+	RMMD_ENABLE_EL3_TOKEN_SIGN \
+	RMMD_ENABLE_IDE_KEY_PROG \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ENABLE_RUNTIME_INSTRUMENTATION \
 	ENABLE_SME_FOR_NS \
 	ENABLE_SME2_FOR_NS \
@@ -1354,6 +1816,7 @@ $(eval $(call add_defines,\
 	HW_ASSISTED_COHERENCY \
 	LOG_LEVEL \
 	MEASURED_BOOT \
+<<<<<<< HEAD
 	DRTM_SUPPORT \
 	NS_TIMER_SWITCH \
 	PL011_GENERIC_UART \
@@ -1366,16 +1829,46 @@ $(eval $(call add_defines,\
 	SEPARATE_CODE_AND_RODATA \
 	SEPARATE_BL2_NOLOAD_REGION \
 	SEPARATE_NOBITS_REGION \
+=======
+	DISCRETE_TPM \
+	DICE_PROTECTION_ENVIRONMENT \
+	DRTM_SUPPORT \
+	NS_TIMER_SWITCH \
+	PLATFORM_NODE_COUNT \
+	PL011_GENERIC_UART \
+	PLAT_EXTRA_LD_SCRIPT \
+	PLAT_${PLAT} \
+	PROGRAMMABLE_RESET_ADDRESS \
+	PSCI_EXTENDED_STATE_ID \
+	PSCI_OS_INIT_MODE \
+	ARCH_FEATURE_AVAILABILITY \
+	RESET_TO_BL31 \
+	RME_GPT_BITLOCK_BLOCK \
+	RME_GPT_MAX_BLOCK \
+	SEPARATE_CODE_AND_RODATA \
+	SEPARATE_BL2_FIP \
+	SEPARATE_BL2_NOLOAD_REGION \
+	SEPARATE_NOBITS_REGION \
+	SEPARATE_RWDATA_REGION \
+	SEPARATE_SIMD_SECTION \
+>>>>>>> upstream_import/upstream_v2_14_1
 	RECLAIM_INIT_CODE \
 	SPD_${SPD} \
 	SPIN_ON_BL1_EXIT \
 	SPM_MM \
 	SPMC_AT_EL3 \
+<<<<<<< HEAD
+=======
+	SPMC_AT_EL3_PARTITION_MAX_UUIDS \
+>>>>>>> upstream_import/upstream_v2_14_1
 	SPMC_AT_EL3_SEL0_SP \
 	SPMD_SPM_AT_SEL2 \
 	TRANSFER_LIST \
 	TRUSTED_BOARD_BOOT \
+<<<<<<< HEAD
 	CRYPTO_SUPPORT \
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	TRNG_SUPPORT \
 	ERRATA_ABI_SUPPORT \
 	ERRATA_NON_ARM_INTERCONNECT \
@@ -1386,6 +1879,10 @@ $(eval $(call add_defines,\
 	SEC_INT_DESC_IN_FCONF \
 	USE_ROMLIB \
 	USE_TBBR_DEFS \
+<<<<<<< HEAD
+=======
+	USE_KERNEL_DT_CONVENTION \
+>>>>>>> upstream_import/upstream_v2_14_1
 	WARMBOOT_ENABLE_DCACHE_EARLY \
 	RESET_TO_BL2 \
 	BL2_RUNS_AT_EL3	\
@@ -1393,6 +1890,10 @@ $(eval $(call add_defines,\
 	BL2_INV_DCACHE \
 	USE_SPINLOCK_CAS \
 	ERRATA_SPECULATIVE_AT \
+<<<<<<< HEAD
+=======
+	ERRATA_SME_POWER_DOWN \
+>>>>>>> upstream_import/upstream_v2_14_1
 	RAS_TRAP_NS_ERR_REC_ACCESS \
 	COT_DESC_IN_DTB \
 	USE_SP804_TIMER \
@@ -1403,10 +1904,15 @@ $(eval $(call add_defines,\
 	NR_OF_FW_BANKS \
 	NR_OF_IMAGES_IN_FW_BANK \
 	PSA_FWU_SUPPORT \
+<<<<<<< HEAD
+=======
+	PSA_FWU_METADATA_FW_STORE_DESC \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ENABLE_BRBE_FOR_NS \
 	ENABLE_TRBE_FOR_NS \
 	ENABLE_SYS_REG_TRACE_FOR_NS \
 	ENABLE_TRF_FOR_NS \
+<<<<<<< HEAD
 	ENABLE_FEAT_HCX \
 	ENABLE_MPMM \
 	ENABLE_MPMM_FCONF \
@@ -1418,12 +1924,46 @@ $(eval $(call add_defines,\
 	ENABLE_FEAT_CSV2_2 \
 	ENABLE_FEAT_PAN \
 	ENABLE_FEAT_TCR2 \
+=======
+	ENABLE_FEAT_AIE \
+	ENABLE_FEAT_HCX \
+	ENABLE_MPMM \
+	ENABLE_FEAT_FGT \
+	ENABLE_FEAT_FGT2 \
+	ENABLE_FEAT_FGWTE3 \
+	ENABLE_FEAT_FPMR \
+	ENABLE_FEAT_ECV \
+	ENABLE_FEAT_EBEP \
+	ENABLE_FEAT_AMUv1p1 \
+	ENABLE_FEAT_SEL2 \
+	ENABLE_FEAT_VHE \
+	ENABLE_FEAT_CLRBHB \
+	ENABLE_FEAT_CPA2 \
+	ENABLE_FEAT_CSV2_2 \
+	ENABLE_FEAT_CSV2_3 \
+	ENABLE_FEAT_LS64_ACCDATA \
+	ENABLE_FEAT_MEC \
+	ENABLE_FEAT_PAN \
+	ENABLE_FEAT_TCR2 \
+	ENABLE_FEAT_THE \
+>>>>>>> upstream_import/upstream_v2_14_1
 	ENABLE_FEAT_S2PIE \
 	ENABLE_FEAT_S1PIE \
 	ENABLE_FEAT_S2POE \
 	ENABLE_FEAT_S1POE \
+<<<<<<< HEAD
 	ENABLE_FEAT_GCS \
 	ENABLE_FEAT_MTE_PERM \
+=======
+	ENABLE_FEAT_SCTLR2 \
+	ENABLE_FEAT_D128 \
+	ENABLE_FEAT_RME_GDI \
+	ENABLE_FEAT_GCS \
+	ENABLE_FEAT_MOPS \
+	ENABLE_FEAT_GCIE \
+	ENABLE_FEAT_MTE2 \
+	ENABLE_FEAT_PFAR \
+>>>>>>> upstream_import/upstream_v2_14_1
 	FEATURE_DETECTION \
 	TWED_DELAY \
 	ENABLE_FEAT_TWED \
@@ -1433,7 +1973,24 @@ $(eval $(call add_defines,\
 	ENABLE_SPMD_LP \
 	PSA_CRYPTO	\
 	ENABLE_CONSOLE_GETC \
+<<<<<<< HEAD
+=======
+	INIT_UNUSED_NS_EL2	\
+	PLATFORM_REPORT_CTX_MEM_USE \
+	EARLY_CONSOLE \
+	PRESERVE_DSU_PMU_REGS \
+	HOB_LIST \
+	HW_CONFIG_BASE \
+	LFA_SUPPORT \
+>>>>>>> upstream_import/upstream_v2_14_1
 )))
+
+ifeq (${PLATFORM_REPORT_CTX_MEM_USE}, 1)
+ifeq (${DEBUG}, 0)
+        $(warning "PLATFORM_REPORT_CTX_MEM_USE can be applied when DEBUG=1 only")
+        override PLATFORM_REPORT_CTX_MEM_USE := 0
+endif
+endif
 
 ifeq (${SANITIZE_UB},trap)
         $(eval $(call add_define,MONITOR_TRAPS))
@@ -1455,7 +2012,11 @@ ifeq (${DYN_DISABLE_AUTH},1)
         $(eval $(call add_define,DYN_DISABLE_AUTH))
 endif
 
+<<<<<<< HEAD
 ifneq ($(findstring armlink,$(notdir $(LD))),)
+=======
+ifeq ($($(ARCH)-ld-id),arm-link)
+>>>>>>> upstream_import/upstream_v2_14_1
         $(eval $(call add_define,USE_ARM_LINK))
 endif
 
@@ -1472,19 +2033,27 @@ else
 	endif
 endif #(SP_LAYOUT_FILE)
 endif #(SPD)
+<<<<<<< HEAD
+=======
+
+################################################################################
+# Configure the flags for the specified compiler and linker
+################################################################################
+include ${MAKE_HELPERS_DIRECTORY}cflags.mk
+>>>>>>> upstream_import/upstream_v2_14_1
 
 ################################################################################
 # Build targets
 ################################################################################
 
-.PHONY:	all msg_start clean realclean distclean cscope locate-checkpatch checkcodebase checkpatch fiptool sptool fip sp fwu_fip certtool dtbs memmap doc enctool
-.SUFFIXES:
+.PHONY:	all msg_start clean realclean distclean cscope locate-checkpatch checkcodebase checkpatch fiptool sptool fip sp tl fwu_fip certtool dtbs memmap doc enctool
 
 all: msg_start
 
 msg_start:
-	@echo "Building ${PLAT}"
+	$(s)echo "Building ${PLAT}"
 
+<<<<<<< HEAD
 ifeq (${ERROR_DEPRECATED},0)
 # Check if deprecated declarations and cpp warnings should be treated as error or not.
 ifneq ($(findstring clang,$(notdir $(CC))),)
@@ -1495,6 +2064,8 @@ endif
 endif #(!ERROR_DEPRECATED)
 
 $(eval $(call MAKE_LIB_DIRS))
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 $(eval $(call MAKE_LIB,c))
 
 # Expand build macros for the different images
@@ -1511,8 +2082,16 @@ endif
 
 BL2_SOURCES := $(sort ${BL2_SOURCES})
 
-$(if ${BL2}, $(eval $(call TOOL_ADD_IMG,bl2,--${FIP_BL2_ARGS})),\
+ifeq (${SEPARATE_BL2_FIP},1)
+$(if ${BL2}, $(eval $(call TOOL_ADD_IMG,bl2,--${FIP_BL2_ARGS},BL2_)), \
+	$(eval $(call MAKE_BL,bl2,${FIP_BL2_ARGS},BL2_)))
+else
+$(if ${BL2}, $(eval $(call TOOL_ADD_IMG,bl2,--${FIP_BL2_ARGS})), \
 	$(eval $(call MAKE_BL,bl2,${FIP_BL2_ARGS})))
+<<<<<<< HEAD
+=======
+endif #(SEPARATE_BL2_FIP)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 endif #(NEED_BL2)
 
@@ -1574,16 +2153,44 @@ endif #(NEED_BL2U)
 # Expand build macros for the different images
 ifeq (${NEED_FDT},yes)
     $(eval $(call MAKE_DTBS,$(BUILD_PLAT)/fdts,$(FDT_SOURCES)))
+<<<<<<< HEAD
+=======
+
+    ifneq (${INITRD_SIZE}${INITRD_PATH},)
+        ifndef INITRD_BASE
+            $(error INITRD_BASE must be set when inserting initrd properties to the DTB.)
+        endif
+
+        INITRD_SIZE ?= $(shell printf "0x%x\n" $$(stat -Lc %s $(INITRD_PATH)))
+        initrd_end = $(shell printf "0x%x\n" $$(expr $$(($(INITRD_BASE) + $(INITRD_SIZE)))))
+
+        define $(HW_CONFIG)-after +=
+            $(s)echo "  INITRD  $(HW_CONFIG)"
+            $(q)fdtput -t x $@ /chosen linux,initrd-start $(INITRD_BASE)
+            $(q)fdtput -t x $@ /chosen linux,initrd-end $(initrd_end)
+        endef
+    endif
+>>>>>>> upstream_import/upstream_v2_14_1
 endif #(NEED_FDT)
 
 # Add Secure Partition packages
 ifeq (${NEED_SP_PKG},yes)
+<<<<<<< HEAD
 $(BUILD_PLAT)/sp_gen.mk : ${SP_MK_GEN} ${SP_LAYOUT_FILE} | ${BUILD_PLAT}
 	${PYTHON} "$<" "$@" $(filter-out $<,$^) $(BUILD_PLAT) ${COT} ${SP_DTS_LIST_FRAGMENT}
 sp: $(DTBS) $(BUILD_PLAT)/sp_gen.mk $(SP_PKGS)
 	@${ECHO_BLANK_LINE}
 	@echo "Built SP Images successfully"
 	@${ECHO_BLANK_LINE}
+=======
+$(BUILD_PLAT)/sp_gen.mk: ${SP_MK_GEN} ${SP_LAYOUT_FILE} | $$(@D)/
+	$(if $(host-poetry),$(q)poetry -q install --no-root)
+	$(q)$(if $(host-poetry),poetry run )${PYTHON} "$<" "$@" $(filter-out $<,$^) $(BUILD_PLAT) ${COT} ${SP_DTS_LIST_FRAGMENT}
+sp: $(DTBS) $(BUILD_PLAT)/sp_gen.mk $(SP_PKGS)
+	$(s)echo
+	$(s)echo "Built SP Images successfully"
+	$(s)echo
+>>>>>>> upstream_import/upstream_v2_14_1
 endif #(NEED_SP_PKG)
 
 locate-checkpatch:
@@ -1596,6 +2203,7 @@ endif
 endif #(CHECKPATCH)
 
 clean:
+<<<<<<< HEAD
 	@echo "  CLEAN"
 	$(call SHELL_REMOVE_DIR,${BUILD_PLAT})
 ifdef UNIX_MK
@@ -1623,10 +2231,31 @@ endif #(UNIX_MK)
 	${Q}${MAKE} PLAT=${PLAT} --no-print-directory -C ${CRTTOOLPATH} realclean
 	${Q}${MAKE} PLAT=${PLAT} --no-print-directory -C ${ENCTOOLPATH} realclean
 	${Q}${MAKE} --no-print-directory -C ${ROMLIBPATH} clean
+=======
+	$(s)echo "  CLEAN"
+	$(q)rm -rf $(BUILD_PLAT)
+	$(q)${MAKE} PLAT=${PLAT} BUILD_PLAT=${BUILD_PLAT} --no-print-directory -C ${FIPTOOLPATH} clean
+	$(q)rm -rf ${FIPTOOLPATH}/fiptool
+	$(q)${MAKE} PLAT=${PLAT} BUILD_PLAT=${BUILD_PLAT} --no-print-directory -C ${CRTTOOLPATH} clean
+	$(q)rm -rf ${CRTTOOLPATH}/cert_create
+	$(q)${MAKE} PLAT=${PLAT} BUILD_PLAT=${BUILD_PLAT} --no-print-directory -C ${ENCTOOLPATH} clean
+	$(q)${MAKE} --no-print-directory -C ${ROMLIBPATH} clean
+
+realclean distclean:
+	$(s)echo "  REALCLEAN"
+	$(q)rm -rf $(BUILD_BASE)
+	$(q)rm -rf $(CURDIR)/cscope.*
+	$(q)${MAKE} PLAT=${PLAT} BUILD_PLAT=${BUILD_PLAT} --no-print-directory -C ${FIPTOOLPATH} clean
+	$(q)rm -rf ${FIPTOOLPATH}/fiptool
+	$(q)${MAKE} PLAT=${PLAT} BUILD_PLAT=${BUILD_PLAT} --no-print-directory -C ${CRTTOOLPATH} clean
+	$(q)rm -rf ${CRTTOOLPATH}/cert_create
+	$(q)${MAKE} PLAT=${PLAT} BUILD_PLAT=${BUILD_PLAT} --no-print-directory -C ${ENCTOOLPATH} clean
+	$(q)${MAKE} --no-print-directory -C ${ROMLIBPATH} clean
+>>>>>>> upstream_import/upstream_v2_14_1
 
 checkcodebase:		locate-checkpatch
-	@echo "  CHECKING STYLE"
-	@if test -d .git ; then						\
+	$(s)echo "  CHECKING STYLE"
+	$(q)if test -d .git ; then						\
 		git ls-files | grep -E -v 'libfdt|libc|docs|\.rst' |	\
 		while read GIT_FILE ;					\
 		do ${CHECKPATCH} ${CHECKCODE_ARGS} -f $$GIT_FILE ;	\
@@ -1642,68 +2271,110 @@ checkcodebase:		locate-checkpatch
 	fi
 
 checkpatch:		locate-checkpatch
-	@echo "  CHECKING STYLE"
-	@if test -n "${CHECKPATCH_OPTS}"; then				\
+	$(s)echo "  CHECKING STYLE"
+	$(q)if test -n "${CHECKPATCH_OPTS}"; then				\
 		echo "    with ${CHECKPATCH_OPTS} option(s)";		\
 	fi
-	${Q}COMMON_COMMIT=$$(git merge-base HEAD ${BASE_COMMIT});	\
+	$(q)COMMON_COMMIT=$$(git merge-base HEAD ${BASE_COMMIT});	\
 	for commit in `git rev-list --no-merges $$COMMON_COMMIT..HEAD`;	\
 	do								\
 		printf "\n[*] Checking style of '$$commit'\n\n";	\
-		git log --format=email "$$commit~..$$commit"		\
-			-- ${CHECK_PATHS} |				\
-			${CHECKPATCH} ${CHECKPATCH_OPTS} - || true;	\
-		git diff --format=email "$$commit~..$$commit"		\
-			-- ${CHECK_PATHS} |				\
+		( git log --format=email "$$commit~..$$commit"		\
+			-- ${CHECK_PATHS} ;				\
+		  git diff --format=email "$$commit~..$$commit"		\
+			-- ${CHECK_PATHS}; ) |				\
 			${CHECKPATCH}  ${CHECKPATCH_OPTS} - || true;	\
 	done
 
 certtool: ${CRTTOOL}
 
-${CRTTOOL}: FORCE
-	${Q}${MAKE} PLAT=${PLAT} USE_TBBR_DEFS=${USE_TBBR_DEFS} COT=${COT} OPENSSL_DIR=${OPENSSL_DIR} CRTTOOL=${CRTTOOL} DEBUG=${DEBUG} V=${V} --no-print-directory -C ${CRTTOOLPATH} all
-	@${ECHO_BLANK_LINE}
-	@echo "Built $@ successfully"
-	@${ECHO_BLANK_LINE}
+${CRTTOOL}: FORCE | $$(@D)/
+	$(q)${MAKE} PLAT=${PLAT} BUILD_PLAT=$(abspath ${BUILD_PLAT}) USE_TBBR_DEFS=${USE_TBBR_DEFS} COT=${COT} OPENSSL_DIR=${OPENSSL_DIR} DEBUG=${DEBUG} --no-print-directory -C ${CRTTOOLPATH} all
+	$(q)ln -sf ${CRTTOOL} ${CRTTOOLPATH}/cert_create
+	$(s)echo
+	$(s)echo "Built $@ successfully"
+	$(s)echo
 
 ifneq (${GENERATE_COT},0)
+<<<<<<< HEAD
 certificates: ${CRT_DEPS} ${CRTTOOL}
 	${Q}${CRTTOOL} ${CRT_ARGS}
 	@${ECHO_BLANK_LINE}
 	@echo "Built $@ successfully"
 	@echo "Certificates can be found in ${BUILD_PLAT}"
 	@${ECHO_BLANK_LINE}
+=======
+certificates: ${CRT_DEPS} ${CRTTOOL} ${DTBS}
+	$(q)${CRTTOOL} ${CRT_ARGS}
+	$(s)echo
+	$(s)echo "Built $@ successfully"
+	$(s)echo "Certificates can be found in ${BUILD_PLAT}"
+	$(s)echo
+>>>>>>> upstream_import/upstream_v2_14_1
 endif #(GENERATE_COT)
 
-${BUILD_PLAT}/${FIP_NAME}: ${FIP_DEPS} ${FIPTOOL}
+ifeq (${SEPARATE_BL2_FIP},1)
+${BUILD_PLAT}/${BL2_FIP_NAME}: ${BL2_FIP_DEPS} ${FIPTOOL} | $$(@D)/
+	$(eval ${CHECK_BL2_FIP_CMD})
+	$(q)${FIPTOOL} create ${BL2_FIP_ARGS} $@
+	$(q)${FIPTOOL} info $@
+	$(s)echo
+	$(s)echo "Built $@ successfully"
+	$(s)echo
+endif #(SEPARATE_BL2_FIP)
+
+${BUILD_PLAT}/${FIP_NAME}: ${FIP_DEPS} ${FIPTOOL} | $$(@D)/
 	$(eval ${CHECK_FIP_CMD})
-	${Q}${FIPTOOL} create ${FIP_ARGS} $@
-	${Q}${FIPTOOL} info $@
-	@${ECHO_BLANK_LINE}
-	@echo "Built $@ successfully"
-	@${ECHO_BLANK_LINE}
+	$(q)${FIPTOOL} create ${FIP_ARGS} $@
+	$(q)${FIPTOOL} info $@
+	$(s)echo
+	$(s)echo "Built $@ successfully"
+	$(s)echo
 
 ifneq (${GENERATE_COT},0)
 fwu_certificates: ${FWU_CRT_DEPS} ${CRTTOOL}
+<<<<<<< HEAD
 	${Q}${CRTTOOL} ${FWU_CRT_ARGS}
 	@${ECHO_BLANK_LINE}
 	@echo "Built $@ successfully"
 	@echo "FWU certificates can be found in ${BUILD_PLAT}"
 	@${ECHO_BLANK_LINE}
+=======
+	$(q)${CRTTOOL} ${FWU_CRT_ARGS}
+	$(s)echo
+	$(s)echo "Built $@ successfully"
+	$(s)echo "FWU certificates can be found in ${BUILD_PLAT}"
+	$(s)echo
+>>>>>>> upstream_import/upstream_v2_14_1
 endif #(GENERATE_COT)
 
-${BUILD_PLAT}/${FWU_FIP_NAME}: ${FWU_FIP_DEPS} ${FIPTOOL}
+ifneq (${GENERATE_COT},0)
+bl2_certificates: ${BUILD_PLAT}/${FIP_NAME} ${BL2_CRT_DEPS} ${CRTTOOL} | ${BUILD_PLAT}/
+	$(q)${CRTTOOL} ${BL2_CRT_ARGS}
+	$(s)echo
+	$(s)echo "Built $@ successfully"
+	$(s)echo "BL2 certificates can be found in ${BUILD_PLAT}"
+	$(s)echo
+endif #(GENERATE_COT)
+
+${BUILD_PLAT}/${FWU_FIP_NAME}: ${FWU_FIP_DEPS} ${FIPTOOL} | $$(@D)/
 	$(eval ${CHECK_FWU_FIP_CMD})
-	${Q}${FIPTOOL} create ${FWU_FIP_ARGS} $@
-	${Q}${FIPTOOL} info $@
-	@${ECHO_BLANK_LINE}
-	@echo "Built $@ successfully"
-	@${ECHO_BLANK_LINE}
+	$(q)${FIPTOOL} create ${FWU_FIP_ARGS} $@
+	$(q)${FIPTOOL} info $@
+	$(s)echo
+	$(s)echo "Built $@ successfully"
+	$(s)echo
 
 fiptool: ${FIPTOOL}
+ifeq (${SEPARATE_BL2_FIP},1)
+bl2_fip: ${BUILD_PLAT}/${BL2_FIP_NAME}
+fip: bl2_fip
+else
 fip: ${BUILD_PLAT}/${FIP_NAME}
+endif #(SEPARATE_BL2_FIP)
 fwu_fip: ${BUILD_PLAT}/${FWU_FIP_NAME}
 
+<<<<<<< HEAD
 ${FIPTOOL}: FORCE
 ifdef UNIX_MK
 	${Q}${MAKE} CPPFLAGS="-DVERSION='\"${VERSION_STRING}\"'" FIPTOOL=${FIPTOOL} OPENSSL_DIR=${OPENSSL_DIR} DEBUG=${DEBUG} V=${V} --no-print-directory -C ${FIPTOOLPATH} all
@@ -1712,11 +2383,18 @@ else
 # to pass the gnumake flags to nmake.
 	${Q}set MAKEFLAGS= && ${MSVC_NMAKE} /nologo /f ${FIPTOOLPATH}/Makefile.msvc FIPTOOLPATH=$(subst /,\,$(FIPTOOLPATH)) FIPTOOL=$(subst /,\,$(FIPTOOL))
 endif #(UNIX_MK)
+=======
+# symlink for compatibility before tools were in the build directory
+${FIPTOOL}: FORCE | $$(@D)/
+	$(q)${MAKE} PLAT=${PLAT} BUILD_PLAT=$(abspath ${BUILD_PLAT}) CPPFLAGS="-DVERSION='\"${VERSION_STRING}\"'" OPENSSL_DIR=${OPENSSL_DIR} DEBUG=${DEBUG} --no-print-directory -C ${FIPTOOLPATH} all
+	$(q)ln -sf ${FIPTOOL} ${FIPTOOLPATH}/fiptool
+>>>>>>> upstream_import/upstream_v2_14_1
 
-romlib.bin: libraries FORCE
-	${Q}${MAKE} PLAT_DIR=${PLAT_DIR} BUILD_PLAT=${BUILD_PLAT} ENABLE_BTI=${ENABLE_BTI} ARM_ARCH_MINOR=${ARM_ARCH_MINOR} INCLUDES='${INCLUDES}' DEFINES='${DEFINES}' --no-print-directory -C ${ROMLIBPATH} all
+$(BUILD_PLAT)/romlib/romlib.bin $(BUILD_PLAT)/lib/libwrappers.a $&: $(BUILD_PLAT)/lib/libfdt.a $(BUILD_PLAT)/lib/libc.a $(CRYPTO_LIB) | $$(@D)/
+	$(q)${MAKE} PLAT_DIR=${PLAT_DIR} BUILD_PLAT=${BUILD_PLAT} ENABLE_BTI=${ENABLE_BTI} CRYPTO_LIB=$(CRYPTO_LIB) ARM_ARCH_MINOR=${ARM_ARCH_MINOR} INCLUDES=$(call escape-shell,$(INCLUDES)) DEFINES=$(call escape-shell,$(DEFINES)) --no-print-directory -C ${ROMLIBPATH} all
 
 memmap: all
+<<<<<<< HEAD
 ifdef UNIX_MK
 	${Q}PYTHONPATH=${CURDIR}/tools/memory \
 		${PYTHON} -m memory.memmap -sr ${BUILD_PLAT}
@@ -1724,67 +2402,77 @@ else
 	${Q}set PYTHONPATH=${CURDIR}/tools/memory && \
 		${PYTHON} -m memory.memmap -sr ${BUILD_PLAT}
 endif
+=======
+	$(if $(host-poetry),$(q)poetry -q install --no-root)
+	$(q)$(if $(host-poetry),poetry run )memory --root ${BUILD_PLAT} symbols
+
+tl: ${BUILD_PLAT}/tl.bin
+${BUILD_PLAT}/tl.bin: ${HW_CONFIG} | $$(@D)/
+	$(if $(host-poetry),$(q)poetry -q install --no-root)
+	$(q)$(if $(host-poetry),poetry run )tlc create --fdt $< -s ${FW_HANDOFF_SIZE} $@
+>>>>>>> upstream_import/upstream_v2_14_1
 
 doc:
-	@echo "  BUILD DOCUMENTATION"
-	${Q}${MAKE} --no-print-directory -C ${DOCS_PATH} html
+	$(s)echo "  BUILD DOCUMENTATION"
+	$(if $(host-poetry),$(q)poetry -q install --with docs --no-root)
+	$(q)$(if $(host-poetry),poetry run )${MAKE} --no-print-directory -C ${DOCS_PATH} BUILDDIR=$(abspath ${BUILD_BASE}/docs) html
 
 enctool: ${ENCTOOL}
 
-${ENCTOOL}: FORCE
-	${Q}${MAKE} PLAT=${PLAT} BUILD_INFO=0 OPENSSL_DIR=${OPENSSL_DIR} ENCTOOL=${ENCTOOL} DEBUG=${DEBUG} V=${V} --no-print-directory -C ${ENCTOOLPATH} all
-	@${ECHO_BLANK_LINE}
-	@echo "Built $@ successfully"
-	@${ECHO_BLANK_LINE}
+${ENCTOOL}: FORCE | $$(@D)/
+	$(q)${MAKE} PLAT=${PLAT} BUILD_PLAT=$(abspath ${BUILD_PLAT}) BUILD_INFO=0 OPENSSL_DIR=${OPENSSL_DIR} DEBUG=${DEBUG} --no-print-directory -C ${ENCTOOLPATH} all
+	$(s)echo
+	$(s)echo "Built $@ successfully"
+	$(s)echo
 
 cscope:
-	@echo "  CSCOPE"
-	${Q}find ${CURDIR} -name "*.[chsS]" > cscope.files
-	${Q}cscope -b -q -k
+	$(s)echo "  CSCOPE"
+	$(q)find ${CURDIR} -name "*.[chsS]" > cscope.files
+	$(q)cscope -b -q -k
 
 help:
-	@echo "usage: ${MAKE} [PLAT=<platform>] [OPTIONS] [TARGET]"
-	@echo ""
-	@echo "PLAT is used to specify which platform you wish to build."
-	@echo "If no platform is specified, PLAT defaults to: ${DEFAULT_PLAT}"
-	@echo ""
-	@echo "platform = ${PLATFORM_LIST}"
-	@echo ""
-	@echo "Please refer to the User Guide for a list of all supported options."
-	@echo "Note that the build system doesn't track dependencies for build "
-	@echo "options. Therefore, if any of the build options are changed "
-	@echo "from a previous build, a clean build must be performed."
-	@echo ""
-	@echo "Supported Targets:"
-	@echo "  all            Build all individual bootloader binaries"
-	@echo "  bl1            Build the BL1 binary"
-	@echo "  bl2            Build the BL2 binary"
-	@echo "  bl2u           Build the BL2U binary"
-	@echo "  bl31           Build the BL31 binary"
-	@echo "  bl32           Build the BL32 binary. If ARCH=aarch32, then "
-	@echo "                 this builds secure payload specified by AARCH32_SP"
-	@echo "  certificates   Build the certificates (requires 'GENERATE_COT=1')"
-	@echo "  fip            Build the Firmware Image Package (FIP)"
-	@echo "  fwu_fip        Build the FWU Firmware Image Package (FIP)"
-	@echo "  checkcodebase  Check the coding style of the entire source tree"
-	@echo "  checkpatch     Check the coding style on changes in the current"
-	@echo "                 branch against BASE_COMMIT (default origin/master)"
-	@echo "  clean          Clean the build for the selected platform"
-	@echo "  cscope         Generate cscope index"
-	@echo "  distclean      Remove all build artifacts for all platforms"
-	@echo "  certtool       Build the Certificate generation tool"
-	@echo "  enctool        Build the Firmware encryption tool"
-	@echo "  fiptool        Build the Firmware Image Package (FIP) creation tool"
-	@echo "  sp             Build the Secure Partition Packages"
-	@echo "  sptool         Build the Secure Partition Package creation tool"
-	@echo "  dtbs           Build the Device Tree Blobs (if required for the platform)"
-	@echo "  memmap         Print the memory map of the built binaries"
-	@echo "  doc            Build html based documentation using Sphinx tool"
-	@echo ""
-	@echo "Note: most build targets require PLAT to be set to a specific platform."
-	@echo ""
-	@echo "example: build all targets for the FVP platform:"
-	@echo "  CROSS_COMPILE=aarch64-none-elf- make PLAT=fvp all"
+	$(s)echo "usage: ${MAKE} [PLAT=<platform>] [OPTIONS] [TARGET]"
+	$(s)echo ""
+	$(s)echo "PLAT is used to specify which platform you wish to build."
+	$(s)echo "If no platform is specified, PLAT defaults to: ${DEFAULT_PLAT}"
+	$(s)echo ""
+	$(s)echo "platform = ${PLATFORM_LIST}"
+	$(s)echo ""
+	$(s)echo "Please refer to the User Guide for a list of all supported options."
+	$(s)echo "Note that the build system doesn't track dependencies for build "
+	$(s)echo "options. Therefore, if any of the build options are changed "
+	$(s)echo "from a previous build, a clean build must be performed."
+	$(s)echo ""
+	$(s)echo "Supported Targets:"
+	$(s)echo "  all            Build all individual bootloader binaries"
+	$(s)echo "  bl1            Build the BL1 binary"
+	$(s)echo "  bl2            Build the BL2 binary"
+	$(s)echo "  bl2u           Build the BL2U binary"
+	$(s)echo "  bl31           Build the BL31 binary"
+	$(s)echo "  bl32           Build the BL32 binary. If ARCH=aarch32, then "
+	$(s)echo "                 this builds secure payload specified by AARCH32_SP"
+	$(s)echo "  certificates   Build the certificates (requires 'GENERATE_COT=1')"
+	$(s)echo "  fip            Build the Firmware Image Package (FIP)"
+	$(s)echo "  fwu_fip        Build the FWU Firmware Image Package (FIP)"
+	$(s)echo "  checkcodebase  Check the coding style of the entire source tree"
+	$(s)echo "  checkpatch     Check the coding style on changes in the current"
+	$(s)echo "                 branch against BASE_COMMIT (default origin/master)"
+	$(s)echo "  clean          Clean the build for the selected platform"
+	$(s)echo "  cscope         Generate cscope index"
+	$(s)echo "  distclean      Remove all build artifacts for all platforms"
+	$(s)echo "  certtool       Build the Certificate generation tool"
+	$(s)echo "  enctool        Build the Firmware encryption tool"
+	$(s)echo "  fiptool        Build the Firmware Image Package (FIP) creation tool"
+	$(s)echo "  sp             Build the Secure Partition Packages"
+	$(s)echo "  sptool         Build the Secure Partition Package creation tool"
+	$(s)echo "  dtbs           Build the Device Tree Blobs (if required for the platform)"
+	$(s)echo "  memmap         Print the memory map of the built binaries"
+	$(s)echo "  doc            Build html based documentation using Sphinx tool"
+	$(s)echo ""
+	$(s)echo "Note: most build targets require PLAT to be set to a specific platform."
+	$(s)echo ""
+	$(s)echo "example: build all targets for the FVP platform:"
+	$(s)echo "  CROSS_COMPILE=aarch64-none-elf- make PLAT=fvp all"
 
 .PHONY: FORCE
 FORCE:;

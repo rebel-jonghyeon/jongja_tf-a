@@ -29,6 +29,7 @@
 #include <imx8m_csu.h>
 #include <imx8m_snvs.h>
 #include <platform_def.h>
+#include <plat_common.h>
 #include <plat_imx8.h>
 
 #define TRUSTY_PARAMS_LEN_BYTES      (4096*2)
@@ -48,12 +49,16 @@ static const struct aipstz_cfg aipstz[] = {
 	{0},
 };
 
-static const struct imx_rdc_cfg rdc[] = {
+static struct imx_rdc_cfg rdc[] = {
 	/* Master domain assignment */
 	RDC_MDAn(RDC_MDA_M7, DID1),
 
 	/* peripherals domain permission */
+	RDC_PDAPn(RDC_PDAP_UART1, D0R | D0W | D1R | D1W | D2R | D2W | D3R | D3W),
 	RDC_PDAPn(RDC_PDAP_UART2, D0R | D0W),
+	RDC_PDAPn(RDC_PDAP_UART3, D0R | D0W | D1R | D1W | D2R | D2W | D3R | D3W),
+	RDC_PDAPn(RDC_PDAP_UART4, D0R | D0W | D1R | D1W | D2R | D2W | D3R | D3W),
+	RDC_PDAPn(RDC_PDAP_WDOG1, D0R | D0W),
 
 	/* memory region */
 
@@ -63,12 +68,45 @@ static const struct imx_rdc_cfg rdc[] = {
 
 static const struct imx_csu_cfg csu_cfg[] = {
 	/* peripherals csl setting */
-	CSU_CSLx(CSU_CSL_OCRAM, CSU_SEC_LEVEL_2, UNLOCKED),
-	CSU_CSLx(CSU_CSL_OCRAM_S, CSU_SEC_LEVEL_2, UNLOCKED),
+	CSU_CSLx(CSU_CSL_OCRAM, CSU_SEC_LEVEL_2, LOCKED),
+	CSU_CSLx(CSU_CSL_OCRAM_S, CSU_SEC_LEVEL_2, LOCKED),
+	CSU_CSLx(CSU_CSL_RDC, CSU_SEC_LEVEL_3, LOCKED),
+	CSU_CSLx(CSU_CSL_TZASC, CSU_SEC_LEVEL_5, LOCKED),
+	CSU_CSLx(CSU_CSL_CSU, CSU_SEC_LEVEL_5, LOCKED),
 
 	/* master HP0~1 */
 
 	/* SA setting */
+	CSU_SA(CSU_SA_M7, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_SDMA1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_PCIE_CTRL1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USB1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USB2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_APB_HDMA, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_ENET1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USDHC1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USDHC2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USDHC3, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_HUGO, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_DAP, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_SDMA2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_SDMA3, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_LCDIF1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_ISI, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_NPU, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_LCDIF2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_HDMI_TX, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_ENET2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_GPU3D, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_GPU2D, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_VPU_G1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_VPU_G2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_VPU_VC8000E, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_AUDIO_EDMA, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_ISP1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_ISP2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_DEWARP, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_GIC500, NON_SEC_ACCESS, LOCKED),
 
 	/* HP control setting */
 
@@ -96,26 +134,6 @@ static uint32_t get_spsr_for_bl33_entry(void)
 	return spsr;
 }
 
-static void bl31_tzc380_setup(void)
-{
-	unsigned int val;
-
-	val = mmio_read_32(IMX_IOMUX_GPR_BASE + 0x28);
-	if ((val & GPR_TZASC_EN) != GPR_TZASC_EN)
-		return;
-
-	tzc380_init(IMX_TZASC_BASE);
-
-	/*
-	 * Need to substact offset 0x40000000 from CPU address when
-	 * programming tzasc region for i.mx8mp.
-	 */
-
-	/* Enable 1G-5G S/NS RW */
-	tzc380_configure_region(0, 0x00000000, TZC_ATTR_REGION_SIZE(TZC_REGION_SIZE_4G) |
-		TZC_ATTR_REGION_EN_MASK | TZC_ATTR_SP_ALL);
-}
-
 void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 		u_register_t arg2, u_register_t arg3)
 {
@@ -123,6 +141,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	static console_t console;
 	unsigned int val;
 	unsigned int i;
+	int ret;
 
 	/* Enable CSU NS access permission */
 	for (i = 0; i < 64; i++) {
@@ -131,7 +150,11 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 
 	imx_aipstz_init(aipstz);
 
-	imx_rdc_init(rdc);
+	if (console_base == 0U) {
+		console_base = imx8m_uart_get_base();
+	}
+
+	imx_rdc_init(rdc, console_base);
 
 	imx_csu_init(csu_cfg);
 
@@ -140,10 +163,13 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	val = mmio_read_32(IMX_IOMUX_GPR_BASE + 0x2c);
 	mmio_write_32(IMX_IOMUX_GPR_BASE + 0x2c, val | 0x3DFF0000);
 
+<<<<<<< HEAD
 	if (console_base == 0U) {
 		console_base = imx8m_uart_get_base();
 	}
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	console_imx_uart_register(console_base, IMX_BOOT_UART_CLK_IN_HZ,
 		IMX_CONSOLE_BAUDRATE, &console);
 	/* This console is only used for boot stage */
@@ -180,12 +206,22 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	bl32_image_ep_info.args.arg3 = BL32_FDT_OVERLAY_ADDR;
 #endif
 #endif
+	ret = imx_bl31_params_parse(arg0, IMX_NS_OCRAM_SIZE, IMX_NS_OCRAM_BASE,
+				    &bl32_image_ep_info, &bl33_image_ep_info);
+	if (ret != 0) {
+		ret = imx_bl31_params_parse(arg0, IMX_TCM_BASE, IMX_TCM_SIZE,
+					    &bl32_image_ep_info,
+					    &bl33_image_ep_info);
+	}
 
 #if !defined(SPD_opteed) && !defined(SPD_trusty)
 	enable_snvs_privileged_access();
 #endif
+<<<<<<< HEAD
 
 	bl31_tzc380_setup();
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 }
 
 #define MAP_BL31_TOTAL										   \

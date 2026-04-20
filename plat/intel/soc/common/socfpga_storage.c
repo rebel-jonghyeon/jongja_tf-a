@@ -1,6 +1,10 @@
 /*
  * Copyright (c) 2019, ARM Limited and Contributors. All rights reserved.
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
+<<<<<<< HEAD
+=======
+ * Copyright (c) 2024, Altera Corporation. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,6 +28,7 @@
 
 #include "drivers/sdmmc/sdmmc.h"
 #include "socfpga_private.h"
+<<<<<<< HEAD
 
 
 #define PLAT_FIP_BASE		(0)
@@ -34,6 +39,10 @@
 #define PLAT_QSPI_DATA_SIZE	(0x1000000)
 #define PLAT_NAND_DATA_BASE	(0x0200000)
 #define PLAT_NAND_DATA_SIZE	(0x1000000)
+=======
+#include "socfpga_ros.h"
+
+>>>>>>> upstream_import/upstream_v2_14_1
 
 static const io_dev_connector_t *fip_dev_con;
 static const io_dev_connector_t *boot_dev_con;
@@ -54,6 +63,12 @@ static const io_uuid_spec_t bl31_uuid_spec = {
 static const io_uuid_spec_t bl33_uuid_spec = {
 	.uuid = UUID_NON_TRUSTED_FIRMWARE_BL33,
 };
+
+# if ARM_LINUX_KERNEL_AS_BL33 != 0
+static const io_uuid_spec_t nt_fw_config_uuid_spec = {
+	.uuid = UUID_NT_FW_CONFIG,
+};
+# endif
 
 uintptr_t a2_lba_offset;
 const char a2[] = {0xa2, 0x0};
@@ -101,6 +116,13 @@ static const struct plat_io_policy policies[] = {
 		(uintptr_t) &bl33_uuid_spec,
 		check_fip
 	},
+# if ARM_LINUX_KERNEL_AS_BL33 != 0
+	[NT_FW_CONFIG_ID] = {
+		&fip_dev_handle,
+		(uintptr_t)&nt_fw_config_uuid_spec,
+		check_fip
+	},
+# endif
 	[GPT_IMAGE_ID] = {
 		&boot_dev_handle,
 		(uintptr_t) &gpt_block_spec,
@@ -136,9 +158,10 @@ static int check_fip(const uintptr_t spec)
 	return result;
 }
 
-void socfpga_io_setup(int boot_source)
+void socfpga_io_setup(int boot_source, unsigned long offset)
 {
 	int result;
+	fip_spec.offset = offset;
 
 	switch (boot_source) {
 	case BOOT_SOURCE_SDMMC:
@@ -152,7 +175,10 @@ void socfpga_io_setup(int boot_source)
 
 	case BOOT_SOURCE_QSPI:
 		register_io_dev = &register_io_dev_memmap;
+<<<<<<< HEAD
 		fip_spec.offset = PLAT_QSPI_DATA_BASE;
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 		break;
 
 #if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX5
@@ -161,7 +187,10 @@ void socfpga_io_setup(int boot_source)
 		nand_dev_spec.ops.init = cdns_nand_init_mtd;
 		nand_dev_spec.ops.read = cdns_nand_read;
 		nand_dev_spec.ops.write = NULL;
+<<<<<<< HEAD
 		fip_spec.offset = PLAT_NAND_DATA_BASE;
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 		break;
 #endif
 

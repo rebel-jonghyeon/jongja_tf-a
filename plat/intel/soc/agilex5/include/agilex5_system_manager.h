@@ -1,5 +1,9 @@
 /*
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
+<<<<<<< HEAD
+=======
+ * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,6 +28,10 @@
 #define SOCFPGA_SYSMGR_TSN_0_ACE					0x50
 #define SOCFPGA_SYSMGR_TSN_1_ACE					0x54
 #define SOCFPGA_SYSMGR_TSN_2_ACE					0x58
+<<<<<<< HEAD
+=======
+#define SOCFPGA_SYSMGR_FPGA_BRIDGE_CTRL				0x5C
+>>>>>>> upstream_import/upstream_v2_14_1
 #define SOCFPGA_SYSMGR_FPGAINTF_EN_1					0x68
 #define SOCFPGA_SYSMGR_FPGAINTF_EN_2					0x6C
 #define SOCFPGA_SYSMGR_FPGAINTF_EN_3					0x70
@@ -121,7 +129,11 @@
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_COLD_8				0x220
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_COLD_9				0x224
 #define SOCFPGA_SYSMGR_MPFE_CONFIG					0x228
+<<<<<<< HEAD
 #define SOCFPGA_SYSMGR_MPFE_status					0x22C
+=======
+#define SOCFPGA_SYSMGR_MPFE_STATUS					0x22C
+>>>>>>> upstream_import/upstream_v2_14_1
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_WARM_0				0x230
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_WARM_1				0x234
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_WARM_2				0x238
@@ -142,6 +154,29 @@
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_POR_7				0x274
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_POR_8				0x278
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_POR_9				0x27C
+<<<<<<< HEAD
+=======
+#define SOCFPGA_SYSMGR_SDM_BE_AWADDR_REMAP				0x280
+#define SOCFPGA_SYSMGR_SDM_BE_ARADDR_REMAP				0x284
+
+/* QSPI ECC from SDM register */
+#define SOCFPGA_ECC_QSPI_CTRL						0x08
+#define SOCFPGA_ECC_QSPI_INITSTAT					0x0C
+#define SOCFPGA_ECC_QSPI_ERRINTEN					0x10
+#define SOCFPGA_ECC_QSPI_ERRINTENS					0x14
+#define SOCFPGA_ECC_QSPI_ERRINTENR					0x18
+#define SOCFPGA_ECC_QSPI_INTMODE					0x1C
+#define SOCFPGA_ECC_QSPI_INTSTAT					0x20
+#define SOCFPGA_ECC_QSPI_INTTEST					0x24
+#define SOCFPGA_ECC_QSPI_ECC_ACCCTRL					0x78
+#define SOCFPGA_ECC_QSPI_ECC_STARTACC					0x7C
+#define SOCFPGA_ECC_QSPI_ECC_WDCTRL					0x80
+
+/* IOSSM mailbox address */
+#define IOSSM_CMD_PARAM							0x18400438
+#define IOSSM_CMD_TRIG_OP						0x1840043C
+#define IOSSM_CMD_RESP_STATUS						0x1840045C
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #define DMA0_STREAM_CTRL_REG						0x10D1217C
 #define DMA1_STREAM_CTRL_REG						0x10D12180
@@ -168,11 +203,34 @@
 #define SDM								0x000A000A
 #define CORE_SIGHT_DEBUG						0x000B000B
 
+<<<<<<< HEAD
+=======
+/* JTAG ID value for Agilex5 */
+#define A590_JTAG_ID							0x9000
+#define A594_JTAG_ID							0x40009000
+#define A5C0_JTAG_ID							0xC000
+#define A5C4_JTAG_ID							0x4000C000
+#define A5D0_JTAG_ID							0xD000
+#define A5D4_JTAG_ID							0x4000D000
+#define A5F0_JTAG_ID							0xC000
+#define A5F4_JTAG_ID							0x4000C000
+#define A510_JTAG_ID							0x1000
+#define A514_JTAG_ID							0x40001000
+#define A530_JTAG_ID							0x3000
+#define A534_JTAG_ID							0x40003000
+#define JTAG_ID_MASK							0xF000F000
+
+>>>>>>> upstream_import/upstream_v2_14_1
 /* Field Masking */
 #define SYSMGR_SDMMC_DRVSEL(x)						(((x) & 0x7) << 0)
 #define SYSMGR_SDMMC_SMPLSEL(x)						(((x) & 0x7) << 4)
 
 #define SYSMGR_F2S_BRIDGE_CTRL_EN					BIT(0)
+<<<<<<< HEAD
+=======
+#define SYSMGR_SOC_BRIDGE_CTRL_EN					BIT(0)
+#define SYSMGR_LWSOC_BRIDGE_CTRL_EN					BIT(1)
+>>>>>>> upstream_import/upstream_v2_14_1
 #define IDLE_DATA_LWSOC2FPGA						BIT(4)
 #define IDLE_DATA_SOC2FPGA						BIT(0)
 #define IDLE_DATA_MASK							(IDLE_DATA_LWSOC2FPGA \
@@ -186,10 +244,21 @@
 #define WMMUSECSID_REG_VAL						BIT(4)
 #define RMMUSECSID_REG_VAL						BIT(5)
 
+<<<<<<< HEAD
 /* Macros */
 #define SOCFPGA_SYSMGR(_reg)						(SOCFPGA_SYSMGR_REG_BASE \
 									+ (SOCFPGA_SYSMGR_##_reg))
 
+=======
+#define SYSMGR_USB3_MISC0_RST_PUL_OVRD					BIT(12)
+#define SYSMGR_USB3_MISC0_PORT_OVR_CURR_PIPE_PWR			BIT(14)
+
+/* Macros */
+#define SOCFPGA_ECC_QSPI(_reg)						(SOCFPGA_ECC_QSPI_REG_BASE \
+									+ (SOCFPGA_ECC_QSPI_##_reg))
+#define SOCFPGA_SYSMGR(_reg)						(SOCFPGA_SYSMGR_REG_BASE \
+									+ (SOCFPGA_SYSMGR_##_reg))
+>>>>>>> upstream_import/upstream_v2_14_1
 #define ENABLE_STREAMID							WSTREAMIDEN_REG_CTRL \
 									| RSTREAMIDEN_REG_CTRL
 #define ENABLE_STREAMID_SECURE_TX					WSTREAMIDEN_REG_CTRL \

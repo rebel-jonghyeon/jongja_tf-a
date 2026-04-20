@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -14,8 +14,19 @@ endif
 
 BL2U_DEFAULT_LINKER_SCRIPT_SOURCE := bl2u/bl2u.ld.S
 
-ifneq ($(findstring gcc,$(notdir $(LD))),)
-        BL2U_LDFLAGS	+=	-Wl,--sort-section=alignment
-else ifneq ($(findstring ld,$(notdir $(LD))),)
-        BL2U_LDFLAGS	+=	--sort-section=alignment
-endif
+# CRYPTO_SUPPORT
+NEED_AUTH := $(if $(filter 1,$(TRUSTED_BOARD_BOOT)),1,)
+NEED_HASH := $(if $(filter 1,$(MEASURED_BOOT) $(DRTM_SUPPORT)),1,)
+$(eval $(call set_crypto_support,NEED_AUTH,NEED_HASH))
+
+# BL2U_CPPFLAGS
+$(eval BL2U_CPPFLAGS += $(call make_defines, \
+    $(sort \
+        CRYPTO_SUPPORT \
+)))
+
+# Numeric_Flags
+$(eval $(call assert_numerics,\
+    $(sort \
+	CRYPTO_SUPPORT \
+)))

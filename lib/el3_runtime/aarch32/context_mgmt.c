@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -148,6 +152,7 @@ static void enable_extensions_nonsecure(bool el2_unused)
 	if (is_feat_trf_supported()) {
 		trf_init_el3();
 	}
+<<<<<<< HEAD
 
 	/*
 	 * Also applies to PMU < v3. The PMU is only disabled for EL3 and Secure
@@ -156,18 +161,13 @@ static void enable_extensions_nonsecure(bool el2_unused)
 	pmuv3_init_el3();
 #endif /*  IMAGE_BL32 */
 }
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 
-/*******************************************************************************
- * The following function initializes the cpu_context for a CPU specified by
- * its `cpu_idx` for first use, and sets the initial entrypoint state as
- * specified by the entry_point_info structure.
- ******************************************************************************/
-void cm_init_context_by_index(unsigned int cpu_idx,
-			      const entry_point_info_t *ep)
-{
-	cpu_context_t *ctx;
-	ctx = cm_get_context_by_index(cpu_idx, GET_SECURITY_STATE(ep->h.attr));
-	cm_setup_context(ctx, ep);
+	if (is_feat_pmuv3_present()) {
+		pmuv3_init_el3();
+	}
+#endif /*  IMAGE_BL32 */
 }
 
 /*******************************************************************************
@@ -190,7 +190,7 @@ void cm_init_my_context(const entry_point_info_t *ep)
  * HYP mode then HYP mode is disabled by configuring all necessary HYP mode
  * registers.
  ******************************************************************************/
-void cm_prepare_el3_exit(uint32_t security_state)
+void cm_prepare_el3_exit(size_t security_state)
 {
 	uint32_t hsctlr, scr;
 	cpu_context_t *ctx = cm_get_context(security_state);

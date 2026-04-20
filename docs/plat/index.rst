@@ -7,6 +7,7 @@ Platform Ports
    :hidden:
 
    allwinner
+   amd-versal2
    arm/index
    ast2700
    meson-axg
@@ -21,22 +22,30 @@ Platform Ports
    mt8183
    mt8186
    mt8188
+   mt8189
    mt8192
    mt8195
+   mt8196
    nvidia-tegra
    warp7
    imx8
    imx8m
+<<<<<<< HEAD
    imx9
+=======
+   imx8ulp
+   imx9
+   s32g274a
+>>>>>>> upstream_import/upstream_v2_14_1
    npcm845x
    nxp/index
    poplar
    qemu
    qemu-sbsa
-   qti
-   qti-msm8916
+   qti/index
    rpi3
    rpi4
+   rpi5
    rcar-gen3
    rz-g2
    rockchip
@@ -58,9 +67,6 @@ documentation associated with them.
    currently have associated documentation:
 
    - Arm Neoverse N1 System Development Platform (N1SDP)
-   - Arm Neoverse Reference Design N1 Edge (RD-N1-Edge) FVP
-   - Arm Neoverse Reference Design E1 Edge (RD-E1-Edge) FVP
-   - Arm SGI-575
    - MediaTek MT8173 SoCs
 
 Deprecated platforms
@@ -69,6 +75,7 @@ Deprecated platforms
 +----------------+----------------+--------------------+--------------------+
 |    Platform    |     Vendor     | Deprecated version |  Deleted version   |
 +================+================+====================+====================+
+<<<<<<< HEAD
 |    sgm775      |      Arm       |        2.5         |       2.7          |
 +----------------+----------------+--------------------+--------------------+
 |    mt6795      |      MTK       |        2.5         |       2.7          |
@@ -80,8 +87,12 @@ Deprecated platforms
 |    tc0         |      Arm       |        2.8         |       2.10         |
 +----------------+----------------+--------------------+--------------------+
 |    rde1edge    |      Arm       |        2.9         |       3.0          |
+=======
+|    RD1AE       |      Arm       |        2.14        |         TBD        |
+|                |                |                    |                    |
+>>>>>>> upstream_import/upstream_v2_14_1
 +----------------+----------------+--------------------+--------------------+
 
 --------------
 
-*Copyright (c) 2019-2023, Arm Limited. All rights reserved.*
+*Copyright (c) 2019-2025, Arm Limited. All rights reserved.*

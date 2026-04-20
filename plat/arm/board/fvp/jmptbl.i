@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018-2023, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2018-2024, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -36,8 +36,8 @@ fdt     fdt_get_alias_namelen
 fdt     fdt_get_name
 fdt     fdt_get_alias
 fdt     fdt_node_offset_by_phandle
-fdt     fdt_subnode_offset
 fdt     fdt_add_subnode
+<<<<<<< HEAD
 mbedtls mbedtls_asn1_get_alg
 mbedtls mbedtls_asn1_get_alg_null
 mbedtls mbedtls_asn1_get_bitstring_null
@@ -61,5 +61,7 @@ mbedtls mbedtls_platform_set_snprintf
 mbedtls mbedtls_x509_get_rsassa_pss_params
 mbedtls mbedtls_x509_get_sig_alg
 mbedtls mbedtls_md_info_from_type
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 c       exit
 c       atexit

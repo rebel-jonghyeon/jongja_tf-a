@@ -1,5 +1,9 @@
 /*
  * Copyright (c) 2022-2023, Intel Corporation. All rights reserved.
+<<<<<<< HEAD
+=======
+ * Copyright (c) 2024, Altera Corporation. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -17,6 +21,7 @@
 #include <lib/mmio.h>
 #include <lib/utils.h>
 
+<<<<<<< HEAD
 #include "agilex5_pinmux.h"
 #include "sdmmc.h"
 
@@ -29,17 +34,32 @@ static unsigned int mmc_flags;
 static struct mmc_device_info *mmc_dev_info;
 static unsigned int rca;
 static unsigned int scr[2]__aligned(16) = { 0 };
+=======
+#include "sdmmc.h"
+#include "socfpga_mailbox.h"
+#include "wdt/watchdog.h"
+
+static const struct mmc_ops *ops;
+static unsigned int mmc_ocr_value;
+static unsigned int mmc_flags;
+static unsigned int rca;
+>>>>>>> upstream_import/upstream_v2_14_1
 
 extern const struct mmc_ops cdns_sdmmc_ops;
 extern struct cdns_sdmmc_params cdns_params;
 extern struct cdns_sdmmc_combo_phy sdmmc_combo_phy_reg;
 extern struct cdns_sdmmc_sdhc sdmmc_sdhc_reg;
 
+<<<<<<< HEAD
 static bool is_cmd23_enabled(void)
+=======
+bool is_cmd23_enabled(void)
+>>>>>>> upstream_import/upstream_v2_14_1
 {
 	return ((mmc_flags & MMC_FLAG_CMD23) != 0U);
 }
 
+<<<<<<< HEAD
 static bool is_sd_cmd6_enabled(void)
 {
 	return ((mmc_flags & MMC_FLAG_SD_CMD6) != 0U);
@@ -63,6 +83,9 @@ void sdmmc_pin_config(void)
 }
 
 static int sdmmc_send_cmd(unsigned int idx, unsigned int arg,
+=======
+int sdmmc_send_cmd(unsigned int idx, unsigned int arg,
+>>>>>>> upstream_import/upstream_v2_14_1
 			unsigned int r_type, unsigned int *r_data)
 {
 	struct mmc_cmd cmd;
@@ -92,7 +115,11 @@ static int sdmmc_send_cmd(unsigned int idx, unsigned int arg,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int sdmmc_device_state(void)
+=======
+int sdmmc_device_state(void)
+>>>>>>> upstream_import/upstream_v2_14_1
 {
 	int retries = DEFAULT_SDMMC_MAX_RETRIES;
 	unsigned int resp_data[4];
@@ -123,6 +150,7 @@ static int sdmmc_device_state(void)
 	return MMC_GET_STATE(resp_data[0]);
 }
 
+<<<<<<< HEAD
 static int sdmmc_set_ext_csd(unsigned int ext_cmd, unsigned int value)
 {
 	int ret;
@@ -637,6 +665,14 @@ size_t sdmmc_read_blocks(int lba, uintptr_t buf, size_t size)
 			return 0;
 		}
 	}
+=======
+size_t sdmmc_read_blocks(int lba, uintptr_t buf, size_t size)
+{
+	mmc_read_blocks(lba, buf, size);
+
+	/* Restart watchdog for reading each chunk byte */
+	watchdog_sw_rst();
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	return size;
 }
@@ -707,6 +743,7 @@ size_t sdmmc_write_blocks(int lba, const uintptr_t buf, size_t size)
 
 	return size;
 }
+<<<<<<< HEAD
 
 int sd_or_mmc_init(const struct mmc_ops *ops_ptr, unsigned int clk,
 	     unsigned int width, unsigned int flags,
@@ -767,3 +804,5 @@ int sdmmc_init(handoff *hoff_ptr, struct cdns_sdmmc_params *params, struct mmc_d
 
 	return result;
 }
+=======
+>>>>>>> upstream_import/upstream_v2_14_1

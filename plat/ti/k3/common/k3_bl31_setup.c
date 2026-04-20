@@ -1,24 +1,16 @@
 /*
- * Copyright (c) 2017-2018, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
+ * K3 SOC specific bl31_setup
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <assert.h>
-#include <string.h>
-
-#include <platform_def.h>
-
-#include <arch.h>
-#include <arch_helpers.h>
-#include <common/bl_common.h>
 #include <common/debug.h>
-#include <lib/mmio.h>
-#include <lib/xlat_tables/xlat_tables_v2.h>
-
-#include <k3_console.h>
-#include <k3_gicv3.h>
 #include <ti_sci.h>
+#include <ti_sci_transport.h>
+
+#include <plat_private.h>
 
 #define ADDR_DOWN(_adr) (_adr & XLAT_ADDR_MASK(2U))
 #define SIZE_UP(_adr, _sz) (round_up((_adr + _sz), XLAT_BLOCK_SIZE(2U)) - ADDR_DOWN(_adr))
@@ -37,21 +29,12 @@ const mmap_region_t plat_k3_mmap[] = {
 	{ /* sentinel */ }
 };
 
-/*
- * Placeholder variables for maintaining information about the next image(s)
- */
-static entry_point_info_t bl32_image_ep_info;
-static entry_point_info_t bl33_image_ep_info;
-
-/*******************************************************************************
- * Gets SPSR for BL33 entry
- ******************************************************************************/
-static uint32_t k3_get_spsr_for_bl33_entry(void)
+int ti_soc_init(void)
 {
-	unsigned long el_status;
-	unsigned int mode;
-	uint32_t spsr;
+	struct ti_sci_msg_version version;
+	int ret;
 
+<<<<<<< HEAD
 	/* Figure out what mode we enter the non-secure world in */
 	el_status = read_id_aa64pfr0_el1() >> ID_AA64PFR0_EL2_SHIFT;
 	el_status &= ID_AA64PFR0_ELX_MASK;
@@ -148,45 +131,39 @@ unsigned int plat_get_syscnt_freq2(void)
 	 */
 	if ((gtc_ctrl & K3_GTC_CNTCR_HDBG_MASK) == 0U) {
 		WARN("GTC: Debug access doesn't stop time. Fix Bootloader\n");
+=======
+	ret = ti_sci_get_revision(&version);
+	if (ret) {
+		ERROR("Unable to communicate with the control firmware (%d)\n", ret);
+		return ret;
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 
-	gtc_freq = mmio_read_32(K3_GTC_BASE + K3_GTC_CNTFID0_OFFSET);
-	/* Many older bootloaders may have missed programming FID0 register */
-	if (gtc_freq != 0U) {
-		return gtc_freq;
+	INFO("SYSFW ABI: %d.%d (firmware rev 0x%04x '%s')\n",
+	     version.abi_major, version.abi_minor,
+	     version.firmware_revision,
+	     version.firmware_description);
+
+	/*
+	 * Older firmware have a timing issue with DM that crashes few TF-A
+	 * lite devices while trying to make calls to DM. Since there is no way
+	 * to detect what current DM version we are running - we rely on the
+	 * corresponding TIFS versioning to handle this check and ensure that
+	 * the platform boots up
+	 *
+	 * Upgrading to TIFS version 9.1.7 along with the corresponding DM from
+	 * ti-linux-firmware will enable this functionality.
+	 */
+	if (version.firmware_revision > 9 ||
+	    (version.firmware_revision == 9 && version.sub_version > 1) ||
+	    (version.firmware_revision == 9 && version.sub_version == 1 &&
+		 version.patch_version >= 7)
+	) {
+		if (ti_sci_device_get(PLAT_BOARD_DEVICE_ID)) {
+			WARN("Unable to take system power reference\n");
+		}
+	} else {
+		NOTICE("Upgrade Firmwares for Power off functionality\n");
 	}
-
-	/*
-	 * We could have just warned about this, but this can have serious
-	 * hard to debug side effects if we are NOT sure what the actual
-	 * frequency is. Lets make sure people don't miss this.
-	 */
-	ERROR("GTC_CNTFID0 is 0! Assuming %d Hz. Fix Bootloader\n",
-	      SYS_COUNTER_FREQ_IN_TICKS);
-
-	return SYS_COUNTER_FREQ_IN_TICKS;
-}
-
-/*******************************************************************************
- * Return a pointer to the 'entry_point_info' structure of the next image
- * for the security state specified. BL3-3 corresponds to the non-secure
- * image type while BL3-2 corresponds to the secure image type. A NULL
- * pointer is returned if the image does not exist.
- ******************************************************************************/
-entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
-{
-	entry_point_info_t *next_image_info;
-
-	assert(sec_state_is_valid(type));
-	next_image_info = (type == NON_SECURE) ? &bl33_image_ep_info :
-						 &bl32_image_ep_info;
-	/*
-	 * None of the images on the ARM development platforms can have 0x0
-	 * as the entrypoint
-	 */
-	if (next_image_info->pc)
-		return next_image_info;
-
-	NOTICE("Requested nonexistent image\n");
-	return NULL;
+	return 0;
 }

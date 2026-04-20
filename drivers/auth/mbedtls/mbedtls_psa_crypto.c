@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2023, Arm Limited. All rights reserved.
+=======
+ * Copyright (c) 2023-2025, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,12 +13,19 @@
 #include <string.h>
 
 /* mbed TLS headers */
+<<<<<<< HEAD
 #include <mbedtls/gcm.h>
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 #include <mbedtls/md.h>
 #include <mbedtls/memory_buffer_alloc.h>
 #include <mbedtls/oid.h>
 #include <mbedtls/platform.h>
+<<<<<<< HEAD
 #include <mbedtls/version.h>
+=======
+#include <mbedtls/psa_util.h>
+>>>>>>> upstream_import/upstream_v2_14_1
 #include <mbedtls/x509.h>
 #include <psa/crypto.h>
 #include <psa/crypto_platform.h>
@@ -22,19 +33,39 @@
 #include <psa/crypto_values.h>
 
 #include <common/debug.h>
+<<<<<<< HEAD
 #include <drivers/auth/crypto_mod.h>
 #include <drivers/auth/mbedtls/mbedtls_common.h>
+=======
+#include <drivers/auth/auth_util.h>
+#include <drivers/auth/crypto_mod.h>
+#include <drivers/auth/mbedtls/mbedtls_common.h>
+#include <drivers/auth/mbedtls/mbedtls_psa_crypto.h>
+>>>>>>> upstream_import/upstream_v2_14_1
 #include <plat/common/platform.h>
 
 #define LIB_NAME		"mbed TLS PSA"
 
+<<<<<<< HEAD
 /* Maximum length of R_S pair in the ECDSA signature in bytes */
 #define MAX_ECDSA_R_S_PAIR_LEN	64U
+=======
+/* Minimum required size for a buffer containing a raw EC signature when using
+ * a maximum curve size of 384 bits.
+ * This is calculated as 2 * (384 / 8). */
+#define ECDSA_SIG_BUFFER_SIZE	96U
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /* Size of ASN.1 length and tag in bytes*/
 #define SIZE_OF_ASN1_LEN	1U
 #define SIZE_OF_ASN1_TAG	1U
 
+<<<<<<< HEAD
+=======
+/* Global cache for keys */
+key_cache_t key_cache[MAX_CACHED_KEYS] = {0};
+
+>>>>>>> upstream_import/upstream_v2_14_1
 #if CRYPTO_SUPPORT == CRYPTO_HASH_CALC_ONLY || \
 CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_AND_HASH_CALC
 /*
@@ -49,6 +80,7 @@ CASSERT(CRYPTO_MD_MAX_SIZE >= MBEDTLS_MD_MAX_SIZE,
 	* CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_AND_HASH_CALC
 	*/
 
+<<<<<<< HEAD
 static inline psa_algorithm_t mbedtls_md_psa_alg_from_type(
 						mbedtls_md_type_t md_type)
 {
@@ -59,6 +91,8 @@ static inline psa_algorithm_t mbedtls_md_psa_alg_from_type(
 	return PSA_ALG_CATEGORY_HASH | (psa_algorithm_t) (md_type + 0x5);
 }
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 /*
  * AlgorithmIdentifier  ::=  SEQUENCE  {
  *     algorithm               OBJECT IDENTIFIER,
@@ -112,6 +146,7 @@ static void init(void)
 
 #if CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_ONLY || \
 CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_AND_HASH_CALC
+<<<<<<< HEAD
 
 static void construct_psa_key_alg_and_type(mbedtls_pk_type_t pk_alg,
 					   mbedtls_md_type_t md_alg,
@@ -223,10 +258,114 @@ static int get_ecdsa_pkinfo_from_asn1(unsigned char **pk_start,
 	*pk_start = pk_ptr;
 	*pk_len = len;
 
+=======
+/* Destroy all psa key ids created in a loop */
+static void destroy_key_ids(void)
+{
+	for (int i = 0; i < MAX_CACHED_KEYS; i++) {
+		if (key_cache[i].valid) {
+			psa_destroy_key(key_cache[i].key_id);
+		}
+	}
+}
+
+/* Retrieve cached key ID, algorithm, and key attributes */
+static bool get_cached_psa_key_info(const char *pk_oid, psa_key_id_t *key_id,
+		psa_algorithm_t *psa_alg, psa_key_attributes_t *psa_key_attr)
+{
+	for (int i = 0; i < MAX_CACHED_KEYS; i++) {
+		if (key_cache[i].valid &&
+				(strlen(key_cache[i].pk_oid) == strlen(pk_oid)) &&
+				(strncmp(key_cache[i].pk_oid, pk_oid, strlen(pk_oid)) == 0)) {
+			*key_id = key_cache[i].key_id;
+			*psa_alg = key_cache[i].psa_alg;
+			*psa_key_attr = key_cache[i].psa_key_attr;
+			return true;
+		}
+	}
+	return false;
+}
+
+/* Store key ID, algorithm, and key attributes in the cache */
+static int cache_psa_key_info(const char *pk_oid, psa_key_id_t key_id, psa_algorithm_t psa_alg,
+		psa_key_attributes_t psa_key_attr)
+{
+	for (int i = 0; i < MAX_CACHED_KEYS; i++) {
+		if (!key_cache[i].valid) {
+			key_cache[i].pk_oid = pk_oid;
+			key_cache[i].key_id = key_id;
+			key_cache[i].psa_alg = psa_alg;
+			key_cache[i].psa_key_attr = psa_key_attr;
+			key_cache[i].valid = true;
+			return CRYPTO_SUCCESS;
+		}
+	}
+	return CRYPTO_ERR_SIGNATURE;
+}
+
+/*
+ * NOTE: This has been made internal in mbedtls 3.6.0 and the mbedtls team has
+ * advised that it's better to copy out the declaration than it would be to
+ * update to 3.5.2, where this function is exposed.
+ */
+int mbedtls_x509_get_sig_alg(const mbedtls_x509_buf *sig_oid,
+			     const mbedtls_x509_buf *sig_params,
+			     mbedtls_md_type_t *md_alg,
+			     mbedtls_pk_type_t *pk_alg,
+			     void **sig_opts);
+
+/*
+ * This is a helper function which parses a SignatureAlgorithm OID.
+ * It extracts the pk algorithm and constructs a psa_algorithm_t object
+ * to be used by PSA calls.
+ */
+static int construct_psa_alg(void *sig_alg, unsigned int sig_alg_len,
+			     mbedtls_pk_type_t *pk_alg, psa_algorithm_t *psa_alg)
+{
+	int rc;
+	mbedtls_md_type_t md_alg;
+	void *sig_opts = NULL;
+	mbedtls_asn1_buf sig_alg_oid, params;
+	unsigned char *p = (unsigned char *) sig_alg;
+	unsigned char *end = (unsigned char *) sig_alg + sig_alg_len;
+
+	rc = mbedtls_asn1_get_alg(&p, end, &sig_alg_oid, &params);
+	if (rc != 0) {
+		rc = CRYPTO_ERR_SIGNATURE;
+		goto end;
+	}
+
+	rc = mbedtls_x509_get_sig_alg(&sig_alg_oid, &params, &md_alg, pk_alg, &sig_opts);
+	if (rc != 0) {
+		rc = CRYPTO_ERR_SIGNATURE;
+		goto end;
+	}
+
+	psa_algorithm_t psa_md_alg = mbedtls_md_psa_alg_from_type(md_alg);
+
+	switch (*pk_alg) {
+	case MBEDTLS_PK_RSASSA_PSS:
+		*psa_alg = PSA_ALG_RSA_PSS(psa_md_alg);
+		rc = CRYPTO_SUCCESS;
+		break;
+	case MBEDTLS_PK_ECDSA:
+		*psa_alg = PSA_ALG_ECDSA(psa_md_alg);
+		rc = CRYPTO_SUCCESS;
+		break;
+	default:
+		*psa_alg = PSA_ALG_NONE;
+		rc = CRYPTO_ERR_SIGNATURE;
+		break;
+	}
+
+end:
+	mbedtls_free(sig_opts);
+>>>>>>> upstream_import/upstream_v2_14_1
 	return rc;
 }
 
 /*
+<<<<<<< HEAD
  * Ecdsa-Sig-Value  ::=  SEQUENCE  {
  *   r     INTEGER,
  *   s     INTEGER
@@ -291,6 +430,23 @@ static int get_ecdsa_signature_from_asn1(unsigned char *sig_ptr,
 	* TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_ECDSA || \
 	* TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_RSA_AND_ECDSA
 	**/
+=======
+ * Helper functions for mbedtls PK contexts.
+ */
+static void initialize_pk_context(mbedtls_pk_context *pk, bool *pk_initialized)
+{
+	mbedtls_pk_init(pk);
+	*pk_initialized = true;
+}
+
+static void cleanup_pk_context(mbedtls_pk_context *pk, bool *pk_initialized)
+{
+	if (*pk_initialized) {
+		mbedtls_pk_free(pk);
+		*pk_initialized = false;
+	}
+}
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /*
  * Verify a signature.
@@ -303,6 +459,7 @@ static int verify_signature(void *data_ptr, unsigned int data_len,
 			    void *sig_alg, unsigned int sig_alg_len,
 			    void *pk_ptr, unsigned int pk_len)
 {
+<<<<<<< HEAD
 	mbedtls_asn1_buf sig_oid, sig_params;
 	mbedtls_asn1_buf signature;
 	mbedtls_md_type_t md_alg;
@@ -367,12 +524,95 @@ TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_RSA_AND_ECDSA
 		if (rc != 0) {
 			goto end2;
 		}
+=======
+	unsigned char *p, *end;
+	mbedtls_pk_context pk;
+	bool pk_initialized = false;
+	int rc = CRYPTO_ERR_SIGNATURE;
+	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_key_attributes_t psa_key_attr = PSA_KEY_ATTRIBUTES_INIT;
+	psa_key_id_t psa_key_id;
+	mbedtls_pk_type_t pk_alg;
+	psa_algorithm_t psa_alg;
+	const char *pk_oid = get_current_pk_oid();
+	__unused unsigned char reformatted_sig[ECDSA_SIG_BUFFER_SIZE] = {0};
+	unsigned char *local_sig_ptr;
+	size_t local_sig_len;
+
+	/* Check if key, algorithm, and key attributes are already cached */
+	if (!get_cached_psa_key_info(pk_oid, &psa_key_id, &psa_alg, &psa_key_attr)) {
+		/* Load the key into the PSA key store. */
+		initialize_pk_context(&pk, &pk_initialized);
+
+		p = (unsigned char *) pk_ptr;
+		end = p + pk_len;
+		rc = mbedtls_pk_parse_subpubkey(&p, end, &pk);
+		if (rc != 0) {
+			rc = CRYPTO_ERR_SIGNATURE;
+			goto end2;
+		}
+
+		rc = mbedtls_pk_get_psa_attributes(&pk, PSA_KEY_USAGE_VERIFY_MESSAGE,
+				&psa_key_attr);
+		if (rc != 0) {
+			rc = CRYPTO_ERR_SIGNATURE;
+			goto end2;
+		}
+
+		rc = construct_psa_alg(sig_alg, sig_alg_len, &pk_alg, &psa_alg);
+		if (rc != CRYPTO_SUCCESS) {
+			goto end2;
+		}
+		psa_set_key_algorithm(&psa_key_attr, psa_alg);
+
+		rc = mbedtls_pk_import_into_psa(&pk, &psa_key_attr, &psa_key_id);
+		if (rc != 0) {
+			rc = CRYPTO_ERR_SIGNATURE;
+			goto end2;
+		}
+
+		/* Cache the key, algorithm, and key attributes for future use */
+		rc = cache_psa_key_info(pk_oid, psa_key_id, psa_alg, psa_key_attr);
+		if (rc != CRYPTO_SUCCESS) {
+			goto end2;
+		}
+
+		/* Optimize mbedtls heap usage by freeing the pk context now.  */
+		cleanup_pk_context(&pk, &pk_initialized);
+	}
+
+	/* Extract the signature from sig_ptr. */
+	p = (unsigned char *) sig_ptr;
+	end = p + sig_len;
+	rc = mbedtls_asn1_get_bitstring_null(&p, end, &local_sig_len);
+	if (rc != 0) {
+		rc = CRYPTO_ERR_SIGNATURE;
+		goto end1;
+	}
+	local_sig_ptr = p;
+
+#if TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_ECDSA || \
+TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_RSA_AND_ECDSA
+	if (PSA_ALG_IS_ECDSA(psa_alg)) {
+		/* Convert the DER ASN.1 signature to raw format. */
+		size_t key_bits = psa_get_key_bits(&psa_key_attr);
+
+		rc = mbedtls_ecdsa_der_to_raw(key_bits, p, local_sig_len,
+					      reformatted_sig, ECDSA_SIG_BUFFER_SIZE,
+					      &local_sig_len);
+		if (rc != 0) {
+			rc = CRYPTO_ERR_SIGNATURE;
+			goto end1;
+		}
+		local_sig_ptr = reformatted_sig;
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 #endif /*
 	* TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_ECDSA || \
 	* TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_RSA_AND_ECDSA
 	**/
 
+<<<<<<< HEAD
 	/* Convert this pk_alg and md_alg to PSA key type and key algorithm */
 	construct_psa_key_alg_and_type(pk_alg, md_alg, psa_ecc_family,
 				       &psa_alg, &psa_key_type);
@@ -422,6 +662,21 @@ end1:
 	psa_destroy_key(psa_key_id);
 end2:
 	mbedtls_free(sig_opts);
+=======
+	/* Verify the signature. */
+	psa_status = psa_verify_message(psa_key_id, psa_alg,
+				    data_ptr, data_len,
+				    local_sig_ptr, local_sig_len);
+
+	rc = (psa_status == PSA_SUCCESS) ? CRYPTO_SUCCESS : CRYPTO_ERR_SIGNATURE;
+
+end1:
+	return rc;
+end2:
+	/* Free the pk context, if it is initialized. */
+	cleanup_pk_context(&pk, &pk_initialized);
+
+>>>>>>> upstream_import/upstream_v2_14_1
 	return rc;
 }
 
@@ -502,6 +757,21 @@ static int verify_hash(void *data_ptr, unsigned int data_len,
 	* CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_AND_HASH_CALC
 	*/
 
+<<<<<<< HEAD
+=======
+/*
+ * Finish crypto usage by destroying the psa_key_ids
+ */
+static void finish(void)
+{
+#if CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_ONLY || \
+CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_AND_HASH_CALC
+	/* Destroy the psa_key_ids */
+	destroy_key_ids();
+#endif
+}
+
+>>>>>>> upstream_import/upstream_v2_14_1
 #if CRYPTO_SUPPORT == CRYPTO_HASH_CALC_ONLY || \
 CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_AND_HASH_CALC
 /*
@@ -570,6 +840,7 @@ static int aes_gcm_decrypt(void *data_ptr, size_t len, const void *key,
 			   unsigned int iv_len, const void *tag,
 			   unsigned int tag_len)
 {
+<<<<<<< HEAD
 	mbedtls_gcm_context ctx;
 	mbedtls_cipher_id_t cipher = MBEDTLS_CIPHER_ID_AES;
 	unsigned char buf[DEC_OP_BUF_SIZE];
@@ -595,11 +866,42 @@ static int aes_gcm_decrypt(void *data_ptr, size_t len, const void *key,
 	if (rc != 0) {
 		rc = CRYPTO_ERR_DECRYPTION;
 		goto exit_gcm;
+=======
+	mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+	psa_aead_operation_t operation = PSA_AEAD_OPERATION_INIT;
+	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+	psa_status_t psa_status = PSA_ERROR_GENERIC_ERROR;
+	unsigned char buf[DEC_OP_BUF_SIZE];
+	unsigned char *pt = data_ptr;
+	size_t dec_len;
+	size_t output_length;
+
+	/* Load the key into the PSA key store. */
+	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_DECRYPT);
+	psa_set_key_algorithm(&attributes, PSA_ALG_GCM);
+	psa_set_key_type(&attributes, PSA_KEY_TYPE_AES);
+
+	psa_status = psa_import_key(&attributes, key, key_len, &key_id);
+	if (psa_status != PSA_SUCCESS) {
+		return CRYPTO_ERR_DECRYPTION;
+	}
+
+	/* Perform the decryption. */
+	psa_status = psa_aead_decrypt_setup(&operation, key_id, PSA_ALG_GCM);
+	if (psa_status != PSA_SUCCESS) {
+		goto err;
+	}
+
+	psa_status = psa_aead_set_nonce(&operation, iv, iv_len);
+	if (psa_status != PSA_SUCCESS) {
+		goto err;
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	while (len > 0) {
 		dec_len = MIN(sizeof(buf), len);
 
+<<<<<<< HEAD
 #if (MBEDTLS_VERSION_MAJOR < 3)
 		rc = mbedtls_gcm_update(&ctx, dec_len, pt, buf);
 #else
@@ -642,6 +944,30 @@ static int aes_gcm_decrypt(void *data_ptr, size_t len, const void *key,
 exit_gcm:
 	mbedtls_gcm_free(&ctx);
 	return rc;
+=======
+		psa_status = psa_aead_update(&operation, pt, dec_len, buf,
+					     sizeof(buf), &output_length);
+		if (psa_status != PSA_SUCCESS) {
+			goto err;
+		}
+
+		memcpy(pt, buf, output_length);
+		pt += output_length;
+		len -= dec_len;
+	}
+
+	/* Verify the tag. */
+	psa_status = psa_aead_verify(&operation, NULL, 0, &output_length, tag, tag_len);
+	if (psa_status == PSA_SUCCESS) {
+		psa_destroy_key(key_id);
+		return CRYPTO_SUCCESS;
+	}
+
+err:
+	psa_aead_abort(&operation);
+	psa_destroy_key(key_id);
+	return CRYPTO_ERR_DECRYPTION;
+>>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /*
@@ -678,14 +1004,22 @@ static int auth_decrypt(enum crypto_dec_algo dec_algo, void *data_ptr,
 #if CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_AND_HASH_CALC
 #if TF_MBEDTLS_USE_AES_GCM
 REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, calc_hash,
+<<<<<<< HEAD
 		    auth_decrypt, NULL);
 #else
 REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, calc_hash,
 		    NULL, NULL);
+=======
+		    auth_decrypt, NULL, finish);
+#else
+REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, calc_hash,
+		    NULL, NULL, finish);
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif
 #elif CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_ONLY
 #if TF_MBEDTLS_USE_AES_GCM
 REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, NULL,
+<<<<<<< HEAD
 		    auth_decrypt, NULL);
 #else
 REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, NULL,
@@ -693,4 +1027,13 @@ REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, NULL,
 #endif
 #elif CRYPTO_SUPPORT == CRYPTO_HASH_CALC_ONLY
 REGISTER_CRYPTO_LIB(LIB_NAME, init, NULL, NULL, calc_hash, NULL, NULL);
+=======
+		    auth_decrypt, NULL, finish);
+#else
+REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, NULL,
+		    NULL, NULL, finish);
+#endif
+#elif CRYPTO_SUPPORT == CRYPTO_HASH_CALC_ONLY
+REGISTER_CRYPTO_LIB(LIB_NAME, init, NULL, NULL, calc_hash, NULL, NULL, finish);
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif /* CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_AND_HASH_CALC */

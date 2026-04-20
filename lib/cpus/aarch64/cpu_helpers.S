@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2014-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,6 +14,7 @@
 #include <lib/cpus/errata.h>
 #include <lib/el3_runtime/cpu_data.h>
 
+<<<<<<< HEAD
  /* Reset fn is needed in BL at reset vector */
 #if defined(IMAGE_BL1) || defined(IMAGE_BL31) ||	\
 	(defined(IMAGE_BL2) && RESET_TO_BL2)
@@ -113,6 +114,8 @@ func init_cpu_ops
 endfunc init_cpu_ops
 #endif /* IMAGE_BL31 */
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 #if defined(IMAGE_BL31) && CRASH_REPORTING
 	/*
 	 * The cpu specific registers which need to be reported in a crash
@@ -165,13 +168,13 @@ func get_cpu_ops_ptr
 	and	w2, w2, w3
 
 	/* Get the cpu_ops end location */
-	adr	x5, (__CPU_OPS_END__ + CPU_MIDR)
+	adr_l	x5, (__CPU_OPS_END__ + CPU_MIDR)
 
 	/* Initialize the return parameter */
 	mov	x0, #0
 1:
 	/* Get the cpu_ops start location */
-	adr	x4, (__CPU_OPS_START__ + CPU_MIDR)
+	adr_l	x4, (__CPU_OPS_START__ + CPU_MIDR)
 
 2:
 	/* Check if we have reached end of list */
@@ -213,28 +216,23 @@ search_def_ptr:
 	b	1b
 error_exit:
 #endif
+#if ENABLE_ASSERTIONS
+	/*
+	 * Assert if invalid cpu_ops obtained. If this is not valid, it may
+	 * suggest that the proper CPU file hasn't been included.
+	 */
+	cmp	x0, #0
+	ASM_ASSERT(ne)
+#endif
 	ret
 endfunc get_cpu_ops_ptr
 
-/*
- * Extract CPU revision and variant, and combine them into a single numeric for
- * easier comparison.
- */
 	.globl	cpu_get_rev_var
 func cpu_get_rev_var
-	mrs	x1, midr_el1
-
-	/*
-	 * Extract the variant[23:20] and revision[3:0] from MIDR, and pack them
-	 * as variant[7:4] and revision[3:0] of x0.
-	 *
-	 * First extract x1[23:16] to x0[7:0] and zero fill the rest. Then
-	 * extract x1[3:0] into x0[3:0] retaining other bits.
-	 */
-	ubfx	x0, x1, #(MIDR_VAR_SHIFT - MIDR_REV_BITS), #(MIDR_REV_BITS + MIDR_VAR_BITS)
-	bfxil	x0, x1, #MIDR_REV_SHIFT, #MIDR_REV_BITS
+	get_rev_var x0, x1
 	ret
 endfunc cpu_get_rev_var
+<<<<<<< HEAD
 
 /*
  * Compare the CPU's revision-variant (x0) with a given value (x1), for errata
@@ -391,3 +389,5 @@ func check_smccc_arch_wa3_applies
 	mov	x0, #ERRATA_NOT_APPLIES
 	ret
 endfunc check_smccc_arch_wa3_applies
+=======
+>>>>>>> upstream_import/upstream_v2_14_1

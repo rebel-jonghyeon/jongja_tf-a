@@ -19,7 +19,11 @@ static const uint8_t sample_delegated_key[] = {
 
 /*
  * Get the hardcoded delegated realm attestation key as FVP
+<<<<<<< HEAD
  * does not support RSS.
+=======
+ * does not support RSE.
+>>>>>>> upstream_import/upstream_v2_14_1
  */
 int plat_rmmd_get_cca_realm_attest_key(uintptr_t buf, size_t *len,
 				       unsigned int type)

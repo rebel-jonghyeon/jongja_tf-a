@@ -1,10 +1,15 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2020-2023, Arm Limited. All rights reserved.
+=======
+ * Copyright (c) 2020-2024, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 /dts-v1/;
 
+<<<<<<< HEAD
 / {
 	compatible = "arm,ffa-core-manifest-1.0";
 	#address-cells = <2>;
@@ -125,5 +130,15 @@
 		device_type = "ns-memory";
 		reg = <0x0 0x80000000 0x0 0x79000000>,
 		      <0x80 0x80000000 0x1 0x80000000>;
+=======
+#include <tc_spmc_manifest.dtsi>
+#include <tc_spmc_common_sp_manifest.dtsi>
+
+&hafnium {
+	vm1 {
+		debug_name = "op-tee";
+		load_address = <0xfd280000>;
+		mem_size = <0xb00000>; /* 11MB TZC DRAM */
+>>>>>>> upstream_import/upstream_v2_14_1
 	};
 };

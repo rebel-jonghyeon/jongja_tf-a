@@ -14,4 +14,19 @@
 		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
 	})
 
+<<<<<<< HEAD
+=======
+/*******************************************************************************
+ * interrupt handling related constants
+ ******************************************************************************/
+#define ARM_IRQ_SEC_SGI_0	8U
+#define ARM_IRQ_SEC_SGI_1	9U
+#define ARM_IRQ_SEC_SGI_2	10U
+#define ARM_IRQ_SEC_SGI_3	11U
+#define ARM_IRQ_SEC_SGI_4	12U
+#define ARM_IRQ_SEC_SGI_5	13U
+#define ARM_IRQ_SEC_SGI_6	14U
+#define ARM_IRQ_SEC_SGI_7	15U
+
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif /* PLAT_COMMON_H */

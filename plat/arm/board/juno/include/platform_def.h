@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2014-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,6 +14,7 @@
 #include <plat/arm/board/common/board_css_def.h>
 #include <plat/arm/board/common/v2m_def.h>
 #include <plat/arm/common/arm_def.h>
+#include <plat/arm/common/arm_spm_def.h>
 #include <plat/arm/css/common/css_def.h>
 #include <plat/arm/soc/common/soc_css_def.h>
 #include <plat/common/common_def.h>
@@ -32,12 +33,23 @@
 #define PLATFORM_CORE_COUNT		(JUNO_CLUSTER0_CORE_COUNT + \
 					JUNO_CLUSTER1_CORE_COUNT)
 
-/* Cryptocell HW Base address */
-#define PLAT_CRYPTOCELL_BASE		UL(0x60050000)
-
 /*
  * Other platform porting definitions are provided by included headers
  */
+
+#if SPMC_AT_EL3
+/* Define memory configuration for device tree files. */
+#define PLAT_ARM_HW_CONFIG_SIZE			SZ_2K
+
+/* Define maximum size of sp manifest file. */
+#define PLAT_ARM_SPMC_SP_MANIFEST_SIZE		SZ_2K
+#else
+/* Define memory configuration for device tree files. */
+#define PLAT_ARM_HW_CONFIG_SIZE			U(0x8000)
+
+/* Define maximum size of sp manifest file. */
+#define PLAT_ARM_SPMC_SP_MANIFEST_SIZE		U(0x0)
+#endif
 
 /*
  * Required ARM standard platform porting definitions
@@ -131,8 +143,15 @@
 #endif
 
 #ifdef IMAGE_BL31
-# define PLAT_ARM_MMAP_ENTRIES		8
-# define MAX_XLAT_TABLES		6
+# if SPMC_AT_EL3
+#   define PLAT_ARM_MMAP_ENTRIES		11
+#   define MAX_XLAT_TABLES		10
+#   define PLAT_SP_IMAGE_MMAP_REGIONS 30
+#   define PLAT_SP_IMAGE_MAX_XLAT_TABLES 12
+# else
+#   define PLAT_ARM_MMAP_ENTRIES		8
+#   define MAX_XLAT_TABLES		6
+# endif
 #endif
 
 #ifdef IMAGE_BL32
@@ -140,11 +159,55 @@
 # define MAX_XLAT_TABLES		4
 #endif
 
+#if SPMC_AT_EL3
+/*
+ * Number of Secure Partitions supported.
+ * SPMC at EL3, uses this count to configure the maximum number of supported
+ * secure partitions.
+ */
+#define SECURE_PARTITION_COUNT		1
+
+/*
+ * Number of Normal World Partitions supported.
+ * SPMC at EL3, uses this count to configure the maximum number of supported
+ * NWd partitions.
+ */
+#define NS_PARTITION_COUNT		1
+
+/*
+ * Number of Logical Partitions supported.
+ * SPMC at EL3, uses this count to configure the maximum number of supported
+ * logical partitions.
+ */
+#define MAX_EL3_LP_DESCS_COUNT		1
+
+#endif /* SPMC_AT_EL3 */
+
+#if TRANSFER_LIST
+#define PLAT_ARM_FW_HANDOFF_SIZE	SZ_8K
+
+#define FW_NS_HANDOFF_BASE		(PLAT_ARM_NS_IMAGE_BASE - PLAT_ARM_FW_HANDOFF_SIZE)
+#define PLAT_ARM_EL3_FW_HANDOFF_BASE	ARM_BL_RAM_BASE
+#define PLAT_ARM_EL3_FW_HANDOFF_LIMIT	PLAT_ARM_EL3_FW_HANDOFF_BASE + PLAT_ARM_FW_HANDOFF_SIZE
+
+#define JUNO_MAP_FW_NS_HANDOFF			\
+	MAP_REGION_FLAT(FW_NS_HANDOFF_BASE,			\
+			PLAT_ARM_FW_HANDOFF_SIZE,			\
+			MT_MEMORY | MT_RW | MT_NS)
+
+#define JUNO_MAP_EL3_FW_HANDOFF			\
+	MAP_REGION_FLAT(PLAT_ARM_EL3_FW_HANDOFF_BASE,			\
+			PLAT_ARM_FW_HANDOFF_SIZE,			\
+			MT_MEMORY | MT_RW | EL3_PAS)
+#else
+#define PLAT_ARM_FW_HANDOFF_SIZE	U(0)
+#endif
+
 /*
  * PLAT_ARM_MAX_BL1_RW_SIZE is calculated using the current BL1 RW debug size
  * plus a little space for growth.
  */
-#if TRUSTED_BOARD_BOOT
+#if TRUSTED_BOARD_BOOT || MEASURED_BOOT
 # define PLAT_ARM_MAX_BL1_RW_SIZE	UL(0xB000)
 #else
 # define PLAT_ARM_MAX_BL1_RW_SIZE	UL(0x6000)
@@ -156,7 +219,7 @@
  */
 #if TRUSTED_BOARD_BOOT
 #if TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_RSA_AND_ECDSA
-# define PLAT_ARM_MAX_BL2_SIZE	(UL(0x1F000) - JUNO_BL2_ROMLIB_OPTIMIZATION)
+# define PLAT_ARM_MAX_BL2_SIZE	(UL(0x20000) - JUNO_BL2_ROMLIB_OPTIMIZATION)
 #elif TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_ECDSA
 # define PLAT_ARM_MAX_BL2_SIZE	(UL(0x1D000) - JUNO_BL2_ROMLIB_OPTIMIZATION)
 #else
@@ -172,7 +235,11 @@
  * BL2 and BL1-RW.  SCP_BL2 image is loaded into the space BL31 -> BL2_BASE.
  * Hence the BL31 PROGBITS size should be >= PLAT_CSS_MAX_SCP_BL2_SIZE.
  */
+#if TRANSFER_LIST
+#define PLAT_ARM_MAX_BL31_SIZE		(ARM_BL_RAM_SIZE - PLAT_ARM_FW_HANDOFF_SIZE)
+#else
 #define PLAT_ARM_MAX_BL31_SIZE		UL(0x3D000)
+#endif
 
 #if JUNO_AARCH32_EL3_RUNTIME
 /*
@@ -210,6 +277,9 @@
 #elif defined(IMAGE_BL32)
 # define PLATFORM_STACK_SIZE		UL(0x440)
 #endif
+
+#define PLAT_ARM_SP_IMAGE_STACK_BASE	(PLAT_SPM_BUF_BASE + \
+					 PLAT_SPM_BUF_SIZE)
 
 /* CCI related constants */
 #define PLAT_ARM_CCI_BASE		UL(0x2c090000)
@@ -249,12 +319,14 @@
 /* MHU related constants */
 #define PLAT_CSS_MHU_BASE		UL(0x2b1f0000)
 
+#if CSS_USE_SCMI_SDS_DRIVER
+/* Index of SDS region used in the communication between AP and SCP */
+#define SDS_SCP_AP_REGION_ID			U(0)
+#else
 /*
  * Base address of the first memory region used for communication between AP
  * and SCP. Used by the BOM and SCPI protocols.
- */
-#if !CSS_USE_SCMI_SDS_DRIVER
-/*
+ *
  * Note that this is located at the same address as SCP_BOOT_CFG_ADDR, which
  * means the SCP/AP configuration data gets overwritten when the AP initiates
  * communication with the SCP. The configuration data is expected to be a
@@ -264,13 +336,18 @@
 #define PLAT_CSS_SCP_COM_SHARED_MEM_BASE	(ARM_TRUSTED_SRAM_BASE + UL(0x80))
 #define PLAT_CSS_PRIMARY_CPU_SHIFT		8
 #define PLAT_CSS_PRIMARY_CPU_BIT_WIDTH		4
-#endif
+#endif /* CSS_USE_SCMI_SDS_DRIVER */
 
 /*
  * SCP_BL2 uses up whatever remaining space is available as it is loaded before
  * anything else in this memory region and is handed over to the SCP before
  * BL31 is loaded over the top.
  */
+#if TRANSFER_LIST
+#define ARM_FW_CONFIG_LIMIT		((ARM_BL_RAM_BASE + PAGE_SIZE) \
+					+ (PAGE_SIZE / 2U))
+#endif
+
 #define PLAT_CSS_MAX_SCP_BL2_SIZE \
 	((SCP_BL2_LIMIT - ARM_FW_CONFIG_LIMIT) & ~PAGE_SIZE_MASK)
 
@@ -320,6 +397,12 @@
 #else
 #define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 32)
 #define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 32)
+#endif
+
+#if defined(IMAGE_BL1) && TRANSFER_LIST
+#define PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x200)
+#else
+#define PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x400)
 #endif
 
 /* Number of SCMI channels on the platform */

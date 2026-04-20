@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -86,10 +90,10 @@
 	 * will be extracted from per-cpu data by the C level SMC handler and
 	 * saved to the PMF timestamp region.
 	 */
-	mrs	x30, cntpct_el0
 	str	x29, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X29]
-	mrs	x29, tpidr_el3
-	str	x30, [x29, #CPU_DATA_PMF_TS0_OFFSET]
+	per_cpu_cur percpu_data, x29, x30
+	mrs	x30, cntpct_el0
+	str	x30, [x29, #CPU_DATA_CPU_DATA_PMF_TS]
 	ldr	x29, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X29]
 #endif
 
@@ -229,7 +233,10 @@ vector_entry sync_exception_aarch64
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
+<<<<<<< HEAD
 	unmask_async_ea
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	handle_sync_exception
 end_vector_entry sync_exception_aarch64
 
@@ -237,7 +244,10 @@ vector_entry irq_aarch64
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
+<<<<<<< HEAD
 	unmask_async_ea
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_interrupt_exception
 end_vector_entry irq_aarch64
 
@@ -245,7 +255,10 @@ vector_entry fiq_aarch64
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
+<<<<<<< HEAD
 	unmask_async_ea
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	b 	handle_interrupt_exception
 end_vector_entry fiq_aarch64
 
@@ -258,7 +271,10 @@ vector_entry serror_aarch64
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
+<<<<<<< HEAD
 	unmask_async_ea
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_lower_el_async_ea
 #else
 	b	report_unhandled_exception
@@ -279,7 +295,10 @@ vector_entry sync_exception_aarch32
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
+<<<<<<< HEAD
 	unmask_async_ea
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	handle_sync_exception
 end_vector_entry sync_exception_aarch32
 
@@ -287,7 +306,10 @@ vector_entry irq_aarch32
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
+<<<<<<< HEAD
 	unmask_async_ea
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_interrupt_exception
 end_vector_entry irq_aarch32
 
@@ -295,7 +317,10 @@ vector_entry fiq_aarch32
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
+<<<<<<< HEAD
 	unmask_async_ea
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_interrupt_exception
 end_vector_entry fiq_aarch32
 
@@ -308,7 +333,10 @@ vector_entry serror_aarch32
 	save_x30
 	apply_at_speculative_wa
 	sync_and_handle_pending_serror
+<<<<<<< HEAD
 	unmask_async_ea
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	b	handle_lower_el_async_ea
 #else
 	b	report_unhandled_exception
@@ -348,11 +376,6 @@ sync_handler64:
 	 */
 	bl	prepare_el3_entry
 
-#if ENABLE_PAUTH
-	/* Load and program APIAKey firmware key */
-	bl	pauth_load_bl31_apiakey
-#endif
-
 	/*
 	 * Populate the parameters for the SMC handler.
 	 * We already have x0-x4 in place. x5 will point to a cookie (not used
@@ -384,12 +407,6 @@ sync_handler64:
 	/* Load SCR_EL3 */
 	mrs	x18, scr_el3
 
-	/* check for system register traps */
-	mrs	x16, esr_el3
-	ubfx	x17, x16, #ESR_EC_SHIFT, #ESR_EC_LENGTH
-	cmp	x17, #EC_AARCH64_SYS
-	b.eq	sysreg_handler64
-
 	/* Clear flag register */
 	mov	x7, xzr
 
@@ -407,6 +424,12 @@ sync_handler64:
 
 	/* Copy SCR_EL3.NS bit to the flag to indicate caller's security */
 	bfi	x7, x18, #0, #1
+
+	/* check for system register traps */
+	mrs	x16, esr_el3
+	ubfx	x17, x16, #ESR_EC_SHIFT, #ESR_EC_LENGTH
+	cmp	x17, #EC_AARCH64_SYS
+	b.eq	sysreg_handler64
 
 	mov	sp, x12
 
@@ -450,7 +473,7 @@ sync_handler64:
 	 *
 	 * handler = (base + off) + (index << log2(size))
 	 */
-	adr	x11, (__RT_SVC_DESCS_START__ + RT_SVC_DESC_HANDLE)
+	adr_l	x11, (__RT_SVC_DESCS_START__ + RT_SVC_DESC_HANDLE)
 	lsl	w10, w15, #RT_SVC_SIZE_LOG2
 	ldr	x15, [x11, w10, uxtw]
 
@@ -469,6 +492,7 @@ sync_handler64:
 sysreg_handler64:
 	mov	x0, x16		/* ESR_EL3, containing syndrome information */
 	mov	x1, x6		/* lower EL's context */
+	mov	x2, x7		/* flags, used to find security state */
 	mov	x19, x6		/* save context pointer for after the call */
 	mov	sp, x12		/* EL3 runtime stack, as loaded above */
 
@@ -476,20 +500,32 @@ sysreg_handler64:
 	bl	handle_sysreg_trap
 	/*
 	 * returns:
-	 *   -1: unhandled trap, panic
+	 *   -1: unhandled trap, UNDEF injection into lower EL
 	 *    0: handled trap, return to the trapping instruction (repeating it)
 	 *    1: handled trap, return to the next instruction
 	 */
 
 	tst	w0, w0
-	b.mi	elx_panic	/* negative return value: panic */
-	b.eq	1f		/* zero: do not change ELR_EL3 */
+	b.mi	2f	/* negative: undefined exception injection */
 
-	/* advance the PC to continue after the instruction */
+	b.eq	1f	/* zero: do not change ELR_EL3 */
+	/* positive: advance the PC to continue after the instruction */
 	ldr	x1, [x19, #CTX_EL3STATE_OFFSET + CTX_ELR_EL3]
 	add	x1, x1, #4
 	str	x1, [x19, #CTX_EL3STATE_OFFSET + CTX_ELR_EL3]
 1:
+	b	el3_exit
+2:
+	/*
+	 * UNDEF injection to lower EL, the support is only provided for lower
+	 * EL in AArch64 mode, for AArch32 mode it will do elx_panic as before.
+	 */
+	mrs	x0, spsr_el3
+	tst	x0, #(SPSR_M_MASK << SPSR_M_SHIFT)
+	b.ne	elx_panic
+	/* Pass context pointer as an argument to inject_undef64 */
+	mov	x0, x19
+	bl	inject_undef64
 	b	el3_exit
 
 smc_unknown:
@@ -532,11 +568,14 @@ func handle_interrupt_exception
 	 */
 	bl	prepare_el3_entry
 
+<<<<<<< HEAD
 #if ENABLE_PAUTH
 	/* Load and program APIAKey firmware key */
 	bl	pauth_load_bl31_apiakey
 #endif
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	/* Save the EL3 system registers needed to return from this exception */
 	mrs	x0, spsr_el3
 	mrs	x1, elr_el3

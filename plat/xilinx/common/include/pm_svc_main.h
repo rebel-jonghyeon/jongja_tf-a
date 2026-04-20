@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Advanced Micro Devices, Inc. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,6 +10,12 @@
 
 #include <pm_common.h>
 
+<<<<<<< HEAD
+=======
+#define PASS_THROUGH_FW_CMD_ID	U(0xfff)
+#define API_ID_MASK		U(0xff)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 /******************************************************************************/
 /**
  * SECURE_REDUNDANT_CALL() - Adds redundancy to the function call. This is to
@@ -30,6 +36,11 @@
 		status_tmp = function(__VA_ARGS__); \
 	}
 
+<<<<<<< HEAD
+=======
+bool pm_pwrdwn_req_status(void);
+void request_cpu_pwrdwn(void);
+>>>>>>> upstream_import/upstream_v2_14_1
 int32_t pm_setup(void);
 uint64_t pm_smc_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2, uint64_t x3,
 			uint64_t x4, const void *cookie, void *handle,

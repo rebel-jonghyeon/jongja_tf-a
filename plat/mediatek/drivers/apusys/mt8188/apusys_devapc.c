@@ -271,6 +271,7 @@ int apusys_devapc_ao_init(void)
 
 int apusys_devapc_rcx_init(void)
 {
+<<<<<<< HEAD
 	static bool apusys_devapc_rcx_init_called;
 	enum apusys_apc_err_status ret;
 
@@ -280,6 +281,10 @@ int apusys_devapc_rcx_init(void)
 	}
 	apusys_devapc_rcx_init_called = true;
 
+=======
+	enum apusys_apc_err_status ret;
+
+>>>>>>> upstream_import/upstream_v2_14_1
 	apusys_devapc_init("APUAPC_CTRL_RCX", APU_CTRL_DAPC_RCX_BASE);
 	apusys_devapc_init("APUAPC_NOC_RCX", APU_NOC_DAPC_RCX_BASE);
 

@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2023, STMicroelectronics - All Rights Reserved
+=======
+ * Copyright (c) 2023-2024, STMicroelectronics - All Rights Reserved
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -426,10 +430,17 @@
 #define RCC_USB2CFGR				U(0x7FC)
 #define RCC_USB2PHY1CFGR			U(0x800)
 #define RCC_USB2PHY2CFGR			U(0x804)
+<<<<<<< HEAD
 #define RCC_USB3DRDCFGR				U(0x808)
 #define RCC_USB3PCIEPHYCFGR			U(0x80C)
 #define RCC_PCIECFGR				U(0x810)
 #define RCC_USBTCCFGR				U(0x814)
+=======
+#define RCC_USB3DRCFGR				U(0x808)
+#define RCC_USB3PCIEPHYCFGR			U(0x80C)
+#define RCC_PCIECFGR				U(0x810)
+#define RCC_UCPDCFGR				U(0x814)
+>>>>>>> upstream_import/upstream_v2_14_1
 #define RCC_ETHSWCFGR				U(0x818)
 #define RCC_ETHSWACMCFGR			U(0x81C)
 #define RCC_ETHSWACMMSGCFGR			U(0x820)
@@ -459,7 +470,10 @@
 #define RCC_IWDG5CFGR				U(0x898)
 #define RCC_WWDG1CFGR				U(0x89C)
 #define RCC_WWDG2CFGR				U(0x8A0)
+<<<<<<< HEAD
 #define RCC_BUSPERFMCFGR			U(0x8A4)
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 #define RCC_VREFCFGR				U(0x8A8)
 #define RCC_TMPSENSCFGR				U(0x8AC)
 #define RCC_CRCCFGR				U(0x8B4)
@@ -2309,6 +2323,15 @@
 #define RCC_C1BOOTRSTSCLRR_D1STBYRSTF		BIT(22)
 #define RCC_C1BOOTRSTSCLRR_D2STBYRSTF		BIT(23)
 
+<<<<<<< HEAD
+=======
+#define RCC_C1BOOTRSTSCLRR_IWDGXSYSRSTF (RCC_C1BOOTRSTSCLRR_IWDG1SYSRSTF | \
+					 RCC_C1BOOTRSTSCLRR_IWDG2SYSRSTF | \
+					 RCC_C1BOOTRSTSCLRR_IWDG3SYSRSTF | \
+					 RCC_C1BOOTRSTSCLRR_IWDG4SYSRSTF | \
+					 RCC_C1BOOTRSTSCLRR_IWDG5SYSRSTF)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 /* RCC_C2BOOTRSTSSETR register fields */
 #define RCC_C2BOOTRSTSSETR_PORRSTF		BIT(0)
 #define RCC_C2BOOTRSTSSETR_BORRSTF		BIT(1)
@@ -2352,11 +2375,19 @@
 /* RCC_C1SREQSETR register fields */
 #define RCC_C1SREQSETR_STPREQ_P0		BIT(0)
 #define RCC_C1SREQSETR_STPREQ_P1		BIT(1)
+<<<<<<< HEAD
+=======
+#define RCC_C1SREQSETR_STPREQ_MASK		GENMASK_32(1, 0)
+>>>>>>> upstream_import/upstream_v2_14_1
 #define RCC_C1SREQSETR_ESLPREQ			BIT(16)
 
 /* RCC_C1SREQCLRR register fields */
 #define RCC_C1SREQCLRR_STPREQ_P0		BIT(0)
 #define RCC_C1SREQCLRR_STPREQ_P1		BIT(1)
+<<<<<<< HEAD
+=======
+#define RCC_C1SREQCLRR_STPREQ_MASK		GENMASK_32(1, 0)
+>>>>>>> upstream_import/upstream_v2_14_1
 #define RCC_C1SREQCLRR_ESLPREQ			BIT(16)
 
 /* RCC_CPUBOOTCR register fields */
@@ -2401,12 +2432,21 @@
 #define RCC_BDCR_LSEDRV_WIDTH			2
 
 /* RCC_D3DCR register fields */
+<<<<<<< HEAD
 #define RCC_D3DCR_CSION				BIT(0)
 #define RCC_D3DCR_CSIKERON			BIT(1)
 #define RCC_D3DCR_CSIRDY			BIT(2)
 #define RCC_D3DCR_D3PERCKSEL_MASK		GENMASK_32(17, 16)
 #define RCC_D3DCR_D3PERCKSEL_SHIFT		16
 #define RCC_D3DCR_CSIRDY_BIT			2
+=======
+#define RCC_D3DCR_MSION				BIT(0)
+#define RCC_D3DCR_MSIKERON			BIT(1)
+#define RCC_D3DCR_MSIRDY			BIT(2)
+#define RCC_D3DCR_D3PERCKSEL_MASK		GENMASK_32(17, 16)
+#define RCC_D3DCR_D3PERCKSEL_SHIFT		16
+#define RCC_D3DCR_MSIRDY_BIT			2
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /* RCC_D3DSR register fields */
 #define RCC_D3DSR_D3STATE_MASK			GENMASK_32(1, 0)
@@ -3458,11 +3498,19 @@
 #define RCC_USB2PHYxCFGR_USB2PHY1STPEN		BIT(4)
 #define RCC_USB2PHYxCFGR_USB2PHY1CKREFSEL	BIT(15)
 
+<<<<<<< HEAD
 /* RCC_USB3DRDCFGR register fields */
 #define RCC_USB3DRDCFGR_USB3DRDRST		BIT(0)
 #define RCC_USB3DRDCFGR_USB3DRDEN		BIT(1)
 #define RCC_USB3DRDCFGR_USB3DRDLPEN		BIT(2)
 #define RCC_USB3DRDCFGR_USB3DRDSTPEN		BIT(4)
+=======
+/* RCC_USB3DRCFGR register fields */
+#define RCC_USB3DRCFGR_USB3DRRST		BIT(0)
+#define RCC_USB3DRCFGR_USB3DREN			BIT(1)
+#define RCC_USB3DRCFGR_USB3DRLPEN		BIT(2)
+#define RCC_USB3DRCFGR_USB3DRSTPEN		BIT(4)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /* RCC_USB3PCIEPHYCFGR register fields */
 #define RCC_USB3PCIEPHYCFGR_USB3PCIEPHYRST	BIT(0)
@@ -3477,10 +3525,17 @@
 #define RCC_PCIECFGR_PCIELPEN			BIT(2)
 #define RCC_PCIECFGR_PCIESTPEN			BIT(4)
 
+<<<<<<< HEAD
 /* RCC_USBTCCFGR register fields */
 #define RCC_USBTCCFGR_USBTCRST			BIT(0)
 #define RCC_USBTCCFGR_USBTCEN			BIT(1)
 #define RCC_USBTCCFGR_USBTCLPEN			BIT(2)
+=======
+/* RCC_UCPDCFGR register fields */
+#define RCC_UCPDCFGR_UCPDRST			BIT(0)
+#define RCC_UCPDCFGR_UCPDEN			BIT(1)
+#define RCC_UCPDCFGR_UCPDLPEN			BIT(2)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /* RCC_ETHSWCFGR register fields */
 #define RCC_ETHSWCFGR_ETHSWRST			BIT(0)
@@ -3647,11 +3702,14 @@
 #define RCC_WWDG2CFGR_WWDG2LPEN			BIT(2)
 #define RCC_WWDG2CFGR_WWDG2AMEN			BIT(3)
 
+<<<<<<< HEAD
 /* RCC_BUSPERFMCFGR register fields */
 #define RCC_BUSPERFMCFGR_BUSPERFMRST		BIT(0)
 #define RCC_BUSPERFMCFGR_BUSPERFMEN		BIT(1)
 #define RCC_BUSPERFMCFGR_BUSPERFMLPEN		BIT(2)
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 /* RCC_VREFCFGR register fields */
 #define RCC_VREFCFGR_VREFRST			BIT(0)
 #define RCC_VREFCFGR_VREFEN			BIT(1)

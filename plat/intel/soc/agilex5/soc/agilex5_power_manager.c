@@ -1,5 +1,9 @@
 /*
  * Copyright (c) 2022-2023, Intel Corporation. All rights reserved.
+<<<<<<< HEAD
+=======
+ * Copyright (c) 2024, Altera Corporation. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,7 +17,11 @@
 #include "agilex5_power_manager.h"
 #include "socfpga_reset_manager.h"
 
+<<<<<<< HEAD
 int wait_verify_fsm(uint16_t timeout, uint32_t peripheral_handoff)
+=======
+static int wait_verify_fsm(uint16_t timeout, uint32_t peripheral_handoff)
+>>>>>>> upstream_import/upstream_v2_14_1
 {
 	uint32_t data = 0;
 	uint32_t count = 0;
@@ -38,7 +46,11 @@ int wait_verify_fsm(uint16_t timeout, uint32_t peripheral_handoff)
 	return 0;
 }
 
+<<<<<<< HEAD
 int pss_sram_power_off(handoff *hoff_ptr)
+=======
+static int pss_sram_power_off(handoff *hoff_ptr)
+>>>>>>> upstream_import/upstream_v2_14_1
 {
 	int ret = 0;
 	uint32_t peripheral_handoff = 0;
@@ -66,7 +78,11 @@ void config_pwrmgr_handoff(handoff *hoff_ptr)
 {
 	int ret = 0;
 
+<<<<<<< HEAD
 	switch (hoff_ptr->header_magic) {
+=======
+	switch (hoff_ptr->peripheral_pwr_gate_magic) {
+>>>>>>> upstream_import/upstream_v2_14_1
 	case HANDOFF_MAGIC_PERIPHERAL:
 		ret = pss_sram_power_off(hoff_ptr);
 		break;

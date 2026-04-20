@@ -1,5 +1,9 @@
 /*
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
+<<<<<<< HEAD
+=======
+   Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -155,6 +159,11 @@
 #define RSTMGR_HDSKACK_F2SDRAM0ACK		0x00000800
 #define RSTMGR_HDSKACK_FPGA2SOCACK		0x00001000
 #define RSTMGR_HDSKACK_FPGAHSACK_DASRT		0x00000000
+<<<<<<< HEAD
+=======
+#define RSTMGR_HDSKACK_LWSOC2FPGAACK_DASRT	0x00000000
+#define RSTMGR_HDSKACK_SOC2FPGAACK_DASRT	0x00000000
+>>>>>>> upstream_import/upstream_v2_14_1
 #define RSTMGR_HDSKACK_F2SDRAM0ACK_DASRT	0x00000000
 #define RSTMGR_HDSKACK_FPGA2SOCACK_DASRT	0x00000000
 
@@ -250,5 +259,9 @@ int socfpga_cpu_reset_base(unsigned int cpu_id);
 /* SMP: Func proto */
 void bl31_plat_set_secondary_cpu_entrypoint(unsigned int cpu_id);
 void bl31_plat_set_secondary_cpu_off(void);
+<<<<<<< HEAD
+=======
+void bl31_plat_reset_secondary_cpu(unsigned int cpu_id);
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* SOCFPGA_RESETMANAGER_H */

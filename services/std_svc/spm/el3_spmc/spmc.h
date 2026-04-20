@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2023, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -110,6 +110,12 @@ struct mailbox {
 
 	/* Lock access to mailbox. */
 	spinlock_t lock;
+
+	/* The offset of the last transmitted RX fragment */
+	uint32_t last_rx_fragment_offset;
+
+	/* The offset of the next RX fragment to transmit */
+	uint32_t next_rx_fragment_offset;
 };
 
 /*
@@ -134,6 +140,16 @@ struct sp_exec_ctx {
 
 	/* Track the source partition ID to validate a direct response. */
 	uint16_t dir_req_origin_id;
+<<<<<<< HEAD
+=======
+
+	/* Track direct message function id to validate a direct response. */
+	uint16_t dir_req_funcid;
+};
+
+struct ffa_uuid {
+	uint32_t uuid[4];
+>>>>>>> upstream_import/upstream_v2_14_1
 };
 
 /*
@@ -153,8 +169,11 @@ struct secure_partition_desc {
 	/* Runtime EL. */
 	enum sp_runtime_el runtime_el;
 
-	/* Partition UUID. */
-	uint32_t uuid[4];
+	/* Partition UUID array. */
+	struct ffa_uuid uuid_array[SPMC_AT_EL3_PARTITION_MAX_UUIDS];
+
+	/* Number of UUIDs in uuid array. */
+	uint32_t num_uuids;
 
 	/* Partition Properties. */
 	uint32_t properties;
@@ -167,6 +186,12 @@ struct secure_partition_desc {
 
 	/* Mailbox tracking. */
 	struct mailbox mailbox;
+
+	/* Lock to protect the runtime state of a S-EL0 SP execution context. */
+	spinlock_t rt_state_lock;
+
+	/* Pointer to translation table context of a S-EL0 SP. */
+	xlat_ctx_t *xlat_ctx_handle;
 
 	/* Secondary entrypoint. Only valid for a S-EL1 SP. */
 	uintptr_t secondary_ep;
@@ -224,6 +249,10 @@ void spmc_el1_sp_setup(struct secure_partition_desc *sp,
 		       entry_point_info_t *ep_info);
 void spmc_sp_common_ep_commit(struct secure_partition_desc *sp,
 			      entry_point_info_t *ep_info);
+void spmc_el0_sp_spsr_setup(entry_point_info_t *ep_info);
+void spmc_el0_sp_setup(struct secure_partition_desc *sp,
+		       int32_t boot_info_reg,
+		       void *sp_manifest);
 
 /*
  * Helper function to perform a synchronous entry into a SP.

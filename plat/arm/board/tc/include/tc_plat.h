@@ -8,7 +8,11 @@
 #define TC_PLAT_H
 
 #ifdef PLATFORM_TEST_ROTPK
+<<<<<<< HEAD
 #include <rss_crypto_defs.h>
+=======
+#include <rse_crypto_defs.h>
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 void tc_bl31_common_platform_setup(void);
@@ -23,7 +27,11 @@ int nv_counter_test(void);
 
 #ifdef PLATFORM_TEST_ROTPK
 struct key_id_info {
+<<<<<<< HEAD
 	enum rss_key_id_builtin_t key_id;
+=======
+	enum rse_key_id_builtin_t key_id;
+>>>>>>> upstream_import/upstream_v2_14_1
 	const char *key_id_name;
 };
 

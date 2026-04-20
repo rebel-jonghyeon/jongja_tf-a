@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2018-2023, Arm Limited. All rights reserved.
+=======
+ * Copyright (c) 2018-2024, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -18,9 +22,6 @@
 /* IOFPGA UART0 */
 #define PLAT_ARM_RUN_UART_BASE			0x1C090000
 #define PLAT_ARM_RUN_UART_CLK_IN_HZ		24000000
-
-#define PLAT_ARM_SP_MIN_RUN_UART_BASE		0x2A410000
-#define PLAT_ARM_SP_MIN_RUN_UART_CLK_IN_HZ	50000000
 
 #define PLAT_ARM_CRASH_UART_BASE		PLAT_ARM_RUN_UART_BASE
 #define PLAT_ARM_CRASH_UART_CLK_IN_HZ		PLAT_ARM_RUN_UART_CLK_IN_HZ
@@ -77,6 +78,10 @@
 
 #if CSS_USE_SCMI_SDS_DRIVER
 #define N1SDP_SCMI_PAYLOAD_BASE			0x45400000
+/*
+ * Index of SDS region used in the communication with SCP
+ */
+#define SDS_SCP_AP_REGION_ID			U(0)
 #else
 #define PLAT_CSS_SCP_COM_SHARED_MEM_BASE	0x45400000
 #endif

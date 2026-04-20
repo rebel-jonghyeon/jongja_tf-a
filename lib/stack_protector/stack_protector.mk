@@ -1,5 +1,9 @@
 #
+<<<<<<< HEAD
 # Copyright (c) 2017-2019, Arm Limited and Contributors. All rights reserved.
+=======
+# Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -12,16 +16,16 @@ ifeq (${ENABLE_STACK_PROTECTOR},0)
 endif
 
 ifeq (${ENABLE_STACK_PROTECTOR},none)
-  TF_CFLAGS            +=      -fno-stack-protector
+  cflags-common		+=      -fno-stack-protector
 else
   STACK_PROTECTOR_ENABLED := 1
   BL_COMMON_SOURCES	+=	lib/stack_protector/stack_protector.c	\
 				lib/stack_protector/${ARCH}/asm_stack_protector.S
 
   ifeq (${ENABLE_STACK_PROTECTOR},default)
-    TF_CFLAGS		+=	-fstack-protector
+    cflags-common	+=	-fstack-protector
   else
-    TF_CFLAGS		+=	-fstack-protector-${ENABLE_STACK_PROTECTOR}
+    cflags-common	+=	-fstack-protector-${ENABLE_STACK_PROTECTOR}
   endif
 endif
 

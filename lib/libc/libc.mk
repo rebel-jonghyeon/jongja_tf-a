@@ -1,9 +1,15 @@
 #
+<<<<<<< HEAD
 # Copyright (c) 2016-2021, Arm Limited and Contributors. All rights reserved.
+=======
+# Copyright (c) 2016-2024, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
+#
 
+<<<<<<< HEAD
 LIBC_SRCS	:=	$(addprefix lib/libc/,		\
 			abort.c				\
 			assert.c			\
@@ -32,11 +38,9 @@ LIBC_SRCS	:=	$(addprefix lib/libc/,		\
 			strtoll.c			\
 			strtoull.c			\
 			strtol.c)
+=======
+include lib/libc/libc_common.mk
+>>>>>>> upstream_import/upstream_v2_14_1
 
-ifeq (${ARCH},aarch64)
-LIBC_SRCS	+=	$(addprefix lib/libc/aarch64/,	\
-			setjmp.S)
-endif
-
-INCLUDES	+=	-Iinclude/lib/libc		\
-			-Iinclude/lib/libc/$(ARCH)	\
+LIBC_SRCS	+=	$(addprefix lib/libc/,		\
+			memset.c)

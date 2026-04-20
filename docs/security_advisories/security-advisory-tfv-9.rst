@@ -1,3 +1,5 @@
+.. _security-advisory-tfv-9:
+
 Advisory TFV-9 (CVE-2022-23960)
 ============================================================
 
@@ -77,8 +79,11 @@ revisions of Cortex-A73 and Cortex-A75 that implements FEAT_CSV2).
 +----------------------+
 | Cortex-A715          |
 +----------------------+
+<<<<<<< HEAD
 | Cortex-A720          |
 +----------------------+
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 | Neoverse-N1          |
 +----------------------+
 | Neoverse-N2          |
@@ -86,8 +91,6 @@ revisions of Cortex-A73 and Cortex-A75 that implements FEAT_CSV2).
 | Neoverse-V1          |
 +----------------------+
 | Neoverse-V2          |
-+----------------------+
-| Neoverse-Poseidon    |
 +----------------------+
 
 For all other cores impacted by Spectre-BHB, some of which that do not implement
