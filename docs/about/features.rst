@@ -108,6 +108,29 @@ Current features
 
 -  Position-Independent Executable (PIE) support.
 
+Experimental features
+---------------------
+
+A feature is considered experimental when still in development or isn't known
+to the TF-A team as widely deployed or proven on end products. It is generally
+advised such options aren't pulled into real deployments, or done with the
+appropriate level of supplementary integration testing.
+
+A feature is no longer considered experimental when it is generally agreed
+the said feature has reached a level of maturity and quality comparable to
+other features that have been integrated into products.
+
+Experimental build options are found in following section
+:ref:`build_options_experimental`. Their use through the build emits a warning
+message.
+
+Additionally the following libraries are marked experimental when included
+in a platform:
+
+-  RSE comms driver ``drivers/arm/rse``
+-  GICv5 driver ``drivers/arm/gicv5`` via ``USE_GIC_DRIVER=5``
+-  FEAT_IDTE3 ``lib/extensions/idte/`` via ``ENABLE_FEAT_IDTE3``
+
 Still to come
 -------------
 
@@ -123,10 +146,10 @@ Still to come
 
 .. _SMC Calling Convention: https://developer.arm.com/docs/den0028/latest
 .. _OP-TEE Secure OS: https://github.com/OP-TEE/optee_os
-.. _NVIDIA Trusted Little Kernel: http://nv-tegra.nvidia.com/gitweb/?p=3rdparty/ote_partner/tlk.git;a=summary
+.. _NVIDIA Trusted Little Kernel: https://nv-tegra.nvidia.com/r/plugins/gitiles/3rdparty/ote_partner/tlk
 .. _Trusty Secure OS: https://source.android.com/security/trusty
 .. _ProvenCore Secure OS: https://provenrun.com/products/provencore/
 
 --------------
 
-*Copyright (c) 2019-2023, Arm Limited. All rights reserved.*
+*Copyright (c) 2019-2025, Arm Limited. All rights reserved.*

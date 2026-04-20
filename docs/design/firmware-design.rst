@@ -130,6 +130,12 @@ convention:
    -  For other BL3x images, if the firmware configuration file is loaded by
       BL2, then its address is passed in ``arg0`` and if HW_CONFIG is loaded
       then its address is passed in ``arg1``.
+   -  In case SPMC_AT_EL3 is enabled, populate the BL32 image base, size and max
+      limit in the entry point information, since there is no platform function
+      to retrieve these in generic code. We choose ``arg2``, ``arg3`` and
+      ``arg4`` since the generic code uses ``arg1`` for stashing the SP manifest
+      size. The SPMC setup uses these arguments to update SP manifest with
+      actual SP's base address and it size.
    -  In case of the Arm FVP platform, FW_CONFIG address passed in ``arg1`` to
       BL31/SP_MIN, and the SOC_FW_CONFIG and HW_CONFIG details are retrieved
       from FW_CONFIG device tree.
@@ -241,7 +247,7 @@ BL1 performs minimal architectural initialization as follows.
 
 -  CPU initialization
 
-   BL1 calls the ``reset_handler()`` function which in turn calls the CPU
+   BL1 calls the ``reset_handler`` macro/function which in turn calls the CPU
    specific reset handler function (see the section: "CPU specific operations
    framework").
 
@@ -639,6 +645,35 @@ on entry, these should be enabled during ``bl31_plat_arch_setup()``.
 Data structures used in the BL31 cold boot interface
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 
+In the cold boot flow, ``entry_point_info`` is used to represent the execution
+state of an image; that is, the state of general purpose registers, PC, and
+SPSR.
+
+There are two variants of this structure, for AArch64:
+
+.. code:: c
+
+   typedef struct entry_point_info {
+        param_header_t h;
+        uintptr_t pc;
+        uint32_t spsr;
+
+        aapcs64_params_t args;
+   }
+
+and, AArch32:
+
+.. code:: c
+
+   typedef struct entry_point_info {
+      param_header_t h;
+      uintptr_t pc;
+      uint32_t spsr;
+
+      uintptr_t lr_svc;
+      aapcs32_params_t args;
+   } entry_point_info_t;
+
 These structures are designed to support compatibility and independent
 evolution of the structures and the firmware images. For example, a version of
 BL31 that can interpret the BL3x image information from different versions of
@@ -656,13 +691,17 @@ BL31 to detect which information is present and respond appropriately. The
         uint8_t type;       /* type of the structure */
         uint8_t version;    /* version of this structure */
         uint16_t size;      /* size of this structure in bytes */
-        uint32_t attr;      /* attributes: unused bits SBZ */
+        uint32_t attr;      /* attributes */
     } param_header_t;
 
-The structures using this format are ``entry_point_info``, ``image_info`` and
-``bl31_params``. The code that allocates and populates these structures must set
-the header fields appropriately, and the ``SET_PARAM_HEAD()`` a macro is defined
-to simplify this action.
+In `entry_point_info`, Bits 0 and 5 of ``attr`` field are used to encode the
+security state; in other words, whether the image is to be executed in Secure,
+Non-Secure, or Realm mode.
+
+Other structures using this format are ``image_info`` and ``bl31_params``. The
+code that allocates and populates these structures must set the header fields
+appropriately, the ``SET_PARAM_HEAD()`` macro is defined to simplify this
+action.
 
 Required CPU state for BL31 Warm boot initialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -772,8 +811,7 @@ data access and all interrupt sources masked:
 
 The warm boot entrypoint may be implemented by using TF-A
 ``psci_warmboot_entrypoint()`` function. In that case, the platform must fulfil
-the pre-requisites mentioned in the
-:ref:`PSCI Library Integration guide for Armv8-A AArch32 systems`.
+the pre-requisites mentioned in the :ref:`Porting Guide`.
 
 EL3 runtime services framework
 ------------------------------
@@ -1014,8 +1052,21 @@ hooks to be registered with the generic PSCI code to be supported.
 
 The PSCI implementation in TF-A is a library which can be integrated with
 AArch64 or AArch32 EL3 Runtime Software for Armv8-A systems. A guide to
-integrating PSCI library with AArch32 EL3 Runtime Software can be found
-at :ref:`PSCI Library Integration guide for Armv8-A AArch32 systems`.
+integrating the PSCI library for EL3 Runtime Software can be found
+at :ref:`Porting Guide`.
+
+DSU driver
+----------
+
+Platforms that include a DSU (DynamIQ Shared Unit) can define
+the ``USE_DSU_DRIVER`` build flag to enable the DSU driver.
+This driver is responsible for configuring DSU-related powerdown
+and power feature settings, enabling access to PMU registers at EL1
+using ``dsu_driver_init()`` and for preserving the context of DSU
+PMU system registers.
+
+To support the DSU driver, platforms must define the ``plat_dsu_data``
+structure.
 
 .. _firmware_design_sel1_spd:
 
@@ -1298,7 +1349,7 @@ Guidelines for Reset Handlers
 
 TF-A implements a framework that allows CPU and platform ports to perform
 actions very early after a CPU is released from reset in both the cold and warm
-boot paths. This is done by calling the ``reset_handler()`` function in both
+boot paths. This is done by calling the ``reset_handler`` macro/function in both
 the BL1 and BL31 images. It in turn calls the platform and CPU specific reset
 handling functions.
 
@@ -1442,13 +1493,19 @@ the returned ``cpu_ops`` is then invoked which executes the required reset
 handling for that CPU and also any errata workarounds enabled by the platform.
 
 It should be defined using the ``cpu_reset_func_{start,end}`` macros and its
+<<<<<<< HEAD
 body may only clobber x0 to x14 with x14 being the cpu_rev parameter.
+=======
+body may only clobber x0 to x14 with x14 being the cpu_rev parameter. The cpu
+file should also include a call to ``cpu_reset_prologue`` at the start of the
+file for errata to work correctly.
+>>>>>>> upstream_import/upstream_v2_14_1
 
 CPU specific power down sequence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 During the BL31 initialization sequence, the pointer to the matching ``cpu_ops``
-entry is stored in per-CPU data by ``init_cpu_ops()`` so that it can be quickly
+entry is stored in per-CPU data by ``cpu_data_init_cpu_ops()`` so that it can be quickly
 retrieved during power down sequences.
 
 Various CPU drivers register handlers to perform power down at certain power
@@ -1464,6 +1521,19 @@ registered for highest level is invoked.
 At runtime the platform hooks for power down are invoked by the PSCI service to
 perform platform specific operations during a power down sequence, for example
 turning off CCI coherency during a cluster power down.
+
+Newer CPUs include a feature called "powerdown abandon". The feature is based on
+the observation that events like GIC wakeups have a high likelihood of happening
+while the core is in the middle of its powerdown sequence (at ``wfi``). Older
+cores will powerdown and immediately power back up when this happens. To save on
+the work and latency involved, the newer cores will "give up" mid way through if
+no context has been lost yet. This is possible as the powerdown operation is
+lengthy and a large part of it does not lose context.
+
+To cater for this possibility, the powerdown hook will be called a second time
+after a wakeup. The expectation is that the first call will operate as before,
+while the second call will undo anything the first call did. This should be done
+statelessly, for example by toggling the relevant bits.
 
 CPU specific register reporting during crash
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2545,6 +2615,9 @@ are changed within the ``bl31_plat_runtime_setup`` platform hook. The init
 section section can be reclaimed for any data which is accessed after cold
 boot initialization and it is upto the platform to make the decision.
 
+Please note that this will disable inlining for any functions with the __init
+attribute.
+
 .. _firmware_design_pmf:
 
 Performance Measurement Framework
@@ -2761,13 +2834,11 @@ Armv8.5-A
 -  Branch Target Identification feature is selected by ``BRANCH_PROTECTION``
    option set to 1. This option defaults to 0.
 
--  Memory Tagging Extension feature is unconditionally enabled for both worlds
-   (at EL0 and S-EL0) if it is only supported at EL0. If instead it is
-   implemented at all ELs, it is unconditionally enabled for only the normal
-   world. To enable it for the secure world as well, the build option
-   ``CTX_INCLUDE_MTE_REGS`` is required. If the hardware does not implement
-   MTE support at all, it is always disabled, no matter what build options
-   are used.
+-  Memory Tagging Extension feature has few variants but not all of them require
+   enablement from EL3 to be used at lower EL. e.g. Memory tagging only at
+   EL0(MTE) does not require EL3 configuration however memory tagging at
+   EL2/EL1 (MTE2) does require EL3 enablement and we need to set this option
+   ``ENABLE_FEAT_MTE2`` to 1. This option defaults to 0.
 
 Armv7-A
 ~~~~~~~
@@ -2854,13 +2925,13 @@ kernel at boot time. These can be found in the ``fdts`` directory.
 
 --------------
 
-*Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.*
+*Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.*
 
 .. _SMCCC: https://developer.arm.com/docs/den0028/latest
 .. _PSCI: https://developer.arm.com/documentation/den0022/latest/
 .. _Arm ARM: https://developer.arm.com/docs/ddi0487/latest
 .. _SMC Calling Convention: https://developer.arm.com/docs/den0028/latest
-.. _Trusted Board Boot Requirements CLIENT (TBBR-CLIENT) Armv8-A (ARM DEN0006D): https://developer.arm.com/docs/den0006/latest/trusted-board-boot-requirements-client-tbbr-client-armv8-a
+.. _Trusted Board Boot Requirements CLIENT (TBBR-CLIENT) Armv8-A (ARM DEN0006D): https://developer.arm.com/docs/den0006/latest
 .. _Arm Confidential Compute Architecture (Arm CCA): https://www.arm.com/why-arm/architecture/security-features/arm-confidential-compute-architecture
 .. _AArch64 exception vector table: https://developer.arm.com/documentation/100933/0100/AArch64-exception-vector-table
 

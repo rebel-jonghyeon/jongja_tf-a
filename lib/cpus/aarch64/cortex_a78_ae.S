@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2019-2023, Arm Limited. All rights reserved.
+=======
+ * Copyright (c) 2019-2025, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  * Copyright (c) 2021-2023, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -22,10 +26,19 @@
 	wa_cve_2022_23960_bhb_vector_table CORTEX_A78_AE_BHB_LOOP_COUNT, cortex_a78_ae
 #endif /* WORKAROUND_CVE_2022_23960 */
 
+<<<<<<< HEAD
 workaround_reset_start cortex_a78_ae, ERRATUM(1941500), ERRATA_A78_AE_1941500
 	sysreg_bit_set CORTEX_A78_AE_CPUECTLR_EL1, CORTEX_A78_AE_CPUECTLR_EL1_BIT_8
 workaround_reset_end cortex_a78_ae, ERRATUM(1941500)
 
+=======
+cpu_reset_prologue cortex_a78_ae
+
+workaround_reset_start cortex_a78_ae, ERRATUM(1941500), ERRATA_A78_AE_1941500
+	sysreg_bit_set CORTEX_A78_AE_CPUECTLR_EL1, CORTEX_A78_AE_CPUECTLR_EL1_BIT_8
+workaround_reset_end cortex_a78_ae, ERRATUM(1941500)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 check_erratum_ls cortex_a78_ae, ERRATUM(1941500), CPU_REV(0, 1)
 
 workaround_reset_start cortex_a78_ae, ERRATUM(1951502), ERRATA_A78_AE_1951502
@@ -95,6 +108,16 @@ workaround_reset_start cortex_a78_ae, CVE(2022, 23960), WORKAROUND_CVE_2022_2396
 workaround_reset_end cortex_a78_ae, CVE(2022, 23960)
 
 check_erratum_chosen cortex_a78_ae, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
+<<<<<<< HEAD
+=======
+
+/* Disable hardware page aggregation. Enables mitigation for `CVE-2024-5660` */
+workaround_reset_start cortex_a78_ae, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
+	sysreg_bit_set CORTEX_A78_AE_CPUECTLR_EL1, BIT(46)
+workaround_reset_end cortex_a78_ae, CVE(2024, 5660)
+
+check_erratum_ls cortex_a78_ae, CVE(2024, 5660), CPU_REV(0, 3)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 cpu_reset_func_start cortex_a78_ae
 #if ENABLE_FEAT_AMU
@@ -128,8 +151,11 @@ func cortex_a78_ae_core_pwr_dwn
 	ret
 endfunc cortex_a78_ae_core_pwr_dwn
 
+<<<<<<< HEAD
 errata_report_shim cortex_a78_ae
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	/* -------------------------------------------------------
 	 * This function provides cortex_a78_ae specific
 	 * register information for crash reporting.

@@ -18,7 +18,7 @@
 #define FORBIDDEN			(5)
 #define SEC_R_NSEC_RW			(6)
 
-#define LOCK				(1)
+#define LOCK				(1UL)
 #define UNLOCK				(0)
 
 #if (EMI_MPU_DGROUP_NUM == 1)
@@ -69,6 +69,10 @@ int emi_mpu_init(void);
 int emi_mpu_optee_handler(uint64_t encoded_addr, uint64_t zone_size,
 						  uint64_t zone_info);
 int emi_mpu_set_protection(struct emi_region_info_t *region_info);
+<<<<<<< HEAD
+=======
+int emi_mpu_clear_protection(unsigned int region);
+>>>>>>> upstream_import/upstream_v2_14_1
 void set_emi_mpu_regions(void);
 int set_apu_emi_mpu_region(void);
 #endif

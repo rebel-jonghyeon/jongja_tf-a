@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2024, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <arch_helpers.h>
+#include <common/build_message.h>
 #include <common/debug.h>
 #include <common/desc_image_load.h>
 #include <drivers/arm/css/sds.h>
@@ -13,6 +14,7 @@
 #include "morello_def.h"
 #include <plat/arm/common/plat_arm.h>
 #include <plat/common/platform.h>
+#include <platform_def.h>
 
 /* In client mode, a part of the DDR memory is reserved for Tag bits.
  * Calculate the usable memory size after subtracting the Tag memory.
@@ -141,7 +143,11 @@ static int plat_morello_append_config_node(struct morello_plat_info *plat_info,
 		return -1;
 	}
 
+<<<<<<< HEAD
 	err = fdt_setprop_string(fdt, nodeoffset_fw, "tfa-fw-version", version_string);
+=======
+	err = fdt_setprop_string(fdt, nodeoffset_fw, "tfa-fw-version", build_version_string);
+>>>>>>> upstream_import/upstream_v2_14_1
 	if (err < 0) {
 		WARN("NT_FW_CONFIG: Unable to set tfa-fw-version\n");
 	}
@@ -167,13 +173,14 @@ bl_params_t *plat_get_next_bl_params(void)
 	struct morello_plat_info plat_info;
 	struct morello_firmware_version fw_version;
 
-	ret = sds_init();
+	ret = sds_init(SDS_SCP_AP_REGION_ID);
 	if (ret != SDS_OK) {
 		ERROR("SDS initialization failed. ret:%d\n", ret);
 		panic();
 	}
 
-	ret = sds_struct_read(MORELLO_SDS_PLATFORM_INFO_STRUCT_ID,
+	ret = sds_struct_read(SDS_SCP_AP_REGION_ID,
+				MORELLO_SDS_PLATFORM_INFO_STRUCT_ID,
 				MORELLO_SDS_PLATFORM_INFO_OFFSET,
 				&plat_info,
 				MORELLO_SDS_PLATFORM_INFO_SIZE,
@@ -183,7 +190,12 @@ bl_params_t *plat_get_next_bl_params(void)
 		panic();
 	}
 
+<<<<<<< HEAD
 	ret = sds_struct_read(MORELLO_SDS_FIRMWARE_VERSION_STRUCT_ID,
+=======
+	ret = sds_struct_read(SDS_SCP_AP_REGION_ID,
+				MORELLO_SDS_FIRMWARE_VERSION_STRUCT_ID,
+>>>>>>> upstream_import/upstream_v2_14_1
 				MORELLO_SDS_FIRMWARE_VERSION_OFFSET,
 				&fw_version,
 				MORELLO_SDS_FIRMWARE_VERSION_SIZE,

@@ -30,6 +30,10 @@
 #include <imx8m_ccm.h>
 #include <imx8m_csu.h>
 #include <imx8m_snvs.h>
+<<<<<<< HEAD
+=======
+#include <plat_common.h>
+>>>>>>> upstream_import/upstream_v2_14_1
 #include <plat_imx8.h>
 
 #define TRUSTY_PARAMS_LEN_BYTES      (4096*2)
@@ -61,13 +65,15 @@ static const struct aipstz_cfg aipstz[] = {
 	{0},
 };
 
-static const struct imx_rdc_cfg rdc[] = {
+static struct imx_rdc_cfg rdc[] = {
 	/* Master domain assignment */
 	RDC_MDAn(RDC_MDA_M4, DID1),
 
 	/* peripherals domain permission */
-	RDC_PDAPn(RDC_PDAP_UART4, D1R | D1W),
+	RDC_PDAPn(RDC_PDAP_UART1, D0R | D0W | D1R | D1W | D2R | D2W | D3R | D3W),
 	RDC_PDAPn(RDC_PDAP_UART2, D0R | D0W),
+	RDC_PDAPn(RDC_PDAP_UART3, D0R | D0W | D1R | D1W | D2R | D2W | D3R | D3W),
+	RDC_PDAPn(RDC_PDAP_UART4, D1R | D1W),
 
 	/* memory region */
 
@@ -77,11 +83,31 @@ static const struct imx_rdc_cfg rdc[] = {
 
 static const struct imx_csu_cfg csu_cfg[] = {
 	/* peripherals csl setting */
-	CSU_CSLx(0x1, CSU_SEC_LEVEL_0, UNLOCKED),
+	CSU_CSLx(CSU_CSL_RDC, CSU_SEC_LEVEL_3, LOCKED),
+	CSU_CSLx(CSU_CSL_TZASC, CSU_SEC_LEVEL_5, LOCKED),
+	CSU_CSLx(CSU_CSL_CSU, CSU_SEC_LEVEL_5, LOCKED),
 
 	/* master HP0~1 */
 
 	/* SA setting */
+	CSU_SA(CSU_SA_M4, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_SDMA1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_PCIE_CTRL1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USB1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USB2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_VPU, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_GPU, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_APBHDMA, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_ENET, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USDHC1, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USDHC2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_USDHC3, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_HUGO, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_DAP, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_SDMA2, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_SDMA3, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_LCDIF, NON_SEC_ACCESS, LOCKED),
+	CSU_SA(CSU_SA_CSI, NON_SEC_ACCESS, LOCKED),
 
 	/* HP control setting */
 
@@ -109,32 +135,12 @@ static uint32_t get_spsr_for_bl33_entry(void)
 	return spsr;
 }
 
-void bl31_tzc380_setup(void)
-{
-	unsigned int val;
-
-	val = mmio_read_32(IMX_IOMUX_GPR_BASE + 0x28);
-	if ((val & GPR_TZASC_EN) != GPR_TZASC_EN)
-		return;
-
-	tzc380_init(IMX_TZASC_BASE);
-
-	/*
-	 * Need to substact offset 0x40000000 from CPU address when
-	 * programming tzasc region for i.mx8mm.
-	 */
-
-	/* Enable 1G-5G S/NS RW */
-	tzc380_configure_region(0, 0x00000000, TZC_ATTR_REGION_SIZE(TZC_REGION_SIZE_4G) |
-		TZC_ATTR_REGION_EN_MASK | TZC_ATTR_SP_ALL);
-}
-
 void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 		u_register_t arg2, u_register_t arg3)
 {
 	unsigned int console_base = IMX_BOOT_UART_BASE;
 	static console_t console;
-	int i;
+	int i, ret;
 
 	/* Enable CSU NS access permission */
 	for (i = 0; i < 64; i++) {
@@ -143,14 +149,21 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 
 	imx_aipstz_init(aipstz);
 
-	imx_rdc_init(rdc);
-
-	imx_csu_init(csu_cfg);
-
 	if (console_base == 0U) {
 		console_base = imx8m_uart_get_base();
 	}
 
+	imx_rdc_init(rdc, console_base);
+
+	imx_csu_init(csu_cfg);
+
+<<<<<<< HEAD
+	if (console_base == 0U) {
+		console_base = imx8m_uart_get_base();
+	}
+
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	console_imx_uart_register(console_base, IMX_BOOT_UART_CLK_IN_HZ,
 		IMX_CONSOLE_BAUDRATE, &console);
 	/* This console is only used for boot stage */
@@ -187,12 +200,22 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	bl32_image_ep_info.args.arg3 = BL32_FDT_OVERLAY_ADDR;
 #endif
 #endif
+	ret = imx_bl31_params_parse(arg0, IMX_NS_OCRAM_SIZE, IMX_NS_OCRAM_BASE,
+				    &bl32_image_ep_info, &bl33_image_ep_info);
+	if (ret != 0) {
+		ret = imx_bl31_params_parse(arg0, IMX_TCM_BASE, IMX_TCM_SIZE,
+					    &bl32_image_ep_info,
+					    &bl33_image_ep_info);
+	}
 
 #if !defined(SPD_opteed) && !defined(SPD_trusty)
 	enable_snvs_privileged_access();
 #endif
+<<<<<<< HEAD
 
 	bl31_tzc380_setup();
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 }
 
 #define MAP_BL31_TOTAL										   \

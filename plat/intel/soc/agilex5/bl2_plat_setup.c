@@ -1,6 +1,12 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2019-2021, ARM Limited and Contributors. All rights reserved.
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
+=======
+ * Copyright (c) 2019-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
+ * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -19,21 +25,39 @@
 #include <lib/xlat_tables/xlat_tables_v2.h>
 
 #include "agilex5_clock_manager.h"
+<<<<<<< HEAD
 #include "agilex5_memory_controller.h"
 #include "agilex5_mmc.h"
 #include "agilex5_pinmux.h"
+=======
+#include "agilex5_ddr.h"
+#include "agilex5_memory_controller.h"
+#include "agilex5_mmc.h"
+#include "agilex5_pinmux.h"
+#include "agilex5_power_manager.h"
+>>>>>>> upstream_import/upstream_v2_14_1
 #include "agilex5_system_manager.h"
 #include "ccu/ncore_ccu.h"
 #include "combophy/combophy.h"
 #include "nand/nand.h"
 #include "qspi/cadence_qspi.h"
 #include "sdmmc/sdmmc.h"
+<<<<<<< HEAD
+=======
+/* TODO: DTB not available */
+// #include "socfpga_dt.h"
+>>>>>>> upstream_import/upstream_v2_14_1
 #include "socfpga_emac.h"
 #include "socfpga_f2sdram_manager.h"
 #include "socfpga_handoff.h"
 #include "socfpga_mailbox.h"
 #include "socfpga_private.h"
 #include "socfpga_reset_manager.h"
+<<<<<<< HEAD
+=======
+#include "socfpga_ros.h"
+#include "socfpga_vab.h"
+>>>>>>> upstream_import/upstream_v2_14_1
 #include "wdt/watchdog.h"
 
 
@@ -41,7 +65,11 @@
 static struct mmc_device_info mmc_info;
 
 /* Declare cadence idmac descriptor */
+<<<<<<< HEAD
 extern struct cdns_idmac_desc cdns_desc[8] __aligned(32);
+=======
+extern struct cdns_idmac_desc cdns_desc[CONFIG_CDNS_DESC_COUNT] __aligned(8);
+>>>>>>> upstream_import/upstream_v2_14_1
 
 const mmap_region_t agilex_plat_mmap[] = {
 	MAP_REGION_FLAT(DRAM_BASE, DRAM_SIZE,
@@ -63,6 +91,7 @@ const mmap_region_t agilex_plat_mmap[] = {
 
 boot_source_type boot_source = BOOT_SOURCE;
 
+<<<<<<< HEAD
 void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
 				u_register_t x2, u_register_t x4)
 {
@@ -85,10 +114,108 @@ void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
 
 	/* Store magic number */
 	mmio_write_32(L2_RESET_DONE_REG, PLAT_L2_RESET_REQ);
+=======
+void bl2_el3_early_platform_setup(u_register_t x0 __unused,
+				  u_register_t x1 __unused,
+				  u_register_t x2 __unused,
+				  u_register_t x3 __unused)
+{
+	static console_t console;
+	handoff reverse_handoff_ptr;
+	uint32_t reg_val;
+
+	/* Enable nonsecure access for peripherals and other misc components */
+	enable_nonsecure_access();
+
+	/* Bring all the required peripherals out of reset */
+	deassert_peripheral_reset();
+
+	/*
+	 * Initialize the UART console early in BL2 EL3 boot flow to get
+	 * the error/notice messages wherever required.
+	 */
+	console_16550_register(PLAT_INTEL_UART_BASE, PLAT_UART_CLOCK,
+			       PLAT_BAUDRATE, &console);
+
+	/* Generic delay timer init */
+	generic_delay_timer_init();
+
+	socfpga_delay_timer_init();
+
+	/* Get the handoff data */
+	if ((socfpga_get_handoff(&reverse_handoff_ptr)) != 0) {
+		ERROR("SOCFPGA: Failed to get the correct handoff data\n");
+		panic();
+	}
+
+	/* Configure the pinmux */
+	config_pinmux(&reverse_handoff_ptr);
+
+	/* Configure OCRAM to NON SECURE ACCESS */
+	mmio_write_32(OCRAM_REGION_0_REG_BASE, OCRAM_NON_SECURE_ENABLE);
+	mmio_write_32(SOCFPGA_L4_PER_SCR_REG_BASE + SOCFPGA_SDMMC_SECU_BIT,
+		SOCFPGA_SDMMC_SECU_BIT_ENABLE);
+	mmio_write_32(SOCFPGA_L4_SYS_SCR_REG_BASE + SOCFPGA_SDMMC_SECU_BIT,
+		SOCFPGA_SDMMC_SECU_BIT_ENABLE);
+	mmio_write_32(SOCFPGA_LWSOC2FPGA_SCR_REG_BASE,
+		SOCFPGA_LWSOC2FPGA_ENABLE);
+
+	/* Configure the clock manager */
+	if ((config_clkmgr_handoff(&reverse_handoff_ptr)) != 0) {
+		ERROR("SOCFPGA: Failed to initialize the clock manager\n");
+		panic();
+	}
+
+	/* Configure power manager PSS SRAM power gate */
+	config_pwrmgr_handoff(&reverse_handoff_ptr);
+
+	/* Initialize the mailbox to enable communication between HPS and SDM */
+	mailbox_init();
+
+	/* Perform a handshake with certain peripherals before issuing a reset */
+	config_hps_hs_before_warm_reset();
+
+	/* TODO: watchdog init */
+	//watchdog_init(clkmgr_get_rate(CLKMGR_WDT_CLK_ID));
+
+	/* Initialize the CCU module for hardware cache coherency */
+	init_ncore_ccu();
+
+	socfpga_emac_init();
+
+	/* DDR and IOSSM driver init */
+	if ((agilex5_ddr_init(&reverse_handoff_ptr)) != 0) {
+		ERROR("SOCFPGA: Failed to initialize the ddr.\n");
+		panic();
+	}
+
+	/* TODO: DTB not available */
+	// if (socfpga_dt_open_and_check(SOCFPGA_DTB_BASE, DT_COMPATIBLE_STR) < 0) {
+		// ERROR("SOCFPGA: Failed to open device tree\n");
+		// panic();
+	// }
+
+	if (combo_phy_init(&reverse_handoff_ptr) != 0) {
+		ERROR("SOCFPGA: Combo Phy initialization failed\n");
+	}
+
+	/* Enable FPGA bridges as required */
+	if (!intel_mailbox_is_fpga_not_ready()) {
+		socfpga_bridges_enable(SOC2FPGA_MASK | LWHPS2FPGA_MASK |
+				       FPGA2SOC_MASK | F2SDRAM0_MASK);
+	}
+
+	/* Configure USB 3.1 in system manager */
+	reg_val = mmio_read_32(SOCFPGA_SYSMGR(USB3_MISC_CTRL_REG0));
+	reg_val |= SYSMGR_USB3_MISC0_PORT_OVR_CURR_PIPE_PWR; /* set pipe power present bit */
+	mmio_write_32(SOCFPGA_SYSMGR(USB3_MISC_CTRL_REG0), reg_val);
+	VERBOSE("USB3_MISC_CTRL_REG0 = 0x%X\n", mmio_read_32(SOCFPGA_SYSMGR(USB3_MISC_CTRL_REG0)));
+>>>>>>> upstream_import/upstream_v2_14_1
 }
 
 void bl2_el3_plat_arch_setup(void)
 {
+<<<<<<< HEAD
 	handoff reverse_handoff_ptr;
 
 	struct cdns_sdmmc_params params = EMMC_INIT_PARAMS((uintptr_t) &cdns_desc, get_mmc_clk());
@@ -96,11 +223,25 @@ void bl2_el3_plat_arch_setup(void)
 	mmc_info.mmc_dev_type = MMC_DEVICE_TYPE;
 	mmc_info.ocr_voltage = OCR_3_3_3_4 | OCR_3_2_3_3;
 
+=======
+	unsigned long offset = 0;
+
+	struct cdns_sdmmc_params params = EMMC_INIT_PARAMS((uintptr_t) &cdns_desc,
+							   SDEMMC_SDCLK);
+
+	params.sdmclk = clkmgr_get_rate(CLKMGR_SDMMC_CLK_ID);
+	mmc_info.mmc_dev_type = MMC_DEVICE_TYPE;
+	mmc_info.ocr_voltage = OCR_3_3_3_4 | OCR_3_2_3_3;
+
+	INFO("SDMMC/NAND clock is %u\n", clkmgr_get_rate(CLKMGR_SDMMC_CLK_ID));
+
+>>>>>>> upstream_import/upstream_v2_14_1
 	/* Request ownership and direct access to QSPI */
 	mailbox_hps_qspi_enable();
 
 	switch (boot_source) {
 	case BOOT_SOURCE_SDMMC:
+<<<<<<< HEAD
 		NOTICE("SDMMC boot\n");
 		sdmmc_init(&reverse_handoff_ptr, &params, &mmc_info);
 		socfpga_io_setup(boot_source);
@@ -122,6 +263,32 @@ void bl2_el3_plat_arch_setup(void)
 
 	default:
 		ERROR("Unsupported boot source\n");
+=======
+		NOTICE("SOCFPGA: SDMMC boot\n");
+		cdns_mmc_init(&params, &mmc_info);
+		socfpga_io_setup(boot_source, PLAT_SDMMC_DATA_BASE);
+		break;
+
+	case BOOT_SOURCE_QSPI:
+		NOTICE("SOCFPGA: QSPI boot\n");
+		cad_qspi_init(0, QSPI_CONFIG_CPHA, QSPI_CONFIG_CPOL,
+			QSPI_CONFIG_CSDA, QSPI_CONFIG_CSDADS,
+			QSPI_CONFIG_CSEOT, QSPI_CONFIG_CSSOT, 0);
+		if (ros_qspi_get_ssbl_offset(&offset) != ROS_RET_OK) {
+			offset = PLAT_QSPI_DATA_BASE;
+		}
+		socfpga_io_setup(boot_source, offset);
+		break;
+
+	case BOOT_SOURCE_NAND:
+		NOTICE("SOCFPGA: NAND boot\n");
+		nand_init();
+		socfpga_io_setup(boot_source, PLAT_NAND_DATA_BASE);
+		break;
+
+	default:
+		ERROR("SOCFPGA: Unsupported boot source\n");
+>>>>>>> upstream_import/upstream_v2_14_1
 		panic();
 		break;
 	}
@@ -154,6 +321,23 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 
 	assert(bl_mem_params);
 
+<<<<<<< HEAD
+=======
+#if SOCFPGA_SECURE_VAB_AUTH
+	/*
+	 * VAB Authentication start here.
+	 * If failed to authenticate, shall not proceed to process BL31 and hang.
+	 */
+	int ret = 0;
+
+	ret = socfpga_vab_init(image_id);
+	if (ret < 0) {
+		ERROR("SOCFPGA: VAB Authentication failed\n");
+		wfi();
+	}
+#endif
+
+>>>>>>> upstream_import/upstream_v2_14_1
 	switch (image_id) {
 	case BL33_IMAGE_ID:
 		bl_mem_params->ep_info.args.arg0 = 0xffff & read_mpidr();

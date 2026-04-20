@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2023, MediaTek Inc. All rights reserved.
+=======
+ * Copyright (c) 2023-2024, MediaTek Inc. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -34,5 +38,9 @@
 #define D15_REMAP_DOMAIN	(15)
 
 void apusys_security_ctrl_init(void);
+<<<<<<< HEAD
+=======
+int apusys_plat_setup_sec_mem(void);
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* APUSYS_SECURITY_CTRL_PLAT_H */

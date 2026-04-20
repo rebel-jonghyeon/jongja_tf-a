@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2019-2023, Arm Limited. All rights reserved.
+=======
+ * Copyright (c) 2019-2025, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -22,9 +26,6 @@
 #define NEOVERSE_V1_CPUPCR_EL3					S3_6_C15_C8_1
 #define NEOVERSE_V1_CPUECTLR_EL1_BIT_8				(ULL(1) << 8)
 #define NEOVERSE_V1_CPUECTLR_EL1_BIT_53				(ULL(1) << 53)
-#define NEOVERSE_V1_CPUECTLR_EL1_PF_MODE_CNSRV			ULL(3)
-#define CPUECTLR_EL1_PF_MODE_LSB				U(6)
-#define CPUECTLR_EL1_PF_MODE_WIDTH				U(2)
 
 /*******************************************************************************
  * CPU Power Control register specific definitions
@@ -47,5 +48,9 @@
 #define NEOVERSE_V1_ACTLR5_EL1					S3_0_C15_C9_0
 #define NEOVERSE_V1_ACTLR5_EL1_BIT_55				(ULL(1) << 55)
 #define NEOVERSE_V1_ACTLR5_EL1_BIT_56				(ULL(1) << 56)
+<<<<<<< HEAD
+=======
+#define NEOVERSE_V1_ACTLR5_EL1_BIT_61				(ULL(1) << 61)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* NEOVERSE_V1_H */

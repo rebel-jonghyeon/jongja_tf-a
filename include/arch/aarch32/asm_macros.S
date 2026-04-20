@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016-2023, ARM Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2016-2026, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -111,7 +115,8 @@
 	 */
 	.macro exception_return
 	eret
-#if ENABLE_FEAT_SB
+	/* fallback to the old slower variant for FEAT_STATE_CHECKED */
+#if ENABLE_FEAT_SB == 1
 	sb
 #else
 	dsb	nsh
@@ -240,5 +245,14 @@ div2:
 	mov     \temp, \temp, lsr #1
 	cmp     \temp, \bot
 	bhs     div2
+	.endm
+
+	/*
+	 * Helper macro to instruction adr <reg>, <symbol> where <symbol> is
+	 * within the range +/- 4 GB.
+	 */
+	.macro adr_l, dst, sym
+	adrp	\dst, \sym
+	add	\dst, \dst, :lo12:\sym
 	.endm
 #endif /* ASM_MACROS_S */

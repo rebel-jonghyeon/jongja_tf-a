@@ -21,9 +21,12 @@
 #define PLATFORM_CORE_COUNT		(PLATFORM_CLUSTER_COUNT * \
 					 PLATFORM_CORE_COUNT_PER_CLUSTER)
 
+<<<<<<< HEAD
 /* arch timer */
 #define PLAT_SYSCNT_CLKIN_HZ		U(1600000000)
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 /* power domain */
 #define PLAT_MAX_PWR_LVL		U(1)
 #define PLAT_NUM_PWR_DOMAINS		U(5)
@@ -55,4 +58,15 @@
 #define CONSOLE_UART_CLKIN_HZ		U(1846153)
 #define CONSOLE_UART_BAUDRATE		U(115200)
 
+<<<<<<< HEAD
+=======
+/* CLK information */
+#define CLKIN_25M			UL(25000000)
+
+#define PLAT_CLK_GATE_NUM		U(29)
+#define PLAT_CLK_HPLL			(PLAT_CLK_GATE_NUM + 5)
+#define PLAT_CLK_DPLL			(PLAT_CLK_GATE_NUM + 6)
+#define PLAT_CLK_MPLL			(PLAT_CLK_GATE_NUM + 7)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif /* PLATFORM_DEF_H */

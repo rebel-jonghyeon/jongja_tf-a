@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,14 +17,24 @@
 #include <bl31/bl31.h>
 #include <bl31/ehf.h>
 #include <common/bl_common.h>
+#include <common/build_message.h>
 #include <common/debug.h>
 #include <common/feat_detect.h>
 #include <common/runtime_svc.h>
+#include <drivers/arm/dsu.h>
+#include <drivers/arm/gic.h>
 #include <drivers/console.h>
 #include <lib/bootmarker_capture.h>
+<<<<<<< HEAD
+=======
+#include <lib/el3_runtime/context_debug.h>
+>>>>>>> upstream_import/upstream_v2_14_1
 #include <lib/el3_runtime/context_mgmt.h>
+#include <lib/extensions/pauth.h>
+#include <lib/gpt_rme/gpt_rme.h>
 #include <lib/pmf/pmf.h>
 #include <lib/runtime_instr.h>
+#include <lib/xlat_tables/xlat_mmu_helpers.h>
 #include <plat/common/platform.h>
 #include <services/std_svc.h>
 
@@ -31,12 +45,20 @@ enum bl31_boot_sequence {
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_REGISTER_SERVICE_SMC(rt_instr_svc, PMF_RT_INSTR_SVC_ID,
+<<<<<<< HEAD
 							 RT_INSTR_TOTAL_IDS, PMF_STORE_ENABLE)
+=======
+		RT_INSTR_TOTAL_IDS, PMF_STORE_ENABLE)
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_REGISTER_SERVICE(bl_svc, PMF_RT_INSTR_SVC_ID,
+<<<<<<< HEAD
 						 BL_TOTAL_IDS, PMF_DUMP_ENABLE)
+=======
+		BL_TOTAL_IDS, PMF_DUMP_ENABLE)
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 /*******************************************************************************
@@ -58,7 +80,7 @@ static int32_t (*rmm_init)(void);
  * Variable to indicate whether next image to execute after BL31 is BL33
  * (non-secure & default) or BL32 (secure).
  ******************************************************************************/
-static uint32_t next_image_type = NON_SECURE;
+static uint32_t next_image_type = (uint32_t)NON_SECURE;
 
 #ifdef SUPPORT_UNKNOWN_MPID
 /*
@@ -87,12 +109,13 @@ uintptr_t get_arm_std_svc_args(unsigned int svc_mask)
 /*******************************************************************************
  * Simple function to initialise all BL31 helper libraries.
  ******************************************************************************/
-void __init bl31_lib_init(void)
+static void __init bl31_lib_init(void)
 {
 	cm_init();
 }
 
 /*******************************************************************************
+<<<<<<< HEAD
  * Setup function for BL31.
  ******************************************************************************/
 void bl31_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2,
@@ -114,6 +137,8 @@ void bl31_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2,
 }
 
 /*******************************************************************************
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
  * BL31 is responsible for setting up the runtime services for the primary cpu
  * before passing control to the bootloader or an Operating System. This
  * function calls runtime_svc_init() which initializes all registered runtime
@@ -121,8 +146,10 @@ void bl31_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2,
  * switch to the next exception level. When this function returns, the core will
  * switch to the programmed exception level via an ERET.
  ******************************************************************************/
-void bl31_main(void)
+void __no_pauth bl31_main(u_register_t arg0, u_register_t arg1, u_register_t arg2,
+		u_register_t arg3)
 {
+<<<<<<< HEAD
 	/* Init registers that never change for the lifetime of TF-A */
 	cm_manage_extensions_el3();
 
@@ -131,12 +158,39 @@ void bl31_main(void)
 
 	NOTICE("BL31: %s\n", version_string);
 	NOTICE("BL31: %s\n", build_message);
+=======
+	unsigned int core_pos = plat_my_core_pos();
+
+	/* Enable early console if EARLY_CONSOLE flag is enabled */
+	plat_setup_early_console();
+
+	/* Perform early platform-specific setup */
+	bl31_early_platform_setup2(arg0, arg1, arg2, arg3);
+
+	/* Perform late platform-specific setup */
+	bl31_plat_arch_setup();
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #if FEATURE_DETECTION
 	/* Detect if features enabled during compilation are supported by PE. */
-	detect_arch_features();
+	detect_arch_features(core_pos);
 #endif /* FEATURE_DETECTION */
 
+<<<<<<< HEAD
+=======
+	/* Prints context_memory allocated for all the security states */
+	report_ctx_memory_usage();
+
+	/* Init registers that never change for the lifetime of the core. */
+	cm_manage_extensions_el3(core_pos);
+
+	/* Init per-world context registers */
+	cm_manage_extensions_per_world();
+
+	NOTICE("BL31: %s\n", build_version_string);
+	NOTICE("BL31: %s\n", build_message);
+
+>>>>>>> upstream_import/upstream_v2_14_1
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_CAPTURE_TIMESTAMP(bl_svc, BL31_ENTRY, PMF_CACHE_MAINT);
 #endif
@@ -149,6 +203,20 @@ void bl31_main(void)
 
 	/* Perform platform setup in BL31 */
 	bl31_platform_setup();
+
+#if USE_DSU_DRIVER
+	dsu_driver_init(&plat_dsu_data);
+#endif
+
+#if USE_GIC_DRIVER
+	/*
+	 * Initialize the GIC driver as well as per-cpu and global interfaces.
+	 * Platform has had an opportunity to initialise specifics.
+	 */
+	gic_init(core_pos);
+	gic_pcpu_init(core_pos);
+	gic_cpuif_enable(core_pos);
+#endif /* USE_GIC_DRIVER */
 
 	/* Initialise helper libraries */
 	bl31_lib_init();
@@ -212,8 +280,6 @@ void bl31_main(void)
 	 */
 	bl31_prepare_next_image_entry();
 
-	console_flush();
-
 	/*
 	 * Perform any platform specific runtime setup prior to cold boot exit
 	 * from BL31
@@ -226,9 +292,72 @@ void bl31_main(void)
 	bl31_plat_runtime_setup();
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
+<<<<<<< HEAD
 	PMF_CAPTURE_TIMESTAMP(bl_svc, BL31_EXIT, PMF_CACHE_MAINT);
 	console_flush();
 #endif
+=======
+	console_flush();
+	PMF_CAPTURE_TIMESTAMP(bl_svc, BL31_EXIT, PMF_CACHE_MAINT);
+#endif
+
+	console_flush();
+	console_switch_state(CONSOLE_FLAG_RUNTIME);
+}
+
+void __no_pauth bl31_warmboot(void)
+{
+	unsigned int core_pos = plat_my_core_pos();
+
+#if FEATURE_DETECTION
+	/* Detect if features enabled during compilation are supported by PE. */
+	detect_arch_features(core_pos);
+#endif /* FEATURE_DETECTION */
+
+	/*
+	 * We're about to enable MMU and participate in PSCI state coordination.
+	 *
+	 * The PSCI implementation invokes platform routines that enable CPUs to
+	 * participate in coherency. On a system where CPUs are not
+	 * cache-coherent without appropriate platform specific programming,
+	 * having caches enabled until such time might lead to coherency issues
+	 * (resulting from stale data getting speculatively fetched, among
+	 * others). Therefore we keep data caches disabled even after enabling
+	 * the MMU for such platforms.
+	 *
+	 * On systems with hardware-assisted coherency, or on single cluster
+	 * platforms, such platform specific programming is not required to
+	 * enter coherency (as CPUs already are); and there's no reason to have
+	 * caches disabled either.
+	 */
+#if HW_ASSISTED_COHERENCY || WARMBOOT_ENABLE_DCACHE_EARLY
+	bl31_plat_enable_mmu(0);
+#else
+	bl31_plat_enable_mmu(DISABLE_DCACHE);
+#endif
+
+	/* Init registers that never change for the lifetime of the core. */
+	cm_manage_extensions_el3(core_pos);
+
+#if ENABLE_RME
+	/*
+	 * At warm boot GPT data structures have already been initialized in RAM
+	 * but the sysregs for this CPU need to be initialized. Note that the GPT
+	 * accesses are controlled attributes in GPCCR and do not depend on the
+	 * SCR_EL3.C bit.
+	 */
+	if (gpt_enable() != 0) {
+		panic();
+	}
+#endif
+
+/* Enable DSU driver for each booting core */
+#if USE_DSU_DRIVER
+	dsu_driver_init(&plat_dsu_data);
+#endif
+
+	psci_warmboot_entrypoint(core_pos);
+>>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /*******************************************************************************
@@ -245,7 +374,7 @@ void bl31_set_next_image_type(uint32_t security_state)
 	next_image_type = security_state;
 }
 
-uint32_t bl31_get_next_image_type(void)
+static uint32_t bl31_get_next_image_type(void)
 {
 	return next_image_type;
 }
@@ -256,7 +385,7 @@ uint32_t bl31_get_next_image_type(void)
  ******************************************************************************/
 void __init bl31_prepare_next_image_entry(void)
 {
-	entry_point_info_t *next_image_info;
+	const entry_point_info_t *next_image_info;
 	uint32_t image_type;
 
 #if CTX_INCLUDE_AARCH32_REGS

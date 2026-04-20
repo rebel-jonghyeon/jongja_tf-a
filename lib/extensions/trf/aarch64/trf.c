@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
+=======
+ * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,9 +13,16 @@
 #include <arch_helpers.h>
 #include <lib/extensions/trf.h>
 
+<<<<<<< HEAD
 void trf_init_el3(void)
 {
 	u_register_t val;
+=======
+void trf_enable(cpu_context_t *ctx)
+{
+	el3_state_t *state = get_el3state_ctx(ctx);
+	u_register_t mdcr_el3_val = read_ctx_reg(state, CTX_MDCR_EL3);
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	/*
 	 * MDCR_EL3.STE = b0
@@ -21,10 +32,31 @@ void trf_init_el3(void)
 	 * MDCR_EL3.TTRF = b0
 	 * Allow access of trace filter control registers from NS-EL2
 	 * and NS-EL1 when NS-EL2 is implemented but not used
+	 *
+	 * MDCR_EL3.RLTE = b0
+	 * Trace prohibited in Realm state, unless overridden by the
+	 * IMPLEMENTATION DEFINED authentication interface.
 	 */
+<<<<<<< HEAD
 	val = read_mdcr_el3();
 	val &= ~(MDCR_STE_BIT | MDCR_TTRF_BIT);
 	write_mdcr_el3(val);
+=======
+	mdcr_el3_val &= ~(MDCR_STE_BIT | MDCR_TTRF_BIT | MDCR_RLTE_BIT);
+	write_ctx_reg(state, CTX_MDCR_EL3, mdcr_el3_val);
+}
+
+void trf_init_el2_unused(void)
+{
+	/*
+	 * MDCR_EL2.TTRF: Set to zero so that access to Trace
+	 *  Filter Control register TRFCR_EL1 at EL1 is not
+	 *  trapped to EL2. This bit is RES0 in versions of
+	 *  the architecture earlier than ARMv8.4.
+	 *
+	 */
+	write_mdcr_el2(read_mdcr_el2() & ~MDCR_EL2_TTRF);
+>>>>>>> upstream_import/upstream_v2_14_1
 }
 
 void trf_init_el2_unused(void)

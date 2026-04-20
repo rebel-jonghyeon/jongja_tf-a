@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2017-2023, ARM Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2017-2025, ARM Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -56,7 +60,9 @@ typedef struct sp_context {
 void spm_sp_setup(sp_context_t *sp_ctx);
 
 int32_t spm_memory_attributes_get_smc_handler(sp_context_t *sp_ctx,
-					      uintptr_t base_va);
+					      uintptr_t base_va,
+					      uint32_t *page_count,
+					      uint32_t *attr);
 int spm_memory_attributes_set_smc_handler(sp_context_t *sp_ctx,
 					  u_register_t page_address,
 					  u_register_t pages_count,

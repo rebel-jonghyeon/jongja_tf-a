@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <common/bl_common.ld.h>
+#include <lib/per_cpu/per_cpu_defs.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
 
 OUTPUT_FORMAT(elf32-littlearm)
@@ -29,6 +30,9 @@ SECTIONS {
 
 #if SEPARATE_CODE_AND_RODATA
     .text . : {
+        ASSERT(. == ALIGN(PAGE_SIZE),
+        ".text address is not aligned on a page boundary.");
+
         __TEXT_START__ = .;
 
         *entrypoint.o(.text*)
@@ -67,6 +71,9 @@ SECTIONS {
     } >RAM
 #else /* SEPARATE_CODE_AND_RODATA */
     .ro . : {
+        ASSERT(. == ALIGN(PAGE_SIZE),
+        ".ro address is not aligned on a page boundary.");
+
         __RO_START__ = .;
 
         *entrypoint.o(.text*)
@@ -108,6 +115,7 @@ SECTIONS {
 
     STACK_SECTION >RAM
     BSS_SECTION >RAM
+    PER_CPU >RAM
     XLAT_TABLE_SECTION >RAM
 
     __BSS_SIZE__ = SIZEOF(.bss);

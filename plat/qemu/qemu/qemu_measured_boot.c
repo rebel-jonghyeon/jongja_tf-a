@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2022, Arm Limited. All rights reserved.
+=======
+ * Copyright (c) 2022-2025, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  * Copyright (c) 2022-2023, Linaro.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -7,9 +11,14 @@
 
 #include <stdint.h>
 
-#include <drivers/measured_boot/event_log/event_log.h>
 #include <plat/common/common_def.h>
 #include <plat/common/platform.h>
+
+#include <common/debug.h>
+#include <drivers/auth/crypto_mod.h>
+#include <drivers/measured_boot/metadata.h>
+#include <event_measure.h>
+#include <event_print.h>
 #include <tools_share/tbbr_oid.h>
 
 #include "../common/qemu_private.h"
@@ -18,18 +27,24 @@
 static uint8_t event_log[PLAT_EVENT_LOG_MAX_SIZE];
 static uint64_t event_log_base;
 
+static const struct event_log_hash_info crypto_hash_info = {
+	.func = crypto_mod_calc_hash,
+	.ids = (const uint32_t[]){ CRYPTO_MD_ID },
+	.count = 1U,
+};
+
 /* QEMU table with platform specific image IDs, names and PCRs */
 static const event_log_metadata_t qemu_event_log_metadata[] = {
-	{ BL31_IMAGE_ID, EVLOG_BL31_STRING, PCR_0 },
-	{ BL32_IMAGE_ID, EVLOG_BL32_STRING, PCR_0 },
-	{ BL32_EXTRA1_IMAGE_ID, EVLOG_BL32_EXTRA1_STRING, PCR_0 },
-	{ BL32_EXTRA2_IMAGE_ID, EVLOG_BL32_EXTRA2_STRING, PCR_0 },
-	{ BL33_IMAGE_ID, EVLOG_BL33_STRING, PCR_0 },
-	{ HW_CONFIG_ID, EVLOG_HW_CONFIG_STRING, PCR_0 },
-	{ NT_FW_CONFIG_ID, EVLOG_NT_FW_CONFIG_STRING, PCR_0 },
-	{ SCP_BL2_IMAGE_ID, EVLOG_SCP_BL2_STRING, PCR_0 },
-	{ SOC_FW_CONFIG_ID, EVLOG_SOC_FW_CONFIG_STRING, PCR_0 },
-	{ TOS_FW_CONFIG_ID, EVLOG_TOS_FW_CONFIG_STRING, PCR_0 },
+	{ BL31_IMAGE_ID, MBOOT_BL31_IMAGE_STRING, PCR_0 },
+	{ BL32_IMAGE_ID, MBOOT_BL32_IMAGE_STRING, PCR_0 },
+	{ BL32_EXTRA1_IMAGE_ID, MBOOT_BL32_EXTRA1_IMAGE_STRING, PCR_0 },
+	{ BL32_EXTRA2_IMAGE_ID, MBOOT_BL32_EXTRA2_IMAGE_STRING, PCR_0 },
+	{ BL33_IMAGE_ID, MBOOT_BL33_IMAGE_STRING, PCR_0 },
+	{ HW_CONFIG_ID, MBOOT_HW_CONFIG_STRING, PCR_0 },
+	{ NT_FW_CONFIG_ID, MBOOT_NT_FW_CONFIG_STRING, PCR_0 },
+	{ SCP_BL2_IMAGE_ID, MBOOT_SCP_BL2_IMAGE_STRING, PCR_0 },
+	{ SOC_FW_CONFIG_ID, MBOOT_SOC_FW_CONFIG_STRING, PCR_0 },
+	{ TOS_FW_CONFIG_ID, MBOOT_TOS_FW_CONFIG_STRING, PCR_0 },
 
 	{ EVLOG_INVALID_ID, NULL, (unsigned int)(-1) }	/* Terminator */
 };
@@ -41,8 +56,18 @@ void bl2_plat_mboot_init(void)
 	 * to measure the BL2 code which is a common case for
 	 * already existing platforms
 	 */
-	event_log_init(event_log, event_log + sizeof(event_log));
-	event_log_write_header();
+	int rc = event_log_init_and_reg(
+		event_log, event_log + sizeof(event_log), &crypto_hash_info);
+	if (rc < 0) {
+		ERROR("Failed to initialize event log (%d).\n", rc);
+		panic();
+	}
+
+	rc = event_log_write_header();
+	if (rc < 0) {
+		ERROR("Failed to write event log header (%d).\n", rc);
+		panic();
+	}
 
 	/*
 	 * TBD - Add code to do self measurement of BL2 code and add an
@@ -64,6 +89,14 @@ void bl2_plat_mboot_finish(void)
 
 	event_log_cur_size = event_log_get_cur_size((uint8_t *)event_log_base);
 
+	event_log_dump((uint8_t *)event_log_base, event_log_cur_size);
+
+#if TRANSFER_LIST
+	if (!plat_handoff_mboot((void *)event_log_base, event_log_cur_size,
+				(void *)(uintptr_t)FW_HANDOFF_BASE))
+		return;
+#endif
+
 	rc = qemu_set_nt_fw_info(
 #ifdef SPD_opteed
 			    (uintptr_t)event_log_base,
@@ -73,13 +106,17 @@ void bl2_plat_mboot_finish(void)
 		ERROR("%s(): Unable to update %s_FW_CONFIG\n",
 		      __func__, "NT");
 		/*
-		 * It is a fatal error because on QEMU secure world software
+		 * It is a non-fatal error because on QEMU secure world software
 		 * assumes that a valid event log exists and will use it to
-		 * record the measurements into the fTPM or sw-tpm.
+		 * record the measurements into the fTPM or sw-tpm, but the boot
+		 * can also happen without TPM on the platform. It's up to
+		 * higher layer in boot sequence to decide if this is fatal or
+		 * not, e.g. by not providing access to TPM encrypted storage.
 		 * Note: In QEMU platform, OP-TEE uses nt_fw_config to get the
 		 * secure Event Log buffer address.
 		 */
-		panic();
+		WARN("Ignoring TPM errors, continuing without\n");
+		return;
 	}
 
 	/* Copy Event Log to Non-secure memory */
@@ -100,7 +137,6 @@ void bl2_plat_mboot_finish(void)
 	}
 #endif /* defined(SPD_tspd) || defined(SPD_spmd) */
 
-	dump_event_log((uint8_t *)event_log_base, event_log_cur_size);
 }
 
 int plat_mboot_measure_image(unsigned int image_id, image_info_t *image_data)

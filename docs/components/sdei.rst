@@ -354,7 +354,51 @@ implemented in assembly, following a similar pattern as below:
 
 --------------
 
-*Copyright (c) 2017-2019, Arm Limited and Contributors. All rights reserved.*
+Security Considerations
+-----------------------
+
+SDEI introduces concept of providing software based non-maskable interrupts to
+Hypervisor/OS. In doing so, it modifies the priority scheme defined by Interrupt
+controllers and relies on Non-Secure clients, Hypervisor or OS, to create/manage
+high priority events.
+
+Considering a Non-secure client is involved in SDEI state management, there exists
+some security considerations which needs to be taken care of in both client and EL3
+when using SDEI. Few of them are mentioned below.
+
+Bound events
+~~~~~~~~~~~~
+
+A bound event is an SDEI event that corresponds to a client interrupt.
+The binding of event is done using ``SDEI_INTERRUPT_BIND`` SMC call to associate
+an SDEI event with a client interrupt. There is a possibility that a rogue
+client can request an invalid interrupt to be bound. This may potentially
+cause out-of-bound memory read.
+
+Even though TF-A implementation has checks to ensure that interrupt ID passed
+by client is architecturally valid, Non-secure client should also ensure the
+validity of interrupts.
+
+Recurring events
+~~~~~~~~~~~~~~~~
+
+For a given event source, if the events are generated continuously, then NS client
+may be unusable. To mitigate against this, the Non-secure client must have
+mechanism in place to remove such interrupt source from the system.
+
+One of the examples is a memory region which continuously generates RAS errors.
+This may result in unusable Non-secure client.
+
+Dispatched events
+~~~~~~~~~~~~~~~~~
+
+For a dispatched event, it is the client's responsibility to ensure that the
+handling finishes in finite time and notify the dispatcher through
+``SDEI_EVENT_COMPLETE`` or ``SDEI_EVENT_COMPLETE_AND_RESUME``. If the client
+fails to complete the event handling, it might result in ``UNPREDICTABLE`` behavior
+in the client and potentially end up in unusable PE.
+
+*Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.*
 
 .. rubric:: Footnotes
 
@@ -365,5 +409,5 @@ implemented in assembly, following a similar pattern as below:
                      External Abort*, *Fault Handling interrupt* or *Error
                      Recovery interrupt* from one of RAS nodes in the system.
 
-.. _SDEI specification: http://infocenter.arm.com/help/topic/com.arm.doc.den0054a/ARM_DEN0054A_Software_Delegated_Exception_Interface.pdf
+.. _SDEI specification: https://developer.arm.com/documentation/den0054
 .. _Software Delegated Exception Interface: `SDEI specification`_

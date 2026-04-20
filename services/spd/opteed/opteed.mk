@@ -14,9 +14,6 @@ SPD_SOURCES		:=	services/spd/opteed/opteed_common.c	\
 
 NEED_BL32		:=	yes
 
-# required so that optee code can control access to the timer registers
-NS_TIMER_SWITCH		:=	1
-
 # WARNING: This enables loading of OP-TEE via an SMC, which can be potentially
 # insecure. This removes the boundary between the startup of the secure and
 # non-secure worlds until the point where this SMC is invoked. Only use this
@@ -32,4 +29,12 @@ $(warning "OPTEE_ALLOW_SMC_LOAD is enabled which may result in an insecure \
 $(eval $(call add_define,PLAT_XLAT_TABLES_DYNAMIC))
 $(eval $(call add_define,OPTEE_ALLOW_SMC_LOAD))
 include lib/libfdt/libfdt.mk
+endif
+
+CROS_WIDEVINE_SMC		:=	0
+ifeq ($(CROS_WIDEVINE_SMC),1)
+ifeq ($(OPTEE_ALLOW_SMC_LOAD),0)
+$(error When CROS_WIDEVINE_SMC=1, OPTEE_ALLOW_SMC_LOAD must also be 1)
+endif
+$(eval $(call add_define,CROS_WIDEVINE_SMC))
 endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,8 +7,18 @@
 #include <stdint.h>
 
 #include <common/tbbr/tbbr_img_def.h>
+<<<<<<< HEAD
 #include <drivers/measured_boot/event_log/event_log.h>
 #include <drivers/measured_boot/rss/rss_measured_boot.h>
+=======
+#if TRANSFER_LIST
+#include <tpm_event_log.h>
+#endif
+#include <drivers/auth/crypto_mod.h>
+#include <drivers/measured_boot/metadata.h>
+#include <event_measure.h>
+#include <event_print.h>
+>>>>>>> upstream_import/upstream_v2_14_1
 #if defined(ARM_COT_cca)
 #include <tools_share/cca_oid.h>
 #else
@@ -19,7 +29,7 @@
 #include <plat/arm/common/plat_arm.h>
 #include <plat/common/common_def.h>
 
-#if defined(SPD_tspd) || defined(SPD_opteed) || defined(SPD_spmd)
+#if !TRANSFER_LIST && (defined(SPD_tspd) || defined(SPD_opteed) || defined(SPD_spmd))
 CASSERT(ARM_EVENT_LOG_DRAM1_SIZE >= PLAT_ARM_EVENT_LOG_MAX_SIZE, \
 	assert_res_eventlog_mem_insufficient);
 #endif /* defined(SPD_tspd) || defined(SPD_opteed) || defined(SPD_spmd) */
@@ -27,29 +37,35 @@ CASSERT(ARM_EVENT_LOG_DRAM1_SIZE >= PLAT_ARM_EVENT_LOG_MAX_SIZE, \
 /* Event Log data */
 static uint64_t event_log_base;
 
+static const struct event_log_hash_info crypto_hash_info = {
+	.func = crypto_mod_calc_hash,
+	.ids = (const uint32_t[]){ CRYPTO_MD_ID },
+	.count = 1U,
+};
+
 /* FVP table with platform specific image IDs, names and PCRs */
 const event_log_metadata_t fvp_event_log_metadata[] = {
-	{ BL31_IMAGE_ID, EVLOG_BL31_STRING, PCR_0 },
-	{ BL32_IMAGE_ID, EVLOG_BL32_STRING, PCR_0 },
-	{ BL32_EXTRA1_IMAGE_ID, EVLOG_BL32_EXTRA1_STRING, PCR_0 },
-	{ BL32_EXTRA2_IMAGE_ID, EVLOG_BL32_EXTRA2_STRING, PCR_0 },
-	{ BL33_IMAGE_ID, EVLOG_BL33_STRING, PCR_0 },
-	{ HW_CONFIG_ID, EVLOG_HW_CONFIG_STRING, PCR_0 },
-	{ NT_FW_CONFIG_ID, EVLOG_NT_FW_CONFIG_STRING, PCR_0 },
-	{ SCP_BL2_IMAGE_ID, EVLOG_SCP_BL2_STRING, PCR_0 },
-	{ SOC_FW_CONFIG_ID, EVLOG_SOC_FW_CONFIG_STRING, PCR_0 },
-	{ TOS_FW_CONFIG_ID, EVLOG_TOS_FW_CONFIG_STRING, PCR_0 },
-	{ RMM_IMAGE_ID, EVLOG_RMM_STRING, PCR_0},
+	{ BL31_IMAGE_ID, MBOOT_BL31_IMAGE_STRING, PCR_0 },
+	{ BL32_IMAGE_ID, MBOOT_BL32_IMAGE_STRING, PCR_0 },
+	{ BL32_EXTRA1_IMAGE_ID, MBOOT_BL32_EXTRA1_IMAGE_STRING, PCR_0 },
+	{ BL32_EXTRA2_IMAGE_ID, MBOOT_BL32_EXTRA2_IMAGE_STRING, PCR_0 },
+	{ BL33_IMAGE_ID, MBOOT_BL33_IMAGE_STRING, PCR_0 },
+	{ HW_CONFIG_ID, MBOOT_HW_CONFIG_STRING, PCR_0 },
+	{ NT_FW_CONFIG_ID, MBOOT_NT_FW_CONFIG_STRING, PCR_0 },
+	{ SCP_BL2_IMAGE_ID, MBOOT_SCP_BL2_IMAGE_STRING, PCR_0 },
+	{ SOC_FW_CONFIG_ID, MBOOT_SOC_FW_CONFIG_STRING, PCR_0 },
+	{ TOS_FW_CONFIG_ID, MBOOT_TOS_FW_CONFIG_STRING, PCR_0 },
+	{ RMM_IMAGE_ID, MBOOT_RMM_IMAGE_STRING, PCR_0},
 
 #if defined(SPD_spmd)
-	{ SP_PKG1_ID, EVLOG_SP1_STRING, PCR_0 },
-	{ SP_PKG2_ID, EVLOG_SP2_STRING, PCR_0 },
-	{ SP_PKG3_ID, EVLOG_SP3_STRING, PCR_0 },
-	{ SP_PKG4_ID, EVLOG_SP4_STRING, PCR_0 },
-	{ SP_PKG5_ID, EVLOG_SP5_STRING, PCR_0 },
-	{ SP_PKG6_ID, EVLOG_SP6_STRING, PCR_0 },
-	{ SP_PKG7_ID, EVLOG_SP7_STRING, PCR_0 },
-	{ SP_PKG8_ID, EVLOG_SP8_STRING, PCR_0 },
+	{ SP_PKG1_ID, MBOOT_SP1_STRING, PCR_0 },
+	{ SP_PKG2_ID, MBOOT_SP2_STRING, PCR_0 },
+	{ SP_PKG3_ID, MBOOT_SP3_STRING, PCR_0 },
+	{ SP_PKG4_ID, MBOOT_SP4_STRING, PCR_0 },
+	{ SP_PKG5_ID, MBOOT_SP5_STRING, PCR_0 },
+	{ SP_PKG6_ID, MBOOT_SP6_STRING, PCR_0 },
+	{ SP_PKG7_ID, MBOOT_SP7_STRING, PCR_0 },
+	{ SP_PKG8_ID, MBOOT_SP8_STRING, PCR_0 },
 #endif
 
 	{ CRITICAL_DATA_ID, EVLOG_CRITICAL_DATA_STRING, PCR_1 },
@@ -57,6 +73,7 @@ const event_log_metadata_t fvp_event_log_metadata[] = {
 	{ EVLOG_INVALID_ID, NULL, (unsigned int)(-1) }	/* Terminator */
 };
 
+<<<<<<< HEAD
 /* FVP table with platform specific image IDs and metadata. Intentionally not a
  * const struct, some members might set by bootloaders during trusted boot.
  */
@@ -95,14 +112,23 @@ struct rss_mboot_metadata fvp_rss_mboot_metadata[] = {
 		.id = RSS_MBOOT_INVALID_ID }
 };
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 void bl2_plat_mboot_init(void)
 {
 	uint8_t *event_log_start;
 	uint8_t *event_log_finish;
-	size_t bl1_event_log_size;
-	size_t event_log_max_size;
-	int rc;
+	size_t bl1_event_log_size __unused = 0;
+	size_t event_log_max_size __unused = 0;
+	int rc __unused;
 
+#if TRANSFER_LIST
+	event_log_start = transfer_list_event_log_extend(
+		secure_tl, PLAT_ARM_EVENT_LOG_MAX_SIZE);
+	event_log_finish = event_log_start + PLAT_ARM_EVENT_LOG_MAX_SIZE;
+
+	event_log_base = (uintptr_t)event_log_start;
+#else
 	rc = arm_get_tb_fw_info(&event_log_base, &bl1_event_log_size,
 				&event_log_max_size);
 	if (rc != 0) {
@@ -120,14 +146,24 @@ void bl2_plat_mboot_init(void)
 	 * BL1 and BL2 share the same Event Log buffer and that BL2 will
 	 * append its measurements after BL1's
 	 */
-	event_log_start = (uint8_t *)((uintptr_t)event_log_base +
-				      bl1_event_log_size);
-	event_log_finish = (uint8_t *)((uintptr_t)event_log_base +
-				       event_log_max_size);
+	event_log_start =
+		(uint8_t *)((uintptr_t)event_log_base + bl1_event_log_size);
+	event_log_finish =
+		(uint8_t *)((uintptr_t)event_log_base + event_log_max_size);
+#endif
 
+<<<<<<< HEAD
 	event_log_init((uint8_t *)event_log_start, event_log_finish);
 
 	rss_measured_boot_init(fvp_rss_mboot_metadata);
+=======
+	rc = event_log_init_and_reg(event_log_start, event_log_finish,
+				    &crypto_hash_info);
+	if (rc < 0) {
+		ERROR("Failed to initialize event log (%d).\n", rc);
+		panic();
+	}
+>>>>>>> upstream_import/upstream_v2_14_1
 }
 
 int plat_mboot_measure_critical_data(unsigned int critical_data_id,
@@ -200,10 +236,12 @@ void bl2_plat_mboot_finish(void)
 	int rc;
 
 	/* Event Log address in Non-Secure memory */
-	uintptr_t ns_log_addr;
+	uintptr_t ns_log_addr __unused;
 
 	/* Event Log filled size */
 	size_t event_log_cur_size;
+
+	struct transfer_list_entry *te __maybe_unused;
 
 	rc = fvp_populate_and_measure_critical_data();
 	if (rc != 0) {
@@ -212,6 +250,35 @@ void bl2_plat_mboot_finish(void)
 
 	event_log_cur_size = event_log_get_cur_size((uint8_t *)event_log_base);
 
+#if TRANSFER_LIST
+	/*
+	 * Re-size the event log for the next stage and update the size to include
+	 * the entire event log (i.e., not just what this stage has added.)
+	 */
+	event_log_base = (uintptr_t)transfer_list_event_log_finish(
+		secure_tl, (uintptr_t)event_log_base + event_log_cur_size);
+
+	/* Ensure changes are visible to the next stage. */
+	flush_dcache_range((uintptr_t)secure_tl, secure_tl->size);
+
+	event_log_cur_size = event_log_get_cur_size((uint8_t *)event_log_base);
+
+	/* If there is DT_SPMC_MANIFEST, update event log information. */
+	te = transfer_list_find(secure_tl, TL_TAG_DT_SPMC_MANIFEST);
+	if (te != NULL) {
+		te = transfer_list_find(secure_tl, TL_TAG_TPM_EVLOG);
+		assert(te != NULL && te->data_size > 0);
+
+		rc = arm_set_tos_fw_info((uintptr_t)transfer_list_entry_data(te),
+					 te->data_size);
+		if (rc != 0) {
+			WARN("%s(): Unable to update %s_FW_CONFIG\n",
+			      __func__, "TOS");
+		}
+
+		transfer_list_update_checksum(secure_tl);
+	}
+#else
 #if defined(SPD_tspd) || defined(SPD_opteed) || defined(SPD_spmd)
 	/* Copy Event Log to TZC secured DRAM memory */
 	(void)memcpy((void *)ARM_EVENT_LOG_DRAM1_BASE,
@@ -257,6 +324,7 @@ void bl2_plat_mboot_finish(void)
 		panic();
 	}
 #endif /* defined(SPD_tspd) || defined(SPD_spmd) */
+#endif /* TRANSFER_LIST */
 
-	dump_event_log((uint8_t *)event_log_base, event_log_cur_size);
+	event_log_dump((uint8_t *)event_log_base, event_log_cur_size);
 }

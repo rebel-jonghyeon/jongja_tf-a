@@ -1,5 +1,9 @@
 /*
  * Copyright (c) 2022-2023, Intel Corporation. All rights reserved.
+<<<<<<< HEAD
+=======
+ * Copyright (c) 2025, Altera Corporation. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -20,6 +24,7 @@
 #include "agilex5_pinmux.h"
 #include "combophy/combophy.h"
 
+<<<<<<< HEAD
 /* Pinmux configuration */
 static void nand_pinmux_config(void)
 {
@@ -55,3 +60,9 @@ int nand_init(handoff *hoff_ptr)
 
 	return cdns_nand_host_init();
 }
+=======
+int nand_init(void)
+{
+	return cdns_nand_host_init();
+}
+>>>>>>> upstream_import/upstream_v2_14_1

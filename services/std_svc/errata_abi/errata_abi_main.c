@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2025, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <assert.h>
 #include "cpu_errata_info.h"
+#include <lib/cpus/cpu_ops.h>
+#include <lib/cpus/errata.h>
 #include <lib/smccc.h>
 #include <lib/utils_def.h>
 #include <services/errata_abi_svc.h>
@@ -17,10 +19,9 @@
  */
 struct em_cpu_list *cpu_ptr;
 
-extern uint8_t cpu_get_rev_var(void);
-
 /* Structure array that holds CPU specific errata information */
 struct em_cpu_list cpu_list[] = {
+<<<<<<< HEAD
 #if CORTEX_A9_H_INC
 {
 	.cpu_partnumber = CORTEX_A9_MIDR,
@@ -189,33 +190,23 @@ struct em_cpu_list cpu_list[] = {
 },
 #endif /* CORTEX_A77_H_INC */
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 #if CORTEX_A78_H_INC
 {
-	.cpu_partnumber = CORTEX_A78_MIDR,
+	.cpu_midr = CORTEX_A78_MIDR,
 	.cpu_errata_list = {
-		[0] = {1688305, 0x00, 0x10, ERRATA_A78_1688305},
-		[1] = {1821534, 0x00, 0x10, ERRATA_A78_1821534},
-		[2] = {1941498, 0x00, 0x11, ERRATA_A78_1941498},
-		[3] = {1951500, 0x10, 0x11, ERRATA_A78_1951500},
-		[4] = {1952683, 0x00, 0x00, ERRATA_A78_1952683},
-		[5] = {2132060, 0x00, 0x12, ERRATA_A78_2132060},
-		[6] = {2242635, 0x10, 0x12, ERRATA_A78_2242635},
-		[7] = {2376745, 0x00, 0x12, ERRATA_A78_2376745},
-		[8] = {2395406, 0x00, 0x12, ERRATA_A78_2395406},
-		[9] = {2712571, 0x00, 0x12, ERRATA_A78_2712571, \
-			ERRATA_NON_ARM_INTERCONNECT},
-		[10] = {2742426, 0x00, 0x12, ERRATA_A78_2742426},
-		[11] = {2772019, 0x00, 0x12, ERRATA_A78_2772019},
-		[12] = {2779479, 0x00, 0x12, ERRATA_A78_2779479},
-		[13 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+		[0] = {2712571, 0x00, 0x12},
+		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
 	}
 },
 #endif /* CORTEX_A78_H_INC */
 
 #if CORTEX_A78_AE_H_INC
 {
-	.cpu_partnumber = CORTEX_A78_AE_MIDR,
+	.cpu_midr = CORTEX_A78_AE_MIDR,
 	.cpu_errata_list = {
+<<<<<<< HEAD
 		[0] = {1941500, 0x00, 0x01, ERRATA_A78_AE_1941500},
 		[1] = {1951502, 0x00, 0x01, ERRATA_A78_AE_1951502},
 		[2] = {2376748, 0x00, 0x02, ERRATA_A78_AE_2376748},
@@ -223,14 +214,19 @@ struct em_cpu_list cpu_list[] = {
 		[4] = {2712574, 0x00, 0x02, ERRATA_A78_AE_2712574, \
 			ERRATA_NON_ARM_INTERCONNECT},
 		[5 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+=======
+		[0] = {2712574, 0x00, 0x02},
+		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 },
 #endif /* CORTEX_A78_AE_H_INC */
 
 #if CORTEX_A78C_H_INC
 {
-	.cpu_partnumber = CORTEX_A78C_MIDR,
+	.cpu_midr = CORTEX_A78C_MIDR,
 	.cpu_errata_list = {
+<<<<<<< HEAD
 		[0] = {1827430, 0x00, 0x00, ERRATA_A78C_1827430},
 		[1] = {1827440, 0x00, 0x00, ERRATA_A78C_1827440},
 		[2] = {2132064, 0x01, 0x02, ERRATA_A78C_2132064},
@@ -242,10 +238,15 @@ struct em_cpu_list cpu_list[] = {
 		[7] = {2772121, 0x00, 0x02, ERRATA_A78C_2772121},
 		[8] = {2779484, 0x01, 0x02, ERRATA_A78C_2779484},
 		[9 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+=======
+		[0] = {2712575, 0x01, 0x02},
+		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 },
 #endif /* CORTEX_A78C_H_INC */
 
+<<<<<<< HEAD
 #if CORTEX_X1_H_INC
 {
 	.cpu_partnumber = CORTEX_X1_MIDR,
@@ -282,10 +283,13 @@ struct em_cpu_list cpu_list[] = {
 },
 #endif /* NEOVERSE_N1_H_INC */
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 #if NEOVERSE_V1_H_INC
 {
-	.cpu_partnumber = NEOVERSE_V1_MIDR,
+	.cpu_midr = NEOVERSE_V1_MIDR,
 	.cpu_errata_list = {
+<<<<<<< HEAD
 		[0] = {1618635, 0x00, 0x00, ERRATA_V1_1618635},
 		[1] = {1774420, 0x00, 0x10, ERRATA_V1_1774420},
 		[2] = {1791573, 0x00, 0x10, ERRATA_V1_1791573},
@@ -304,14 +308,19 @@ struct em_cpu_list cpu_list[] = {
 		[14] = {2743233, 0x00, 0x12, ERRATA_V1_2743233},
 		[15] = {2779461, 0x00, 0x12, ERRATA_V1_2779461},
 		[16 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+=======
+		[0] = {2701953, 0x00, 0x11},
+		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 },
 #endif /* NEOVERSE_V1_H_INC */
 
 #if CORTEX_A710_H_INC
 {
-	.cpu_partnumber = CORTEX_A710_MIDR,
+	.cpu_midr = CORTEX_A710_MIDR,
 	.cpu_errata_list = {
+<<<<<<< HEAD
 		[0] = {1987031, 0x00, 0x20, ERRATA_A710_1987031},
 		[1] = {2008768, 0x00, 0x20, ERRATA_A710_2008768},
 		[2] = {2017096, 0x00, 0x20, ERRATA_A710_2017096},
@@ -330,14 +339,19 @@ struct em_cpu_list cpu_list[] = {
 			ERRATA_NON_ARM_INTERCONNECT},
 		[15] = {2768515, 0x00, 0x21, ERRATA_A710_2768515},
 		[16 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+=======
+		[0] = {2701952, 0x00, 0x21},
+		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 },
 #endif /* CORTEX_A710_H_INC */
 
 #if NEOVERSE_N2_H_INC
 {
-	.cpu_partnumber = NEOVERSE_N2_MIDR,
+	.cpu_midr = NEOVERSE_N2_MIDR,
 	.cpu_errata_list = {
+<<<<<<< HEAD
 		[0] = {2002655, 0x00, 0x00, ERRATA_N2_2002655},
 		[1] = {2009478, 0x00, 0x00, ERRATA_N2_2009478},
 		[2] = {2025414, 0x00, 0x00, ERRATA_N2_2025414},
@@ -358,14 +372,19 @@ struct em_cpu_list cpu_list[] = {
 		[16] = {2743089, 0x00, 0x02, ERRATA_N2_2743089},
 		[17] = {2779511, 0x00, 0x02, ERRATA_N2_2779511},
 		[18 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+=======
+		[0] = {2728475, 0x00, 0x02},
+		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 },
 #endif /* NEOVERSE_N2_H_INC */
 
 #if CORTEX_X2_H_INC
 {
-	.cpu_partnumber = CORTEX_X2_MIDR,
+	.cpu_midr = CORTEX_X2_MIDR,
 	.cpu_errata_list = {
+<<<<<<< HEAD
 		[0] = {2002765, 0x00, 0x20, ERRATA_X2_2002765},
 		[1] = {2017096, 0x00, 0x20, ERRATA_X2_2017096},
 		[2] = {2058056, 0x00, 0x21, ERRATA_X2_2058056},
@@ -379,10 +398,15 @@ struct em_cpu_list cpu_list[] = {
 			ERRATA_NON_ARM_INTERCONNECT},
 		[10] = {2768515, 0x00, 0x21, ERRATA_X2_2768515},
 		[11 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+=======
+		[0] = {2701952, 0x00, 0x21},
+		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 },
 #endif /* CORTEX_X2_H_INC */
 
+<<<<<<< HEAD
 #if CORTEX_A510_H_INC
 {
 	.cpu_partnumber = CORTEX_A510_MIDR,
@@ -404,10 +428,13 @@ struct em_cpu_list cpu_list[] = {
 },
 #endif /* CORTEX_A510_H_INC */
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 #if NEOVERSE_V2_H_INC
 {
-	.cpu_partnumber = NEOVERSE_V2_MIDR,
+	.cpu_midr = NEOVERSE_V2_MIDR,
 	.cpu_errata_list = {
+<<<<<<< HEAD
 		[0] = {2331132, 0x00, 0x02, ERRATA_V2_2331132},
 		[1] = {2719103, 0x00, 0x01, ERRATA_V2_2719103, \
 			ERRATA_NON_ARM_INTERCONNECT},
@@ -416,19 +443,27 @@ struct em_cpu_list cpu_list[] = {
 		[4] = {2779510, 0x00, 0x01, ERRATA_V2_2779510},
 		[5] = {2801372, 0x00, 0x01, ERRATA_V2_2801372},
 		[6 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+=======
+		[0] = {2719103, 0x00, 0x01},
+		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+>>>>>>> upstream_import/upstream_v2_14_1
 	}
 },
 #endif /* NEOVERSE_V2_H_INC */
 
-#if CORTEX_A715_H_INC
+#if CORTEX_X3_H_INC
 {
+<<<<<<< HEAD
 	.cpu_partnumber = CORTEX_A715_MIDR,
+=======
+	.cpu_midr = CORTEX_X3_MIDR,
+>>>>>>> upstream_import/upstream_v2_14_1
 	.cpu_errata_list = {
-		[0] = {2701951, 0x00, 0x11, ERRATA_A715_2701951, \
-			ERRATA_NON_ARM_INTERCONNECT},
+		[0] = {2701951, 0x00, 0x11},
 		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
 	}
 },
+<<<<<<< HEAD
 #endif /* CORTEX_A715_H_INC */
 
 #if CORTEX_X3_H_INC
@@ -443,88 +478,92 @@ struct em_cpu_list cpu_list[] = {
 	}
 },
 #endif /* CORTEX_X3_H_INC */
+=======
+#endif /* CORTEX_X3_H_INC */
+
+#if CORTEX_X4_H_INC
+{
+	.cpu_midr = CORTEX_X4_MIDR,
+	.cpu_errata_list = {
+		[0] = {2701112, 0x00, 0x00},
+		[1 ... ERRATA_LIST_END] = UNDEF_ERRATA,
+	}
+},
+#endif /* CORTEX_X4_H_INC */
+
+>>>>>>> upstream_import/upstream_v2_14_1
 };
 
-/*
- * Function to do binary search and check for the specific errata ID
- * in the array of structures specific to the cpu identified.
- */
-int32_t binary_search(struct em_cpu_list *ptr, uint32_t erratum_id, uint8_t rxpx_val)
+#if ERRATA_NON_ARM_INTERCONNECT
+
+/* Check if the errata is enabled for non-arm interconnect */
+static int32_t non_arm_interconnect_errata(uint32_t errata_id, long rev_var)
 {
-	int low_index = 0U, mid_index = 0U;
-
-	int high_index = MAX_ERRATA_ENTRIES - 1;
-
-	assert(ptr != NULL);
-
-	/*
-	 * Pointer to the errata list of the cpu that matches
-	 * extracted partnumber in the cpu list
-	 */
-	struct em_cpu *erratum_ptr = NULL;
-
-	while (low_index <= high_index) {
-		mid_index = (low_index + high_index) / 2;
-
-		erratum_ptr = &ptr->cpu_errata_list[mid_index];
-		assert(erratum_ptr != NULL);
-
-		if (erratum_id < erratum_ptr->em_errata_id) {
-			high_index = mid_index - 1;
-		} else if (erratum_id > erratum_ptr->em_errata_id) {
-			low_index = mid_index + 1;
-		} else if (erratum_id == erratum_ptr->em_errata_id) {
-			if (RXPX_RANGE(rxpx_val, erratum_ptr->em_rxpx_lo, \
-				erratum_ptr->em_rxpx_hi)) {
-				if ((erratum_ptr->errata_enabled) && \
-				(!(erratum_ptr->non_arm_interconnect))) {
-					return EM_HIGHER_EL_MITIGATION;
-				}
-				return EM_AFFECTED;
-			}
-			return EM_NOT_AFFECTED;
-		}
-	}
-	/* no matching errata ID */
-	return EM_UNKNOWN_ERRATUM;
-}
-
-/* Function to check if the errata exists for the specific CPU and rxpx */
-int32_t verify_errata_implemented(uint32_t errata_id, uint32_t forward_flag)
-{
-	/*
-	 * Read MIDR value and extract the revision, variant and partnumber
-	 */
-	static uint32_t midr_val, cpu_partnum;
-	static uint8_t  cpu_rxpx_val;
 	int32_t ret_val = EM_UNKNOWN_ERRATUM;
 
 	/* Determine the number of cpu listed in the cpu list */
 	uint8_t size_cpulist = ARRAY_SIZE(cpu_list);
 
 	/* Read the midr reg to extract cpu, revision and variant info */
-	midr_val = read_midr();
+	uint32_t midr_val = read_midr();
 
-	/* Extract revision and variant from the MIDR register */
-	cpu_rxpx_val = cpu_get_rev_var();
-
-	/* Extract the cpu partnumber and check if the cpu is in the cpu list */
-	cpu_partnum = EXTRACT_PARTNUM(midr_val);
-
-	for (uint8_t i = 0; i < size_cpulist; i++) {
+	for (uint8_t i = 0U; i < size_cpulist; i++) {
 		cpu_ptr = &cpu_list[i];
-		uint16_t partnum_extracted = EXTRACT_PARTNUM(cpu_ptr->cpu_partnumber);
+		/*
+		 * If the cpu partnumber in the cpu list, matches the midr
+		 * part number, check to see if the errata ID matches
+		 */
+		if (EXTRACT_PARTNUM(midr_val) == EXTRACT_PARTNUM(cpu_ptr->cpu_midr)) {
 
-		if (partnum_extracted == cpu_partnum) {
-			/*
-			 * If the midr value is in the cpu list, binary search
-			 * for the errata ID and specific revision in the list.
-			 */
-			ret_val = binary_search(cpu_ptr, errata_id, cpu_rxpx_val);
+			struct em_cpu *ptr = NULL;
+
+			for (int j = 0; j < MAX_PLAT_CPU_ERRATA_ENTRIES; j++) {
+				ptr = &cpu_ptr->cpu_errata_list[j];
+				assert(ptr != NULL);
+				if (errata_id == ptr->em_errata_id) {
+					if (RXPX_RANGE(rev_var, ptr->em_rxpx_lo, ptr->em_rxpx_hi)) {
+						ret_val = EM_AFFECTED;
+						break;
+					}
+					ret_val = EM_NOT_AFFECTED;
+					break;
+				}
+			}
 			break;
 		}
 	}
 	return ret_val;
+}
+#endif
+
+/* Function to check if the errata exists for the specific CPU and rxpx */
+int32_t verify_errata_implemented(uint32_t errata_id)
+{
+	struct erratum_entry *entry;
+	long rev_var;
+
+	rev_var = cpu_get_rev_var();
+
+#if ERRATA_NON_ARM_INTERCONNECT
+	int32_t ret_val = non_arm_interconnect_errata(errata_id, rev_var);
+	if (ret_val != EM_UNKNOWN_ERRATUM) {
+		return ret_val;
+	}
+#endif
+	entry = find_erratum_entry(errata_id);
+	if (entry == NULL)
+		return EM_UNKNOWN_ERRATUM;
+
+	if (entry->check_func(rev_var)) {
+		if (entry->chosen & WA_ENABLED_MASK)
+			if (entry->chosen & SPLIT_WA_MASK)
+				return EM_AFFECTED;
+			else
+				return EM_HIGHER_EL_MITIGATION;
+		else
+			return EM_AFFECTED;
+	}
+	return EM_NOT_AFFECTED;
 }
 
 /* Predicate indicating that a function id is part of EM_ABI */
@@ -586,7 +625,7 @@ uintptr_t errata_abi_smc_handler(uint32_t smc_fid, u_register_t x1,
 		if (((uint32_t)x2 != 0) && (validate_spsr_mode())) {
 			SMC_RET1(handle, EM_INVALID_PARAMETERS);
 		}
-		ret_id = verify_errata_implemented((uint32_t)x1, (uint32_t)x2);
+		ret_id = verify_errata_implemented((uint32_t)x1);
 		SMC_RET1(handle, ret_id);
 		break; /* unreachable */
 	default:

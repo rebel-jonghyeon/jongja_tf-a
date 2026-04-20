@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2015-2023, ARM Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * Copyright (C) 2017-2023 Nuvoton Ltd.
  *
@@ -47,6 +51,23 @@ static entry_point_info_t bl33_image_ep_info;
 					BL31_END - BL31_START, \
 					MT_MEMORY | MT_RW | EL3_PAS)
 
+<<<<<<< HEAD
+=======
+#if RECLAIM_INIT_CODE
+IMPORT_SYM(unsigned long, __INIT_CODE_START__, BL_INIT_CODE_BASE);
+IMPORT_SYM(unsigned long, __INIT_CODE_END__, BL_CODE_END_UNALIGNED);
+
+#define	BL_INIT_CODE_END	((BL_CODE_END_UNALIGNED + PAGE_SIZE - 1) & \
+					~(PAGE_SIZE - 1))
+
+#define MAP_BL_INIT_CODE	MAP_REGION_FLAT( \
+					BL_INIT_CODE_BASE, \
+					BL_INIT_CODE_END - \
+					BL_INIT_CODE_BASE, \
+					MT_CODE | MT_SECURE)
+#endif /* RECLAIM_INIT_CODE */
+
+>>>>>>> upstream_import/upstream_v2_14_1
 #if SEPARATE_NOBITS_REGION
 #define MAP_BL31_NOBITS		MAP_REGION_FLAT( \
 					BL31_NOBITS_BASE, \
@@ -103,7 +124,14 @@ int board_uart_init(void)
 
 unsigned int plat_get_syscnt_freq2(void)
 {
+<<<<<<< HEAD
 	return (unsigned int)COUNTER_FREQUENCY;
+=======
+	/*
+	 * Do not overwrite the value set by BootBlock
+	 */
+	return (unsigned int)read_cntfrq_el0();
+>>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /******************************************************************************
@@ -117,6 +145,10 @@ unsigned int plat_get_syscnt_freq2(void)
 void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 		u_register_t arg2, u_register_t arg3)
 {
+<<<<<<< HEAD
+=======
+	arg0 = arg1 = arg2 = arg3 = 0;
+>>>>>>> upstream_import/upstream_v2_14_1
 #if RESET_TO_BL31
 	void *from_bl2 = (void *)arg0;
 	void *plat_params_from_bl2 = (void *)arg3;
@@ -149,7 +181,11 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 					0);
 	SET_SECURITY_STATE(bl32_image_ep_info.h.attr, SECURE);
 	bl32_image_ep_info.pc = BL32_BASE;
+<<<<<<< HEAD
 	bl32_image_ep_info.spsr = arm_get_spsr_for_bl32_entry();
+=======
+	bl32_image_ep_info.spsr = arm_get_spsr(BL32_IMAGE_ID);
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #if defined(SPD_spmd)
 /*
@@ -176,7 +212,11 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
  */
 		bl33_image_ep_info.pc = plat_get_ns_image_entrypoint();
 		/* Generic ARM code will switch to EL2, revert to EL1 */
+<<<<<<< HEAD
 		bl33_image_ep_info.spsr = arm_get_spsr_for_bl33_entry();
+=======
+		bl33_image_ep_info.spsr = arm_get_spsr(BL33_IMAGE_ID);
+>>>>>>> upstream_import/upstream_v2_14_1
 		bl33_image_ep_info.spsr &= ~0x8;
 		bl33_image_ep_info.spsr |= 0x4;
 
@@ -309,6 +349,7 @@ void __init npcm845x_bl31_plat_arch_setup(void)
 {
 	const mmap_region_t bl_regions[] = {
 		MAP_BL31_TOTAL,
+<<<<<<< HEAD
 #if SEPARATE_NOBITS_REGION
 		MAP_BL31_NOBITS,
 #endif /* SEPARATE_NOBITS_REGION */
@@ -317,16 +358,22 @@ void __init npcm845x_bl31_plat_arch_setup(void)
 		ARM_MAP_ROMLIB_CODE,
 		ARM_MAP_ROMLIB_DATA,
 #endif /* USE_ROMLIB */
+=======
+		ARM_MAP_BL_RO,
+>>>>>>> upstream_import/upstream_v2_14_1
 #if USE_COHERENT_MEM
 		ARM_MAP_BL_COHERENT_RAM,
 #endif /* USE_COHERENT_MEM */
 		ARM_MAP_SHARED_RAM,
+<<<<<<< HEAD
 #ifdef SECONDARY_BRINGUP
 		ARM_MAP_NS_DRAM1,
 	#ifdef BL32_BASE
 		ARM_MAP_BL32_CORE_MEM
 	#endif /* BL32_BASE */
 #endif /* SECONDARY_BRINGUP */
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 		{0}
 	};
 	setup_page_tables(bl_regions, plat_arm_get_mmap());

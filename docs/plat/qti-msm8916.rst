@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Qualcomm MSM8916
 ================
 The MSM8916 platform port in TF-A supports multiple similar Qualcomm SoCs:
@@ -209,3 +210,12 @@ this (with ``DEBUG=1``, otherwise only the ``NOTICE`` lines are shown)::
 .. _U-Boot for DragonBoard 410c: https://u-boot.readthedocs.io/en/latest/board/qualcomm/dragonboard410c.html
 .. _qtestsign: https://github.com/msm8916-mainline/qtestsign
 .. _tfalkstub: https://github.com/msm8916-mainline/tfalkstub
+=======
+:orphan:
+
+Qualcomm MSM8916 (old page)
+======================================
+
+Please check :ref:`Qualcomm MSM8916` for updated documentation related to
+MSM8916 platform.
+>>>>>>> upstream_import/upstream_v2_14_1

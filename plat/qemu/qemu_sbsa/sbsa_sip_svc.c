@@ -6,6 +6,7 @@
 
 #include <assert.h>
 
+<<<<<<< HEAD
 #include <common/fdt_wrappers.h>
 #include <common/runtime_svc.h>
 #include <libfdt.h>
@@ -14,6 +15,12 @@
 /* default platform version is 0.0 */
 static int platform_version_major;
 static int platform_version_minor;
+=======
+#include <common/runtime_svc.h>
+#include <smccc_helpers.h>
+
+#include <sbsa_platform.h>
+>>>>>>> upstream_import/upstream_v2_14_1
 
 #define SMC_FASTCALL       0x80000000
 #define SMC64_FUNCTION     (SMC_FASTCALL   | 0x40000000)
@@ -28,6 +35,7 @@ static int platform_version_minor;
 #define SIP_SVC_VERSION  SIP_FUNCTION_ID(1)
 #define SIP_SVC_GET_GIC  SIP_FUNCTION_ID(100)
 #define SIP_SVC_GET_GIC_ITS SIP_FUNCTION_ID(101)
+<<<<<<< HEAD
 
 static uint64_t gic_its_addr;
 
@@ -131,6 +139,17 @@ void sip_svc_init(void)
 	read_platform_config_from_dt(dtb);
 }
 
+=======
+#define SIP_SVC_GET_CPU_COUNT SIP_FUNCTION_ID(200)
+#define SIP_SVC_GET_CPU_NODE SIP_FUNCTION_ID(201)
+#define SIP_SVC_GET_CPU_TOPOLOGY SIP_FUNCTION_ID(202)
+#define SIP_SVC_GET_MEMORY_NODE_COUNT SIP_FUNCTION_ID(300)
+#define SIP_SVC_GET_MEMORY_NODE SIP_FUNCTION_ID(301)
+
+uintptr_t sbsa_get_gicd(void);
+uintptr_t sbsa_get_gicr(void);
+
+>>>>>>> upstream_import/upstream_v2_14_1
 /*
  * This function is responsible for handling all SiP calls from the NS world
  */
@@ -144,6 +163,10 @@ uintptr_t sbsa_sip_smc_handler(uint32_t smc_fid,
 			       u_register_t flags)
 {
 	uint32_t ns;
+<<<<<<< HEAD
+=======
+	uint64_t index;
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Determine which security state this SMC originated from */
 	ns = is_caller_non_secure(flags);
@@ -155,13 +178,67 @@ uintptr_t sbsa_sip_smc_handler(uint32_t smc_fid,
 	switch (smc_fid) {
 	case SIP_SVC_VERSION:
 		INFO("Platform version requested\n");
+<<<<<<< HEAD
 		SMC_RET3(handle, NULL, platform_version_major, platform_version_minor);
+=======
+		SMC_RET3(handle, NULL, sbsa_platform_version_major(),
+			 sbsa_platform_version_minor());
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	case SIP_SVC_GET_GIC:
 		SMC_RET3(handle, NULL, sbsa_get_gicd(), sbsa_get_gicr());
 
 	case SIP_SVC_GET_GIC_ITS:
+<<<<<<< HEAD
 		SMC_RET2(handle, NULL, gic_its_addr);
+=======
+		SMC_RET2(handle, NULL, sbsa_platform_gic_its_addr());
+
+	case SIP_SVC_GET_CPU_COUNT:
+		SMC_RET2(handle, NULL, sbsa_platform_num_cpus());
+
+	case SIP_SVC_GET_CPU_NODE:
+		index = x1;
+		if (index < PLATFORM_CORE_COUNT) {
+			struct platform_cpu_data data;
+
+			data = sbsa_platform_cpu_node(index);
+
+			SMC_RET3(handle, NULL, data.nodeid, data.mpidr);
+		} else {
+			SMC_RET1(handle, SMC_ARCH_CALL_INVAL_PARAM);
+		}
+
+	case SIP_SVC_GET_CPU_TOPOLOGY:
+		struct platform_cpu_topology topology;
+
+		topology = sbsa_platform_cpu_topology();
+
+		if (topology.cores > 0) {
+			SMC_RET5(handle, NULL, topology.sockets,
+				 topology.clusters, topology.cores,
+				 topology.threads);
+		} else {
+			/* we do not know topology so we report SMC as unknown */
+			SMC_RET1(handle, SMC_UNK);
+		}
+
+	case SIP_SVC_GET_MEMORY_NODE_COUNT:
+		SMC_RET2(handle, NULL, sbsa_platform_num_memnodes());
+
+	case SIP_SVC_GET_MEMORY_NODE:
+		index = x1;
+		if (index < PLAT_MAX_MEM_NODES) {
+			struct platform_memory_data data;
+
+			data = sbsa_platform_memory_node(index);
+
+			SMC_RET4(handle, NULL, data.nodeid,
+				 data.addr_base, data.addr_size);
+		} else {
+			SMC_RET1(handle, SMC_ARCH_CALL_INVAL_PARAM);
+		}
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	default:
 		ERROR("%s: unhandled SMC (0x%x) (function id: %d)\n", __func__, smc_fid,

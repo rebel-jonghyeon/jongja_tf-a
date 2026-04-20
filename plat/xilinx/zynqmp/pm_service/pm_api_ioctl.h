@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018-2022, Arm Limited and Contributors. All rights reserved.
- * Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Advanced Micro Devices, Inc. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -36,10 +36,6 @@
 #define	PM_TAPDELAY_BYPASS_DISABLE 0U
 #define	PM_TAPDELAY_BYPASS_ENABLE 1U
 
-//sgmii mode
-#define	PM_SGMII_DISABLE 0U
-#define	PM_SGMII_ENABLE 1U
-
 enum tap_delay_type {
 	PM_TAPDELAY_INPUT,
 	PM_TAPDELAY_OUTPUT,
@@ -54,6 +50,12 @@ enum pm_ret_status pm_api_ioctl(enum pm_node_id nid,
 				uint32_t ioctl_id,
 				uint32_t arg1,
 				uint32_t arg2,
+<<<<<<< HEAD
 				uint32_t *value);
 enum pm_ret_status tfa_ioctl_bitmask(uint32_t *bit_mask);
+=======
+				uint32_t *value,
+				uint32_t flag);
+enum pm_ret_status tfa_ioctl_bitmask(uint32_t *bit_mask, uint32_t flag);
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif /* PM_API_IOCTL_H */

@@ -1,5 +1,9 @@
 #
+<<<<<<< HEAD
 # Copyright (c) 2023, Arm Limited. All rights reserved.
+=======
+# Copyright (c) 2023-2025, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -21,7 +25,11 @@
 # armv8.6-a armv8.7-a armv8.8-a armv8-r armv9-a
 # [...]
 #
+<<<<<<< HEAD
 GCC_MARCH_OUTPUT := $(shell $(CC) -march=foo -Q --help=target -v 2>&1)
+=======
+GCC_MARCH_OUTPUT := $(if $($(ARCH)-cc),$(shell $($(ARCH)-cc) -march=foo -Q --help=target -v 2>&1))
+>>>>>>> upstream_import/upstream_v2_14_1
 
 # This function is used to find the best march value supported by the given compiler.
 # We try to use `GCC_MARCH_OUTPUT` which has verbose message with supported march values we filter that
@@ -54,7 +62,11 @@ else
     provided-march = armv${ARM_ARCH_MAJOR}.${ARM_ARCH_MINOR}-a
 endif
 
+<<<<<<< HEAD
 ifeq ($(findstring clang,$(notdir $(CC))),)
+=======
+ifeq ($(filter %-clang,$($(ARCH)-cc-id)),)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 # We expect from Platform to provide a correct Major/Minor value but expecting something
 # from compiler with unsupported march means we shouldn't fail without trying anything,
@@ -82,4 +94,34 @@ endif # not clang
 
 march-directive := -march=${provided-march}
 
+<<<<<<< HEAD
+=======
+################################################################################
+# Get Architecture Feature Modifiers
+################################################################################
+arch-features		=	${ARM_ARCH_FEATURE}
+
+# This section is where we place modifiers for optional arch features. If they
+# are enabled with build flags, then we need to explicitly enable them in the
+# compiler as well since they are not enabled by default.
+ifneq ($(ENABLE_FEAT_PAUTH_LR), 0)
+    # Currently, FEAT_PAUTH_LR is only supported by arm/clang compilers
+    # TODO implement for GCC when support is added
+    ifeq ($($(ARCH)-cc-id),arm-clang)
+            arch-features	:= $(arch-features)+pauth-lr
+    else
+            $(error Error: ENABLE_FEAT_PAUTH_LR not supported for GCC compiler)
+    endif
+endif
+
+# Set the compiler's architecture feature modifiers
+ifneq ($(arch-features), none)
+	# Strip "none+" from arch-features
+	arch-features	:=	$(subst none+,,$(arch-features))
+	march-directive	:=	$(march-directive)+$(arch-features)
+# Print features
+        $(info Arm Architecture Features specified: $(subst +, ,$(arch-features)))
+endif #(arch-features)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 endif # MARCH_DIRECTIVE

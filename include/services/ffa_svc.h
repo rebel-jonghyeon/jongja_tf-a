@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023, Arm Limited. All rights reserved.
+ * Copyright (c) 2020-2025, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,22 +24,22 @@
 
 /* The macros below are used to identify FFA calls from the SMC function ID */
 #define FFA_FNUM_MIN_VALUE	U(0x60)
-#define FFA_FNUM_MAX_VALUE	U(0x8C)
+#define FFA_FNUM_MAX_VALUE	U(0x90)
 #define is_ffa_fid(fid) __extension__ ({		\
 	__typeof__(fid) _fid = (fid);			\
 	((GET_SMC_NUM(_fid) >= FFA_FNUM_MIN_VALUE) &&	\
 	 (GET_SMC_NUM(_fid) <= FFA_FNUM_MAX_VALUE)); })
 
 /* FFA_VERSION helpers */
-#define FFA_VERSION_MAJOR		U(1)
 #define FFA_VERSION_MAJOR_SHIFT		16
 #define FFA_VERSION_MAJOR_MASK		U(0x7FFF)
-#define FFA_VERSION_MINOR		U(1)
 #define FFA_VERSION_MINOR_SHIFT		0
 #define FFA_VERSION_MINOR_MASK		U(0xFFFF)
 #define FFA_VERSION_BIT31_MASK 		U(0x1u << 31)
 #define FFA_VERSION_MASK		U(0xFFFFFFFF)
 
+#define FFA_VERSION_MAJOR		U(1)
+#define FFA_VERSION_MINOR		U(3)
 
 #define MAKE_FFA_VERSION(major, minor) 	\
 	((((major) & FFA_VERSION_MAJOR_MASK) <<  FFA_VERSION_MAJOR_SHIFT) | \
@@ -57,8 +57,8 @@
 	<< FFA_MSG_SEND_ATTRS_BLK_SHIFT)
 
 /* Defines for FF-A framework messages exchanged using direct messages. */
-#define FFA_FWK_MSG_BIT		BIT(31)
-#define FFA_FWK_MSG_MASK	0xFF
+#define FFA_FWK_MSG_BIT		BIT_32(31)
+#define FFA_FWK_MSG_MASK	U(0xFF)
 #define FFA_FWK_MSG_PSCI	U(0x0)
 
 /* Defines for FF-A power management messages framework messages. */
@@ -117,8 +117,17 @@
 #define FFA_FNUM_SPM_ID_GET			U(0x85)
 #define FFA_FNUM_MSG_SEND2			U(0x86)
 #define FFA_FNUM_SECONDARY_EP_REGISTER		U(0x87)
+#define FFA_FNUM_MEM_PERM_GET			U(0x88)
+#define FFA_FNUM_MEM_PERM_SET			U(0x89)
+
+/* FF-A v1.2 */
 #define FFA_FNUM_PARTITION_INFO_GET_REGS	U(0x8B)
 #define FFA_FNUM_EL3_INTR_HANDLE		U(0x8C)
+#define FFA_FNUM_MSG_SEND_DIRECT_REQ2		U(0x8D)
+#define FFA_FNUM_MSG_SEND_DIRECT_RESP2		U(0x8E)
+#define FFA_FNUM_NS_RES_INFO_GET		U(0x8F)
+
+#define FFA_FNUM_CONSOLE_LOG			U(0x8A)
 
 /* FFA SMC32 FIDs */
 #define FFA_ERROR		FFA_FID(SMC_32, FFA_FNUM_ERROR)
@@ -165,6 +174,9 @@
 #define FFA_SPM_ID_GET		FFA_FID(SMC_32, FFA_FNUM_SPM_ID_GET)
 #define FFA_NORMAL_WORLD_RESUME	FFA_FID(SMC_32, FFA_FNUM_NORMAL_WORLD_RESUME)
 #define FFA_EL3_INTR_HANDLE	FFA_FID(SMC_32, FFA_FNUM_EL3_INTR_HANDLE)
+#define FFA_MEM_PERM_GET_SMC32	FFA_FID(SMC_32, FFA_FNUM_MEM_PERM_GET)
+#define FFA_MEM_PERM_SET_SMC32	FFA_FID(SMC_32, FFA_FNUM_MEM_PERM_SET)
+#define FFA_CONSOLE_LOG_SMC32 FFA_FID(SMC_32, FFA_FNUM_CONSOLE_LOG)
 
 /* FFA SMC64 FIDs */
 #define FFA_ERROR_SMC64		FFA_FID(SMC_64, FFA_FNUM_ERROR)
@@ -185,13 +197,36 @@
 	FFA_FID(SMC_64, FFA_FNUM_NOTIFICATION_INFO_GET)
 #define FFA_PARTITION_INFO_GET_REGS_SMC64 \
 	FFA_FID(SMC_64, FFA_FNUM_PARTITION_INFO_GET_REGS)
+#define FFA_CONSOLE_LOG_SMC64 FFA_FID(SMC_64, FFA_FNUM_CONSOLE_LOG)
+#define FFA_MSG_SEND_DIRECT_REQ2_SMC64 \
+	FFA_FID(SMC_64, FFA_FNUM_MSG_SEND_DIRECT_REQ2)
+#define FFA_MSG_SEND_DIRECT_RESP2_SMC64	\
+	FFA_FID(SMC_64, FFA_FNUM_MSG_SEND_DIRECT_RESP2)
+#define FFA_MEM_PERM_GET_SMC64	FFA_FID(SMC_64, FFA_FNUM_MEM_PERM_GET)
+#define FFA_MEM_PERM_SET_SMC64	FFA_FID(SMC_64, FFA_FNUM_MEM_PERM_SET)
+#define FFA_NS_RES_INFO_GET_SMC64	\
+	FFA_FID(SMC_64, FFA_FNUM_NS_RES_INFO_GET)
 
+/* FF-A v1.3 ALP2 specification. */
+#define FFA_FNUM_ABORT			U(0x90)
+#define FFA_ABORT_SMC32	FFA_FID(SMC_32, FFA_FNUM_ABORT)
+#define FFA_ABORT_SMC64	FFA_FID(SMC_64, FFA_FNUM_ABORT)
 /*
  * FF-A partition properties values.
  */
 #define FFA_PARTITION_DIRECT_REQ_RECV	U(1 << 0)
 #define FFA_PARTITION_DIRECT_REQ_SEND	U(1 << 1)
 #define FFA_PARTITION_INDIRECT_MSG	U(1 << 2)
+#define FFA_PARTITION_VM_CREATED	U(1 << 6)
+#define FFA_PARTITION_VM_DESTROYED	U(1 << 7)
+#define FFA_PARTITION_DIRECT_REQ2_RECV	U(1 << 9)
+#define FFA_PARTITION_DIRECT_REQ2_SEND	U(1 << 10)
+
+/*
+ * "vm-availability-messages" values.
+ */
+#define FFA_VM_AVAILABILITY_CREATED	U(1 << 0)
+#define FFA_VM_AVAILABILITY_DESTROYED	U(1 << 1)
 
 /*
  * Reserve a special value for traffic targeted to the Hypervisor or SPM.

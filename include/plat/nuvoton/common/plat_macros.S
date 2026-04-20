@@ -41,7 +41,12 @@ arm_print_gic_regs
  * BL31.
  */
 .macro plat_crash_print_regs
+<<<<<<< HEAD
 	/* TODO */
+=======
+plat_print_gic_regs
+/*print_cci_regs*/
+>>>>>>> upstream_import/upstream_v2_14_1
 .endm
 
 #endif /* PLAT_MACROS_S */

@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -150,6 +154,7 @@
 /* GICD_TYPER shifts and masks */
 #define	TYPER_ESPI		U(1 << 8)
 #define	TYPER_DVIS		U(1 << 18)
+#define	TYPER_LPIS		U(1 << 17)
 #define	TYPER_ESPI_RANGE_MASK	U(0x1f)
 #define	TYPER_ESPI_RANGE_SHIFT	U(27)
 #define	TYPER_ESPI_RANGE	U(TYPER_ESPI_MASK << TYPER_ESPI_SHIFT)
@@ -225,7 +230,7 @@
 #define TYPER_VLPI_SHIFT	1
 
 #define TYPER_AFF_VAL_MASK	U(0xffffffff)
-#define TYPER_PROC_NUM_MASK	U(0xffff)
+#define TYPER_PROC_NUM_MASK	UL(0xffff)
 #define TYPER_LAST_MASK		U(0x1)
 
 #define TYPER_LAST_BIT		BIT_32(TYPER_LAST_SHIFT)
@@ -340,7 +345,7 @@
 
 /* GITS_CTLR bit definitions */
 #define GITS_CTLR_ENABLED_BIT		BIT_32(0)
-#define GITS_CTLR_QUIESCENT_BIT		BIT_32(1)
+#define GITS_CTLR_QUIESCENT_BIT		BIT_32(31)
 
 #define GITS_TYPER_VSGI			BIT_64(39)
 
@@ -588,6 +593,7 @@ void gicv3_set_spi_routing(unsigned int id, unsigned int irm,
 void gicv3_set_interrupt_pending(unsigned int id, unsigned int proc_num);
 void gicv3_clear_interrupt_pending(unsigned int id, unsigned int proc_num);
 unsigned int gicv3_set_pmr(unsigned int mask);
+unsigned int gicv3_deactivate_priority(unsigned int mask);
 
 void gicv3_get_component_prodid_rev(const uintptr_t gicd_base,
 				    unsigned int *gic_prod_id,

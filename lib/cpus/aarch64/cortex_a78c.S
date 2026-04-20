@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -21,6 +21,7 @@
 	wa_cve_2022_23960_bhb_vector_table CORTEX_A78C_BHB_LOOP_COUNT, cortex_a78c
 #endif /* WORKAROUND_CVE_2022_23960 */
 
+<<<<<<< HEAD
 workaround_reset_start cortex_a78c, ERRATUM(1827430), ERRATA_A78C_1827430
 	/* Disable allocation of splintered pages in the L2 TLB */
 	sysreg_bit_set CORTEX_A78C_CPUECTLR_EL1, CORTEX_A78C_CPUECTLR_EL1_MM_ASP_EN
@@ -47,6 +48,24 @@ workaround_reset_end cortex_a78c, ERRATUM(2132064)
 
 check_erratum_range cortex_a78c, ERRATUM(2132064), CPU_REV(0, 1), CPU_REV(0, 2)
 
+=======
+cpu_reset_prologue cortex_a78c
+
+workaround_reset_start cortex_a78c, ERRATUM(1827430), ERRATA_A78C_1827430
+	/* Disable allocation of splintered pages in the L2 TLB */
+	sysreg_bit_set CORTEX_A78C_CPUECTLR_EL1, CORTEX_A78C_CPUECTLR_EL1_MM_ASP_EN
+workaround_reset_end cortex_a78c, ERRATUM(1827430)
+
+check_erratum_ls cortex_a78c, ERRATUM(1827430), CPU_REV(0, 0)
+
+workaround_reset_start cortex_a78c, ERRATUM(1827440), ERRATA_A78C_1827440
+	/* Force Atomic Store to WB memory be done in L1 data cache */
+	sysreg_bit_set CORTEX_A78C_CPUACTLR2_EL1, BIT(2)
+workaround_reset_end cortex_a78c, ERRATUM(1827440)
+
+check_erratum_ls cortex_a78c, ERRATUM(1827440), CPU_REV(0, 0)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_a78c, ERRATUM(2242638), ERRATA_A78C_2242638
 	ldr	x0, =0x5
 	msr	CORTEX_A78C_IMP_CPUPSELR_EL3, x0
@@ -72,6 +91,30 @@ workaround_reset_end cortex_a78c, ERRATUM(2395411)
 
 check_erratum_range cortex_a78c, ERRATUM(2395411), CPU_REV(0, 1), CPU_REV(0, 2)
 
+<<<<<<< HEAD
+=======
+workaround_reset_start cortex_a78c, ERRATUM(2683027), ERRATA_A78C_2683027
+	ldr	x0, =0x3
+	msr	CORTEX_A78C_IMP_CPUPSELR_EL3, x0
+	ldr	x0, =0xEE010F10
+	msr	CORTEX_A78C_IMP_CPUPOR_EL3, x0
+	ldr	x0, =0xFF1F0FFE
+	msr	CORTEX_A78C_IMP_CPUPMR_EL3, x0
+	ldr	x0, =0x100000004003FF
+	msr	CORTEX_A78C_IMP_CPUPCR_EL3, x0
+workaround_reset_end cortex_a78c, ERRATUM(2683027)
+
+check_erratum_range cortex_a78c, ERRATUM(2683027), CPU_REV(0, 1), CPU_REV(0, 2)
+
+workaround_reset_start cortex_a78c, ERRATUM(2743232), ERRATA_A78C_2743232
+	/* Set CPUACTLR5_EL1[56:55] to 2'b01 */
+	sysreg_bit_set CORTEX_A78C_ACTLR5_EL1, BIT(55)
+	sysreg_bit_clear CORTEX_A78C_ACTLR5_EL1, BIT(56)
+workaround_reset_end cortex_a78c, ERRATUM(2743232)
+
+check_erratum_range cortex_a78c, ERRATUM(2743232), CPU_REV(0, 1), CPU_REV(0, 2)
+
+>>>>>>> upstream_import/upstream_v2_14_1
 workaround_runtime_start cortex_a78c, ERRATUM(2772121), ERRATA_A78C_2772121
 	/* dsb before isb of power down sequence */
 	dsb	sy
@@ -97,10 +140,22 @@ workaround_reset_start cortex_a78c, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #endif /* IMAGE_BL31 */
 workaround_reset_end cortex_a78c, CVE(2022, 23960)
 
+<<<<<<< HEAD
 cpu_reset_func_start cortex_a78c
 cpu_reset_func_end cortex_a78c
 
 errata_report_shim cortex_a78c
+=======
+/* Disable hardware page aggregation. Enables mitigation for `CVE-2024-5660` */
+workaround_reset_start cortex_a78c, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
+	sysreg_bit_set CORTEX_A78C_CPUECTLR_EL1, BIT(46)
+workaround_reset_end cortex_a78c, CVE(2024, 5660)
+
+check_erratum_ls cortex_a78c, CVE(2024, 5660), CPU_REV(0, 2)
+
+cpu_reset_func_start cortex_a78c
+cpu_reset_func_end cortex_a78c
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ----------------------------------------------------
 	 * HW will do the cache maintenance while powering down

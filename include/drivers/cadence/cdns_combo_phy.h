@@ -1,5 +1,9 @@
 /*
  * Copyright (c) 2022-2023, Intel Corporation. All rights reserved.
+<<<<<<< HEAD
+=======
+ * Copyright (c) 2025, Altera Corporation. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -134,8 +138,13 @@
 #define CP_DLL_IE_TIMING_REG		(0x14)
 
 #define CP_DQ_TIMING_REG_SDR		(0x00000002)
+<<<<<<< HEAD
 #define CP_DQS_TIMING_REG_SDR		(0x00100004)
 #define CP_GATE_LPBK_CTRL_REG_SDR	(0x00D80000)
+=======
+#define CP_DQS_TIMING_REG_SDR		(0x00110004)
+#define CP_GATE_LPBK_CTRL_REG_SDR	(0x00680000)
+>>>>>>> upstream_import/upstream_v2_14_1
 #define CP_DLL_MASTER_CTRL_REG_SDR	(0x00800000)
 #define CP_DLL_SLAVE_CTRL_REG_SDR	(0x00000000)
 
@@ -151,7 +160,11 @@
 #define CP_CTB_GPIO_STATUS0		(0x10)
 #define CP_CTB_GPIO_STATUS1		(0x14)
 
+<<<<<<< HEAD
 #define CP_CTRL_REG_SDR			(0x00004040)
+=======
+#define CP_CTRL_REG_SDR			(0x000040a0)
+>>>>>>> upstream_import/upstream_v2_14_1
 #define CP_TSEL_REG_SDR			(0x00000000)
 
 #define CP_CTB(_reg)			(CP_CTB_REG_BASE \
@@ -235,4 +248,8 @@ int cdns_sdmmc_write_phy_reg(uint32_t phy_reg_addr, uint32_t phy_reg_addr_value,
 int cdns_sd_card_detect(void);
 int cdns_emmc_card_reset(void);
 
+<<<<<<< HEAD
 #endif
+=======
+#endif
+>>>>>>> upstream_import/upstream_v2_14_1

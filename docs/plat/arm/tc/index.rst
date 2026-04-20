@@ -13,6 +13,7 @@ Some of the features of TC platform referenced in TF-A include:
 - SCMI
 - MHUv2
 
+<<<<<<< HEAD
 Currently, the main difference between TC0 (TARGET_PLATFORM=0), TC1
 (TARGET_PLATFORM=1), TC2 (TARGET_PLATFORM=2) platforms w.r.t to TF-A
 is the CPUs supported as below:
@@ -20,6 +21,13 @@ is the CPUs supported as below:
 -  TC0 has support for Cortex A510, Cortex A710 and Cortex X2. (Note TC0 is now deprecated)
 -  TC1 has support for Cortex A510, Cortex A715 and Cortex X3.
 -  TC2 has support for Cortex A520, Cortex A720 and Cortex x4.
+=======
+The TF-A build is specified by the option `TARGET_PLATFORM` which represents
+the Total Compute platform number. The platforms support the CPU variants
+listed as below:
+
+-  TC3 has support for Cortex A520, Cortex A725 and Cortex x925.
+>>>>>>> upstream_import/upstream_v2_14_1
 
 Boot Sequence
 -------------
@@ -43,7 +51,7 @@ Build Procedure (TF-A only)
    .. code:: shell
 
       make PLAT=tc BL33=<path_to_uboot.bin> \
-      SCP_BL2=<path_to_scp_ramfw.bin> TARGET_PLATFORM={0,1,2} all fip
+      SCP_BL2=<path_to_scp_ramfw.bin> TARGET_PLATFORM={3} all fip
 
    Enable TBBR by adding the following options to the make command:
 
@@ -57,6 +65,10 @@ Build Procedure (TF-A only)
 
 --------------
 
+<<<<<<< HEAD
 *Copyright (c) 2020-2023, Arm Limited. All rights reserved.*
+=======
+*Copyright (c) 2020-2025, Arm Limited. All rights reserved.*
+>>>>>>> upstream_import/upstream_v2_14_1
 
 .. _Arm Toolchain: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/downloads

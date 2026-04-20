@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2022-2023, Arm Limited. All rights reserved.
+=======
+ * Copyright (c) 2022-2025, Arm Limited. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -27,6 +31,8 @@
  ******************************************************************************/
 #define CORTEX_A510_CPUPWRCTLR_EL1				S3_0_C15_C2_7
 #define CORTEX_A510_CPUPWRCTLR_EL1_CORE_PWRDN_BIT		U(1)
+#define CORTEX_A510_CPUPWRCTLR_EL1_WFI_RET_CTRL_BITS		0x70
+#define CORTEX_A510_CPUPWRCTLR_EL1_WFE_RET_CTRL_BITS		0x380
 
 /*******************************************************************************
  * Complex auxiliary control register specific definitions
@@ -52,4 +58,25 @@
 #define CORTEX_A510_CPUACTLR_EL1_DATA_CORRUPT_SHIFT		U(18)
 #define CORTEX_A510_CPUACTLR_EL1_DATA_CORRUPT_WIDTH		U(1)
 
+<<<<<<< HEAD
+=======
+/*******************************************************************************
+ * Auxiliary control register 2 specific definitions
+ ******************************************************************************/
+#define CORTEX_A510_CPUACTLR2_EL1				S3_0_C15_C1_1
+
+/*******************************************************************************
+ * Auxiliary control register 3 specific definitions
+ ******************************************************************************/
+#define CORTEX_A510_CPUACTLR3_EL1				S3_0_C15_C1_2
+
+#ifndef __ASSEMBLER__
+
+#if ERRATA_A510_2971420
+long check_erratum_cortex_a510_2971420(long cpu_rev);
+#endif
+
+#endif /* __ASSEMBLER__ */
+
+>>>>>>> upstream_import/upstream_v2_14_1
 #endif /* CORTEX_A510_H */

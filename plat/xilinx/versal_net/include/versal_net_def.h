@@ -12,15 +12,33 @@
 #include <plat/arm/common/smccc_def.h>
 #include <plat/common/common_def.h>
 
+<<<<<<< HEAD
 #define MAX_INTR_EL3			2
+=======
+#define MAX_INTR_EL3			2U
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /* List all consoles */
+#define VERSAL_NET_CONSOLE_ID_none	U(0)
 #define VERSAL_NET_CONSOLE_ID_pl011	U(1)
 #define VERSAL_NET_CONSOLE_ID_pl011_0	U(1)
 #define VERSAL_NET_CONSOLE_ID_pl011_1	U(2)
 #define VERSAL_NET_CONSOLE_ID_dcc	U(3)
+#define VERSAL_NET_CONSOLE_ID_dtb	U(4)
 
 #define CONSOLE_IS(con)	(VERSAL_NET_CONSOLE_ID_ ## con == VERSAL_NET_CONSOLE)
+<<<<<<< HEAD
+=======
+
+/* Runtime console */
+#define RT_CONSOLE_ID_pl011    1
+#define RT_CONSOLE_ID_pl011_0  1
+#define RT_CONSOLE_ID_pl011_1  2
+#define RT_CONSOLE_ID_dcc      3
+#define RT_CONSOLE_ID_dtb      4
+
+#define RT_CONSOLE_IS(con)     (RT_CONSOLE_ID_ ## con == CONSOLE_RUNTIME)
+>>>>>>> upstream_import/upstream_v2_14_1
 
 /* List all platforms */
 #define VERSAL_NET_SILICON		U(0)
@@ -111,11 +129,11 @@
 #define VERSAL_NET_CRL_APB_TIMESTAMP_REF_CTRL_CLKACT_BIT	(1U << 25U)
 
 /* IOU SCNTRS */
-#define VERSAL_NET_IOU_SCNTRS					U(0xEC920000)
-#define VERSAL_NET_IOU_SCNTRS_COUNTER_CONTROL_REG_OFFSET	U(0)
-#define VERSAL_NET_IOU_SCNTRS_BASE_FREQ_OFFSET			U(0x20)
+#define IOU_SCNTRS_BASE	U(0xEC920000)
+#define IOU_SCNTRS_COUNTER_CONTROL_REG_OFFSET	U(0)
+#define IOU_SCNTRS_BASE_FREQ_OFFSET	U(0x20)
 
-#define VERSAL_NET_IOU_SCNTRS_CONTROL_EN	U(1)
+#define IOU_SCNTRS_CONTROL_EN	U(1)
 
 #define APU_CLUSTER0		U(0xECC00000)
 #define APU_RVBAR_L_0		U(0x40)
@@ -138,6 +156,7 @@
 
 #define UART_BAUDRATE	115200
 
+<<<<<<< HEAD
 #if CONSOLE_IS(pl011_1)
 #define UART_BASE		VERSAL_NET_UART1_BASE
 #else
@@ -145,6 +164,39 @@
 #define UART_BASE            VERSAL_NET_UART0_BASE
 #endif
 
+=======
+#if CONSOLE_IS(pl011) || CONSOLE_IS(dtb)
+#define UART_BASE		VERSAL_NET_UART0_BASE
+# define UART_TYPE	CONSOLE_PL011
+#elif CONSOLE_IS(pl011_1)
+#define UART_BASE            VERSAL_NET_UART1_BASE
+# define UART_TYPE	CONSOLE_PL011
+#elif CONSOLE_IS(dcc)
+# define UART_BASE	0x0
+# define UART_TYPE	CONSOLE_DCC
+#elif CONSOLE_IS(none)
+# define UART_TYPE	CONSOLE_NONE
+#else
+# error "invalid VERSAL_NET_CONSOLE"
+#endif
+
+/* Runtime console */
+#if defined(CONSOLE_RUNTIME)
+#if RT_CONSOLE_IS(pl011) || RT_CONSOLE_IS(dtb)
+# define RT_UART_BASE VERSAL_NET_UART0_BASE
+# define RT_UART_TYPE	CONSOLE_PL011
+#elif RT_CONSOLE_IS(pl011_1)
+# define RT_UART_BASE VERSAL_NET_UART1_BASE
+# define RT_UART_TYPE	CONSOLE_PL011
+#elif RT_CONSOLE_IS(dcc)
+# define RT_UART_BASE	0x0
+# define RT_UART_TYPE	CONSOLE_DCC
+#else
+# error "invalid CONSOLE_RUNTIME"
+#endif
+#endif
+
+>>>>>>> upstream_import/upstream_v2_14_1
 /* Processor core device IDs */
 #define PM_DEV_CLUSTER0_ACPU_0	(0x1810C0AFU)
 #define PM_DEV_CLUSTER0_ACPU_1	(0x1810C0B0U)

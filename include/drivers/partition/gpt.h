@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,6 +17,8 @@
 
 #define PARTITION_TYPE_GPT		0xee
 #define GPT_SIGNATURE			"EFI PART"
+
+#define PRIMARY_GPT_CORRUPTED (1U << 0)
 
 typedef struct gpt_entry {
 	struct efi_guid		type_uuid;

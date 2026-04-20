@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
+=======
+ * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
+>>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,6 +14,7 @@
 #include <cpu_macros.S>
 #include <plat_macros.S>
 
+<<<<<<< HEAD
 	/* ---------------------------------------------
 	 * Disable L1 data cache
 	 * ---------------------------------------------
@@ -19,6 +24,9 @@ func cortex_a73_disable_dcache
 	isb
 	ret
 endfunc cortex_a73_disable_dcache
+=======
+cpu_reset_prologue cortex_a73
+>>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ---------------------------------------------
 	 * Disable intra-cluster coherency
@@ -31,10 +39,17 @@ func cortex_a73_disable_smp
 	ret
 endfunc cortex_a73_disable_smp
 
+<<<<<<< HEAD
 func check_smccc_arch_workaround_3
 	mov	x0, #ERRATA_APPLIES
 	ret
 endfunc check_smccc_arch_workaround_3
+=======
+/* Erratum entry and check function for SMCCC_ARCH_WORKAROUND_3 */
+add_erratum_entry cortex_a73, ERRATUM(ARCH_WORKAROUND_3), WORKAROUND_CVE_2022_23960
+
+check_erratum_chosen cortex_a73, ERRATUM(ARCH_WORKAROUND_3), WORKAROUND_CVE_2022_23960
+>>>>>>> upstream_import/upstream_v2_14_1
 
 workaround_reset_start cortex_a73, ERRATUM(852427), ERRATA_A73_852427
 	sysreg_bit_set CORTEX_A73_DIAGNOSTIC_REGISTER, BIT(12)
@@ -121,12 +136,6 @@ func cortex_a73_core_pwr_dwn
 	mov	x18, x30
 
 	/* ---------------------------------------------
-	 * Turn off caches.
-	 * ---------------------------------------------
-	 */
-	bl	cortex_a73_disable_dcache
-
-	/* ---------------------------------------------
 	 * Flush L1 caches.
 	 * ---------------------------------------------
 	 */
@@ -143,12 +152,6 @@ endfunc cortex_a73_core_pwr_dwn
 
 func cortex_a73_cluster_pwr_dwn
 	mov	x18, x30
-
-	/* ---------------------------------------------
-	 * Turn off caches.
-	 * ---------------------------------------------
-	 */
-	bl	cortex_a73_disable_dcache
 
 	/* ---------------------------------------------
 	 * Flush L1 caches.
@@ -178,9 +181,12 @@ func cortex_a73_cluster_pwr_dwn
 	b	cortex_a73_disable_smp
 endfunc cortex_a73_cluster_pwr_dwn
 
+<<<<<<< HEAD
 
 errata_report_shim cortex_a73
 
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides cortex_a73 specific
 	 * register information for crash reporting.
@@ -201,10 +207,13 @@ func cortex_a73_cpu_reg_dump
 	ret
 endfunc cortex_a73_cpu_reg_dump
 
-declare_cpu_ops_wa cortex_a73, CORTEX_A73_MIDR, \
+declare_cpu_ops cortex_a73, CORTEX_A73_MIDR, \
 	cortex_a73_reset_func, \
+<<<<<<< HEAD
 	check_erratum_cortex_a73_5715, \
 	CPU_NO_EXTRA2_FUNC, \
 	check_smccc_arch_workaround_3, \
+=======
+>>>>>>> upstream_import/upstream_v2_14_1
 	cortex_a73_core_pwr_dwn, \
 	cortex_a73_cluster_pwr_dwn
