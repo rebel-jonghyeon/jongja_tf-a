@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -569,11 +565,7 @@ DEFINE_SYSREG_RW_FUNCS(vmpidr_el2)
 
 DEFINE_SYSREG_RW_FUNCS(hacr_el2)
 DEFINE_SYSREG_RW_FUNCS(hpfar_el2)
-<<<<<<< HEAD
-DEFINE_SYSREG_RW_FUNCS(tpidr_el2)
-=======
 
->>>>>>> upstream_import/upstream_v2_14_1
 DEFINE_SYSREG_RW_FUNCS(dbgvcr32_el2)
 DEFINE_RENAME_SYSREG_RW_FUNCS(ich_hcr_el2, ICH_HCR_EL2)
 DEFINE_RENAME_SYSREG_RW_FUNCS(ich_vmcr_el2, ICH_VMCR_EL2)

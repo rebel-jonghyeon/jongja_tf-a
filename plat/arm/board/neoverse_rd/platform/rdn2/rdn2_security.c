@@ -8,15 +8,9 @@
 #include <plat/arm/common/plat_arm.h>
 #include <platform_def.h>
 
-<<<<<<< HEAD:plat/arm/board/rdn2/rdn2_security.c
-#define RDN2_TZC_CPER_REGION					\
-	{CSS_SGI_SP_CPER_BUF_BASE, (CSS_SGI_SP_CPER_BUF_BASE +	\
-	CSS_SGI_SP_CPER_BUF_SIZE) - 1, TZC_REGION_S_NONE,	\
-=======
 #define RDN2_TZC_CPER_REGION				\
 	{NRD_CSS_SP_CPER_BUF_BASE, (NRD_CSS_SP_CPER_BUF_BASE +	\
 	NRD_CSS_SP_CPER_BUF_SIZE) - 1, TZC_REGION_S_NONE,	\
->>>>>>> upstream_import/upstream_v2_14_1:plat/arm/board/neoverse_rd/platform/rdn2/rdn2_security.c
 	PLAT_ARM_TZC_NS_DEV_ACCESS}
 
 static const arm_tzc_regions_info_t tzc_regions[] = {

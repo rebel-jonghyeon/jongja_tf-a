@@ -323,16 +323,9 @@ Additional References:
 
 --------------
 
-<<<<<<< HEAD
-*Copyright (c) 2014-2023, Arm Limited and Contributors. All rights reserved.*
-
-.. _SMCCC: https://developer.arm.com/docs/den0028/latest
-.. _PSCI: https://developer.arm.com/documentation/den0022/latest/
-=======
 *Copyright (c) 2014-2024, Arm Limited and Contributors. All rights reserved.*
 
 .. _SMCCC: https://developer.arm.com/docs/den0028/latest
 .. _PSCI: https://developer.arm.com/documentation/den0022/latest/
 .. _ARM SiP Services: arm-sip-service.rst
 .. _Vendor Specific EL3 Monitor Service Calls: ven-el3-service.rst
->>>>>>> upstream_import/upstream_v2_14_1

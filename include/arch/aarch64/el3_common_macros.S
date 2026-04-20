@@ -76,16 +76,6 @@ feat_sctlr2_not_supported\@:
 	 * zero here but are updated ahead of transitioning to a lower EL in the
 	 * function cm_init_context_common().
 	 *
-<<<<<<< HEAD
-	 * SCR_EL3.SIF: Set to one to disable instruction fetches from
-	 *  Non-secure memory.
-	 *
-	 * SCR_EL3.EA: Set to one to route External Aborts and SError Interrupts
-	 *  to EL3 when executing at any EL.
-	 * ---------------------------------------------------------------------
-	 */
-	mov_imm	x0, (SCR_RESET_VAL | SCR_EA_BIT | SCR_SIF_BIT)
-=======
 	 * SCR_EL3.EEL2: Set to one if S-EL2 is present and enabled.
 	 *
 	 * NOTE: Modifying EEL2 bit along with EA bit ensures that we mitigate
@@ -100,49 +90,16 @@ feat_sctlr2_not_supported\@:
 	orr	x0, x0, #SCR_EEL2_BIT
 #endif
 1:
->>>>>>> upstream_import/upstream_v2_14_1
 	msr	scr_el3, x0
 
 	/* ---------------------------------------------------------------------
 	 * Initialise MDCR_EL3, setting all fields rather than relying on hw.
 	 * Some fields are architecturally UNKNOWN on reset.
-<<<<<<< HEAD
-	 *
-	 * MDCR_EL3.SDD: Set to one to disable AArch64 Secure self-hosted debug.
-	 *  Debug exceptions, other than Breakpoint Instruction exceptions, are
-	 *  disabled from all ELs in Secure state.
-	 *
-	 * MDCR_EL3.SPD32: Set to 0b10 to disable AArch32 Secure self-hosted
-	 *  privileged debug from S-EL1.
-	 *
-	 * MDCR_EL3.TDOSA: Set to zero so that EL2 and EL2 System register
-	 *  access to the powerdown debug registers do not trap to EL3.
-	 *
-	 * MDCR_EL3.TDA: Set to zero to allow EL0, EL1 and EL2 access to the
-	 *  debug registers, other than those registers that are controlled by
-	 *  MDCR_EL3.TDOSA.
-	 */
-	mov_imm	x0, ((MDCR_EL3_RESET_VAL | MDCR_SDD_BIT | \
-		      MDCR_SPD32(MDCR_SPD32_DISABLE)) & \
-		    ~(MDCR_TDOSA_BIT | MDCR_TDA_BIT))
-
-	msr	mdcr_el3, x0
-
-	/* ---------------------------------------------------------------------
-	 * Enable External Aborts and SError Interrupts now that the exception
-	 * vectors have been setup.
-	 * ---------------------------------------------------------------------
-	 */
-	msr	daifclr, #DAIF_ABT_BIT
-
-	/* ---------------------------------------------------------------------
-=======
 	 */
 	mov_imm	x0, MDCR_EL3_RESET_VAL
 	msr	mdcr_el3, x0
 
 	/* ---------------------------------------------------------------------
->>>>>>> upstream_import/upstream_v2_14_1
 	 * Initialise CPTR_EL3, setting all fields rather than relying on hw.
 	 * All fields are architecturally UNKNOWN on reset.
 	 * ---------------------------------------------------------------------
@@ -522,8 +479,6 @@ feat_sctlr2_not_supported\@:
 	end:
 	.endm
 
-<<<<<<< HEAD
-=======
 /*-----------------------------------------------------------------------------
  * Helper macro to configure EL3 registers we care about, while executing
  * at EL3/Root world. Root world has its own execution environment and
@@ -597,5 +552,4 @@ feat_sctlr2_not_supported\@:
 		isb
 	.endm
 
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* EL3_COMMON_MACROS_S */

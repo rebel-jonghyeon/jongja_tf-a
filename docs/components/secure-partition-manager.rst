@@ -192,53 +192,6 @@ Sample TF-A build command line when the SPMC is located at EL3:
 
 Sample TF-A build command line when the SPMC is located at EL3 and SEL0 SP is
 enabled:
-<<<<<<< HEAD
-
-.. code:: shell
-
-    make \
-    CROSS_COMPILE=aarch64-none-elf- \
-    SPD=spmd \
-    SPMD_SPM_AT_SEL2=0 \
-    SPMC_AT_EL3=1 \
-    SPMC_AT_EL3_SEL0_SP=1 \
-    BL32=<path-to-tee-binary> \
-    BL33=<path-to-bl33-binary> \
-    PLAT=fvp \
-    all fip
-
-FVP model invocation
-====================
-
-The FVP command line needs the following options to exercise the S-EL2 SPMC:
-
-+---------------------------------------------------+------------------------------------+
-| - cluster0.has_arm_v8-5=1                         | Implements FEAT_SEL2, FEAT_PAuth,  |
-| - cluster1.has_arm_v8-5=1                         | and FEAT_BTI.                      |
-+---------------------------------------------------+------------------------------------+
-| - pci.pci_smmuv3.mmu.SMMU_AIDR=2                  | Parameters required for the        |
-| - pci.pci_smmuv3.mmu.SMMU_IDR0=0x0046123B         | SMMUv3.2 modeling.                 |
-| - pci.pci_smmuv3.mmu.SMMU_IDR1=0x00600002         |                                    |
-| - pci.pci_smmuv3.mmu.SMMU_IDR3=0x1714             |                                    |
-| - pci.pci_smmuv3.mmu.SMMU_IDR5=0xFFFF0472         |                                    |
-| - pci.pci_smmuv3.mmu.SMMU_S_IDR1=0xA0000002       |                                    |
-| - pci.pci_smmuv3.mmu.SMMU_S_IDR2=0                |                                    |
-| - pci.pci_smmuv3.mmu.SMMU_S_IDR3=0                |                                    |
-+---------------------------------------------------+------------------------------------+
-| - cluster0.has_branch_target_exception=1          | Implements FEAT_BTI.               |
-| - cluster1.has_branch_target_exception=1          |                                    |
-+---------------------------------------------------+------------------------------------+
-| - cluster0.has_pointer_authentication=2           | Implements FEAT_PAuth              |
-| - cluster1.has_pointer_authentication=2           |                                    |
-+---------------------------------------------------+------------------------------------+
-| - cluster0.memory_tagging_support_level=2         | Implements FEAT_MTE2               |
-| - cluster1.memory_tagging_support_level=2         |                                    |
-| - bp.dram_metadata.is_enabled=1                   |                                    |
-+---------------------------------------------------+------------------------------------+
-
-Sample FVP command line invocation:
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 .. code:: shell
 

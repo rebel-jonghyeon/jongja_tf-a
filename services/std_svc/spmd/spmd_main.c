@@ -324,16 +324,12 @@ static uint64_t spmd_group0_interrupt_handler_nwd(uint32_t id,
 
 	assert(plat_ic_get_pending_interrupt_type() == INTR_TYPE_EL3);
 
-<<<<<<< HEAD
-	intid = plat_ic_acknowledge_interrupt();
-=======
 	intr_raw = plat_ic_acknowledge_interrupt();
 	intid = plat_ic_get_interrupt_id(intr_raw);
 
 	if (intid == INTR_ID_UNAVAILABLE) {
 		return 0U;
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 
 	if (plat_spmd_handle_group0_interrupt(intid) < 0) {
 		ERROR("Group0 interrupt %u not handled\n", intid);
@@ -363,16 +359,12 @@ static uint64_t spmd_handle_group0_intr_swd(void *handle)
 
 	assert(plat_ic_get_pending_interrupt_type() == INTR_TYPE_EL3);
 
-<<<<<<< HEAD
-	intid = plat_ic_acknowledge_interrupt();
-=======
 	intr_raw = plat_ic_acknowledge_interrupt();
 	intid = plat_ic_get_interrupt_id(intr_raw);
 
 	if (intid == INTR_ID_UNAVAILABLE) {
 		return 0U;
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/*
 	 * TODO: Currently due to a limitation in SPMD implementation, the
@@ -631,14 +623,6 @@ static int spmd_spmc_init(void *pm_addr)
 	 *
 	 * EL3_EXCEPTION_HANDLING=1: the Group0 interrupt is routed to the EHF.
 	 *
-<<<<<<< HEAD
-	 */
-#if (EL3_EXCEPTION_HANDLING == 0)
-	/*
-	 * Register an interrupt handler routing Group0 interrupts to SPMD
-	 * while the NWd is running.
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	 */
 #if (EL3_EXCEPTION_HANDLING == 0)
 	/*
@@ -959,8 +943,6 @@ uint64_t spmd_smc_handler(uint32_t smc_fid,
 		spmd_spm_core_sync_exit(0ULL);
 	}
 
-<<<<<<< HEAD
-=======
 	if ((!secure_origin) && (smc_fid != FFA_VERSION)) {
 		/*
 		 * Once the caller invokes any FF-A ABI other than FFA_VERSION,
@@ -969,7 +951,6 @@ uint64_t spmd_smc_handler(uint32_t smc_fid,
 		nonsecure_version_negotiated = true;
 	}
 
->>>>>>> upstream_import/upstream_v2_14_1
 	switch (smc_fid) {
 	case FFA_ERROR:
 		/*
@@ -982,13 +963,6 @@ uint64_t spmd_smc_handler(uint32_t smc_fid,
 		}
 
 		/*
-<<<<<<< HEAD
-		 * If there was an SPMD logical partition direct request on-going,
-		 * return back to the SPMD logical partition so the error can be
-		 * consumed.
-		 */
-		if (is_spmd_logical_sp_dir_req_in_progress(ctx)) {
-=======
 		 * Perform a synchronous exit:
 		 * 1. If there was an SPMD logical partition direct request on-going,
 		 * return back to the SPMD logical partition so the error can be
@@ -998,7 +972,6 @@ uint64_t spmd_smc_handler(uint32_t smc_fid,
 		 */
 		if (is_spmd_logical_sp_dir_req_in_progress(ctx) ||
 		    ctx->psci_operation_ongoing) {
->>>>>>> upstream_import/upstream_v2_14_1
 			assert(secure_origin);
 			spmd_spm_core_sync_exit(0ULL);
 		}

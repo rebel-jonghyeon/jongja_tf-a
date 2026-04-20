@@ -4,11 +4,7 @@
  * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
  * Copyright (C) 2020 Marek Vasut <marex@denx.de>
  * Copyright (C) 2022 DH electronics GmbH
-<<<<<<< HEAD
- * Copyright (C) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (C) 2023-2024, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  */
 
 #include "stm32mp15-pinctrl.dtsi"

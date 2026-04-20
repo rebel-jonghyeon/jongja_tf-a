@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -247,15 +243,11 @@ size_t dt_get_ddr_size(void)
 		return 0U;
 	}
 
-<<<<<<< HEAD
-	size = (size_t)fdt_read_uint32_default(fdt, node, "st,mem-size", 0U);
-=======
 #ifdef __aarch64__
 	size = (size_t)fdt_read_uint64_default(fdt, node, "st,mem-size", 0ULL);
 #else /* __aarch64__ */
 	size = (size_t)fdt_read_uint32_default(fdt, node, "st,mem-size", 0U);
 #endif /* __aarch64__ */
->>>>>>> upstream_import/upstream_v2_14_1
 
 	flush_dcache_range((uintptr_t)&size, sizeof(size_t));
 

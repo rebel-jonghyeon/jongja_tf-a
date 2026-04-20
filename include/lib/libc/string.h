@@ -4,11 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 /*
-<<<<<<< HEAD
- * Portions copyright (c) 2018-2020, Arm Limited and Contributors.
-=======
  * Portions copyright (c) 2018-2025, Arm Limited and Contributors.
->>>>>>> upstream_import/upstream_v2_14_1
  * Portions copyright (c) 2023, Intel Corporation. All rights reserved.
  * All rights reserved.
  */
@@ -18,9 +14,6 @@
 
 #include <stddef.h>
 
-<<<<<<< HEAD
-void *memcpy(void *dst, const void *src, size_t len);
-=======
 /*
  * When conditions are right, the compiler may have a baked-in call that can be
  * inlined and that will be much more optimal than our generic implementation.
@@ -37,7 +30,6 @@ void *memcpy(void *dst, const void *src, size_t len);
 #define strlen  __builtin_strlen
 #define strrchr __builtin_strrchr
 
->>>>>>> upstream_import/upstream_v2_14_1
 int memcpy_s(void *dst, size_t dsize, void *src, size_t ssize);
 void *memmove(void *dst, const void *src, size_t len);
 void *memrchr(const void *src, int c, size_t len);

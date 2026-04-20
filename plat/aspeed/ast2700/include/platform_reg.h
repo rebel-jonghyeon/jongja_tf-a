@@ -19,13 +19,10 @@
 
 /* CPU-die SCU */
 #define SCU_CPU_BASE	U(0x12c02000)
-<<<<<<< HEAD
-=======
 #define SCU_CPU_HW_STRAP1	(SCU_CPU_BASE + 0x010)
 #define SCU_CPU_HPLL	(SCU_CPU_BASE + 0x300)
 #define SCU_CPU_DPLL	(SCU_CPU_BASE + 0x308)
 #define SCU_CPU_MPLL	(SCU_CPU_BASE + 0x310)
->>>>>>> upstream_import/upstream_v2_14_1
 #define SCU_CPU_SMP_EP0	(SCU_CPU_BASE + 0x780)
 #define SCU_CPU_SMP_EP1	(SCU_CPU_BASE + 0x788)
 #define SCU_CPU_SMP_EP2	(SCU_CPU_BASE + 0x790)

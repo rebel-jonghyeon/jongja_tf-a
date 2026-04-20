@@ -1,9 +1,5 @@
 #
-<<<<<<< HEAD
-# Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
-=======
 # Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -227,8 +223,6 @@ $(eval $(call TOOL_ADD_PAYLOAD,${TB_FW_CONFIG},--tb-fw-config,${TB_FW_CONFIG}))
 # Add the HW_CONFIG to FIP and specify the same to certtool
 $(eval $(call TOOL_ADD_PAYLOAD,${HW_CONFIG},--hw-config,${HW_CONFIG}))
 
-<<<<<<< HEAD
-=======
 
 ifeq (${SPD},spmd)
 ifneq ($(ARM_SPMC_MANIFEST_DTS),)
@@ -236,7 +230,6 @@ FDT_SOURCES +=	${ARM_SPMC_MANIFEST_DTS}
 endif
 endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 include drivers/arm/ethosn/ethosn_npu.mk
 include plat/arm/board/common/board_common.mk
 include plat/arm/common/arm_common.mk

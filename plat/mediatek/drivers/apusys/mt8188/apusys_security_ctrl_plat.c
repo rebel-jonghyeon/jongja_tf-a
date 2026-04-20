@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, MediaTek Inc. All rights reserved.
-=======
  * Copyright (c) 2023-2024, MediaTek Inc. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,11 +8,8 @@
 #include <common/debug.h>
 #include <lib/mmio.h>
 
-<<<<<<< HEAD
-=======
 #include "emi_mpu.h"
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* Vendor header */
 #include "apusys_security_ctrl_plat.h"
 
@@ -50,11 +43,8 @@ void apusys_security_ctrl_init(void)
 {
 	apusys_domain_remap_init();
 }
-<<<<<<< HEAD
-=======
 
 int apusys_plat_setup_sec_mem(void)
 {
 	return set_apu_emi_mpu_region();
 }
->>>>>>> upstream_import/upstream_v2_14_1

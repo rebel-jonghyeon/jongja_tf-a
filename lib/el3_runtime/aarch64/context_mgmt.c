@@ -31,10 +31,7 @@
 #include <lib/extensions/fgt2.h>
 #include <lib/extensions/idte3.h>
 #include <lib/extensions/mpam.h>
-<<<<<<< HEAD
-=======
 #include <lib/extensions/pauth.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <lib/extensions/pmuv3.h>
 #include <lib/extensions/sme.h>
 #include <lib/extensions/spe.h>
@@ -51,16 +48,10 @@
 CASSERT(((TWED_DELAY & ~SCR_TWEDEL_MASK) == 0U), assert_twed_delay_value_check);
 #endif /* ENABLE_FEAT_TWED */
 
-<<<<<<< HEAD
-per_world_context_t per_world_context[CPU_DATA_CONTEXT_NUM];
-static bool has_secure_perworld_init;
-=======
 per_world_context_t per_world_context[CPU_CONTEXT_NUM];
->>>>>>> upstream_import/upstream_v2_14_1
 
 static void manage_extensions_nonsecure(cpu_context_t *ctx);
 static void manage_extensions_secure(cpu_context_t *ctx);
-static void manage_extensions_secure_per_world(void);
 
 #if ((IMAGE_BL1) || (IMAGE_BL31 && (!CTX_INCLUDE_EL2_REGS)))
 static void setup_el1_context(cpu_context_t *ctx, const struct entry_point_info *ep)
@@ -146,10 +137,6 @@ static void setup_secure_context(cpu_context_t *ctx, const struct entry_point_in
 	if (is_feat_mte2_supported()) {
 		scr_el3 |= SCR_ATA_BIT;
 	}
-<<<<<<< HEAD
-#endif /* CTX_INCLUDE_MTE_REGS */
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 	write_ctx_reg(state, CTX_SCR_EL3, scr_el3);
 
@@ -162,18 +149,6 @@ static void setup_secure_context(cpu_context_t *ctx, const struct entry_point_in
 #endif
 
 	manage_extensions_secure(ctx);
-
-	/**
-	 * manage_extensions_secure_per_world api has to be executed once,
-	 * as the registers getting initialised, maintain constant value across
-	 * all the cpus for the secure world.
-	 * Henceforth, this check ensures that the registers are initialised once
-	 * and avoids re-initialization from multiple cores.
-	 */
-	if (!has_secure_perworld_init) {
-		manage_extensions_secure_per_world();
-	}
-
 }
 
 #if ENABLE_RME && IMAGE_BL31
@@ -265,10 +240,6 @@ static void setup_ns_context(cpu_context_t *ctx, const struct entry_point_info *
 	/* SCR_NS: Set the NS bit */
 	scr_el3 |= SCR_NS_BIT;
 
-<<<<<<< HEAD
-	/* Allow access to Allocation Tags when MTE is implemented. */
-	scr_el3 |= SCR_ATA_BIT;
-=======
 	/* Allow access to Allocation Tags when FEAT_MTE2 is implemented and enabled. */
 	if (is_feat_mte2_supported()) {
 		scr_el3 |= SCR_ATA_BIT;
@@ -296,32 +267,6 @@ static void setup_ns_context(cpu_context_t *ctx, const struct entry_point_info *
 	if (!is_ctx_pauth_supported()) {
 		scr_el3 |= SCR_API_BIT | SCR_APK_BIT;
 	}
->>>>>>> upstream_import/upstream_v2_14_1
-
-#if !CTX_INCLUDE_PAUTH_REGS
-	/*
-	 * Pointer Authentication feature, if present, is always enabled by default
-	 * for Non secure lower exception levels. We do not have an explicit
-	 * flag to set it.
-	 * CTX_INCLUDE_PAUTH_REGS flag, is explicitly used to enable for lower
-	 * exception levels of secure and realm worlds.
-	 *
-	 * To prevent the leakage between the worlds during world switch,
-	 * we enable it only for the non-secure world.
-	 *
-	 * If the Secure/realm world wants to use pointer authentication,
-	 * CTX_INCLUDE_PAUTH_REGS must be explicitly set to 1, in which case
-	 * it will be enabled globally for all the contexts.
-	 *
-	 * SCR_EL3.API: Set to one to not trap any PAuth instructions at ELs
-	 *  other than EL3
-	 *
-	 * SCR_EL3.APK: Set to one to not trap any PAuth key values at ELs other
-	 *  than EL3
-	 */
-	scr_el3 |= SCR_API_BIT | SCR_APK_BIT;
-
-#endif /* CTX_INCLUDE_PAUTH_REGS */
 
 #if HANDLE_EA_EL3_FIRST_NS
 	/* SCR_EL3.EA: Route External Abort and SError Interrupt to EL3. */
@@ -398,21 +343,7 @@ static void setup_ns_context(cpu_context_t *ctx, const struct entry_point_info *
 	write_ctx_reg(state, CTX_SCR_EL3, scr_el3);
 
 	/* Initialize EL2 context registers */
-<<<<<<< HEAD
-#if CTX_INCLUDE_EL2_REGS
-
-	/*
-	 * Initialize SCTLR_EL2 context register using Endianness value
-	 * taken from the entrypoint attribute.
-	 */
-	u_register_t sctlr_el2 = (EP_GET_EE(ep->h.attr) != 0U) ? SCTLR_EE_BIT : 0UL;
-	sctlr_el2 |= SCTLR_EL2_RES1;
-	write_ctx_reg(get_el2_sysregs_ctx(ctx), CTX_SCTLR_EL2,
-			sctlr_el2);
-
-=======
 #if (CTX_INCLUDE_EL2_REGS && IMAGE_BL31)
->>>>>>> upstream_import/upstream_v2_14_1
 	if (is_feat_hcx_supported()) {
 		/*
 		 * Initialize register HCRX_EL2 with its init value.
@@ -432,16 +363,6 @@ static void setup_ns_context(cpu_context_t *ctx, const struct entry_point_info *
 		 * systems unaware of FEAT_FGT do not get trapped due to their lack
 		 * of initialization for this feature.
 		 */
-<<<<<<< HEAD
-		write_ctx_reg(get_el2_sysregs_ctx(ctx), CTX_HFGITR_EL2,
-			HFGITR_EL2_INIT_VAL);
-		write_ctx_reg(get_el2_sysregs_ctx(ctx), CTX_HFGRTR_EL2,
-			HFGRTR_EL2_INIT_VAL);
-		write_ctx_reg(get_el2_sysregs_ctx(ctx), CTX_HFGWTR_EL2,
-			HFGWTR_EL2_INIT_VAL);
-	}
-#endif /* CTX_INCLUDE_EL2_REGS */
-=======
 		write_el2_ctx_fgt(get_el2_sysregs_ctx(ctx), hfgitr_el2,
 			HFGITR_EL2_INIT_VAL);
 		write_el2_ctx_fgt(get_el2_sysregs_ctx(ctx), hfgrtr_el2,
@@ -453,7 +374,6 @@ static void setup_ns_context(cpu_context_t *ctx, const struct entry_point_info *
 	/* Initialize EL1 context registers */
 	setup_el1_context(ctx, ep);
 #endif /* (CTX_INCLUDE_EL2_REGS && IMAGE_BL31) */
->>>>>>> upstream_import/upstream_v2_14_1
 
 	manage_extensions_nonsecure(ctx);
 }
@@ -484,23 +404,13 @@ static void setup_context_common(cpu_context_t *ctx, const entry_point_info_t *e
 	 * to boot correctly. However, there are very few registers where this
 	 * is not true and some values need to be recreated.
 	 */
-<<<<<<< HEAD
-#if CTX_INCLUDE_EL2_REGS
-=======
 #if (CTX_INCLUDE_EL2_REGS && IMAGE_BL31)
->>>>>>> upstream_import/upstream_v2_14_1
 	el2_sysregs_t *el2_ctx = get_el2_sysregs_ctx(ctx);
 
 	/*
 	 * These bits are set in the gicv3 driver. Losing them (especially the
 	 * SRE bit) is problematic for all worlds. Henceforth recreate them.
 	 */
-<<<<<<< HEAD
-	u_register_t icc_sre_el2 = ICC_SRE_DIB_BIT | ICC_SRE_DFB_BIT |
-				   ICC_SRE_EN_BIT | ICC_SRE_SRE_BIT;
-	write_ctx_reg(el2_ctx, CTX_ICC_SRE_EL2, icc_sre_el2);
-#endif /* CTX_INCLUDE_EL2_REGS */
-=======
 	u_register_t icc_sre_el2_val = ICC_SRE_DIB_BIT | ICC_SRE_DFB_BIT |
 				   ICC_SRE_EN_BIT | ICC_SRE_SRE_BIT;
 	write_el2_ctx_common(el2_ctx, icc_sre_el2, icc_sre_el2_val);
@@ -511,7 +421,6 @@ static void setup_context_common(cpu_context_t *ctx, const entry_point_info_t *e
 	 */
 	write_el2_ctx_common(el2_ctx, actlr_el2, read_actlr_el2());
 #endif /* (CTX_INCLUDE_EL2_REGS && IMAGE_BL31) */
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Start with a clean SCR_EL3 copy as all relevant values are set */
 	scr_el3 = SCR_RESET_VAL;
@@ -581,19 +490,6 @@ static void setup_context_common(cpu_context_t *ctx, const entry_point_info_t *e
 	/* Enable fault injection from lower ELs */
 	scr_el3 |= SCR_FIEN_BIT;
 #endif
-
-#if CTX_INCLUDE_PAUTH_REGS
-	/*
-	 * Enable Pointer Authentication globally for all the worlds.
-	 *
-	 * SCR_EL3.API: Set to one to not trap any PAuth instructions at ELs
-	 *  other than EL3
-	 *
-	 * SCR_EL3.APK: Set to one to not trap any PAuth key values at ELs other
-	 *  than EL3
-	 */
-	scr_el3 |= SCR_API_BIT | SCR_APK_BIT;
-#endif /* CTX_INCLUDE_PAUTH_REGS */
 
 	/*
 	 * Enable Pointer Authentication globally for all the worlds.
@@ -666,14 +562,8 @@ static void setup_context_common(cpu_context_t *ctx, const entry_point_info_t *e
 	}
 #endif /* (IMAGE_BL31 && defined(SPD_spmd) && SPMD_SPM_AT_SEL2) */
 
-<<<<<<< HEAD
-	if (is_feat_mpam_supported()) {
-		write_ctx_reg(get_el3state_ctx(ctx), CTX_MPAM3_EL3, \
-				MPAM3_EL3_RESET_VAL);
-=======
 	if (is_feat_mec_supported()) {
 		scr_el3 |= SCR_MECEn_BIT;
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	/*
@@ -804,19 +694,6 @@ void cm_setup_context(cpu_context_t *ctx, const entry_point_info_t *ep)
 /*******************************************************************************
  * Enable architecture extensions for EL3 execution. This function only updates
  * registers in-place which are expected to either never change or be
-<<<<<<< HEAD
- * overwritten by el3_exit.
- ******************************************************************************/
-#if IMAGE_BL31
-void cm_manage_extensions_el3(void)
-{
-	if (is_feat_spe_supported()) {
-		spe_init_el3();
-	}
-
-	if (is_feat_amu_supported()) {
-		amu_init_el3();
-=======
  * overwritten by el3_exit. Expects the core_pos of the current core as argument.
  ******************************************************************************/
 void __no_pauth cm_manage_extensions_el3(unsigned int my_idx)
@@ -832,30 +709,12 @@ void __no_pauth cm_manage_extensions_el3(unsigned int my_idx)
 
 	if (is_feat_amu_supported()) {
 		amu_init_el3(my_idx);
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	if (is_feat_sme_supported()) {
 		sme_init_el3();
 	}
 
-<<<<<<< HEAD
-	if (is_feat_trbe_supported()) {
-		trbe_init_el3();
-	}
-
-	if (is_feat_brbe_supported()) {
-		brbe_init_el3();
-	}
-
-	if (is_feat_trf_supported()) {
-		trf_init_el3();
-	}
-
-	pmuv3_init_el3();
-}
-#endif /* IMAGE_BL31 */
-=======
 	if (is_feat_fgwte3_supported()) {
 		write_fgwte3_el3(FGWTE3_EL3_EARLY_INIT_VAL);
 	}
@@ -881,24 +740,17 @@ static void cm_el3_arch_init_per_world(per_world_context_t *per_world_ctx)
 	per_world_ctx->ctx_cptr_el3 = CPTR_EL3_RESET_VAL;
 	per_world_ctx->ctx_mpam3_el3 = MPAM3_EL3_RESET_VAL;
 }
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * Initialise per_world_context for Non-Secure world.
  * This function enables the architecture extensions, which have same value
  * across the cores for the non-secure world.
  ******************************************************************************/
-<<<<<<< HEAD
-#if IMAGE_BL31
-void manage_extensions_nonsecure_per_world(void)
-{
-=======
 static void manage_extensions_nonsecure_per_world(void)
 {
 	cm_el3_arch_init_per_world(&per_world_context[CPU_CONTEXT_NS]);
 
 #if IMAGE_BL31
->>>>>>> upstream_import/upstream_v2_14_1
 	if (is_feat_sme_supported()) {
 		sme_enable_per_world(&per_world_context[CPU_CONTEXT_NS]);
 	}
@@ -914,10 +766,6 @@ static void manage_extensions_nonsecure_per_world(void)
 	if (is_feat_sys_reg_trace_supported()) {
 		sys_reg_trace_enable_per_world(&per_world_context[CPU_CONTEXT_NS]);
 	}
-<<<<<<< HEAD
-}
-#endif /* IMAGE_BL31 */
-=======
 
 	if (is_feat_mpam_supported()) {
 		mpam_enable_per_world(&per_world_context[CPU_CONTEXT_NS]);
@@ -928,23 +776,16 @@ static void manage_extensions_nonsecure_per_world(void)
 	}
 #endif /* IMAGE_BL31 */
 }
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * Initialise per_world_context for Secure world.
  * This function enables the architecture extensions, which have same value
  * across the cores for the secure world.
  ******************************************************************************/
-<<<<<<< HEAD
-
-static void manage_extensions_secure_per_world(void)
-{
-=======
 static void manage_extensions_secure_per_world(void)
 {
 	cm_el3_arch_init_per_world(&per_world_context[CPU_CONTEXT_SECURE]);
 
->>>>>>> upstream_import/upstream_v2_14_1
 #if IMAGE_BL31
 	if (is_feat_sme_supported()) {
 
@@ -983,9 +824,6 @@ static void manage_extensions_secure_per_world(void)
 		sys_reg_trace_disable_per_world(&per_world_context[CPU_CONTEXT_SECURE]);
 	}
 
-<<<<<<< HEAD
-	has_secure_perworld_init = true;
-=======
 	if (is_feat_idte3_supported()) {
 		idte3_init_cached_idregs_per_world(CPU_CONTEXT_SECURE);
 	}
@@ -1053,7 +891,6 @@ void cm_init_percpu_once_regs(void)
 		idte3_init_percpu_once_regs(CPU_CONTEXT_REALM);
 #endif /* ENABLE_RME */
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* IMAGE_BL31 */
 }
 
@@ -1063,10 +900,7 @@ void cm_init_percpu_once_regs(void)
 static void manage_extensions_nonsecure(cpu_context_t *ctx)
 {
 #if IMAGE_BL31
-<<<<<<< HEAD
-=======
 	/* NOTE: registers are not context switched */
->>>>>>> upstream_import/upstream_v2_14_1
 	if (is_feat_amu_supported()) {
 		amu_enable(ctx);
 	}
@@ -1075,49 +909,6 @@ static void manage_extensions_nonsecure(cpu_context_t *ctx)
 		sme_enable(ctx);
 	}
 
-<<<<<<< HEAD
-	if (is_feat_mpam_supported()) {
-		mpam_enable(ctx);
-	}
-	pmuv3_enable(ctx);
-#endif /* IMAGE_BL31 */
-}
-
-/* TODO: move to lib/extensions/pauth when it has been ported to FEAT_STATE */
-static __unused void enable_pauth_el2(void)
-{
-	u_register_t hcr_el2 = read_hcr_el2();
-	/*
-	 * For Armv8.3 pointer authentication feature, disable traps to EL2 when
-	 *  accessing key registers or using pointer authentication instructions
-	 *  from lower ELs.
-	 */
-	hcr_el2 |= (HCR_API_BIT | HCR_APK_BIT);
-
-	write_hcr_el2(hcr_el2);
-}
-
-/*******************************************************************************
- * Enable architecture extensions in-place at EL2 on first entry to Non-secure
- * world when EL2 is empty and unused.
- ******************************************************************************/
-static void manage_extensions_nonsecure_el2_unused(void)
-{
-#if IMAGE_BL31
-	if (is_feat_spe_supported()) {
-		spe_init_el2_unused();
-	}
-
-	if (is_feat_amu_supported()) {
-		amu_init_el2_unused();
-	}
-
-	if (is_feat_mpam_supported()) {
-		mpam_init_el2_unused();
-	}
-
-	if (is_feat_trbe_supported()) {
-=======
 	if (is_feat_fgt2_supported()) {
 		fgt2_enable(ctx);
 	}
@@ -1165,7 +956,6 @@ static void manage_extensions_nonsecure_el2_unused(void)
 	}
 
 	if (is_feat_trbe_supported()) {
->>>>>>> upstream_import/upstream_v2_14_1
 		trbe_init_el2_unused();
 	}
 
@@ -1187,11 +977,6 @@ static void manage_extensions_nonsecure_el2_unused(void)
 		sme_init_el2_unused();
 	}
 
-<<<<<<< HEAD
-#if ENABLE_PAUTH
-	enable_pauth_el2();
-#endif /* ENABLE_PAUTH */
-=======
 	if (is_feat_mops_supported() && is_feat_hcx_supported()) {
 		write_hcrx_el2(read_hcrx_el2() | HCRX_EL2_MSCEn_BIT);
 	}
@@ -1199,7 +984,6 @@ static void manage_extensions_nonsecure_el2_unused(void)
 	if (is_feat_pauth_supported()) {
 		pauth_enable_el2();
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* IMAGE_BL31 */
 }
 #endif /* INIT_UNUSED_NS_EL2 */
@@ -1250,14 +1034,9 @@ void cm_init_my_context(const entry_point_info_t *ep)
 }
 
 /* EL2 present but unused, need to disable safely. SCTLR_EL2 can be ignored */
-<<<<<<< HEAD
-static __unused void init_nonsecure_el2_unused(cpu_context_t *ctx)
-{
-=======
 static void init_nonsecure_el2_unused(cpu_context_t *ctx)
 {
 #if INIT_UNUSED_NS_EL2
->>>>>>> upstream_import/upstream_v2_14_1
 	u_register_t hcr_el2 = HCR_RESET_VAL;
 	u_register_t mdcr_el2;
 	u_register_t scr_el3;
@@ -1356,10 +1135,7 @@ static void init_nonsecure_el2_unused(cpu_context_t *ctx)
 	write_cnthp_ctl_el2(CNTHP_CTL_RESET_VAL & ~(CNTHP_CTL_ENABLE_BIT));
 
 	manage_extensions_nonsecure_el2_unused();
-<<<<<<< HEAD
-=======
 #endif /* INIT_UNUSED_NS_EL2 */
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /*******************************************************************************
@@ -1373,11 +1149,7 @@ static void init_nonsecure_el2_unused(cpu_context_t *ctx)
  ******************************************************************************/
 void cm_prepare_el3_exit(size_t security_state)
 {
-<<<<<<< HEAD
-	u_register_t sctlr_elx, scr_el3;
-=======
 	u_register_t sctlr_el2, scr_el3;
->>>>>>> upstream_import/upstream_v2_14_1
 	cpu_context_t *ctx = cm_get_context(security_state);
 
 	assert(ctx != NULL);
@@ -1415,18 +1187,6 @@ void cm_prepare_el3_exit(size_t security_state)
 				write_hfgrtr_el2(HFGRTR_EL2_INIT_VAL);
 				write_hfgwtr_el2(HFGWTR_EL2_INIT_VAL);
 			}
-<<<<<<< HEAD
-		}
-
-
-		if ((scr_el3 & SCR_HCE_BIT) != 0U) {
-			/* Use SCTLR_EL1.EE value to initialise sctlr_el2 */
-			sctlr_elx = read_ctx_reg(get_el1_sysregs_ctx(ctx),
-							   CTX_SCTLR_EL1);
-			sctlr_elx &= SCTLR_EE_BIT;
-			sctlr_elx |= SCTLR_EL2_RES1;
-#if ERRATA_A75_764081
-=======
 
 			/* Condition to ensure EL2 is being used. */
 			if ((scr_el3 & SCR_HCE_BIT) != 0U) {
@@ -1453,20 +1213,11 @@ void cm_prepare_el3_exit(size_t security_state)
 		}
 
 		if (is_feat_fgwte3_supported()) {
->>>>>>> upstream_import/upstream_v2_14_1
 			/*
 			 * TCR_EL3 and ACTLR_EL3 could be overwritten
 			 * by platforms and hence is locked a bit late.
 			 */
-<<<<<<< HEAD
-			sctlr_elx |= SCTLR_IESB_BIT;
-#endif
-			write_sctlr_el2(sctlr_elx);
-		} else if (el2_implemented != EL_IMPL_NONE) {
-			init_nonsecure_el2_unused(ctx);
-=======
 			write_fgwte3_el3(FGWTE3_EL3_LATE_INIT_VAL);
->>>>>>> upstream_import/upstream_v2_14_1
 		}
 	}
 #if !CTX_INCLUDE_EL2_REGS || IMAGE_BL1
@@ -1610,8 +1361,6 @@ static void el2_sysregs_context_restore_mpam(el2_sysregs_t *ctx)
 	}
 }
 
-<<<<<<< HEAD
-=======
 /* ---------------------------------------------------------------------------
  * The following registers are not added:
  * ICH_AP0R<n>_EL2
@@ -1691,69 +1440,14 @@ static void el2_sysregs_context_restore_gic(el2_sysregs_t *ctx, uint32_t securit
 	}
 }
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* -----------------------------------------------------
  * The following registers are not added:
  * AMEVCNTVOFF0<n>_EL2
  * AMEVCNTVOFF1<n>_EL2
-<<<<<<< HEAD
- * ICH_AP0R<n>_EL2
- * ICH_AP1R<n>_EL2
- * ICH_LR<n>_EL2
-=======
->>>>>>> upstream_import/upstream_v2_14_1
  * -----------------------------------------------------
  */
 static void el2_sysregs_context_save_common(el2_sysregs_t *ctx)
 {
-<<<<<<< HEAD
-	write_ctx_reg(ctx, CTX_ACTLR_EL2, read_actlr_el2());
-	write_ctx_reg(ctx, CTX_AFSR0_EL2, read_afsr0_el2());
-	write_ctx_reg(ctx, CTX_AFSR1_EL2, read_afsr1_el2());
-	write_ctx_reg(ctx, CTX_AMAIR_EL2, read_amair_el2());
-	write_ctx_reg(ctx, CTX_CNTHCTL_EL2, read_cnthctl_el2());
-	write_ctx_reg(ctx, CTX_CNTVOFF_EL2, read_cntvoff_el2());
-	write_ctx_reg(ctx, CTX_CPTR_EL2, read_cptr_el2());
-	if (CTX_INCLUDE_AARCH32_REGS) {
-		write_ctx_reg(ctx, CTX_DBGVCR32_EL2, read_dbgvcr32_el2());
-	}
-	write_ctx_reg(ctx, CTX_ELR_EL2, read_elr_el2());
-	write_ctx_reg(ctx, CTX_ESR_EL2, read_esr_el2());
-	write_ctx_reg(ctx, CTX_FAR_EL2, read_far_el2());
-	write_ctx_reg(ctx, CTX_HACR_EL2, read_hacr_el2());
-	write_ctx_reg(ctx, CTX_HCR_EL2, read_hcr_el2());
-	write_ctx_reg(ctx, CTX_HPFAR_EL2, read_hpfar_el2());
-	write_ctx_reg(ctx, CTX_HSTR_EL2, read_hstr_el2());
-
-	/*
-	 * Set the NS bit to be able to access the ICC_SRE_EL2 register
-	 * TODO: remove with root context
-	 */
-	u_register_t scr_el3 = read_scr_el3();
-
-	write_scr_el3(scr_el3 | SCR_NS_BIT);
-	isb();
-	write_ctx_reg(ctx, CTX_ICC_SRE_EL2, read_icc_sre_el2());
-
-	write_scr_el3(scr_el3);
-	isb();
-
-	write_ctx_reg(ctx, CTX_ICH_HCR_EL2, read_ich_hcr_el2());
-	write_ctx_reg(ctx, CTX_ICH_VMCR_EL2, read_ich_vmcr_el2());
-	write_ctx_reg(ctx, CTX_MAIR_EL2, read_mair_el2());
-	write_ctx_reg(ctx, CTX_MDCR_EL2, read_mdcr_el2());
-	write_ctx_reg(ctx, CTX_SCTLR_EL2, read_sctlr_el2());
-	write_ctx_reg(ctx, CTX_SPSR_EL2, read_spsr_el2());
-	write_ctx_reg(ctx, CTX_SP_EL2, read_sp_el2());
-	write_ctx_reg(ctx, CTX_TCR_EL2, read_tcr_el2());
-	write_ctx_reg(ctx, CTX_TPIDR_EL2, read_tpidr_el2());
-	write_ctx_reg(ctx, CTX_TTBR0_EL2, read_ttbr0_el2());
-	write_ctx_reg(ctx, CTX_VBAR_EL2, read_vbar_el2());
-	write_ctx_reg(ctx, CTX_VMPIDR_EL2, read_vmpidr_el2());
-	write_ctx_reg(ctx, CTX_VPIDR_EL2, read_vpidr_el2());
-	write_ctx_reg(ctx, CTX_VTCR_EL2, read_vtcr_el2());
-	write_ctx_reg(ctx, CTX_VTTBR_EL2, read_vttbr_el2());
-=======
 	write_el2_ctx_common(ctx, actlr_el2, read_actlr_el2());
 	write_el2_ctx_common(ctx, afsr0_el2, read_afsr0_el2());
 	write_el2_ctx_common(ctx, afsr1_el2, read_afsr1_el2());
@@ -1785,59 +1479,10 @@ static void el2_sysregs_context_save_common(el2_sysregs_t *ctx)
 
 	write_el2_ctx_common_sysreg128(ctx, ttbr0_el2, read_ttbr0_el2());
 	write_el2_ctx_common_sysreg128(ctx, vttbr_el2, read_vttbr_el2());
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 static void el2_sysregs_context_restore_common(el2_sysregs_t *ctx)
 {
-<<<<<<< HEAD
-	write_actlr_el2(read_ctx_reg(ctx, CTX_ACTLR_EL2));
-	write_afsr0_el2(read_ctx_reg(ctx, CTX_AFSR0_EL2));
-	write_afsr1_el2(read_ctx_reg(ctx, CTX_AFSR1_EL2));
-	write_amair_el2(read_ctx_reg(ctx, CTX_AMAIR_EL2));
-	write_cnthctl_el2(read_ctx_reg(ctx, CTX_CNTHCTL_EL2));
-	write_cntvoff_el2(read_ctx_reg(ctx, CTX_CNTVOFF_EL2));
-	write_cptr_el2(read_ctx_reg(ctx, CTX_CPTR_EL2));
-	if (CTX_INCLUDE_AARCH32_REGS) {
-		write_dbgvcr32_el2(read_ctx_reg(ctx, CTX_DBGVCR32_EL2));
-	}
-	write_elr_el2(read_ctx_reg(ctx, CTX_ELR_EL2));
-	write_esr_el2(read_ctx_reg(ctx, CTX_ESR_EL2));
-	write_far_el2(read_ctx_reg(ctx, CTX_FAR_EL2));
-	write_hacr_el2(read_ctx_reg(ctx, CTX_HACR_EL2));
-	write_hcr_el2(read_ctx_reg(ctx, CTX_HCR_EL2));
-	write_hpfar_el2(read_ctx_reg(ctx, CTX_HPFAR_EL2));
-	write_hstr_el2(read_ctx_reg(ctx, CTX_HSTR_EL2));
-
-	/*
-	 * Set the NS bit to be able to access the ICC_SRE_EL2 register
-	 * TODO: remove with root context
-	 */
-	u_register_t scr_el3 = read_scr_el3();
-
-	write_scr_el3(scr_el3 | SCR_NS_BIT);
-	isb();
-	write_icc_sre_el2(read_ctx_reg(ctx, CTX_ICC_SRE_EL2));
-
-	write_scr_el3(scr_el3);
-	isb();
-
-	write_ich_hcr_el2(read_ctx_reg(ctx, CTX_ICH_HCR_EL2));
-	write_ich_vmcr_el2(read_ctx_reg(ctx, CTX_ICH_VMCR_EL2));
-	write_mair_el2(read_ctx_reg(ctx, CTX_MAIR_EL2));
-	write_mdcr_el2(read_ctx_reg(ctx, CTX_MDCR_EL2));
-	write_sctlr_el2(read_ctx_reg(ctx, CTX_SCTLR_EL2));
-	write_spsr_el2(read_ctx_reg(ctx, CTX_SPSR_EL2));
-	write_sp_el2(read_ctx_reg(ctx, CTX_SP_EL2));
-	write_tcr_el2(read_ctx_reg(ctx, CTX_TCR_EL2));
-	write_tpidr_el2(read_ctx_reg(ctx, CTX_TPIDR_EL2));
-	write_ttbr0_el2(read_ctx_reg(ctx, CTX_TTBR0_EL2));
-	write_vbar_el2(read_ctx_reg(ctx, CTX_VBAR_EL2));
-	write_vmpidr_el2(read_ctx_reg(ctx, CTX_VMPIDR_EL2));
-	write_vpidr_el2(read_ctx_reg(ctx, CTX_VPIDR_EL2));
-	write_vtcr_el2(read_ctx_reg(ctx, CTX_VTCR_EL2));
-	write_vttbr_el2(read_ctx_reg(ctx, CTX_VTTBR_EL2));
-=======
 	write_actlr_el2(read_el2_ctx_common(ctx, actlr_el2));
 	write_afsr0_el2(read_el2_ctx_common(ctx, afsr0_el2));
 	write_afsr1_el2(read_el2_ctx_common(ctx, afsr1_el2));
@@ -1868,7 +1513,6 @@ static void el2_sysregs_context_restore_common(el2_sysregs_t *ctx)
 	write_vpidr_el2(read_el2_ctx_common(ctx, vpidr_el2));
 	write_vtcr_el2(read_el2_ctx_common(ctx, vtcr_el2));
 	write_vttbr_el2(read_el2_ctx_common(ctx, vttbr_el2));
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /*******************************************************************************
@@ -1885,64 +1529,6 @@ void cm_el2_sysregs_context_save(uint32_t security_state)
 	el2_sysregs_ctx = get_el2_sysregs_ctx(ctx);
 
 	el2_sysregs_context_save_common(el2_sysregs_ctx);
-<<<<<<< HEAD
-#if CTX_INCLUDE_MTE_REGS
-	write_ctx_reg(el2_sysregs_ctx, CTX_TFSR_EL2, read_tfsr_el2());
-#endif
-	if (is_feat_mpam_supported()) {
-		el2_sysregs_context_save_mpam(el2_sysregs_ctx);
-	}
-
-	if (is_feat_fgt_supported()) {
-		el2_sysregs_context_save_fgt(el2_sysregs_ctx);
-	}
-
-	if (is_feat_ecv_v2_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_CNTPOFF_EL2, read_cntpoff_el2());
-	}
-
-	if (is_feat_vhe_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_CONTEXTIDR_EL2, read_contextidr_el2());
-		write_ctx_reg(el2_sysregs_ctx, CTX_TTBR1_EL2, read_ttbr1_el2());
-	}
-
-	if (is_feat_ras_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_VDISR_EL2, read_vdisr_el2());
-		write_ctx_reg(el2_sysregs_ctx, CTX_VSESR_EL2, read_vsesr_el2());
-	}
-
-	if (is_feat_nv2_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_VNCR_EL2, read_vncr_el2());
-	}
-
-	if (is_feat_trf_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_TRFCR_EL2, read_trfcr_el2());
-	}
-
-	if (is_feat_csv2_2_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_SCXTNUM_EL2, read_scxtnum_el2());
-	}
-
-	if (is_feat_hcx_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_HCRX_EL2, read_hcrx_el2());
-	}
-	if (is_feat_tcr2_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_TCR2_EL2, read_tcr2_el2());
-	}
-	if (is_feat_sxpie_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_PIRE0_EL2, read_pire0_el2());
-		write_ctx_reg(el2_sysregs_ctx, CTX_PIR_EL2, read_pir_el2());
-	}
-	if (is_feat_s2pie_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_S2PIR_EL2, read_s2pir_el2());
-	}
-	if (is_feat_sxpoe_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_POR_EL2, read_por_el2());
-	}
-	if (is_feat_gcs_supported()) {
-		write_ctx_reg(el2_sysregs_ctx, CTX_GCSPR_EL2, read_gcspr_el2());
-		write_ctx_reg(el2_sysregs_ctx, CTX_GCSCR_EL2, read_gcscr_el2());
-=======
 	el2_sysregs_context_save_gic(el2_sysregs_ctx, security_state);
 
 	if (is_feat_mte2_supported()) {
@@ -2021,7 +1607,6 @@ void cm_el2_sysregs_context_save(uint32_t security_state)
 
 	if (is_feat_sctlr2_supported()) {
 		write_el2_ctx_sctlr2(el2_sysregs_ctx, sctlr2_el2, read_sctlr2_el2());
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 }
 
@@ -2039,63 +1624,6 @@ void cm_el2_sysregs_context_restore(uint32_t security_state)
 	el2_sysregs_ctx = get_el2_sysregs_ctx(ctx);
 
 	el2_sysregs_context_restore_common(el2_sysregs_ctx);
-<<<<<<< HEAD
-#if CTX_INCLUDE_MTE_REGS
-	write_tfsr_el2(read_ctx_reg(el2_sysregs_ctx, CTX_TFSR_EL2));
-#endif
-	if (is_feat_mpam_supported()) {
-		el2_sysregs_context_restore_mpam(el2_sysregs_ctx);
-	}
-
-	if (is_feat_fgt_supported()) {
-		el2_sysregs_context_restore_fgt(el2_sysregs_ctx);
-	}
-
-	if (is_feat_ecv_v2_supported()) {
-		write_cntpoff_el2(read_ctx_reg(el2_sysregs_ctx, CTX_CNTPOFF_EL2));
-	}
-
-	if (is_feat_vhe_supported()) {
-		write_contextidr_el2(read_ctx_reg(el2_sysregs_ctx, CTX_CONTEXTIDR_EL2));
-		write_ttbr1_el2(read_ctx_reg(el2_sysregs_ctx, CTX_TTBR1_EL2));
-	}
-
-	if (is_feat_ras_supported()) {
-		write_vdisr_el2(read_ctx_reg(el2_sysregs_ctx, CTX_VDISR_EL2));
-		write_vsesr_el2(read_ctx_reg(el2_sysregs_ctx, CTX_VSESR_EL2));
-	}
-
-	if (is_feat_nv2_supported()) {
-		write_vncr_el2(read_ctx_reg(el2_sysregs_ctx, CTX_VNCR_EL2));
-	}
-	if (is_feat_trf_supported()) {
-		write_trfcr_el2(read_ctx_reg(el2_sysregs_ctx, CTX_TRFCR_EL2));
-	}
-
-	if (is_feat_csv2_2_supported()) {
-		write_scxtnum_el2(read_ctx_reg(el2_sysregs_ctx, CTX_SCXTNUM_EL2));
-	}
-
-	if (is_feat_hcx_supported()) {
-		write_hcrx_el2(read_ctx_reg(el2_sysregs_ctx, CTX_HCRX_EL2));
-	}
-	if (is_feat_tcr2_supported()) {
-		write_tcr2_el2(read_ctx_reg(el2_sysregs_ctx, CTX_TCR2_EL2));
-	}
-	if (is_feat_sxpie_supported()) {
-		write_pire0_el2(read_ctx_reg(el2_sysregs_ctx, CTX_PIRE0_EL2));
-		write_pir_el2(read_ctx_reg(el2_sysregs_ctx, CTX_PIR_EL2));
-	}
-	if (is_feat_s2pie_supported()) {
-		write_s2pir_el2(read_ctx_reg(el2_sysregs_ctx, CTX_S2PIR_EL2));
-	}
-	if (is_feat_sxpoe_supported()) {
-		write_por_el2(read_ctx_reg(el2_sysregs_ctx, CTX_POR_EL2));
-	}
-	if (is_feat_gcs_supported()) {
-		write_gcscr_el2(read_ctx_reg(el2_sysregs_ctx, CTX_GCSCR_EL2));
-		write_gcspr_el2(read_ctx_reg(el2_sysregs_ctx, CTX_GCSPR_EL2));
-=======
 	el2_sysregs_context_restore_gic(el2_sysregs_ctx, security_state);
 
 	if (is_feat_mte2_supported()) {
@@ -2174,7 +1702,6 @@ void cm_el2_sysregs_context_restore(uint32_t security_state)
 
 	if (is_feat_brbe_supported()) {
 		write_brbcr_el2(read_el2_ctx_brbe(el2_sysregs_ctx, brbcr_el2));
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 }
 #endif /* (CTX_INCLUDE_EL2_REGS && IMAGE_BL31) */
@@ -2187,11 +1714,7 @@ void cm_el2_sysregs_context_restore(uint32_t security_state)
  ******************************************************************************/
 void cm_prepare_el3_exit_ns(void)
 {
-<<<<<<< HEAD
-#if CTX_INCLUDE_EL2_REGS
-=======
 #if (CTX_INCLUDE_EL2_REGS && IMAGE_BL31)
->>>>>>> upstream_import/upstream_v2_14_1
 #if ENABLE_ASSERTIONS
 	cpu_context_t *ctx = cm_get_context(NON_SECURE);
 	assert(ctx != NULL);
@@ -2202,11 +1725,7 @@ void cm_prepare_el3_exit_ns(void)
 			(el_implemented(2U) != EL_IMPL_NONE));
 #endif /* ENABLE_ASSERTIONS */
 
-<<<<<<< HEAD
-	/* Restore EL2 and EL1 sysreg contexts */
-=======
 	/* Restore EL2 sysreg contexts */
->>>>>>> upstream_import/upstream_v2_14_1
 	cm_el2_sysregs_context_restore(NON_SECURE);
 	cm_set_next_eret_context(NON_SECURE);
 #else

@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2014-2019, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2014-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  * Copyright (c) 2023, Advanced Micro Devices. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause

@@ -644,11 +644,7 @@ element of the data flow diagram.
 
 ---------------
 
-<<<<<<< HEAD:docs/threat_model/threat_model_el3_spm.rst
-*Copyright (c) 2022-2023, Arm Limited. All rights reserved.*
-=======
 *Copyright (c) 2022-2024, Arm Limited. All rights reserved.*
->>>>>>> upstream_import/upstream_v2_14_1:docs/threat_model/firmware_threat_model/threat_model_el3_spm.rst
 
 .. _Arm Firmware Framework for Arm A-profile: https://developer.arm.com/docs/den0077/latest
 .. _FF-A ACS: https://github.com/ARM-software/ff-a-acs/releases

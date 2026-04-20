@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -54,11 +50,7 @@ static int load_mbr_header(uintptr_t image_handle, mbr_entry_t *mbr_entry)
 {
 	size_t bytes_read;
 	int result;
-<<<<<<< HEAD
-	mbr_entry_t *tmp;
-=======
 	mbr_entry_t tmp;
->>>>>>> upstream_import/upstream_v2_14_1
 
 	assert(mbr_entry != NULL);
 	/* MBR partition table is in LBA0. */
@@ -81,29 +73,14 @@ static int load_mbr_header(uintptr_t image_handle, mbr_entry_t *mbr_entry)
 		return -ENOENT;
 	}
 
-<<<<<<< HEAD
-	tmp = (mbr_entry_t *)(&mbr_sector[MBR_PRIMARY_ENTRY_OFFSET]);
-
-	if (tmp->first_lba != 1) {
-		VERBOSE("MBR header may have an invalid first LBA\n");
-		return -EINVAL;
-	}
-
-	if ((tmp->sector_nums == 0) || (tmp->sector_nums == UINT32_MAX)) {
-=======
 	memcpy(&tmp, mbr_sector + MBR_PRIMARY_ENTRY_OFFSET, sizeof(tmp));
 
 	if ((tmp.sector_nums == 0) || (tmp.sector_nums == UINT32_MAX)) {
->>>>>>> upstream_import/upstream_v2_14_1
 		VERBOSE("MBR header entry has an invalid number of sectors\n");
 		return -EINVAL;
 	}
 
-<<<<<<< HEAD
-	memcpy(mbr_entry, tmp, sizeof(mbr_entry_t));
-=======
 	memcpy(mbr_entry, &tmp, sizeof(mbr_entry_t));
->>>>>>> upstream_import/upstream_v2_14_1
 	return 0;
 }
 
@@ -112,11 +89,7 @@ static int load_mbr_header(uintptr_t image_handle, mbr_entry_t *mbr_entry)
  * If partition numbers could be found, check & update it.
  */
 static int load_gpt_header(uintptr_t image_handle, size_t header_offset,
-<<<<<<< HEAD
-			   unsigned long long *part_lba)
-=======
 			   gpt_header_t *header)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	size_t bytes_read;
 	int result;
@@ -136,13 +109,8 @@ static int load_gpt_header(uintptr_t image_handle, size_t header_offset,
 			sizeof(gpt_header_t), bytes_read);
 		return result;
 	}
-<<<<<<< HEAD
-	if (memcmp(header.signature, GPT_SIGNATURE,
-			   sizeof(header.signature)) != 0) {
-=======
 	if (memcmp(header->signature, GPT_SIGNATURE,
 			   sizeof(header->signature)) != 0) {
->>>>>>> upstream_import/upstream_v2_14_1
 		VERBOSE("GPT header signature failure\n");
 		return -EINVAL;
 	}
@@ -155,11 +123,7 @@ static int load_gpt_header(uintptr_t image_handle, size_t header_offset,
 	header_crc = header->header_crc;
 	header->header_crc = 0U;
 
-<<<<<<< HEAD
-	calc_crc = tf_crc32(0U, (uint8_t *)&header, sizeof(gpt_header_t));
-=======
 	calc_crc = tf_crc32(0U, (uint8_t *)header, sizeof(gpt_header_t));
->>>>>>> upstream_import/upstream_v2_14_1
 	if (header_crc != calc_crc) {
 		ERROR("Invalid GPT Header CRC: Expected 0x%x but got 0x%x.\n",
 		      header_crc, calc_crc);
@@ -174,10 +138,6 @@ static int load_gpt_header(uintptr_t image_handle, size_t header_offset,
 		list.entry_count = PLAT_PARTITION_MAX_ENTRIES;
 	}
 
-<<<<<<< HEAD
-	*part_lba = header.part_lba;
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	return 0;
 }
 
@@ -264,16 +224,9 @@ static int load_gpt_entry(uintptr_t image_handle, gpt_entry_t *entry)
  * Retrieve each entry in the partition table, parse the data from each
  * entry and store them in the list of partition table entries.
  */
-<<<<<<< HEAD
-static int load_partition_gpt(uintptr_t image_handle,
-			      unsigned long long part_lba)
-{
-	const signed long long gpt_entry_offset = LBA(part_lba);
-=======
 static int load_partition_gpt(uintptr_t image_handle, gpt_header_t header)
 {
 	const signed long long gpt_entry_offset = LBA(header.part_lba);
->>>>>>> upstream_import/upstream_v2_14_1
 	gpt_entry_t entry;
 	int result;
 	unsigned int i;
@@ -286,17 +239,10 @@ static int load_partition_gpt(uintptr_t image_handle, gpt_header_t header)
 		return result;
 	}
 
-<<<<<<< HEAD
-	for (i = 0; i < list.entry_count; i++) {
-		result = load_gpt_entry(image_handle, &entry);
-		if (result != 0) {
-			VERBOSE("Failed to load gpt entry data(%i) error is (%i)\n",
-=======
 	for (i = 0U; i < list.entry_count; i++) {
 		result = load_gpt_entry(image_handle, &entry);
 		if (result != 0) {
 			VERBOSE("Failed to load gpt entry data(%u) error is (%i)\n",
->>>>>>> upstream_import/upstream_v2_14_1
 				i, result);
 			return result;
 		}
@@ -363,11 +309,7 @@ static int load_partition_gpt(uintptr_t image_handle, gpt_header_t header)
 static int load_backup_gpt(unsigned int image_id, unsigned int sector_nums)
 {
 	int result;
-<<<<<<< HEAD
-	unsigned long long part_lba = 0;
-=======
 	gpt_header_t header;
->>>>>>> upstream_import/upstream_v2_14_1
 	size_t gpt_header_offset;
 	uintptr_t dev_handle, image_spec, image_handle;
 	io_block_spec_t *block_spec;
@@ -404,13 +346,8 @@ static int load_backup_gpt(unsigned int image_id, unsigned int sector_nums)
 	INFO("Trying to retrieve back-up GPT header\n");
 	/* Last block is backup-GPT header, after the end of GPT entries */
 	gpt_header_offset = LBA(part_num_entries);
-<<<<<<< HEAD
-	result = load_gpt_header(image_handle, gpt_header_offset, &part_lba);
-	if ((result != 0) || (part_lba == 0)) {
-=======
 	result = load_gpt_header(image_handle, gpt_header_offset, &header);
 	if ((result != 0) || (header.part_lba == 0)) {
->>>>>>> upstream_import/upstream_v2_14_1
 		ERROR("Failed to retrieve Backup GPT header,"
 		      "Partition maybe corrupted\n");
 		goto out;
@@ -420,12 +357,8 @@ static int load_backup_gpt(unsigned int image_id, unsigned int sector_nums)
 	 * Note we mapped last 33 blocks(LBA-33), first block here starts with
 	 * entries while last block was header.
 	 */
-<<<<<<< HEAD
-	result = load_partition_gpt(image_handle, 0);
-=======
 	header.part_lba = 0;
 	result = load_partition_gpt(image_handle, header);
->>>>>>> upstream_import/upstream_v2_14_1
 
 out:
 	io_close(image_handle);
@@ -440,15 +373,6 @@ out:
 static int load_primary_gpt(uintptr_t image_handle, unsigned int first_lba)
 {
 	int result;
-<<<<<<< HEAD
-	unsigned long long part_lba;
-	size_t gpt_header_offset;
-
-	/* Try to load Primary GPT header from LBA1 */
-	gpt_header_offset = LBA(first_lba);
-	result = load_gpt_header(image_handle, gpt_header_offset, &part_lba);
-	if ((result != 0) || (part_lba == 0)) {
-=======
 	size_t gpt_header_offset;
 	gpt_header_t header;
 
@@ -456,15 +380,11 @@ static int load_primary_gpt(uintptr_t image_handle, unsigned int first_lba)
 	gpt_header_offset = LBA(first_lba);
 	result = load_gpt_header(image_handle, gpt_header_offset, &header);
 	if ((result != 0) || (header.part_lba == 0)) {
->>>>>>> upstream_import/upstream_v2_14_1
 		VERBOSE("Failed to retrieve Primary GPT header,"
 			"trying to retrieve back-up GPT header\n");
 		return result;
 	}
 
-<<<<<<< HEAD
-	return load_partition_gpt(image_handle, part_lba);
-=======
 	return load_partition_gpt(image_handle, header);
 }
 
@@ -480,7 +400,6 @@ static void handle_gpt_corruption(void)
 	flags = plat_log_gpt_ptr->gpt_corrupted_info | PRIMARY_GPT_CORRUPTED;
 	plat_log_gpt_ptr->plat_set_gpt_corruption((uintptr_t)&plat_log_gpt_ptr->gpt_corrupted_info,
 						  flags);
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /*
@@ -511,11 +430,6 @@ int load_partition_table(unsigned int image_id)
 		goto out;
 	}
 	if (mbr_entry.type == PARTITION_TYPE_GPT) {
-<<<<<<< HEAD
-		result = load_primary_gpt(image_handle, mbr_entry.first_lba);
-		if (result != 0) {
-			io_close(image_handle);
-=======
 		if (mbr_entry.first_lba != 1U) {
 			VERBOSE("MBR header may have an invalid first LBA\n");
 			return -EINVAL;
@@ -525,7 +439,6 @@ int load_partition_table(unsigned int image_id)
 		if (result != 0) {
 			io_close(image_handle);
 			handle_gpt_corruption();
->>>>>>> upstream_import/upstream_v2_14_1
 			return load_backup_gpt(BKUP_GPT_IMAGE_ID,
 					       mbr_entry.sector_nums);
 		}
@@ -554,16 +467,10 @@ const partition_entry_t *get_partition_entry(const char *name)
 }
 
 /*
-<<<<<<< HEAD
- * Try retrieving a partition table entry based on the GUID.
- */
-const partition_entry_t *get_partition_entry_by_type(const uuid_t *type_uuid)
-=======
  * Try retrieving a partition table entry based on the partition type GUID.
  */
 const partition_entry_t *get_partition_entry_by_type(
 	const struct efi_guid *type_guid)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	unsigned int i;
 
@@ -577,16 +484,10 @@ const partition_entry_t *get_partition_entry_by_type(
 }
 
 /*
-<<<<<<< HEAD
- * Try retrieving a partition table entry based on the UUID.
- */
-const partition_entry_t *get_partition_entry_by_uuid(const uuid_t *part_uuid)
-=======
  * Try retrieving a partition table entry based on the unique partition GUID.
  */
 const partition_entry_t *get_partition_entry_by_guid(
 	const struct efi_guid *part_guid)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	unsigned int i;
 

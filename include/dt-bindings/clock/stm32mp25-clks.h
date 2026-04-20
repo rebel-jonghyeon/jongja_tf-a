@@ -1,12 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
 /*
-<<<<<<< HEAD
- * Copyright (C) 2023, STMicroelectronics - All Rights Reserved
- * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
-=======
  * Copyright (C) 2023-2024, STMicroelectronics - All Rights Reserved
  * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->>>>>>> upstream_import/upstream_v2_14_1
  */
 
 #ifndef _DT_BINDINGS_STM32MP25_CLKS_H_
@@ -114,11 +109,7 @@
 /* LOW SPEED MCU CLOCK */
 #define CK_ICN_LS_MCU		88
 
-<<<<<<< HEAD
-#define CK_BUS_STM500		89
-=======
 #define CK_BUS_STM		89
->>>>>>> upstream_import/upstream_v2_14_1
 #define CK_BUS_FMC		90
 #define CK_BUS_GPU		91
 #define CK_BUS_ETH1		92
@@ -242,10 +233,6 @@
 #define CK_BUS_DDRCFG		210
 #define CK_BUS_GICV2M		211
 #define CK_BUS_USBTC		212
-<<<<<<< HEAD
-#define CK_BUS_BUSPERFM		213
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 #define CK_BUS_USB3PCIEPHY	214
 #define CK_BUS_STGEN		215
 #define CK_BUS_VDEC		216
@@ -284,11 +271,7 @@
 #define CK_BUS_RISAF4		249
 #define CK_BUS_USB2OHCI		250
 #define CK_BUS_USB2EHCI		251
-<<<<<<< HEAD
-#define CK_BUS_USB3DRD		252
-=======
 #define CK_BUS_USB3DR		252
->>>>>>> upstream_import/upstream_v2_14_1
 #define CK_KER_LPTIM1		253
 #define CK_KER_LPTIM2		254
 #define CK_KER_USART2		255
@@ -380,15 +363,10 @@
 #define CK_BUS_ETHSWACMCFG	341
 #define CK_BUS_ETHSWACMMSG	342
 #define HSE_DIV2_CK		343
-<<<<<<< HEAD
-
-#define STM32MP25_LAST_CLK	344
-=======
 #define CK_KER_ETR		344
 #define CK_KER_STM		345
 
 #define STM32MP25_LAST_CLK	346
->>>>>>> upstream_import/upstream_v2_14_1
 
 #define CK_SCMI_ICN_HS_MCU	0
 #define CK_SCMI_ICN_SDMMC	1
@@ -476,12 +454,7 @@
 #define CK_SCMI_TIMG2		83
 #define CK_SCMI_BKPSRAM		84
 #define CK_SCMI_BSEC		85
-<<<<<<< HEAD
-#define CK_SCMI_BUSPERFM	86
-#define CK_SCMI_ETR		87
-=======
 #define CK_SCMI_BUS_ETR		87
->>>>>>> upstream_import/upstream_v2_14_1
 #define CK_SCMI_FMC		88
 #define CK_SCMI_GPIOA		89
 #define CK_SCMI_GPIOB		90
@@ -516,12 +489,8 @@
 #define CK_SCMI_SYSDBG		119
 #define CK_SCMI_SYSATB		120
 #define CK_SCMI_TSDBG		121
-<<<<<<< HEAD
-#define CK_SCMI_STM500		122
-=======
 #define CK_SCMI_BUS_STM		122
 #define CK_SCMI_KER_STM		123
 #define CK_SCMI_KER_ETR		124
->>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* _DT_BINDINGS_STM32MP25_CLKS_H_ */

@@ -10,12 +10,6 @@
 #include <context.h>
 
 #if ENABLE_TRBE_FOR_NS
-<<<<<<< HEAD
-void trbe_init_el3(void);
-void trbe_init_el2_unused(void);
-#else
-static inline void trbe_init_el3(void)
-=======
 void trbe_enable_ns(cpu_context_t *ctx);
 void trbe_disable_ns(cpu_context_t *ctx);
 void trbe_disable_secure(cpu_context_t *ctx);
@@ -32,7 +26,6 @@ static inline void trbe_disable_secure(cpu_context_t *ctx)
 {
 }
 static inline void trbe_disable_realm(cpu_context_t *ctx)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 }
 static inline void trbe_init_el2_unused(void)

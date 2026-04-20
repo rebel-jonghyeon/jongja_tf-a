@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2024, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -125,11 +122,7 @@
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_COLD_8		0x220
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_COLD_9		0x224
 #define SOCFPGA_SYSMGR_MPFE_CONFIG			0x228
-<<<<<<< HEAD
-#define SOCFPGA_SYSMGR_MPFE_status			0x22C
-=======
 #define SOCFPGA_SYSMGR_MPFE_STATUS			0x22C
->>>>>>> upstream_import/upstream_v2_14_1
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_WARM_0		0x230
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_WARM_1		0x234
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_WARM_2		0x238
@@ -151,8 +144,6 @@
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_POR_8		0x278
 #define SOCFPGA_SYSMGR_BOOT_SCRATCH_POR_9		0x27C
 
-<<<<<<< HEAD
-=======
 /* QSPI ECC from SDM register */
 #define SOCFPGA_ECC_QSPI_CTRL						0x08
 #define SOCFPGA_ECC_QSPI_ERRINTEN					0x10
@@ -165,7 +156,6 @@
 #define SOCFPGA_ECC_QSPI_ECC_STARTACC					0x7C
 #define SOCFPGA_ECC_QSPI_ECC_WDCTRL					0x80
 
->>>>>>> upstream_import/upstream_v2_14_1
 #define DMA0_STREAM_CTRL_REG				0x10D1217C
 #define DMA1_STREAM_CTRL_REG				0x10D12180
 #define SDM_STREAM_CTRL_REG				0x10D12184
@@ -209,12 +199,9 @@
 #define RMMUSECSID_REG_VAL				BIT(5)
 
 /* Macros */
-<<<<<<< HEAD
-=======
 #define SOCFPGA_ECC_QSPI(_reg)						(SOCFPGA_ECC_QSPI_REG_BASE \
 									+ (SOCFPGA_ECC_QSPI_##_reg))
 
->>>>>>> upstream_import/upstream_v2_14_1
 #define SOCFPGA_SYSMGR(_reg)				(SOCFPGA_SYSMGR_REG_BASE \
 								+ (SOCFPGA_SYSMGR_##_reg))
 #define ENABLE_STREAMID					WSTREAMIDEN_REG_CTRL | \

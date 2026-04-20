@@ -163,13 +163,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	val = mmio_read_32(IMX_IOMUX_GPR_BASE + 0x2c);
 	mmio_write_32(IMX_IOMUX_GPR_BASE + 0x2c, val | 0x3DFF0000);
 
-<<<<<<< HEAD
-	if (console_base == 0U) {
-		console_base = imx8m_uart_get_base();
-	}
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	console_imx_uart_register(console_base, IMX_BOOT_UART_CLK_IN_HZ,
 		IMX_CONSOLE_BAUDRATE, &console);
 	/* This console is only used for boot stage */
@@ -217,11 +210,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 #if !defined(SPD_opteed) && !defined(SPD_trusty)
 	enable_snvs_privileged_access();
 #endif
-<<<<<<< HEAD
-
-	bl31_tzc380_setup();
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 #define MAP_BL31_TOTAL										   \

@@ -254,15 +254,11 @@ static int auth_signature(const auth_method_param_sig_t *param,
 			 * suffixed or modified pk
 			 */
 			rc = crypto_mod_convert_pk(pk_ptr, pk_len, &cnv_pk_ptr, &cnv_pk_len);
-<<<<<<< HEAD
-			return_if_error(rc);
-=======
 			if (rc != 0) {
 				VERBOSE("[TBB] %s():%d failed with error code %d.\n",
 					__func__, __LINE__, rc);
 				return rc;
 			}
->>>>>>> upstream_import/upstream_v2_14_1
 
 			/*
 			 * The hash of the certificate's public key must match
@@ -285,30 +281,13 @@ static int auth_signature(const auth_method_param_sig_t *param,
 		}
 
 		/*
-<<<<<<< HEAD
-		 * Set Zero-OID for ROTPK(subject key) as a the certificate
-		 * does not hold Key-OID information for ROTPK.
-		 */
-		if (param->pk->cookie != NULL) {
-			pk_oid = param->pk->cookie;
-		} else {
-			pk_oid = ZERO_OID;
-		}
-
-		/*
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 		 * Public key is verified at this stage, notify platform
 		 * to measure and publish it.
 		 */
 		rc = plat_mboot_measure_key(pk_oid, pk_ptr, pk_len);
 		if (rc != 0) {
-<<<<<<< HEAD
-			WARN("Public Key measurement failure = %d\n", rc);
-=======
 			VERBOSE("[TBB] %s():%d failed with error code %d.\n",
 				__func__, __LINE__, rc);
->>>>>>> upstream_import/upstream_v2_14_1
 		}
 	}
 
@@ -600,13 +579,8 @@ int auth_mod_verify_img(unsigned int img_id,
 							    param_ptr,
 							    param_len);
 				if (rc != 0) {
-<<<<<<< HEAD
-					WARN("Public Key measurement "
-					     "failure = %d\n", rc);
-=======
 					VERBOSE("[TBB] %s():%d failed with error code %d.\n",
 						__func__, __LINE__, rc);
->>>>>>> upstream_import/upstream_v2_14_1
 				}
 			}
 		}

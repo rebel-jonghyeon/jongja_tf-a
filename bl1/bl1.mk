@@ -15,7 +15,6 @@ BL1_SOURCES		+=	bl1/${ARCH}/bl1_arch_setup.c		\
 				lib/locks/exclusive/${ARCH}/spinlock.S	\
 				plat/common/plat_bl1_common.c		\
 				plat/common/${ARCH}/platform_up_stack.S \
-				common/tf_crc32.c		\
 				${MBEDTLS_SOURCES}
 
 ifeq (${ARCH},aarch64)
@@ -31,17 +30,8 @@ ifeq (${ENABLE_PMF},1)
 BL1_SOURCES		+=	lib/pmf/pmf_main.c
 endif
 
-<<<<<<< HEAD
-BL1_SOURCES		+=	lib/sic/sic.c
-
-ifneq ($(findstring gcc,$(notdir $(LD))),)
-        BL1_LDFLAGS	+=	-Wl,--sort-section=alignment
-else ifneq ($(findstring ld,$(notdir $(LD))),)
-        BL1_LDFLAGS	+=	--sort-section=alignment
-=======
 ifeq (${WORKAROUND_CVE_2025_0647},1)
 BL1_SOURCES		+=	lib/cpus/aarch64/wa_cve_2025_0647_cpprctx.S
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 BL1_DEFAULT_LINKER_SCRIPT_SOURCE := bl1/bl1.ld.S

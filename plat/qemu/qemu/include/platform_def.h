@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -154,11 +150,7 @@
  * Put BL3-1 at the top of the Trusted SRAM. BL31_BASE is calculated using the
  * current BL3-1 debug size plus a little space for growth.
  */
-<<<<<<< HEAD
-#define BL31_BASE			(BL31_LIMIT - 0x60000)
-=======
 #define BL31_BASE			(BL31_LIMIT - 0x70000)
->>>>>>> upstream_import/upstream_v2_14_1
 #define BL31_LIMIT			(BL_RAM_BASE + BL_RAM_SIZE - FW_HANDOFF_SIZE)
 #define BL31_PROGBITS_LIMIT		BL1_RW_BASE
 
@@ -303,17 +295,6 @@
 
 /*
  * Platforms macros to support SDEI
-<<<<<<< HEAD
- */
-#define PLAT_PRI_BITS			U(3)
-#define PLAT_SDEI_CRITICAL_PRI		0x60
-#define PLAT_SDEI_NORMAL_PRI		0x70
-#define PLAT_SDEI_SGI_PRIVATE		QEMU_IRQ_SEC_SGI_0
-
-/*
- * System counter
-=======
->>>>>>> upstream_import/upstream_v2_14_1
  */
 #define PLAT_PRI_BITS			U(3)
 #define PLAT_SDEI_CRITICAL_PRI		0x60

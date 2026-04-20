@@ -10,15 +10,6 @@
 #include <context.h>
 
 #if ENABLE_TRF_FOR_NS
-<<<<<<< HEAD
-void trf_init_el3(void);
-void trf_init_el2_unused(void);
-#else
-static inline void trf_init_el3(void)
-{
-}
-static inline void trf_init_el2_unused(void)
-=======
 
 #if __aarch64__
 void trf_enable(cpu_context_t *ctx);
@@ -31,7 +22,6 @@ void trf_init_el3(void);
 
 #if __aarch64__
 static inline void trf_enable(cpu_context_t *ctx)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 }
 static inline void trf_init_el2_unused(void)

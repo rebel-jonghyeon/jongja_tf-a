@@ -15,16 +15,11 @@
 
 #include "../drivers/arm/gic/v3/gicv3_private.h"
 
-<<<<<<< HEAD
-#include <common/runtime_svc.h>
-#include <drivers/arm/gicv3.h>
-=======
 #include <common/ep_info.h>
 #include <common/runtime_svc.h>
 #include <drivers/arm/gicv3.h>
 #include <lib/psci/psci.h>
 #include <plat/arm/common/plat_arm.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <plat/common/platform.h>
 
 #include <plat_private.h>
@@ -306,11 +301,7 @@ int32_t pm_setup(void)
  * @api_id: identifier for the API being called.
  * @pm_arg: pointer to the argument data for the API call.
  * @handle: Pointer to caller's context structure.
-<<<<<<< HEAD
- * @security_flag: SECURE_FLAG or NON_SECURE_FLAG.
-=======
  * @security_flag: SECURE or NON_SECURE.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Return: If EEMI API found then, uintptr_t type address, else 0.
  *
@@ -353,11 +344,7 @@ static uintptr_t eemi_for_compatibility(uint32_t api_id, const uint32_t *pm_arg,
  * @api_id: identifier for the API being called.
  * @pm_arg: pointer to the argument data for the API call.
  * @handle: Pointer to caller's context structure.
-<<<<<<< HEAD
- * @security_flag: SECURE_FLAG or NON_SECURE_FLAG.
-=======
  * @security_flag: SECURE or NON_SECURE.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * These EEMI APIs performs CPU specific power management tasks.
  * These EEMI APIs are invoked either from PSCI or from debugfs in kernel.
@@ -395,8 +382,6 @@ static uintptr_t eemi_psci_debugfs_handler(uint32_t api_id, const uint32_t *pm_a
 }
 
 /**
-<<<<<<< HEAD
-=======
  * tfa_clear_pm_state() - Reset TF-A-specific PM state.
  *
  * This function resets TF-A-specific state that may have been modified,
@@ -414,16 +399,11 @@ static enum pm_ret_status tfa_clear_pm_state(void)
 }
 
 /**
->>>>>>> upstream_import/upstream_v2_14_1
  * TF_A_specific_handler() - SMC handler for TF-A specific functionality.
  * @api_id: identifier for the API being called.
  * @pm_arg: pointer to the argument data for the API call.
  * @handle: Pointer to caller's context structure.
-<<<<<<< HEAD
- * @security_flag: SECURE_FLAG or NON_SECURE_FLAG.
-=======
  * @security_flag: SECURE or NON_SECURE.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * These EEMI calls performs functionality that does not require
  * IPI transaction. The handler ends in TF-A and returns requested data to
@@ -496,11 +476,7 @@ static uintptr_t TF_A_specific_handler(uint32_t api_id, const uint32_t *pm_arg,
  * @api_id: identifier for the API being called.
  * @pm_arg: pointer to the argument data for the API call.
  * @handle: Pointer to caller's context structure.
-<<<<<<< HEAD
- * @security_flag: SECURE_FLAG or NON_SECURE_FLAG.
-=======
  * @security_flag: SECURE or NON_SECURE.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * EEMI - Embedded Energy Management Interface is Xilinx proprietary protocol
  * to allow communication between power management controller and different
@@ -540,18 +516,6 @@ static uintptr_t eemi_handler(uint32_t api_id, const uint32_t *pm_arg,
 }
 
 /**
-<<<<<<< HEAD
- * pm_smc_handler() - SMC handler for PM-API calls coming from EL1/EL2.
- * @smc_fid: Function Identifier.
- * @x1: SMC64 Arguments from kernel.
- * @x2: SMC64 Arguments from kernel.
- * @x3: SMC64 Arguments from kernel (upper 32-bits).
- * @x4: Unused.
- * @cookie: Unused.
- * @handle: Pointer to caller's context structure.
- * @flags: SECURE_FLAG or NON_SECURE_FLAG.
- *
-=======
  * eemi_api_handler() - Prepare EEMI payload and perform IPI transaction.
  * @api_id: identifier for the API being called.
  * @pm_arg: pointer to the argument data for the API call.
@@ -601,7 +565,6 @@ static uintptr_t eemi_api_handler(uint32_t api_id, const uint32_t *pm_arg,
  * @handle: Pointer to caller's context structure.
  * @flags: SECURE or NON_SECURE.
  *
->>>>>>> upstream_import/upstream_v2_14_1
  * Return: Unused.
  *
  * Determines that smc_fid is valid and supported PM SMC Function ID from the
@@ -618,16 +581,10 @@ uint64_t pm_smc_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2, uint64_t x3,
 	(void)cookie;
 	uintptr_t ret;
 	uint32_t pm_arg[PAYLOAD_ARG_CNT] = {0};
-<<<<<<< HEAD
-	uint32_t security_flag = NON_SECURE_FLAG;
-	uint32_t api_id;
-	bool status = false, status_tmp = false;
-=======
 	uint32_t security_flag = NON_SECURE;
 	uint32_t api_id;
 	bool status = false, status_tmp = false;
 	const uint64_t x[4] = {x1, x2, x3, x4};
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Handle case where PM wasn't initialized properly */
 	if (pm_up == false) {
@@ -642,9 +599,6 @@ uint64_t pm_smc_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2, uint64_t x3,
 	 */
 	SECURE_REDUNDANT_CALL(status, status_tmp, is_caller_secure, flags);
 	if ((status != false) && (status_tmp != false)) {
-<<<<<<< HEAD
-		security_flag = SECURE_FLAG;
-=======
 		security_flag = SECURE;
 	}
 
@@ -654,7 +608,6 @@ uint64_t pm_smc_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2, uint64_t x3,
 		EXTRACT_ARGS(pm_arg, x);
 
 		return eemi_api_handler(api_id, pm_arg, handle, security_flag);
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	pm_arg[0] = (uint32_t)x1;

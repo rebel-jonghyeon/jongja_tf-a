@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -305,14 +301,6 @@ func apply_cve_2018_3639_sync_wa
 endfunc apply_cve_2018_3639_sync_wa
 #endif /* DYNAMIC_WORKAROUND_CVE_2018_3639 */
 
-<<<<<<< HEAD
-workaround_reset_start cortex_a76, ERRATUM(1073348), ERRATA_A76_1073348
-	sysreg_bit_set CORTEX_A76_CPUACTLR_EL1 ,CORTEX_A76_CPUACTLR_EL1_DISABLE_STATIC_PREDICTION
-workaround_reset_end cortex_a76, ERRATUM(1073348)
-
-check_erratum_ls cortex_a76, ERRATUM(1073348), CPU_REV(1, 0)
-
-=======
 /* Erratum entry and check function for SMCCC_ARCH_WORKAROUND_2*/
 add_erratum_entry cortex_a76, ERRATUM(ARCH_WORKAROUND_2), WORKAROUND_CVE_2018_3639
 
@@ -342,7 +330,6 @@ workaround_reset_end cortex_a76, ERRATUM(1073348)
 
 check_erratum_ls cortex_a76, ERRATUM(1073348), CPU_REV(1, 0)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_a76, ERRATUM(1130799), ERRATA_A76_1130799
 	sysreg_bit_set CORTEX_A76_CPUACTLR2_EL1, CORTEX_A76_CPUACTLR2_EL1_BIT_59
 	msr	CORTEX_A76_CPUACTLR2_EL1, x1
@@ -350,26 +337,6 @@ workaround_reset_end cortex_a76, ERRATUM(1130799)
 
 check_erratum_ls cortex_a76, ERRATUM(1130799), CPU_REV(2, 0)
 
-<<<<<<< HEAD
-workaround_reset_start cortex_a76, ERRATUM(1220197), ERRATA_A76_1220197
-	sysreg_bit_set CORTEX_A76_CPUECTLR_EL1, CORTEX_A76_CPUECTLR_EL1_WS_THR_L2
-workaround_reset_end cortex_a76, ERRATUM(1220197)
-
-check_erratum_ls cortex_a76, ERRATUM(1220197), CPU_REV(2, 0)
-
-workaround_reset_start cortex_a76, ERRATUM(1257314), ERRATA_A76_1257314
-	sysreg_bit_set CORTEX_A76_CPUACTLR3_EL1, CORTEX_A76_CPUACTLR3_EL1_BIT_10
-workaround_reset_end cortex_a76, ERRATUM(1257314)
-
-check_erratum_ls cortex_a76, ERRATUM(1257314), CPU_REV(3, 0)
-
-workaround_reset_start cortex_a76, ERRATUM(1262606), ERRATA_A76_1262606
-	sysreg_bit_set CORTEX_A76_CPUACTLR_EL1, CORTEX_A76_CPUACTLR_EL1_BIT_13
-workaround_reset_end cortex_a76, ERRATUM(1262606)
-
-check_erratum_ls cortex_a76, ERRATUM(1262606), CPU_REV(3, 0)
-
-=======
 /* --------------------------------------------------------------
  * Errata Workaround for Cortex A76 Errata #1165522.
  * This applies only to revisions <= r3p0 of Cortex A76.
@@ -406,7 +373,6 @@ workaround_reset_end cortex_a76, ERRATUM(1262606)
 
 check_erratum_ls cortex_a76, ERRATUM(1262606), CPU_REV(3, 0)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_a76, ERRATUM(1262888), ERRATA_A76_1262888
 	sysreg_bit_set CORTEX_A76_CPUECTLR_EL1, CORTEX_A76_CPUECTLR_EL1_BIT_51
 workaround_reset_end cortex_a76, ERRATUM(1262888)
@@ -425,20 +391,6 @@ check_erratum_custom_start cortex_a76, ERRATUM(1286807)
 #else
 	cpu_rev_var_ls	CPU_REV(3, 0)
 #endif
-<<<<<<< HEAD
-check_erratum_custom_end cortex_a76, ERRATUM(1286807)
-
-workaround_reset_start cortex_a76, ERRATUM(1791580), ERRATA_A76_1791580
-	sysreg_bit_set CORTEX_A76_CPUACTLR2_EL1, CORTEX_A76_CPUACTLR2_EL1_BIT_2
-workaround_reset_end cortex_a76, ERRATUM(1791580)
-
-check_erratum_ls cortex_a76, ERRATUM(1791580), CPU_REV(4, 0)
-
-workaround_reset_start cortex_a76, ERRATUM(1868343), ERRATA_A76_1868343
-	sysreg_bit_set CORTEX_A76_CPUACTLR_EL1, CORTEX_A76_CPUACTLR_EL1_BIT_13
-workaround_reset_end cortex_a76, ERRATUM(1868343)
-
-=======
 	ret
 check_erratum_custom_end cortex_a76, ERRATUM(1286807)
 
@@ -454,7 +406,6 @@ workaround_reset_start cortex_a76, ERRATUM(1868343), ERRATA_A76_1868343
 	sysreg_bit_set CORTEX_A76_CPUACTLR_EL1, CORTEX_A76_CPUACTLR_EL1_BIT_13
 workaround_reset_end cortex_a76, ERRATUM(1868343)
 
->>>>>>> upstream_import/upstream_v2_14_1
 check_erratum_ls cortex_a76, ERRATUM(1868343), CPU_REV(4, 0)
 
 workaround_reset_start cortex_a76, ERRATUM(1946160), ERRATA_A76_1946160
@@ -503,54 +454,11 @@ func cortex_a76_disable_wa_cve_2018_3639
 	ret
 endfunc cortex_a76_disable_wa_cve_2018_3639
 
-<<<<<<< HEAD
-/* --------------------------------------------------------------
- * Errata Workaround for Cortex A76 Errata #1165522.
- * This applies only to revisions <= r3p0 of Cortex A76.
- * Due to the nature of the errata it is applied unconditionally
- * when built in, report it as applicable in this case
- * --------------------------------------------------------------
- */
-check_erratum_custom_start cortex_a76, ERRATUM(1165522)
-#if ERRATA_A76_1165522
-	mov	x0, #ERRATA_APPLIES
-	ret
-#else
-	mov	x1, #0x30
-	b	cpu_rev_var_ls
-#endif
-check_erratum_custom_end cortex_a76, ERRATUM(1165522)
-
-check_erratum_chosen cortex_a76, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-
-/* erratum has no workaround in the cpu. Generic code must take care */
-add_erratum_entry cortex_a76, CVE(2022, 23960), WORKAROUND_CVE_2022_23960, NO_APPLY_AT_RESET
-
-/* ERRATA_DSU_798953 :
- * The errata is defined in dsu_helpers.S but applies to cortex_a76
- * as well. Henceforth creating symbolic names to the already existing errata
- * workaround functions to get them registered under the Errata Framework.
- */
-.equ check_erratum_cortex_a76_798953, check_errata_dsu_798953
-.equ erratum_cortex_a76_798953_wa, errata_dsu_798953_wa
-add_erratum_entry cortex_a76, ERRATUM(798953), ERRATA_DSU_798953, APPLY_AT_RESET
-
-/* ERRATA_DSU_936184 :
- * The errata is defined in dsu_helpers.S but applies to cortex_a76
- * as well. Henceforth creating symbolic names to the already existing errata
- * workaround functions to get them registered under the Errata Framework.
- */
-.equ check_erratum_cortex_a76_936184, check_errata_dsu_936184
-.equ erratum_cortex_a76_936184_wa, errata_dsu_936184_wa
-add_erratum_entry cortex_a76, ERRATUM(936184), ERRATA_DSU_936184, APPLY_AT_RESET
-
-=======
 check_erratum_chosen cortex_a76, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 
 /* erratum has no workaround in the cpu. Generic code must take care */
 add_erratum_entry cortex_a76, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 
->>>>>>> upstream_import/upstream_v2_14_1
 cpu_reset_func_start cortex_a76
 
 #if WORKAROUND_CVE_2018_3639
@@ -613,11 +521,6 @@ func cortex_a76_core_pwr_dwn
 	ret
 endfunc cortex_a76_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_a76
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides cortex_a76 specific
 	 * register information for crash reporting.

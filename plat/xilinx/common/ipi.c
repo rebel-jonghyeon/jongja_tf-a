@@ -1,11 +1,7 @@
 /*
  * Copyright (c) 2017-2020, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2020-2022, Xilinx, Inc. All rights reserved.
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
-=======
  * Copyright (c) 2022-2025, Advanced Micro Devices, Inc. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -144,12 +140,7 @@ void ipi_mb_release(uint32_t local, uint32_t remote)
  * @local: local IPI ID.
  * @remote: remote IPI ID.
  *
-<<<<<<< HEAD
- * Return: 0 idle, positive value for pending sending or receiving,
- *         negative value for errors.
-=======
  * Return: 0 idle and positive value for pending sending or receiving.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  */
 uint32_t ipi_mb_enquire_status(uint32_t local, uint32_t remote)

@@ -140,12 +140,9 @@ static int32_t spmd_cpu_off_handler(u_register_t unused)
 	write_ctx_reg(gpregs, CTX_GPREG_X15, 0);
 	write_ctx_reg(gpregs, CTX_GPREG_X16, 0);
 	write_ctx_reg(gpregs, CTX_GPREG_X17, 0);
-<<<<<<< HEAD
-=======
 
 	/* Mark current core as processing a PSCI operation. */
 	ctx->psci_operation_ongoing = true;
->>>>>>> upstream_import/upstream_v2_14_1
 
 	rc = spmd_spm_core_sync_entry(ctx);
 

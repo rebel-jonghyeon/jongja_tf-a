@@ -685,8 +685,6 @@ spmc_populate_ffa_v1_0_descriptor(void *dst, struct spmc_shmem_obj *orig_obj,
 		return 0;
 }
 
-<<<<<<< HEAD
-=======
 bool spmc_compatible_version(uint32_t ffa_version, uint16_t major,
 			     uint16_t minor)
 {
@@ -699,7 +697,6 @@ bool spmc_compatible_version(uint32_t ffa_version, uint16_t major,
 	return !bit31_set && majv == major && minv >= minor;
 }
 
->>>>>>> upstream_import/upstream_v2_14_1
 static int
 spmc_validate_mtd_start(struct ffa_mtd *desc, uint32_t ffa_version,
 			size_t fragment_length, size_t total_length)
@@ -712,11 +709,7 @@ spmc_validate_mtd_start(struct ffa_mtd *desc, uint32_t ffa_version,
 	/* Determine the appropriate minimum descriptor size. */
 	if (ffa_version == MAKE_FFA_VERSION(1, 0)) {
 		min_desc_size = sizeof(struct ffa_mtd_v1_0);
-<<<<<<< HEAD
-	} else if (ffa_version == MAKE_FFA_VERSION(1, 1)) {
-=======
 	} else if (spmc_compatible_version(ffa_version, 1, 1)) {
->>>>>>> upstream_import/upstream_v2_14_1
 		min_desc_size = sizeof(struct ffa_mtd);
 	} else {
 		return FFA_ERROR_INVALID_PARAMETER;
@@ -1250,11 +1243,7 @@ long spmc_ffa_mem_send(uint32_t smc_fid,
 
 	if (ffa_version == MAKE_FFA_VERSION(1, 0)) {
 		min_desc_size = sizeof(struct ffa_mtd_v1_0);
-<<<<<<< HEAD
-	} else if (ffa_version == MAKE_FFA_VERSION(1, 1)) {
-=======
 	} else if (spmc_compatible_version(ffa_version, 1, 1)) {
->>>>>>> upstream_import/upstream_v2_14_1
 		min_desc_size = sizeof(struct ffa_mtd);
 	} else {
 		WARN("%s: bad FF-A version.\n", __func__);

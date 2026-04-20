@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  * Copyright (c) 2023, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -195,12 +191,6 @@ void __init gicv3_distif_init(void)
 	assert(gicv3_driver_data->gicd_base != 0U);
 
 	assert(IS_IN_EL3());
-
-	if (gicd_read_ctlr(gicv3_driver_data->gicd_base) & CTLR_ENABLE_G0_BIT) {
-		/* GIC Distributor already initialized */
-		/* G0 SGI 15, G1S SEC_PHY_TIMER */
-		return;
-	}
 
 	/*
 	 * Clear the "enable" bits for G0/G1S/G1NS interrupts before configuring

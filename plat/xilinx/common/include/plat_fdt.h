@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, Advanced Micro Devices, Inc. All rights reserved.
-=======
  * Copyright (c) 2023-2025, Advanced Micro Devices, Inc. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -12,8 +8,6 @@
 #define PLAT_FDT_H
 
 void prepare_dtb(void);
-<<<<<<< HEAD
-=======
 uintptr_t plat_retrieve_dt_addr(void);
 int32_t is_valid_dtb(void *fdt);
 
@@ -41,6 +35,5 @@ static inline struct reserve_mem_range *get_reserved_entries_fdt(uint32_t *reser
 	return NULL;
 }
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* PLAT_FDT_H */

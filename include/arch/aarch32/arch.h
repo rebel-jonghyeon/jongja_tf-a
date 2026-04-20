@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2016-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -125,13 +121,8 @@
 /* ID_DFR1_EL1 definitions */
 #define ID_DFR1_MTPMU_SHIFT	U(0)
 #define ID_DFR1_MTPMU_MASK	U(0xf)
-<<<<<<< HEAD
-#define ID_DFR1_MTPMU_SUPPORTED	U(1)
-#define ID_DFR1_MTPMU_DISABLED	U(15)
-=======
 #define MTPMU_IMPLEMENTED	U(1)
 #define MTPMU_NOT_IMPLEMENTED	U(15)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* ID_MMFR3 definitions */
 #define ID_MMFR3_PAN_SHIFT	U(16)
@@ -825,11 +816,8 @@
 #define DSU_CLUSTER_PWR_ON	1
 #define DSU_CLUSTER_PWR_MASK	U(1)
 #define DSU_CLUSTER_MEM_RET	BIT(1)
-<<<<<<< HEAD
-=======
 
 /* CLUSTERPMMDCR register definitions */
 #define CLUSTERPMMDCR_SPME	U(1)
->>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* ARCH_H */

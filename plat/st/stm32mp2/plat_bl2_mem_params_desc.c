@@ -1,16 +1,9 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (c) 2023-2024, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-<<<<<<< HEAD
-#include <common/desc_image_load.h>
-=======
 #include <common/bl_common.h>
 #include <common/desc_image_load.h>
 #include <plat/common/platform.h>
@@ -22,7 +15,6 @@
 #else
 #define BL33_MODE MODE_EL2
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * Following descriptor provides BL image/ep information that gets used
@@ -33,8 +25,6 @@
  * the next executable image id.
  ******************************************************************************/
 static bl_mem_params_node_t bl2_mem_params_descs[] = {
-<<<<<<< HEAD
-=======
 #if STM32MP_DDR_FIP_IO_STORAGE
 	/* Fill FW_DDR related information if it exists */
 	{
@@ -162,7 +152,6 @@ static bl_mem_params_node_t bl2_mem_params_descs[] = {
 
 		.next_handoff_image_id = INVALID_IMAGE_ID,
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 };
 
 REGISTER_BL_IMAGE_DESCS(bl2_mem_params_descs)

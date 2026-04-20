@@ -31,14 +31,10 @@ static const uintptr_t *gicr_frames = NULL;
 static const interrupt_prop_t arm_interrupt_props[] = {
 #ifdef PLAT_ARM_G1S_IRQ_PROPS
 	PLAT_ARM_G1S_IRQ_PROPS(INTR_GROUP1S),
-<<<<<<< HEAD:plat/arm/common/arm_gicv3.c
-	PLAT_ARM_G0_IRQ_PROPS(INTR_GROUP0),
-=======
 #endif
 #ifdef PLAT_ARM_G0_IRQ_PROPS
 	PLAT_ARM_G0_IRQ_PROPS(INTR_GROUP0),
 #endif
->>>>>>> upstream_import/upstream_v2_14_1:drivers/arm/gic/v3/gicv3_base.c
 #if ENABLE_FEAT_RAS && FFH_SUPPORT
 	INTR_PROP_DESC(PLAT_CORE_FAULT_IRQ, PLAT_RAS_PRI, INTR_GROUP0,
 			GIC_INTR_CFG_LEVEL)

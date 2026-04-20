@@ -20,15 +20,6 @@
  * Definitions common to all ARM standard platforms
  *****************************************************************************/
 
-<<<<<<< HEAD
-/*
- * Root of trust key lengths
- */
-#define ARM_ROTPK_HEADER_LEN		19
-#define ARM_ROTPK_HASH_LEN		32
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 /* Special value used to verify platform parameters from BL2 to BL31 */
 #define ARM_BL31_PLAT_PARAM_VAL		ULL(0x0f1e2d3c4b5a6978)
 
@@ -560,20 +551,6 @@ MEASURED_BOOT
  */
 #define ARM_FW_CONFIGS_SIZE		(PAGE_SIZE * 2)
 #define ARM_FW_CONFIGS_LIMIT		(ARM_BL_RAM_BASE + ARM_FW_CONFIGS_SIZE)
-<<<<<<< HEAD
-
-#if ENABLE_RME
-/*
- * Store the L0 GPT on Trusted SRAM next to firmware
- * configuration memory, 4KB aligned.
- */
-#define ARM_L0_GPT_SIZE			(PAGE_SIZE)
-#define ARM_L0_GPT_ADDR_BASE		(ARM_FW_CONFIGS_LIMIT)
-#define ARM_L0_GPT_LIMIT		(ARM_L0_GPT_ADDR_BASE + ARM_L0_GPT_SIZE)
-#else
-#define ARM_L0_GPT_SIZE			U(0)
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 /*******************************************************************************

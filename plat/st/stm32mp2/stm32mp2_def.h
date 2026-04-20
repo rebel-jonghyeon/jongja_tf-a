@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (c) 2023-2025, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,16 +10,6 @@
 #include <common/tbbr/tbbr_img_def.h>
 #ifndef __ASSEMBLER__
 #include <drivers/st/bsec.h>
-<<<<<<< HEAD
-#endif
-#include <drivers/st/stm32mp25_rcc.h>
-#include <dt-bindings/clock/stm32mp25-clks.h>
-#include <dt-bindings/clock/stm32mp25-clksrc.h>
-#include <dt-bindings/reset/stm32mp25-resets.h>
-
-#ifndef __ASSEMBLER__
-#include <boot_api.h>
-=======
 #include <drivers/st/stm32mp2_clk.h>
 #include <drivers/st/stm32mp2_risaf.h>
 #include <drivers/st/stm32mp_rifsc_regs.h>
@@ -57,15 +43,12 @@
 #ifndef __ASSEMBLER__
 #include <boot_api.h>
 #include <stm32mp2_private.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <stm32mp_common.h>
 #include <stm32mp_dt.h>
 #include <stm32mp_shared_resources.h>
 #endif
 
 /*******************************************************************************
-<<<<<<< HEAD
-=======
  * CHIP ID
  ******************************************************************************/
 #define STM32MP2_CHIP_ID			U(0x505)
@@ -103,16 +86,10 @@
 #define STM32MP25_PKG_UNKNOWN			U(7)
 
 /*******************************************************************************
->>>>>>> upstream_import/upstream_v2_14_1
  * STM32MP2 memory map related constants
  ******************************************************************************/
 #define STM32MP_SYSRAM_BASE			U(0x0E000000)
 #define STM32MP_SYSRAM_SIZE			U(0x00040000)
-<<<<<<< HEAD
-
-#define STM32MP_SEC_SYSRAM_BASE			STM32MP_SYSRAM_BASE
-#define STM32MP_SEC_SYSRAM_SIZE			STM32MP_SYSRAM_SIZE
-=======
 #define SRAM1_BASE				U(0x0E040000)
 #define SRAM1_SIZE_FOR_TFA			U(0x00010000)
 #define RETRAM_BASE				U(0x0E080000)
@@ -131,7 +108,6 @@
 						 STM32MP_SYSRAM_DEVICE_SIZE)
 #define STM32MP_SYSRAM_MEM_BASE			STM32MP_SYSRAM_BASE
 #endif /* IMAGE_BL2 && STM32MP_USB_PROGRAMMER */
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* DDR configuration */
 #define STM32MP_DDR_BASE			U(0x80000000)
@@ -148,36 +124,14 @@ enum ddr_type {
 
 /* Section used inside TF binaries */
 #define STM32MP_PARAM_LOAD_SIZE			U(0x00002400) /* 9 KB for param */
-<<<<<<< HEAD
-/* 512 Octets reserved for header */
-#define STM32MP_HEADER_SIZE			U(0x00000200)
-#define STM32MP_HEADER_BASE			(STM32MP_SEC_SYSRAM_BASE +	\
-=======
 /* 512 Bytes reserved for header */
 #define STM32MP_HEADER_SIZE			U(0x00000200)
 #define STM32MP_HEADER_BASE			(STM32MP_SYSRAM_BASE +	\
->>>>>>> upstream_import/upstream_v2_14_1
 						 STM32MP_PARAM_LOAD_SIZE)
 
 /* round_up(STM32MP_PARAM_LOAD_SIZE + STM32MP_HEADER_SIZE, PAGE_SIZE) */
 #define STM32MP_HEADER_RESERVED_SIZE		U(0x3000)
 
-<<<<<<< HEAD
-#define STM32MP_BINARY_BASE			(STM32MP_SEC_SYSRAM_BASE +	\
-						 STM32MP_PARAM_LOAD_SIZE +	\
-						 STM32MP_HEADER_SIZE)
-
-#define STM32MP_BINARY_SIZE			(STM32MP_SEC_SYSRAM_SIZE -	\
-						 (STM32MP_PARAM_LOAD_SIZE +	\
-						  STM32MP_HEADER_SIZE))
-
-#define STM32MP_BL2_SIZE			U(0x0002A000) /* 168 KB for BL2 */
-
-#define STM32MP_BL2_BASE			(STM32MP_SEC_SYSRAM_BASE + \
-						 STM32MP_SEC_SYSRAM_SIZE - \
-						 STM32MP_BL2_SIZE)
-
-=======
 #define STM32MP_BINARY_BASE			(STM32MP_SYSRAM_BASE +	\
 						 STM32MP_PARAM_LOAD_SIZE +	\
 						 STM32MP_HEADER_SIZE)
@@ -206,7 +160,6 @@ enum ddr_type {
 						 STM32MP_SYSRAM_SIZE - \
 						 STM32MP_BL2_RW_BASE)
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* BL2 and BL32/sp_min require 4 tables */
 #define MAX_XLAT_TABLES				U(4)	/* 16 KB for mapping */
 
@@ -214,12 +167,6 @@ enum ddr_type {
  * MAX_MMAP_REGIONS is usually:
  * BL stm32mp2_mmap size + mmap regions in *_plat_arch_setup
  */
-<<<<<<< HEAD
-#define MAX_MMAP_REGIONS			6
-
-/* DTB initialization value */
-#define STM32MP_BL2_DTB_SIZE			U(0x00005000) /* 20 KB for DTB */
-=======
 #if STM32MP_USB_PROGRAMMER || defined(IMAGE_BL31)
 #define MAX_MMAP_REGIONS			7
 #else
@@ -228,15 +175,10 @@ enum ddr_type {
 
 /* DTB initialization value */
 #define STM32MP_BL2_DTB_SIZE			U(0x00006000)	/* 24 KB for DTB */
->>>>>>> upstream_import/upstream_v2_14_1
 
 #define STM32MP_BL2_DTB_BASE			(STM32MP_BL2_BASE - \
 						 STM32MP_BL2_DTB_SIZE)
 
-<<<<<<< HEAD
-#define STM32MP_BL33_BASE			(STM32MP_DDR_BASE + U(0x04000000))
-#define STM32MP_BL33_MAX_SIZE			U(0x400000)
-=======
 #if defined(IMAGE_BL2)
 #define STM32MP_DTB_SIZE			STM32MP_BL2_DTB_SIZE
 #define STM32MP_DTB_BASE			STM32MP_BL2_DTB_BASE
@@ -264,7 +206,6 @@ enum ddr_type {
  ******************************************************************************/
 #define STM32MP_DEVICE_BASE			U(0x40000000)
 #define STM32MP_DEVICE_SIZE			U(0x40000000)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * STM32MP2 RCC
@@ -313,8 +254,6 @@ enum ddr_type {
 /* For UART crash console */
 #define STM32MP_DEBUG_USART_CLK_FRQ		64000000
 /* USART2 on HSI@64MHz, TX on GPIOA4 Alternate 6 */
-<<<<<<< HEAD
-=======
 #ifdef ULTRA_FLY
 #define STM32MP_DEBUG_USART_BASE		USART1_BASE
 #define DEBUG_UART_TX_GPIO_BANK_ADDRESS		GPIOA_BASE
@@ -331,7 +270,6 @@ enum ddr_type {
 #define DEBUG_UART_PREDIV_CFGR			RCC_PREDIV19CFGR
 #define DEBUG_UART_FINDIV_CFGR			RCC_FINDIV19CFGR
 #else
->>>>>>> upstream_import/upstream_v2_14_1
 #define STM32MP_DEBUG_USART_BASE		USART2_BASE
 #define DEBUG_UART_TX_GPIO_BANK_ADDRESS		GPIOA_BASE
 #define DEBUG_UART_TX_GPIO_BANK_CLK_REG		RCC_GPIOACFGR
@@ -346,10 +284,7 @@ enum ddr_type {
 #define DEBUG_UART_RST_BIT			RCC_UARTxCFGR_UARTxRST
 #define DEBUG_UART_PREDIV_CFGR			RCC_PREDIV8CFGR
 #define DEBUG_UART_FINDIV_CFGR			RCC_FINDIV8CFGR
-<<<<<<< HEAD
-=======
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * STM32MP2 SDMMC
@@ -359,8 +294,6 @@ enum ddr_type {
 #define STM32MP_SDMMC3_BASE			U(0x48240000)
 
 /*******************************************************************************
-<<<<<<< HEAD
-=======
  * STM32MP2 OSPI
  ******************************************************************************/
 /* OSPI 1 & 2 memory map area */
@@ -459,7 +392,6 @@ enum ddr_type {
 #define SECURE_BOOT_CLOSED_SECURE		GENMASK_32(3, 0)
 
 /*******************************************************************************
->>>>>>> upstream_import/upstream_v2_14_1
  * STM32MP2 TAMP
  ******************************************************************************/
 #define PLAT_MAX_TAMP_INT			U(5)
@@ -479,14 +411,11 @@ static inline uintptr_t tamp_bkpr(uint32_t idx)
 #endif
 
 /*******************************************************************************
-<<<<<<< HEAD
-=======
  * STM32MP2 USB
  ******************************************************************************/
 #define USB_DWC3_BASE				U(0x48300000)
 
 /*******************************************************************************
->>>>>>> upstream_import/upstream_v2_14_1
  * STM32MP2 DDRCTRL
  ******************************************************************************/
 #define DDRCTRL_BASE				U(0x48040000)
@@ -502,11 +431,7 @@ static inline uintptr_t tamp_bkpr(uint32_t idx)
 #define DDRPHYC_BASE				U(0x48C00000)
 
 /*******************************************************************************
-<<<<<<< HEAD
- * Miscellaneous STM32MP1 peripherals base address
-=======
  * Miscellaneous STM32MP2 peripherals base address
->>>>>>> upstream_import/upstream_v2_14_1
  ******************************************************************************/
 #define BSEC_BASE				U(0x44000000)
 #define DBGMCU_BASE				U(0x4A010000)
@@ -516,8 +441,6 @@ static inline uintptr_t tamp_bkpr(uint32_t idx)
 #define SYSCFG_BASE				U(0x44230000)
 
 /*******************************************************************************
-<<<<<<< HEAD
-=======
  * STM32MP RIF
  ******************************************************************************/
 #define RIFSC_BASE				U(0x42080000)
@@ -585,7 +508,6 @@ static inline uintptr_t tamp_bkpr(uint32_t idx)
 #define A35SSC_BASE				U(0x48800000)
 
 /*******************************************************************************
->>>>>>> upstream_import/upstream_v2_14_1
  * REGULATORS
  ******************************************************************************/
 /* 3 PWR + 1 VREFBUF + 14 PMIC regulators + 1 FIXED */
@@ -601,16 +523,12 @@ static inline uintptr_t tamp_bkpr(uint32_t idx)
 #define DT_BSEC_COMPAT				"st,stm32mp25-bsec"
 #define DT_DDR_COMPAT				"st,stm32mp2-ddr"
 #define DT_PWR_COMPAT				"st,stm32mp25-pwr"
-<<<<<<< HEAD
-#define DT_RCC_CLK_COMPAT			"st,stm32mp25-rcc"
-=======
 #if STM32MP21
 #define DT_RCC_CLK_COMPAT			"st,stm32mp21-rcc"
 #else
 #define DT_RCC_CLK_COMPAT			"st,stm32mp25-rcc"
 #endif
 #define DT_SDMMC2_COMPAT			"st,stm32mp25-sdmmc2"
->>>>>>> upstream_import/upstream_v2_14_1
 #define DT_UART_COMPAT				"st,stm32h7-uart"
 
 #endif /* STM32MP2_DEF_H */

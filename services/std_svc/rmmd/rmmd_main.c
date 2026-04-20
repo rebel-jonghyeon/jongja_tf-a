@@ -19,10 +19,7 @@
 #include <lib/el3_runtime/context_mgmt.h>
 #include <lib/el3_runtime/cpu_data.h>
 #include <lib/el3_runtime/pubsub.h>
-<<<<<<< HEAD
-=======
 #include <lib/extensions/mpam.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <lib/extensions/pmuv3.h>
 #include <lib/extensions/sys_reg_trace.h>
 #include <lib/gpt_rme/gpt_rme.h>
@@ -119,57 +116,6 @@ __dead2 void rmmd_rmm_sync_exit(uint64_t rc)
 	panic();
 }
 
-<<<<<<< HEAD
-static void rmm_el2_context_init(el2_sysregs_t *regs)
-{
-	regs->ctx_regs[CTX_SPSR_EL2 >> 3] = REALM_SPSR_EL2;
-	regs->ctx_regs[CTX_SCTLR_EL2 >> 3] = SCTLR_EL2_RES1;
-}
-
-/*******************************************************************************
- * Enable architecture extensions on first entry to Realm world.
- ******************************************************************************/
-
-static void manage_extensions_realm(cpu_context_t *ctx)
-{
-	pmuv3_enable(ctx);
-
-	/*
-	 * Enable access to TPIDR2_EL0 if SME/SME2 is enabled for Non Secure world.
-	 */
-	if (is_feat_sme_supported()) {
-		sme_enable(ctx);
-	}
-}
-
-static void manage_extensions_realm_per_world(void)
-{
-	if (is_feat_sve_supported()) {
-	/*
-	 * Enable SVE and FPU in realm context when it is enabled for NS.
-	 * Realm manager must ensure that the SVE and FPU register
-	 * contexts are properly managed.
-	 */
-		sve_enable_per_world(&per_world_context[CPU_CONTEXT_REALM]);
-	}
-
-	/* NS can access this but Realm shouldn't */
-	if (is_feat_sys_reg_trace_supported()) {
-		sys_reg_trace_disable_per_world(&per_world_context[CPU_CONTEXT_REALM]);
-	}
-
-	/*
-	 * If SME/SME2 is supported and enabled for NS world, then disable trapping
-	 * of SME instructions for Realm world. RMM will save/restore required
-	 * registers that are shared with SVE/FPU so that Realm can use FPU or SVE.
-	 */
-	if (is_feat_sme_supported()) {
-		sme_enable_per_world(&per_world_context[CPU_CONTEXT_REALM]);
-	}
-}
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 /*******************************************************************************
  * Jump to the RMM for the first time.
  ******************************************************************************/
@@ -180,17 +126,6 @@ static int32_t rmm_init(void)
 
 	INFO("RMM init start.\n");
 
-<<<<<<< HEAD
-	/* Enable architecture extensions */
-	manage_extensions_realm(&ctx->cpu_ctx);
-
-	manage_extensions_realm_per_world();
-
-	/* Initialize RMM EL2 context. */
-	rmm_el2_context_init(&ctx->cpu_ctx.el2_sysregs_ctx);
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	rc = rmmd_rmm_sync_entry(ctx);
 	if (rc != E_RMM_BOOT_SUCCESS) {
 		ERROR("RMM init failed: %ld\n", rc);

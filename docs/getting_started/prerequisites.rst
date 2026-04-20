@@ -51,12 +51,8 @@ preceding table that target Armv7-A or Armv8-A. For AArch32 and
 AArch64 builds, the respective targets required are ``arm-none-eabi`` and
 ``aarch64-none-elf``.
 
-<<<<<<< HEAD
-- TF-A has been tested with version 12.3.Rel1 (gcc 12.3) from the `Arm Developer website`_
-=======
 Testing has been performed with the version of the Arm GNU compiler listed in
 the table above. This can be installed from the `Arm Developer website`_.
->>>>>>> upstream_import/upstream_v2_14_1
 
 In addition, a native compiler is required to build supporting tools.
 
@@ -115,62 +111,6 @@ For installation instructions, see the `official Poetry documentation`_.
 
 .. _prerequisites_software_and_libraries:
 
-<<<<<<< HEAD
-Software and Libraries
-----------------------
-
-The following tools are required to obtain and build |TF-A|:
-
-- An appropriate toolchain (see :ref:`prerequisites_toolchain`)
-- GNU Make
-- Git
-
-The following libraries must be available to build one or more components or
-supporting tools:
-
-- OpenSSL >= 1.1.1 (v3.0.0 to v3.0.6 highly discouraged due to security issues)
-
-   Required to build the cert_create, encrypt_fw, and fiptool tools.
-
-   .. note::
-
-    If using OpenSSL 3, older Linux versions may require it to be built from
-    source code, as it may not be available in the default package repositories.
-    Please refer to the OpenSSL project documentation for more information.
-
-The following libraries are required for Trusted Board Boot and Measured Boot
-support:
-
-- mbed TLS == 3.4.1 (tag: ``mbedtls-3.4.1``)
-
-These tools are optional:
-
-- Device Tree Compiler (DTC) >= 1.4.7
-
-   Needed if you want to rebuild the provided Flattened Device Tree (FDT)
-   source files (``.dts`` files). DTC is available for Linux through the package
-   repositories of most distributions.
-
-- Arm `Development Studio (Arm-DS)`_
-
-   The standard software package used for debugging software on Arm development
-   platforms and |FVP| models.
-
-- Node.js >= 16
-
-   Highly recommended, and necessary in order to install and use the packaged
-   Git hooks and helper tools. Without these tools you will need to rely on the
-   CI for feedback on commit message conformance.
-
-- Poetry >= 1.3.2
-
-   Required for managing Python dependencies, this will allow you to reliably
-   reproduce a Python environment to build documentation and run analysis tools.
-   Most importantly, it ensures your system environment will not be affected by
-   dependencies in the Python scripts.
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 Package Installation (Linux)
 ----------------------------
 

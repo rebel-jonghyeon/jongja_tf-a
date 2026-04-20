@@ -17,10 +17,7 @@
 #include <versal_def.h>
 
 uint32_t platform_id, platform_version;
-<<<<<<< HEAD
-=======
 uint32_t cpu_clock;
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*
  * Table of regions to map using the MMU.
@@ -67,22 +64,6 @@ void board_detection(void)
 	}
 }
 
-<<<<<<< HEAD
-void board_detection(void)
-{
-	uint32_t plat_info[2];
-
-	if (pm_get_chipid(plat_info) != PM_RET_SUCCESS) {
-		/* If the call is failed we cannot proceed with further
-		 * setup. TF-A to panic in this situation.
-		 */
-		NOTICE("Failed to read the chip information");
-		panic();
-	}
-
-	platform_id = FIELD_GET(PLATFORM_MASK, plat_info[1]);
-	platform_version = FIELD_GET(PLATFORM_VERSION_MASK, plat_info[1]);
-=======
 const char *board_name_decode(void)
 {
 	const char *platform;
@@ -105,14 +86,10 @@ const char *board_name_decode(void)
 	}
 
 	return platform;
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 uint32_t get_uart_clk(void)
 {
-<<<<<<< HEAD
-	return UART_CLOCK;
-=======
 	uint32_t uart_clock;
 
 	switch (platform_id) {
@@ -131,5 +108,4 @@ uint32_t get_uart_clk(void)
 	}
 
 	return uart_clock;
->>>>>>> upstream_import/upstream_v2_14_1
 }

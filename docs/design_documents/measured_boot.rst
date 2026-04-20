@@ -91,12 +91,6 @@ The Measured Boot implementation in TF-A supports:
    and the variable length crypto agile structure called TCG_PCR_EVENT2. Event
    Log driver implemented in TF-A covers later part.
 
-<<<<<<< HEAD
-#. RSS
-
-   It is one of physical backend to extend the measurements. Please refer this
-   document :ref:`Runtime Security Subsystem (RSS)` for more details.
-=======
 #. Discrete TPM
 
    A Discrete TPM (Trusted Platform Module) can be used alongside Event Log to
@@ -109,7 +103,6 @@ The Measured Boot implementation in TF-A supports:
 
    It is one of the physical backends to extend the measurements. Please refer
    this document :ref:`Runtime Security Engine (RSE)` for more details.
->>>>>>> upstream_import/upstream_v2_14_1
 
 Platform Interface
 ------------------
@@ -136,11 +129,7 @@ Responsibilities of these platform interfaces are -
       void bl2_plat_mboot_init(void);
 
    Initialise all Measured Boot backends supported by the platform
-<<<<<<< HEAD
-   (e.g. Event Log buffer, RSS). As these functions do not return any value,
-=======
    (e.g. Event Log buffer, |RSE|). As these functions do not return any value,
->>>>>>> upstream_import/upstream_v2_14_1
    the platform should deal with error management, such as logging the error
    somewhere, or panicking the system if this is considered a fatal error.
 
@@ -166,14 +155,9 @@ Responsibilities of these platform interfaces are -
 
      - If it is Event Log backend, then record the measurement in TCG Event Log
        format.
-<<<<<<< HEAD
-     - If it is a secure crypto-processor (like RSS), then extend the designated
-       PCR (or slot) with the given measurement.
-=======
      - If it is a secure crypto-processor (like |RSE|), then extend the
        designated PCR (or store it in secure on-chip memory) with the given
        measurement.
->>>>>>> upstream_import/upstream_v2_14_1
    - This function must return 0 on success, a signed integer error code
      otherwise.
    - On the Arm FVP port, this function measures the given image and then
@@ -247,15 +231,6 @@ Responsibilities of these platform interfaces are -
    - Public key data size is passed as the third argument to this function.
    - This function must return 0 on success, a signed integer error code
      otherwise.
-<<<<<<< HEAD
-   - In FVP platform, this function is used to calculate the hash of the given
-     key and forward this hash to RSS alongside the measurement of the image
-     which the key signs.
-
---------------
-
-*Copyright (c) 2023, Arm Limited. All rights reserved.*
-=======
    - In Total Compute platform, this function is used to calculate the hash
      of the given key and forward this hash to |RSE| alongside the measurement
      of the image which the key signs.
@@ -263,7 +238,6 @@ Responsibilities of these platform interfaces are -
 --------------
 
 *Copyright (c) 2023-2025, Arm Limited. All rights reserved.*
->>>>>>> upstream_import/upstream_v2_14_1
 
 .. _Arm® Server Base Security Guide: https://developer.arm.com/documentation/den0086/latest
 .. _TCG EFI Protocol Specification: https://trustedcomputinggroup.org/wp-content/uploads/EFI-Protocol-Specification-rev13-160330final.pdf

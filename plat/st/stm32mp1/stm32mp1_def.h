@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -414,11 +410,7 @@ enum ddr_type {
 #define OTP_MAX_SIZE			(STM32MP1_OTP_MAX_ID + 1U)
 
 /* OTP labels */
-<<<<<<< HEAD
-#define CFG0_OTP			"cfg0_otp"
-=======
 #define CFG0_OTP			"cfg0-otp"
->>>>>>> upstream_import/upstream_v2_14_1
 #define PART_NUMBER_OTP			"part-number-otp"
 #if STM32MP15
 #define PACKAGE_OTP			"package-otp"
@@ -635,14 +627,11 @@ static inline uintptr_t tamp_bkpr(uint32_t idx)
 #define PLAT_NB_RDEVS			U(19)
 /* 2 FIXED */
 #define PLAT_NB_FIXED_REGUS		U(2)
-<<<<<<< HEAD
-=======
 
 /*******************************************************************************
  * STM32MP1 CLOCKS
  ******************************************************************************/
 #define PLL1_NOMINAL_FREQ_IN_KHZ	U(650000) /* 650MHz */
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * Device Tree defines

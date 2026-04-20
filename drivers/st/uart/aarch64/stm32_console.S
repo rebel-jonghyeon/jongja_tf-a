@@ -170,14 +170,6 @@ txe_loop:
 	tst	w2, #USART_ISR_TXE
 	beq	txe_loop
 	str	w0, [x1, #USART_TDR]
-<<<<<<< HEAD
-	/* Check transmit complete flag */
-tc_loop:
-	ldr	w2, [x1, #USART_ISR]
-	tst	w2, #USART_ISR_TC
-	beq	tc_loop
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	ret
 endfunc console_stm32_core_putc
 
@@ -217,19 +209,11 @@ func console_stm32_core_getc
 endfunc console_stm32_core_getc
 
 	/* ---------------------------------------------
-<<<<<<< HEAD
-	 * int console_stm32_core_flush(uintptr_t base_addr)
-	 * Function to force a write of all buffered
-	 * data that hasn't been output.
-	 * In : x0 - console base address
-	 * Out : return -1 on error else return 0.
-=======
 	 * void console_stm32_core_flush(uintptr_t base_addr)
 	 * Function to force a write of all buffered
 	 * data that hasn't been output.
 	 * In : x0 - console base address
 	 * Out : void.
->>>>>>> upstream_import/upstream_v2_14_1
 	 * Clobber list : x0, x1
 	 * ---------------------------------------------
 	 */
@@ -238,37 +222,20 @@ func console_stm32_core_flush
 	cmp	x0, #0
 	ASM_ASSERT(ne)
 #endif /* ENABLE_ASSERTIONS */
-<<<<<<< HEAD
-	/* Check Transmit Data Register Empty */
-txe_loop_3:
-	ldr	w1, [x0, #USART_ISR]
-	tst	w1, #USART_ISR_TXE
-	beq	txe_loop_3
-	mov	w0, #0
-=======
 	/* Check Transmission Complete flag  */
 tc_loop:
 	ldr	w1, [x0, #USART_ISR]
 	tst	w1, #USART_ISR_TC
 	beq	tc_loop
->>>>>>> upstream_import/upstream_v2_14_1
 	ret
 endfunc console_stm32_core_flush
 
 	/* ---------------------------------------------
-<<<<<<< HEAD
-	 * int console_stm32_flush(console_t *console)
-	 * Function to force a write of all buffered
-	 * data that hasn't been output.
-	 * In : x0 - pointer to console_t structure
-	 * Out : return -1 on error else return 0.
-=======
 	 * void console_stm32_flush(console_t *console)
 	 * Function to force a write of all buffered
 	 * data that hasn't been output.
 	 * In : x0 - pointer to console_t structure
 	 * Out : void
->>>>>>> upstream_import/upstream_v2_14_1
 	 * Clobber list : x0, x1
 	 * ---------------------------------------------
 	 */

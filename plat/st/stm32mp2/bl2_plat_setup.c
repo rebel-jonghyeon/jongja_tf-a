@@ -1,19 +1,9 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (c) 2023-2025, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-<<<<<<< HEAD
-#include <cdefs.h>
-#include <stdint.h>
-
-#include <stm32mp_common.h>
-=======
 #include <assert.h>
 #include <cdefs.h>
 #include <errno.h>
@@ -88,24 +78,17 @@ static void print_reset_reason(void)
 
 	INFO("Reset reason: %s (0x%x)\n", reason_str, rstsr);
 }
->>>>>>> upstream_import/upstream_v2_14_1
 
 void bl2_el3_early_platform_setup(u_register_t arg0 __unused,
 				  u_register_t arg1 __unused,
 				  u_register_t arg2 __unused,
 				  u_register_t arg3 __unused)
 {
-<<<<<<< HEAD
-	stm32mp_setup_early_console();
-=======
 	stm32mp_save_boot_ctx_address(BOOT_CTX_ADDR);
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 void bl2_platform_setup(void)
 {
-<<<<<<< HEAD
-=======
 	int ret;
 
 	ret = stm32mp2_ddr_probe();
@@ -161,13 +144,10 @@ static void reset_backup_domain(void)
 
 		mmio_clrbits_32(rcc_base + RCC_BDCR, RCC_BDCR_VSWRST);
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 void bl2_el3_plat_arch_setup(void)
 {
-<<<<<<< HEAD
-=======
 	const char *board_model;
 	boot_api_context_t *boot_context =
 		(boot_api_context_t *)stm32mp_get_boot_ctx_address();
@@ -408,5 +388,4 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	}
 
 	return err;
->>>>>>> upstream_import/upstream_v2_14_1
 }

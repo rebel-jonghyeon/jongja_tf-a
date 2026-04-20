@@ -12,12 +12,6 @@
 
 #include <plat_private.h>
 
-#define ADDR_DOWN(_adr) (_adr & XLAT_ADDR_MASK(2U))
-#define SIZE_UP(_adr, _sz) (round_up((_adr + _sz), XLAT_BLOCK_SIZE(2U)) - ADDR_DOWN(_adr))
-
-#define K3_MAP_REGION_FLAT(_adr, _sz, _attr) \
-	MAP_REGION_FLAT(ADDR_DOWN(_adr), SIZE_UP(_adr, _sz), _attr)
-
 /* Table of regions to map using the MMU */
 const mmap_region_t plat_k3_mmap[] = {
 	K3_MAP_REGION_FLAT(K3_USART_BASE,       K3_USART_SIZE,       MT_DEVICE | MT_RW | MT_SECURE),
@@ -34,109 +28,10 @@ int ti_soc_init(void)
 	struct ti_sci_msg_version version;
 	int ret;
 
-<<<<<<< HEAD
-	/* Figure out what mode we enter the non-secure world in */
-	el_status = read_id_aa64pfr0_el1() >> ID_AA64PFR0_EL2_SHIFT;
-	el_status &= ID_AA64PFR0_ELX_MASK;
-
-	mode = (el_status) ? MODE_EL2 : MODE_EL1;
-
-	spsr = SPSR_64(mode, MODE_SP_ELX, DISABLE_ALL_EXCEPTIONS);
-	return spsr;
-}
-
-/*******************************************************************************
- * Perform any BL3-1 early platform setup, such as console init and deciding on
- * memory layout.
- ******************************************************************************/
-void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
-				u_register_t arg2, u_register_t arg3)
-{
-	/* Initialize the console to provide early debug support */
-	k3_console_setup();
-
-#ifdef BL32_BASE
-	/* Populate entry point information for BL32 */
-	SET_PARAM_HEAD(&bl32_image_ep_info, PARAM_EP, VERSION_1, 0);
-	bl32_image_ep_info.pc = BL32_BASE;
-	bl32_image_ep_info.spsr = SPSR_64(MODE_EL1, MODE_SP_ELX,
-					  DISABLE_ALL_EXCEPTIONS);
-	SET_SECURITY_STATE(bl32_image_ep_info.h.attr, SECURE);
-#endif
-
-	/* Populate entry point information for BL33 */
-	SET_PARAM_HEAD(&bl33_image_ep_info, PARAM_EP, VERSION_1, 0);
-	bl33_image_ep_info.pc = PRELOADED_BL33_BASE;
-	bl33_image_ep_info.spsr = k3_get_spsr_for_bl33_entry();
-	SET_SECURITY_STATE(bl33_image_ep_info.h.attr, NON_SECURE);
-
-#ifdef K3_HW_CONFIG_BASE
-	/*
-	 * According to the file ``Documentation/arm64/booting.txt`` of the
-	 * Linux kernel tree, Linux expects the physical address of the device
-	 * tree blob (DTB) in x0, while x1-x3 are reserved for future use and
-	 * must be 0.
-	 */
-	bl33_image_ep_info.args.arg0 = (u_register_t)K3_HW_CONFIG_BASE;
-	bl33_image_ep_info.args.arg1 = 0U;
-	bl33_image_ep_info.args.arg2 = 0U;
-	bl33_image_ep_info.args.arg3 = 0U;
-#endif
-}
-
-void bl31_plat_arch_setup(void)
-{
-	const mmap_region_t bl_regions[] = {
-		MAP_REGION_FLAT(BL31_START,           BL31_SIZE,			          MT_MEMORY  | MT_RW | MT_SECURE),
-		MAP_REGION_FLAT(BL_CODE_BASE,         BL_CODE_END         - BL_CODE_BASE,         MT_CODE    | MT_RO | MT_SECURE),
-		MAP_REGION_FLAT(BL_RO_DATA_BASE,      BL_RO_DATA_END      - BL_RO_DATA_BASE,      MT_RO_DATA | MT_RO | MT_SECURE),
-#if USE_COHERENT_MEM
-		MAP_REGION_FLAT(BL_COHERENT_RAM_BASE, BL_COHERENT_RAM_END - BL_COHERENT_RAM_BASE, MT_DEVICE  | MT_RW | MT_SECURE),
-#endif
-		{ /* sentinel */ }
-	};
-
-	setup_page_tables(bl_regions, plat_k3_mmap);
-	enable_mmu_el3(0);
-}
-
-void bl31_platform_setup(void)
-{
-	k3_gic_driver_init(K3_GIC_BASE);
-	k3_gic_init();
-
-	ti_sci_init();
-}
-
-void platform_mem_init(void)
-{
-	/* Do nothing for now... */
-}
-
-unsigned int plat_get_syscnt_freq2(void)
-{
-	uint32_t gtc_freq;
-	uint32_t gtc_ctrl;
-
-	/* Lets try and provide basic diagnostics - cost is low */
-	gtc_ctrl = mmio_read_32(K3_GTC_BASE + K3_GTC_CNTCR_OFFSET);
-	/* Did the bootloader fail to enable timer and OS guys are confused? */
-	if ((gtc_ctrl & K3_GTC_CNTCR_EN_MASK) == 0U) {
-		ERROR("GTC is disabled! Timekeeping broken. Fix Bootloader\n");
-	}
-	/*
-	 * If debug will not pause time, we will have issues like
-	 * drivers timing out while debugging, in cases of OS like Linux,
-	 * RCU stall errors, which can be hard to differentiate vs real issues.
-	 */
-	if ((gtc_ctrl & K3_GTC_CNTCR_HDBG_MASK) == 0U) {
-		WARN("GTC: Debug access doesn't stop time. Fix Bootloader\n");
-=======
 	ret = ti_sci_get_revision(&version);
 	if (ret) {
 		ERROR("Unable to communicate with the control firmware (%d)\n", ret);
 		return ret;
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	INFO("SYSFW ABI: %d.%d (firmware rev 0x%04x '%s')\n",

@@ -1,18 +1,12 @@
 // SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 /*
-<<<<<<< HEAD
- * Copyright (C) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (C) 2023-2025, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
  */
 #include <dt-bindings/pinctrl/stm32-pinfunc.h>
 
 &pinctrl {
 	/omit-if-no-ref/
-<<<<<<< HEAD
-=======
 	i2c7_pins_a: i2c7-0 {
 		pins1 {
 			pinmux = <STM32_PINMUX('D', 15, AF10)>, /* I2C7_SCL */
@@ -97,7 +91,6 @@
 	};
 
 	/omit-if-no-ref/
->>>>>>> upstream_import/upstream_v2_14_1
 	usart2_pins_a: usart2-0 {
 		pins1 {
 			pinmux = <STM32_PINMUX('A', 4, AF6)>; /* USART2_TX */

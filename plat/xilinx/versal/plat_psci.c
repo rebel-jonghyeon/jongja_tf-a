@@ -1,10 +1,6 @@
 /*
  * Copyright (c) 2018-2021, Arm Limited and Contributors. All rights reserved.
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
-=======
  * Copyright (c) 2022-2025, Advanced Micro Devices, Inc. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -19,22 +15,16 @@
 #include <plat/common/platform.h>
 #include <plat_arm.h>
 
-<<<<<<< HEAD
-=======
 #include "drivers/delay_timer.h"
->>>>>>> upstream_import/upstream_v2_14_1
 #include <plat_private.h>
 #include "pm_api_sys.h"
 #include "pm_client.h"
 #include <pm_common.h>
-<<<<<<< HEAD
-=======
 #include "pm_ipi.h"
 #include "pm_svc_main.h"
 
 #define SEC_ENTRY_ADDRESS_MASK		0xFFFFFFFFUL
 #define RESUME_ADDR_SET			0x1UL
->>>>>>> upstream_import/upstream_v2_14_1
 
 static uintptr_t versal_sec_entry;
 

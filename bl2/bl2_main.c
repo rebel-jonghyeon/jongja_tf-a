@@ -32,26 +32,15 @@
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_REGISTER_SERVICE(bl_svc, PMF_RT_INSTR_SVC_ID,
-<<<<<<< HEAD
-						 BL_TOTAL_IDS, PMF_DUMP_ENABLE);
-#endif
-
-#if RESET_TO_BL2
-=======
 		BL_TOTAL_IDS, PMF_DUMP_ENABLE);
 #endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 /*******************************************************************************
  * The only thing to do in BL2 is to load further images and pass control to
  * next BL. The memory occupied by BL2 will be reclaimed by BL3x stages.
  ******************************************************************************/
-<<<<<<< HEAD
-void bl2_el3_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2, u_register_t arg3)
-=======
 void __no_pauth bl2_main(u_register_t arg0, u_register_t arg1, u_register_t arg2,
 	       u_register_t arg3)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	entry_point_info_t *next_bl_ep_info;
 
@@ -65,15 +54,6 @@ void __no_pauth bl2_main(u_register_t arg0, u_register_t arg1, u_register_t arg2
 	/* Perform late platform-specific setup */
 	bl2_el3_plat_arch_setup();
 #else /* RESET_TO_BL2 */
-<<<<<<< HEAD
-
-/*******************************************************************************
- * Setup function for BL2 when RESET_TO_BL2=0
- ******************************************************************************/
-void bl2_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2, u_register_t arg3)
-{
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* Perform early platform-specific setup */
 	bl2_early_platform_setup2(arg0, arg1, arg2, arg3);
 
@@ -93,11 +73,7 @@ void bl2_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2, u_regist
 	PMF_CAPTURE_TIMESTAMP(bl_svc, BL2_ENTRY, PMF_CACHE_MAINT);
 #endif
 
-<<<<<<< HEAD
-	NOTICE("BL2: %s\n", version_string);
-=======
 	NOTICE("BL2: %s\n", build_version_string);
->>>>>>> upstream_import/upstream_v2_14_1
 	NOTICE("BL2: %s\n", build_message);
 
 	/* Perform remaining generic architectural setup in S-EL1 */
@@ -106,22 +82,17 @@ void bl2_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2, u_regist
 #if PSA_FWU_SUPPORT
 	fwu_init();
 #endif /* PSA_FWU_SUPPORT */
-	NOTICE("BL2: crypto_mod_init\n");
 
 	crypto_mod_init();
 
 	/* Initialize authentication module */
 	auth_mod_init();
 
-	NOTICE("BL2: bl2_plat_mboot_init\n");
-
 	/* Initialize the Measured Boot backend */
 	bl2_plat_mboot_init();
 
 	/* Initialize boot source */
 	bl2_plat_preload_setup();
-
-	BOOT_LOG(CP0, TBOOT_N, 6);
 
 	/* Load the subsequent bootloader images. */
 	next_bl_ep_info = bl2_load_images();
@@ -141,22 +112,12 @@ void bl2_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2, u_regist
 	disable_mmu_icache_secure();
 #endif /* !__aarch64__ */
 
-<<<<<<< HEAD
-#if ENABLE_PAUTH
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/*
 	 * Disable pointer authentication before running next boot image
 	 */
 	if (is_feat_pauth_supported()) {
 		pauth_disable_el1();
 	}
-
-#if ENABLE_RUNTIME_INSTRUMENTATION
-	PMF_CAPTURE_TIMESTAMP(bl_svc, BL2_EXIT, PMF_CACHE_MAINT);
-#endif
-
-	console_flush();
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_CAPTURE_TIMESTAMP(bl_svc, BL2_EXIT, PMF_CACHE_MAINT);
@@ -173,7 +134,6 @@ void bl2_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2, u_regist
 #else /* if BL2_RUNS_AT_EL3 */
 
 	NOTICE("BL2: Booting " NEXT_IMAGE "\n");
-	BOOT_LOG(CP0, SBOOT_N, 1);
 	print_entry_point_info(next_bl_ep_info);
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_CAPTURE_TIMESTAMP(bl_svc, BL2_EXIT, PMF_CACHE_MAINT);

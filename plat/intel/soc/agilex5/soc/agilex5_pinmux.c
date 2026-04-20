@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2024, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -190,11 +187,6 @@ const uint32_t sysmgr_pinmux_array_iodelay[] = {
 	0x0000011c, 0x00000000
 };
 
-<<<<<<< HEAD
-void config_fpgaintf_mod(void)
-{
-	mmio_write_32(SOCFPGA_SYSMGR(FPGAINTF_EN_2), 1<<8);
-=======
 static void config_fpgaintf_mod(void)
 {
 	uint32_t fpgaintf_en_val;
@@ -226,43 +218,10 @@ static void config_fpgaintf_mod(void)
 	if ((mmio_read_32(SOCFPGA_PINUMX_USEFPGA(EMAC2_USEFPGA)) & 0x01) != 0)
 		fpgaintf_en_val |= BIT(16);
 	mmio_write_32(SOCFPGA_SYSMGR(FPGAINTF_EN_3), fpgaintf_en_val);
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 void config_pinmux(handoff *hoff_ptr)
 {
-<<<<<<< HEAD
-	unsigned int i;
-
-	mmio_write_32(PINMUX_HANDOFF_CONFIG_ADDR, PINMUX_HANDOFF_CONFIG_VAL);
-	for (i = 0; i < PINMUX_HANDOFF_ARRAY_SIZE(hoff_ptr->pinmux_sel_array); i += 2) {
-		mmio_write_32(AGX5_PINMUX_PIN0SEL +
-			hoff_ptr->pinmux_sel_array[i],
-			hoff_ptr->pinmux_sel_array[i + 1]);
-	}
-
-	config_fpgaintf_mod();
-}
-
-void config_peripheral(handoff *hoff_ptr)
-{
-
-	// TODO: This need to be update due to peripheral_pwr_gate_array handoff change
-	// Pending SDM to pass over handoff data
-	// unsigned int i;
-
-	// for (i = 0; i < 4; i += 2) {
-	//	mmio_write_32(AGX_EDGE_PERIPHERAL +
-	//	hoff_ptr->peripheral_pwr_gate_array[i],
-	//	hoff_ptr->peripheral_pwr_gate_array[i+1]);
-	// }
-
-
-	// TODO: This need to be update due to peripheral_pwr_gate_array handoff change
-	mmio_write_32(AGX5_PERIPHERAL,
-	hoff_ptr->peripheral_pwr_gate_array);
-}
-=======
 	uint32_t i;
 
 	/* Configure the pin selection */
@@ -297,4 +256,3 @@ void config_peripheral(handoff *hoff_ptr)
 	/* Enable/Disable individual interfaces between the FPGA and HPS */
 	config_fpgaintf_mod();
 }
->>>>>>> upstream_import/upstream_v2_14_1

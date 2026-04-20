@@ -57,11 +57,7 @@
 
 #ifdef FW_HANDOFF_BASE
 #define MAP_FW_HANDOFF MAP_REGION_FLAT(FW_HANDOFF_BASE, FW_HANDOFF_SIZE, \
-<<<<<<< HEAD
-				       MT_MEMORY | MT_RW | MT_SECURE)
-=======
 				       MT_MEMORY | MT_RW | EL3_PAS)
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 #ifdef FW_NS_HANDOFF_BASE
 #define MAP_FW_NS_HANDOFF MAP_REGION_FLAT(FW_NS_HANDOFF_BASE, FW_HANDOFF_SIZE, \

@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,9 +7,6 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
-<<<<<<< HEAD
-#include <lib/el3_runtime/cpu_data.h>
-=======
 #if (CTX_INCLUDE_EL2_REGS && IMAGE_BL31)
 #include <lib/el3_runtime/context_el2.h>
 #else
@@ -25,7 +18,6 @@
 #endif /* (CTX_INCLUDE_EL2_REGS && IMAGE_BL31) */
 
 #include <lib/el3_runtime/simd_ctx.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <lib/utils_def.h>
 #include <platform_def.h> /* For CACHE_WRITEBACK_GRANULE */
 
@@ -84,62 +76,6 @@
  ******************************************************************************/
 #define CTX_EL3STATE_OFFSET	(CTX_GPREGS_OFFSET + CTX_GPREGS_END)
 #define CTX_SCR_EL3		U(0x0)
-<<<<<<< HEAD
-#define CTX_ESR_EL3		U(0x8)
-#define CTX_RUNTIME_SP		U(0x10)
-#define CTX_SPSR_EL3		U(0x18)
-#define CTX_ELR_EL3		U(0x20)
-#define CTX_PMCR_EL0		U(0x28)
-#define CTX_IS_IN_EL3		U(0x30)
-#define CTX_MPAM3_EL3		U(0x38)
-/* Constants required in supporting nested exception in EL3 */
-#define CTX_SAVED_ELR_EL3	U(0x40)
-/*
- * General purpose flag, to save various EL3 states
- * FFH mode : Used to identify if handling nested exception
- * KFH mode : Used as counter value
- */
-#define CTX_NESTED_EA_FLAG	U(0x48)
-#if FFH_SUPPORT
- #define CTX_SAVED_ESR_EL3	U(0x50)
- #define CTX_SAVED_SPSR_EL3	U(0x58)
- #define CTX_SAVED_GPREG_LR	U(0x60)
- #define CTX_EL3STATE_END	U(0x70) /* Align to the next 16 byte boundary */
-#else
- #define CTX_EL3STATE_END	U(0x50) /* Align to the next 16 byte boundary */
-#endif
-
-/*******************************************************************************
- * Constants that allow assembler code to access members of and the
- * 'el1_sys_regs' structure at their correct offsets. Note that some of the
- * registers are only 32-bits wide but are stored as 64-bit values for
- * convenience
- ******************************************************************************/
-#define CTX_EL1_SYSREGS_OFFSET	(CTX_EL3STATE_OFFSET + CTX_EL3STATE_END)
-#define CTX_SPSR_EL1		U(0x0)
-#define CTX_ELR_EL1		U(0x8)
-#define CTX_SCTLR_EL1		U(0x10)
-#define CTX_TCR_EL1		U(0x18)
-#define CTX_CPACR_EL1		U(0x20)
-#define CTX_CSSELR_EL1		U(0x28)
-#define CTX_SP_EL1		U(0x30)
-#define CTX_ESR_EL1		U(0x38)
-#define CTX_TTBR0_EL1		U(0x40)
-#define CTX_TTBR1_EL1		U(0x48)
-#define CTX_MAIR_EL1		U(0x50)
-#define CTX_AMAIR_EL1		U(0x58)
-#define CTX_ACTLR_EL1		U(0x60)
-#define CTX_TPIDR_EL1		U(0x68)
-#define CTX_TPIDR_EL0		U(0x70)
-#define CTX_TPIDRRO_EL0		U(0x78)
-#define CTX_PAR_EL1		U(0x80)
-#define CTX_FAR_EL1		U(0x88)
-#define CTX_AFSR0_EL1		U(0x90)
-#define CTX_AFSR1_EL1		U(0x98)
-#define CTX_CONTEXTIDR_EL1	U(0xa0)
-#define CTX_VBAR_EL1		U(0xa8)
-
-=======
 #define CTX_RUNTIME_SP		U(0x8)
 #define CTX_SPSR_EL3		U(0x10)
 #define CTX_ELR_EL3		U(0x18)
@@ -148,7 +84,6 @@
 #define CTX_MDCR_EL3		U(0x30)
 /* Constants required in supporting nested exception in EL3 */
 #define CTX_SAVED_ELR_EL3	U(0x38)
->>>>>>> upstream_import/upstream_v2_14_1
 /*
  * General purpose flag, to save various EL3 states
  * FFH mode : Used to identify if handling nested exception
@@ -240,11 +175,6 @@
 /*******************************************************************************
  * Registers initialised in a per-world context.
  ******************************************************************************/
-<<<<<<< HEAD
-#define CTX_CPTR_EL3		U(0x0)
-#define CTX_ZCR_EL3		U(0x8)
-#define CTX_GLOBAL_EL3STATE_END	U(0x10)
-=======
 #define CTX_CPTR_EL3			U(0x0)
 #define CTX_MPAM3_EL3			U(0x8)
 #if (ENABLE_FEAT_IDTE3 && IMAGE_BL31)
@@ -253,7 +183,6 @@
 #else
 #define CTX_PERWORLD_EL3STATE_END	U(0x10)
 #endif /* ENABLE_FEAT_IDTE3 && IMAGE_BL31 */
->>>>>>> upstream_import/upstream_v2_14_1
 
 #ifndef __ASSEMBLER__
 
@@ -407,17 +336,6 @@ static inline uint8_t get_cpu_context_index(size_t security_state)
 
 extern per_world_context_t per_world_context[CPU_CONTEXT_NUM];
 
-/*
- * Per-World Context.
- * It stores registers whose values can be shared across CPUs.
- */
-typedef struct per_world_context {
-	uint64_t ctx_cptr_el3;
-	uint64_t ctx_zcr_el3;
-} per_world_context_t;
-
-extern per_world_context_t per_world_context[CPU_DATA_CONTEXT_NUM];
-
 /* Macros to access members of the 'cpu_context_t' structure */
 #define get_el3state_ctx(h)	(&((cpu_context_t *) h)->el3state_ctx)
 
@@ -502,12 +420,6 @@ CASSERT(CTX_PAUTH_REGS_OFFSET == __builtin_offsetof(cpu_context_t, pauth_ctx),
 /*******************************************************************************
  * Function prototypes
  ******************************************************************************/
-<<<<<<< HEAD
-void el1_sysregs_context_save(el1_sysregs_t *regs);
-void el1_sysregs_context_restore(el1_sysregs_t *regs);
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 #if CTX_INCLUDE_FPREGS
 void fpregs_context_save(simd_regs_t *regs);
 void fpregs_context_restore(simd_regs_t *regs);

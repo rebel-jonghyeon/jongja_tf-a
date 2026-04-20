@@ -155,12 +155,9 @@ enum pm_device_node_idx irq_to_pm_node_idx(uint32_t irq)
 	case 74:
 		dev_idx = XPM_NODEIDX_DEV_USB_0;
 		break;
-<<<<<<< HEAD
-=======
 	case 122:
 		dev_idx = XPM_NODEIDX_DEV_GPIO_PMC;
 		break;
->>>>>>> upstream_import/upstream_v2_14_1
 	case 126:
 	case 127:
 		dev_idx = XPM_NODEIDX_DEV_SDIO_0;
@@ -184,11 +181,8 @@ enum pm_device_node_idx irq_to_pm_node_idx(uint32_t irq)
  * pm_client_suspend() - Client-specific suspend actions.
  * @proc: processor which need to suspend.
  * @state: desired suspend state.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function should contain any PU-specific actions
  * required prior to sending suspend request to PMU
@@ -211,36 +205,9 @@ void pm_client_suspend(const struct pm_proc *proc, uint32_t state, uint32_t flag
 }
 
 /**
-<<<<<<< HEAD
- * pm_client_abort_suspend() - Client-specific abort-suspend actions.
- *
- * This function should contain any PU-specific actions
- * required for aborting a prior suspend request.
- *
- */
-void pm_client_abort_suspend(void)
-{
-	/* Enable interrupts at processor level (for current cpu) */
-	gicv3_cpuif_enable(plat_my_core_pos());
-
-	bakery_lock_get(&pm_client_secure_lock);
-
-	/* Clear powerdown request */
-	mmio_write_32(FPD_APU_PWRCTL, mmio_read_32(FPD_APU_PWRCTL) &
-		      ~((uint32_t)primary_proc->pwrdn_mask));
-
-	bakery_lock_release(&pm_client_secure_lock);
-}
-
-/**
  * pm_get_cpuid() - get the local cpu ID for a global node ID.
  * @nid: node id of the processor.
  *
-=======
- * pm_get_cpuid() - get the local cpu ID for a global node ID.
- * @nid: node id of the processor.
- *
->>>>>>> upstream_import/upstream_v2_14_1
  * Return: the cpu ID (starting from 0) for the subsystem.
  *
  */

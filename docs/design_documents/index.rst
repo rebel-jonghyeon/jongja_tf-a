@@ -12,10 +12,7 @@ Design Documents
    rse
    psci_osi_mode
    measured_boot
-<<<<<<< HEAD
-=======
    dtpm_drivers
->>>>>>> upstream_import/upstream_v2_14_1
 
 --------------
 

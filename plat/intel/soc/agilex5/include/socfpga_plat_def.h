@@ -1,10 +1,7 @@
 /*
  * Copyright (c) 2019, ARM Limited and Contributors. All rights reserved.
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,39 +11,21 @@
 
 #include "agilex5_memory_controller.h"
 #include "agilex5_system_manager.h"
-<<<<<<< HEAD
-=======
 
->>>>>>> upstream_import/upstream_v2_14_1
 #include <platform_def.h>
 
 /* Platform Setting */
 #define PLATFORM_MODEL						PLAT_SOCFPGA_AGILEX5
-<<<<<<< HEAD
-#define BOOT_SOURCE						BOOT_SOURCE_SDMMC
-=======
 /* 1 = Flush cache, 0 = No cache flush.
  * Default for Agilex5 is Cache flush.
  */
 #define CACHE_FLUSH							1
->>>>>>> upstream_import/upstream_v2_14_1
 #define MMC_DEVICE_TYPE						1  /* MMC = 0, SD = 1 */
 #define XLAT_TABLES_V2						U(1)
 #define PLAT_PRIMARY_CPU_A55					0x000
 #define PLAT_PRIMARY_CPU_A76					0x200
 #define PLAT_CLUSTER_ID_MPIDR_AFF_SHIFT				MPIDR_AFF2_SHIFT
 #define PLAT_CPU_ID_MPIDR_AFF_SHIFT				MPIDR_AFF1_SHIFT
-<<<<<<< HEAD
-#define PLAT_L2_RESET_REQ			0xB007C0DE
-
-/* System Counter */ /* TODO: Update back to 400MHz */
-#define PLAT_SYS_COUNTER_FREQ_IN_TICKS				(80000000)
-#define PLAT_SYS_COUNTER_FREQ_IN_MHZ				(80)
-
-/* FPGA config helpers */
-#define INTEL_SIP_SMC_FPGA_CONFIG_ADDR				0x400000
-#define INTEL_SIP_SMC_FPGA_CONFIG_SIZE				0x2000000
-=======
 #define PLAT_L2_RESET_REQ					0xB007C0DE
 #define PLAT_HANDOFF_OFFSET					0x0007F000
 #define PLAT_TIMER_BASE_ADDR					0x10D01000
@@ -63,14 +42,11 @@
 /* FPGA config helpers */
 #define INTEL_SIP_SMC_FPGA_CONFIG_ADDR				0x80400000
 #define INTEL_SIP_SMC_FPGA_CONFIG_SIZE				0x82000000
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* QSPI Setting */
 #define CAD_QSPIDATA_OFST					0x10900000
 #define CAD_QSPI_OFFSET						0x108d2000
 
-<<<<<<< HEAD
-=======
 /* FIP Setting */
 #define PLAT_FIP_BASE						(0)
 #if ARM_LINUX_KERNEL_AS_BL33
@@ -92,7 +68,6 @@
 
 #define PLAT_NAND_SCRATCH_BUFF					(0x96400000)
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* Register Mapping */
 #define SOCFPGA_CCU_NOC_REG_BASE				0x1c000000
 #define SOCFPGA_F2SDRAMMGR_REG_BASE				0x18001000
@@ -103,20 +78,12 @@
 #define SOCFPGA_SYSMGR_REG_BASE					0x10d12000
 #define SOCFPGA_PINMUX_REG_BASE					0x10d13000
 #define SOCFPGA_NAND_REG_BASE					0x10B80000
-<<<<<<< HEAD
-=======
 #define SOCFPGA_ECC_QSPI_REG_BASE				0x10A22000
->>>>>>> upstream_import/upstream_v2_14_1
 
 #define SOCFPGA_L4_PER_SCR_REG_BASE				0x10d21000
 #define SOCFPGA_L4_SYS_SCR_REG_BASE				0x10d21100
 #define SOCFPGA_SOC2FPGA_SCR_REG_BASE				0x10d21200
 #define SOCFPGA_LWSOC2FPGA_SCR_REG_BASE				0x10d21300
-<<<<<<< HEAD
-
-/* Define maximum page size for NAND flash devices */
-#define PLATFORM_MTD_MAX_PAGE_SIZE				U(0x1000)
-=======
 #define SOCFPGA_SDMMC_SECU_BIT					0x40
 #define SOCFPGA_LWSOC2FPGA_ENABLE				0xffe0301
 #define SOCFPGA_SDMMC_SECU_BIT_ENABLE				0x1010001
@@ -147,7 +114,6 @@
 #define L2_RESET_DONE_STATUS			(0x01 << BS_REG_MAGIC_KEYS_POS)
 #define SMP_SEC_CORE_BOOT_REQ			(0x02 << BS_REG_MAGIC_KEYS_POS)
 #define ALIGN_CHECK_64BIT_MASK			0x07
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * Platform memory map related constants
@@ -178,18 +144,10 @@
 #define GIC_SIZE						(0x00100000)
 
 #define BL2_BASE						(0x00000000)
-<<<<<<< HEAD
-#define BL2_LIMIT						(0x0001b000)
-
-#define BL31_BASE						(0x80000000)
-#define BL31_LIMIT						(0x82000000)
-
-=======
 #define BL2_LIMIT						(0x0007E000)
 
 #define BL31_BASE						(0x80000000)
 #define BL31_LIMIT						(0x82000000)
->>>>>>> upstream_import/upstream_v2_14_1
 /*******************************************************************************
  * UART related constants
  ******************************************************************************/
@@ -197,14 +155,11 @@
 #define PLAT_UART1_BASE						(0x10C02100)
 
 /*******************************************************************************
-<<<<<<< HEAD
-=======
  * WDT related constants
  ******************************************************************************/
 #define WDT_BASE						(0x10D00200)
 
 /*******************************************************************************
->>>>>>> upstream_import/upstream_v2_14_1
  * GIC related constants
  ******************************************************************************/
 #define PLAT_GIC_BASE						(0x1D000000)
@@ -217,16 +172,6 @@
 /*******************************************************************************
  * SDMMC related pointer function
  ******************************************************************************/
-<<<<<<< HEAD
-#define SDMMC_READ_BLOCKS	sdmmc_read_blocks
-#define SDMMC_WRITE_BLOCKS	sdmmc_write_blocks
-
-/*******************************************************************************
- * sysmgr.boot_scratch_cold6 & 7 (64bit) are used to indicate L2 reset
- * is done and HPS should trigger warm reset via RMR_EL3.
- ******************************************************************************/
-#define L2_RESET_DONE_REG			0x10D12218
-=======
 #define SDMMC_READ_BLOCKS					sdmmc_read_blocks
 #define SDMMC_WRITE_BLOCKS					sdmmc_write_blocks
 
@@ -235,6 +180,5 @@
  * is done, or SMP secondary cores boot request status.
  ******************************************************************************/
 #define L2_RESET_DONE_REG					SOCFPGA_SYSMGR(BOOT_SCRATCH_COLD_3)
->>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* PLAT_SOCFPGA_DEF_H */

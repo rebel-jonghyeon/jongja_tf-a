@@ -143,11 +143,7 @@ static int plat_morello_append_config_node(struct morello_plat_info *plat_info,
 		return -1;
 	}
 
-<<<<<<< HEAD
-	err = fdt_setprop_string(fdt, nodeoffset_fw, "tfa-fw-version", version_string);
-=======
 	err = fdt_setprop_string(fdt, nodeoffset_fw, "tfa-fw-version", build_version_string);
->>>>>>> upstream_import/upstream_v2_14_1
 	if (err < 0) {
 		WARN("NT_FW_CONFIG: Unable to set tfa-fw-version\n");
 	}
@@ -190,12 +186,8 @@ bl_params_t *plat_get_next_bl_params(void)
 		panic();
 	}
 
-<<<<<<< HEAD
-	ret = sds_struct_read(MORELLO_SDS_FIRMWARE_VERSION_STRUCT_ID,
-=======
 	ret = sds_struct_read(SDS_SCP_AP_REGION_ID,
 				MORELLO_SDS_FIRMWARE_VERSION_STRUCT_ID,
->>>>>>> upstream_import/upstream_v2_14_1
 				MORELLO_SDS_FIRMWARE_VERSION_OFFSET,
 				&fw_version,
 				MORELLO_SDS_FIRMWARE_VERSION_SIZE,

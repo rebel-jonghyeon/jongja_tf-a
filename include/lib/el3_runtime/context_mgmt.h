@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -39,19 +35,11 @@ void cm_prepare_el3_exit(size_t security_state);
 void cm_prepare_el3_exit_ns(void);
 
 #ifdef __aarch64__
-<<<<<<< HEAD
-#if IMAGE_BL31
-void cm_manage_extensions_el3(void);
-void manage_extensions_nonsecure_per_world(void);
-#endif
-#if CTX_INCLUDE_EL2_REGS
-=======
 void cm_manage_extensions_el3(unsigned int my_idx);
 void cm_manage_extensions_per_world(void);
 void cm_init_percpu_once_regs(void);
 
 #if (CTX_INCLUDE_EL2_REGS && IMAGE_BL31)
->>>>>>> upstream_import/upstream_v2_14_1
 void cm_el2_sysregs_context_save(uint32_t security_state);
 void cm_el2_sysregs_context_restore(uint32_t security_state);
 #else
@@ -99,14 +87,9 @@ static inline void cm_set_next_context(void *context)
 #else
 void *cm_get_next_context(void);
 void cm_set_next_context(void *context);
-<<<<<<< HEAD
-static inline void cm_manage_extensions_el3(void) {}
-static inline void manage_extensions_nonsecure_per_world(void) {}
-=======
 static inline void cm_manage_extensions_el3(unsigned int cpu_idx) {}
 static inline void cm_manage_extensions_per_world(void) {}
 static inline void cm_init_percpu_once_regs(void) {}
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* __aarch64__ */
 
 #endif /* CONTEXT_MGMT_H */

@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2022-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,17 +21,12 @@
 /* NAND flash device information struct */
 static cnf_dev_info_t dev_info;
 
-<<<<<<< HEAD
-/* Scratch buffers for read and write operations */
-static uint8_t scratch_buff[PLATFORM_MTD_MAX_PAGE_SIZE];
-=======
 /*
  * Scratch buffers for read and write operations
  * DMA transfer of Cadence NAND expects data 8 bytes aligned
  * to be written to register.
  */
 static uint8_t *scratch_buff = (uint8_t *)PLAT_NAND_SCRATCH_BUFF;
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* Wait for controller to be in idle state */
 static inline void cdns_nand_wait_idle(void)
@@ -59,8 +51,6 @@ static inline void cdns_nand_wait_thread_ready(uint8_t thread_id)
 	} while (reg != 0U);
 }
 
-<<<<<<< HEAD
-=======
 static inline uint32_t cdns_nand_get_thread_status(uint8_t thread_id)
 {
 	uint32_t status = 0U;
@@ -74,7 +64,6 @@ static inline uint32_t cdns_nand_get_thread_status(uint8_t thread_id)
 	return status;
 }
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* Check if the last operation/command in selected thread is completed */
 static int cdns_nand_last_opr_status(uint8_t thread_id)
 {
@@ -140,12 +129,8 @@ int cdns_nand_reset(uint8_t thread_id)
 	cdns_nand_wait_thread_ready(thread_id);
 
 	/* Select memory */
-<<<<<<< HEAD
-	mmio_write_32(CNF_CMDREG(CMD_REG4), (CNF_DEF_DEVICE << CNF_CMDREG4_MEM));
-=======
 	mmio_write_32(CNF_CMDREG(CMD_REG4),
 			(CNF_DEF_DEVICE << CNF_CMDREG4_MEM));
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Issue reset command */
 	uint32_t reg = (CNF_WORK_MODE_PIO << CNF_CMDREG0_CT);
@@ -160,55 +145,6 @@ int cdns_nand_reset(uint8_t thread_id)
 }
 
 /* Set operation work mode */
-<<<<<<< HEAD
-static void cdns_nand_set_opr_mode(uint8_t opr_mode)
-{
-	/* Wait for controller to be in idle state */
-	cdns_nand_wait_idle();
-
-	/* Reset DLL PHY */
-	uint32_t reg = mmio_read_32(CNF_MINICTRL(DLL_PHY_CTRL));
-
-	reg &= ~(1 << CNF_DLL_PHY_RST_N);
-	mmio_write_32(CNF_MINICTRL(DLL_PHY_CTRL), reg);
-
-	if (opr_mode == CNF_OPR_WORK_MODE_SDR) {
-		/* Combo PHY Control Timing Block register settings */
-		mmio_write_32(CP_CTB(CTRL_REG), CP_CTRL_REG_SDR);
-		mmio_write_32(CP_CTB(TSEL_REG), CP_TSEL_REG_SDR);
-
-		/* Combo PHY DLL register settings */
-		mmio_write_32(CP_DLL(DQ_TIMING_REG), CP_DQ_TIMING_REG_SDR);
-		mmio_write_32(CP_DLL(DQS_TIMING_REG), CP_DQS_TIMING_REG_SDR);
-		mmio_write_32(CP_DLL(GATE_LPBK_CTRL_REG), CP_GATE_LPBK_CTRL_REG_SDR);
-		mmio_write_32(CP_DLL(MASTER_CTRL_REG), CP_DLL_MASTER_CTRL_REG_SDR);
-
-		/* Async mode timing settings */
-		mmio_write_32(CNF_MINICTRL(ASYNC_TOGGLE_TIMINGS),
-								(2 << CNF_ASYNC_TIMINGS_TRH) |
-								(4 << CNF_ASYNC_TIMINGS_TRP) |
-								(2 << CNF_ASYNC_TIMINGS_TWH) |
-								(4 << CNF_ASYNC_TIMINGS_TWP));
-
-		/* Set extended read and write mode */
-		reg |= (1 << CNF_DLL_PHY_EXT_RD_MODE);
-		reg |= (1 << CNF_DLL_PHY_EXT_WR_MODE);
-
-		/* Set operation work mode in common settings */
-		uint32_t data = mmio_read_32(CNF_MINICTRL(CMN_SETTINGS));
-
-		data |= (CNF_OPR_WORK_MODE_SDR << CNF_CMN_SETTINGS_OPR);
-		mmio_write_32(CNF_MINICTRL(CMN_SETTINGS), data);
-
-	} else if (opr_mode == CNF_OPR_WORK_MODE_NVDDR) {
-		; /* ToDo: add DDR mode settings also once available on SIMICS */
-	} else {
-		;
-	}
-
-	reg |= (1 << CNF_DLL_PHY_RST_N);
-	mmio_write_32(CNF_MINICTRL(DLL_PHY_CTRL), reg);
-=======
 static void cdns_nand_set_opr_mode(void)
 {
 	/* Wait for controller to be in idle state */
@@ -231,7 +167,6 @@ static void cdns_nand_set_opr_mode(void)
 	cdns_nand_wait_idle();
 	/* Set operation work mode in common settings to SDR. */
 	mmio_clrbits_32(CNF_MINICTRL(CMN_SETTINGS), (BIT(1) | BIT(0)));
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /* Data transfer configuration */
@@ -240,27 +175,6 @@ static void cdns_nand_transfer_config(void)
 	/* Wait for controller to be in idle state */
 	cdns_nand_wait_idle();
 
-<<<<<<< HEAD
-	/* Configure data transfer parameters */
-	mmio_write_32(CNF_CTRLCFG(TRANS_CFG0), 1);
-
-	/* ECC is disabled */
-	mmio_write_32(CNF_CTRLCFG(ECC_CFG0), 0);
-
-	/* DMA burst select */
-	mmio_write_32(CNF_CTRLCFG(DMA_SETTINGS),
-					(CNF_DMA_BURST_SIZE_MAX << CNF_DMA_SETTINGS_BURST) |
-					(1 << CNF_DMA_SETTINGS_OTE));
-
-	/* Enable pre-fetching for 1K */
-	mmio_write_32(CNF_CTRLCFG(FIFO_TLEVEL),
-					(CNF_DMA_PREFETCH_SIZE << CNF_FIFO_TLEVEL_POS) |
-					(CNF_DMA_PREFETCH_SIZE << CNF_FIFO_TLEVEL_DMA_SIZE));
-
-	/* Select access type */
-	mmio_write_32(CNF_CTRLCFG(MULTIPLANE_CFG), 0);
-	mmio_write_32(CNF_CTRLCFG(CACHE_CFG), 0);
-=======
 	/* DMA burst select */
 	mmio_write_32(CNF_CTRLCFG(DMA_SETTINGS),
 			(CNF_DMA_BURST_SIZE_MAX << CNF_DMA_SETTINGS_BURST) |
@@ -289,21 +203,12 @@ static void cdns_nand_transfer_config(void)
 	/* Disable pre-fetching. */
 	cdns_nand_wait_idle();
 	mmio_write_32(CNF_CTRLCFG(FIFO_TLEVEL), 0);
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /* Update the nand flash device info */
 static int cdns_nand_update_dev_info(void)
 {
 	uint32_t reg = 0U;
-<<<<<<< HEAD
-
-	/* Read the device type and number of LUNs */
-	reg = mmio_read_32(CNF_CTRLPARAM(DEV_PARAMS0));
-	dev_info.type = CNF_GET_DEV_TYPE(reg);
-	if (dev_info.type == CNF_DT_UNKNOWN) {
-		ERROR("%s: device type unknown\n", __func__);
-=======
 	static const char *const device_type[] = {
 		"Unknown",
 		"ONFI",
@@ -326,21 +231,14 @@ static int cdns_nand_update_dev_info(void)
 	NOTICE(" -- Device type '%s' detected\n", device_type[dev_info.type]);
 	if (dev_info.type == CNF_DT_UNKNOWN) {
 		ERROR("CNF: Device type is 'Unknown', exit\n");
->>>>>>> upstream_import/upstream_v2_14_1
 		return -ENXIO;
 	}
 	dev_info.nluns = CNF_GET_NLUNS(reg);
 
-<<<<<<< HEAD
-	/* Pages per block */
-	reg = mmio_read_32(CNF_CTRLCFG(DEV_LAYOUT));
-	dev_info.npages_per_block = CNF_GET_NPAGES_PER_BLOCK(reg);
-=======
 	/* Pages per block - number of pages in a block. */
 	reg = mmio_read_32(CNF_CTRLCFG(DEV_LAYOUT));
 	dev_info.npages_per_block = CNF_GET_NPAGES_PER_BLOCK(reg);
 	INFO(" -- Pages per block: %d\n", dev_info.npages_per_block);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Sector size and last sector size */
 	reg = mmio_read_32(CNF_CTRLCFG(TRANS_CFG1));
@@ -351,20 +249,6 @@ static int cdns_nand_update_dev_info(void)
 	reg = mmio_read_32(CNF_CTRLPARAM(DEV_AREA));
 	dev_info.page_size = CNF_GET_PAGE_SIZE(reg);
 	dev_info.spare_size = CNF_GET_SPARE_SIZE(reg);
-<<<<<<< HEAD
-
-	/* Device blocks per LUN */
-	dev_info.nblocks_per_lun = mmio_read_32(CNF_CTRLPARAM(DEV_BLOCKS_PLUN));
-
-	/* Calculate block size and total device size */
-	dev_info.block_size = (dev_info.npages_per_block * dev_info.page_size);
-	dev_info.total_size = (dev_info.block_size * dev_info.nblocks_per_lun *
-							dev_info.nluns);
-
-	VERBOSE("CNF params: page %d, spare %d, block %d, total %lld\n",
-				dev_info.page_size, dev_info.spare_size,
-				dev_info.block_size, dev_info.total_size);
-=======
 	INFO(" -- Page main area size: %d bytes\n", dev_info.page_size);
 	INFO(" -- Page spare area size: %d bytes\n", dev_info.spare_size);
 
@@ -380,7 +264,6 @@ static int cdns_nand_update_dev_info(void)
 				(unsigned long long)dev_info.nblocks_per_lun *
 				dev_info.nluns);
 	NOTICE(" -- Total device size: %llu bytes\n", dev_info.total_size);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	return 0;
 }
@@ -390,14 +273,6 @@ int cdns_nand_host_init(void)
 {
 	uint32_t reg = 0U;
 	int ret = 0;
-<<<<<<< HEAD
-
-	do {
-		/* Read controller status register for init complete */
-		reg = mmio_read_32(CNF_CMDREG(CTRL_STATUS));
-	} while (CNF_GET_INIT_COMP(reg) == 0);
-
-=======
 	uint32_t timeout_count = (CNF_DD_INIT_COMP_US / CNF_DEF_DELAY_US);
 
 	INFO("CNF: Starting Device Discovery Process\n");
@@ -418,31 +293,11 @@ int cdns_nand_host_init(void)
 	}
 
 	INFO("CNF: Device Discovery Process is completed\n");
->>>>>>> upstream_import/upstream_v2_14_1
 	ret = cdns_nand_update_dev_info();
 	if (ret != 0) {
 		return ret;
 	}
 
-<<<<<<< HEAD
-	INFO("CNF: device discovery process completed and device type %d\n",
-			dev_info.type);
-
-	/* Enable data integrity, enable CRC and parity */
-	reg = mmio_read_32(CNF_DI(CONTROL));
-	reg |= (1 << CNF_DI_PAR_EN);
-	reg |= (1 << CNF_DI_CRC_EN);
-	mmio_write_32(CNF_DI(CONTROL), reg);
-
-	/* Status polling mode, device control and status register */
-	cdns_nand_wait_idle();
-	reg = mmio_read_32(CNF_CTRLCFG(DEV_STAT));
-	reg = reg & ~1;
-	mmio_write_32(CNF_CTRLCFG(DEV_STAT), reg);
-
-	/* Set operation work mode */
-	cdns_nand_set_opr_mode(CNF_OPR_WORK_MODE_SDR);
-=======
 	/* Status polling mode, device control and status register. */
 	cdns_nand_wait_idle();
 	mmio_clrbits_32(CNF_CTRLCFG(RDST_CTRL_0), BIT(0));
@@ -453,7 +308,6 @@ int cdns_nand_host_init(void)
 
 	/* Set operation work mode */
 	cdns_nand_set_opr_mode();
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Set data transfer configuration parameters */
 	cdns_nand_transfer_config();
@@ -499,11 +353,6 @@ int cdns_nand_init_mtd(unsigned long long *size, unsigned int *erase_size)
 	return 0;
 }
 
-<<<<<<< HEAD
-/* NAND Flash page read */
-static int cdns_nand_read_page(uint32_t block, uint32_t page, uintptr_t buffer)
-{
-=======
 static uint32_t cdns_nand_get_row_address(uint32_t page, uint32_t block)
 {
 	uint32_t row_address = 0U;
@@ -528,25 +377,11 @@ static uint32_t cdns_nand_get_row_address(uint32_t page, uint32_t block)
 static int cdns_nand_read_page(uint32_t block, uint32_t page, uintptr_t buffer)
 {
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/* Wait for thread to be ready */
 	cdns_nand_wait_thread_ready(CNF_DEF_TRD);
 
 	/* Select device */
 	mmio_write_32(CNF_CMDREG(CMD_REG4),
-<<<<<<< HEAD
-					(CNF_DEF_DEVICE << CNF_CMDREG4_MEM));
-
-	/* Set host memory address for DMA transfers */
-	mmio_write_32(CNF_CMDREG(CMD_REG2), (buffer & 0xFFFF));
-	mmio_write_32(CNF_CMDREG(CMD_REG3), ((buffer >> 32) & 0xFFFF));
-
-	/* Set row address */
-	uint32_t row_address = 0U;
-
-	row_address |= ((page & 0x3F) | (block << 6));
-	mmio_write_32(CNF_CMDREG(CMD_REG1), row_address);
-=======
 			(CNF_DEF_DEVICE << CNF_CMDREG4_MEM));
 
 	/* Set host memory address for DMA transfers */
@@ -556,7 +391,6 @@ static int cdns_nand_read_page(uint32_t block, uint32_t page, uintptr_t buffer)
 	/* Set row address */
 	mmio_write_32(CNF_CMDREG(CMD_REG1),
 			cdns_nand_get_row_address(page, block));
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Page read command */
 	uint32_t reg = (CNF_WORK_MODE_PIO << CNF_CMDREG0_CT);
@@ -566,11 +400,7 @@ static int cdns_nand_read_page(uint32_t block, uint32_t page, uintptr_t buffer)
 	reg |= (CNF_INT_DIS << CNF_CMDREG0_INTR);
 	reg |= (CNF_DMA_MASTER_SEL << CNF_CMDREG0_DMA);
 	reg |= (CNF_CT_PAGE_READ << CNF_CMDREG0_CMD);
-<<<<<<< HEAD
-	reg |= (((CNF_READ_SINGLE_PAGE-1) & 0xFF) << CNF_CMDREG0_CMD);
-=======
 	reg |= (((CNF_READ_SINGLE_PAGE - 1) & 0xFF) << CNF_CMDREG0_CMD);
->>>>>>> upstream_import/upstream_v2_14_1
 	mmio_write_32(CNF_CMDREG(CMD_REG0), reg);
 
 	/* Wait for read operation to complete */
@@ -594,13 +424,8 @@ int cdns_nand_read(unsigned int offset, uintptr_t buffer, size_t length,
 	uint32_t page = 0U;
 	int result = 0;
 
-<<<<<<< HEAD
-	VERBOSE("CNF: block %u-%u, page_start %u, len %zu, offset %u\n",
-				block, end_block, page_start, length, offset);
-=======
 	INFO("CNF: %s: block %u-%u, page_start %u, len %zu, offset %u\n",
 		__func__, block, end_block, page_start, length, offset);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	if ((offset >= dev_info.total_size) ||
 		(offset + length-1 >= dev_info.total_size) ||
@@ -616,11 +441,7 @@ int cdns_nand_read(unsigned int offset, uintptr_t buffer, size_t length,
 			if ((start_offset != 0U) || (length < dev_info.page_size)) {
 				/* Partial page read */
 				result = cdns_nand_read_page(block, page,
-<<<<<<< HEAD
-				(uintptr_t)scratch_buff);
-=======
 							(uintptr_t)scratch_buff);
->>>>>>> upstream_import/upstream_v2_14_1
 				if (result != 0) {
 					return result;
 				}
@@ -660,8 +481,4 @@ int cdns_nand_read(unsigned int offset, uintptr_t buffer, size_t length,
 	} /* while */
 
 	return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> upstream_import/upstream_v2_14_1

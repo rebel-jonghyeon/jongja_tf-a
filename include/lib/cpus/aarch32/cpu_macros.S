@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -118,14 +114,6 @@
 	  .popsection
 	.endif
 
-<<<<<<< HEAD
-	/*
-	 * Mandatory errata status printing function for CPUs of
-	 * this class.
-	 */
-	.word \_name\()_errata_report
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	.word \_name\()_cpu_str
 
 #ifdef IMAGE_BL32
@@ -184,14 +172,6 @@
 		\_cpu\()_errata_list_start:
 		.endif
 
-<<<<<<< HEAD
-		/* unused on AArch32, maintain for portability */
-		.word	0
-		/* TODO(errata ABI): this prevents all checker functions from
-		 * being optimised away. Can be done away with unless the ABI
-		 * needs them */
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 		.ifnb \_special
 			.word	check_errata_\_special
 		.elseif \_cve
@@ -203,34 +183,8 @@
 		.word	\_id
 		.hword	\_cve
 		.byte	\_chosen
-<<<<<<< HEAD
-		/* TODO(errata ABI): mitigated field for known but unmitigated
-		 * errata*/
-		.byte	0x1
-	.popsection
-.endm
-
-/*
- * Maintain compatibility with the old scheme of "each cpu has its own reporter".
- * TODO remove entirely once all cpus have been converted. This includes the
- * cpu_ops entry, as print_errata_status can call this directly for all cpus
- */
-.macro errata_report_shim _cpu:req
-	#if REPORT_ERRATA
-	func \_cpu\()_errata_report
-		push	{r12, lr}
-
-		bl generic_errata_report
-
-		pop	{r12, lr}
-		bx	lr
-	endfunc \_cpu\()_errata_report
-	#endif
-.endm
-=======
 		.byte	0x0 /* alignment */
 	.popsection
 .endm
 
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* CPU_MACROS_S */

@@ -47,19 +47,11 @@ typedef struct core_console {
 	 * fields of the struct to 64 bits in AArch64 and 32 bits in AArch32
 	 */
 	u_register_t flags;
-<<<<<<< HEAD
-	int (*const putc)(int character, struct console *console);
-#if ENABLE_CONSOLE_GETC
-	int (*const getc)(struct console *console);
-#endif
-	void (*const flush)(struct console *console);
-=======
 	int (*const putc)(int character, struct core_console *console);
 #if ENABLE_CONSOLE_GETC
 	int (*const getc)(struct core_console *console);
 #endif
 	void (*const flush)(struct core_console *console);
->>>>>>> upstream_import/upstream_v2_14_1
 	uintptr_t base;
 	/* Additional private driver data may follow here. */
 } console_t;

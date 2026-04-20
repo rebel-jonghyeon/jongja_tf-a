@@ -1871,8 +1871,6 @@ This function must return 0 on success, a non-null error code otherwise.
 The default implementation of this function asserts therefore platforms must
 override it when using the FWU feature.
 
-<<<<<<< HEAD
-=======
 Function : bl1_plat_is_shared_nv_ctr() [optional]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1885,7 +1883,6 @@ This function inquiry the platform if the non-volatile counter is shared
 across all secure images (BL2, BL31, BL32, etc.). It is used only in BL1
 and when `PSA_FWU_SUPPORT` is enabled.
 
->>>>>>> upstream_import/upstream_v2_14_1
 Boot Loader Stage 2 (BL2)
 -------------------------
 
@@ -1997,29 +1994,7 @@ Function : bl2_plat_preload_setup [optional]
 
 This optional function performs any BL2 platform initialization
 required before image loading, that is not done later in
-<<<<<<< HEAD
-bl2_platform_setup(). Specifically, if support for multiple
-boot sources is required, it initializes the boot sequence used by
-plat_try_next_boot_source().
-
-Function : plat_try_next_boot_source() [optional]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-    Argument : void
-    Return   : int
-
-This optional function passes to the next boot source in the redundancy
-sequence.
-
-This function moves the current boot redundancy source to the next
-element in the boot sequence. If there are no more boot sources then it
-must return 0, otherwise it must return 1. The default implementation
-of this always returns 0.
-=======
 bl2_platform_setup().
->>>>>>> upstream_import/upstream_v2_14_1
 
 Boot Loader Stage 2 (BL2) at EL3
 --------------------------------
@@ -3188,11 +3163,7 @@ allocated in a special area if it cannot fit in the platform's global static
 data, for example in DRAM. The Distributor can then be powered down using an
 implementation-defined sequence.
 
-<<<<<<< HEAD
-plat_psci_ops.pwr_domain_pwr_down_wfi()
-=======
 plat_psci_ops.pwr_domain_pwr_down()
->>>>>>> upstream_import/upstream_v2_14_1
 .......................................
 
 This is an optional function and, if implemented, is expected to perform
@@ -4101,8 +4072,6 @@ Measured Boot Platform Interface
 Enabling the MEASURED_BOOT flag adds extra platform requirements. Please refer
 to :ref:`Measured Boot Design` for more details.
 
-<<<<<<< HEAD
-=======
 Live Firmware Activation Interface
 ----------------------------------
 
@@ -4171,19 +4140,13 @@ the required steps for component activation. The function takes the component
 identifier ``lfa_component_id`` as an argument. It should return 0 on success
 or appropriate negative error codes on failures.
 
->>>>>>> upstream_import/upstream_v2_14_1
 --------------
 
 *Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.*
 
 .. _PSCI: https://developer.arm.com/documentation/den0022/latest/
-<<<<<<< HEAD
-.. _Arm Generic Interrupt Controller version 2.0 (GICv2): http://infocenter.arm.com/help/topic/com.arm.doc.ihi0048b/index.html
-.. _3.0 (GICv3): http://infocenter.arm.com/help/topic/com.arm.doc.ihi0069b/index.html
-=======
 .. _Arm Generic Interrupt Controller version 2.0 (GICv2): https://developer.arm.com/documentation/ihi0048/b/
 .. _3.0 (GICv3): https://developer.arm.com/documentation/ihi0069
->>>>>>> upstream_import/upstream_v2_14_1
 .. _FreeBSD: https://www.freebsd.org
 .. _SCC: http://www.simple-cc.org/
 .. _DRTM: https://developer.arm.com/documentation/den0113

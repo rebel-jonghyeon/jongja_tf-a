@@ -50,15 +50,6 @@ static int unsigned_num_print(unsigned long long int unum, unsigned int radix,
 	}
 
 	do {
-<<<<<<< HEAD
-		rem = unum % radix;
-		if (rem < 0xa) {
-			num_buf[i] = '0' + rem;
-		} else if (uppercase) {
-			num_buf[i] = 'A' + (rem - 0xa);
-		} else {
-			num_buf[i] = 'a' + (rem - 0xa);
-=======
 		rem = (uint32_t)(unum % radix);
 		if (rem < 0xaU) {
 			num_buf[i] = '0' + rem;
@@ -66,7 +57,6 @@ static int unsigned_num_print(unsigned long long int unum, unsigned int radix,
 			num_buf[i] = 'A' + (rem - 0xaU);
 		} else {
 			num_buf[i] = 'a' + (rem - 0xaU);
->>>>>>> upstream_import/upstream_v2_14_1
 		}
 		i++;
 		unum /= radix;

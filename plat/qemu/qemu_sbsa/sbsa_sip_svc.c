@@ -6,21 +6,10 @@
 
 #include <assert.h>
 
-<<<<<<< HEAD
-#include <common/fdt_wrappers.h>
-#include <common/runtime_svc.h>
-#include <libfdt.h>
-#include <smccc_helpers.h>
-
-/* default platform version is 0.0 */
-static int platform_version_major;
-static int platform_version_minor;
-=======
 #include <common/runtime_svc.h>
 #include <smccc_helpers.h>
 
 #include <sbsa_platform.h>
->>>>>>> upstream_import/upstream_v2_14_1
 
 #define SMC_FASTCALL       0x80000000
 #define SMC64_FUNCTION     (SMC_FASTCALL   | 0x40000000)
@@ -35,111 +24,6 @@ static int platform_version_minor;
 #define SIP_SVC_VERSION  SIP_FUNCTION_ID(1)
 #define SIP_SVC_GET_GIC  SIP_FUNCTION_ID(100)
 #define SIP_SVC_GET_GIC_ITS SIP_FUNCTION_ID(101)
-<<<<<<< HEAD
-
-static uint64_t gic_its_addr;
-
-void sbsa_set_gic_bases(const uintptr_t gicd_base, const uintptr_t gicr_base);
-uintptr_t sbsa_get_gicd(void);
-uintptr_t sbsa_get_gicr(void);
-
-void read_platform_config_from_dt(void *dtb)
-{
-	int node;
-	const fdt64_t *data;
-	int err;
-	uintptr_t gicd_base;
-	uintptr_t gicr_base;
-
-	/*
-	 * QEMU gives us this DeviceTree node:
-	 *
-	 * intc {
-	 *	 reg = < 0x00 0x40060000 0x00 0x10000
-	 *		 0x00 0x40080000 0x00 0x4000000>;
-	 *       its {
-	 *               reg = <0x00 0x44081000 0x00 0x20000>;
-	 *       };
-	 * };
-	 */
-	node = fdt_path_offset(dtb, "/intc");
-	if (node < 0) {
-		return;
-	}
-
-	data = fdt_getprop(dtb, node, "reg", NULL);
-	if (data == NULL) {
-		return;
-	}
-
-	err = fdt_get_reg_props_by_index(dtb, node, 0, &gicd_base, NULL);
-	if (err < 0) {
-		ERROR("Failed to read GICD reg property of GIC node\n");
-		return;
-	}
-	INFO("GICD base = 0x%lx\n", gicd_base);
-
-	err = fdt_get_reg_props_by_index(dtb, node, 1, &gicr_base, NULL);
-	if (err < 0) {
-		ERROR("Failed to read GICR reg property of GIC node\n");
-		return;
-	}
-	INFO("GICR base = 0x%lx\n", gicr_base);
-
-	sbsa_set_gic_bases(gicd_base, gicr_base);
-
-	node = fdt_path_offset(dtb, "/intc/its");
-	if (node < 0) {
-		return;
-	}
-
-	err = fdt_get_reg_props_by_index(dtb, node, 0, &gic_its_addr, NULL);
-	if (err < 0) {
-		ERROR("Failed to read GICI reg property of GIC node\n");
-		return;
-	}
-	INFO("GICI base = 0x%lx\n", gic_its_addr);
-}
-
-void read_platform_version(void *dtb)
-{
-	int node;
-
-	node = fdt_path_offset(dtb, "/");
-	if (node >= 0) {
-		platform_version_major = fdt32_ld(fdt_getprop(dtb, node,
-							      "machine-version-major", NULL));
-		platform_version_minor = fdt32_ld(fdt_getprop(dtb, node,
-							      "machine-version-minor", NULL));
-	}
-}
-
-void sip_svc_init(void)
-{
-	/* Read DeviceTree data before MMU is enabled */
-
-	void *dtb = (void *)(uintptr_t)ARM_PRELOADED_DTB_BASE;
-	int err;
-
-	err = fdt_open_into(dtb, dtb, PLAT_QEMU_DT_MAX_SIZE);
-	if (err < 0) {
-		ERROR("Invalid Device Tree at %p: error %d\n", dtb, err);
-		return;
-	}
-
-	err = fdt_check_header(dtb);
-	if (err < 0) {
-		ERROR("Invalid DTB file passed\n");
-		return;
-	}
-
-	read_platform_version(dtb);
-	INFO("Platform version: %d.%d\n", platform_version_major, platform_version_minor);
-
-	read_platform_config_from_dt(dtb);
-}
-
-=======
 #define SIP_SVC_GET_CPU_COUNT SIP_FUNCTION_ID(200)
 #define SIP_SVC_GET_CPU_NODE SIP_FUNCTION_ID(201)
 #define SIP_SVC_GET_CPU_TOPOLOGY SIP_FUNCTION_ID(202)
@@ -149,7 +33,6 @@ void sip_svc_init(void)
 uintptr_t sbsa_get_gicd(void);
 uintptr_t sbsa_get_gicr(void);
 
->>>>>>> upstream_import/upstream_v2_14_1
 /*
  * This function is responsible for handling all SiP calls from the NS world
  */
@@ -163,10 +46,7 @@ uintptr_t sbsa_sip_smc_handler(uint32_t smc_fid,
 			       u_register_t flags)
 {
 	uint32_t ns;
-<<<<<<< HEAD
-=======
 	uint64_t index;
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Determine which security state this SMC originated from */
 	ns = is_caller_non_secure(flags);
@@ -178,20 +58,13 @@ uintptr_t sbsa_sip_smc_handler(uint32_t smc_fid,
 	switch (smc_fid) {
 	case SIP_SVC_VERSION:
 		INFO("Platform version requested\n");
-<<<<<<< HEAD
-		SMC_RET3(handle, NULL, platform_version_major, platform_version_minor);
-=======
 		SMC_RET3(handle, NULL, sbsa_platform_version_major(),
 			 sbsa_platform_version_minor());
->>>>>>> upstream_import/upstream_v2_14_1
 
 	case SIP_SVC_GET_GIC:
 		SMC_RET3(handle, NULL, sbsa_get_gicd(), sbsa_get_gicr());
 
 	case SIP_SVC_GET_GIC_ITS:
-<<<<<<< HEAD
-		SMC_RET2(handle, NULL, gic_its_addr);
-=======
 		SMC_RET2(handle, NULL, sbsa_platform_gic_its_addr());
 
 	case SIP_SVC_GET_CPU_COUNT:
@@ -238,7 +111,6 @@ uintptr_t sbsa_sip_smc_handler(uint32_t smc_fid,
 		} else {
 			SMC_RET1(handle, SMC_ARCH_CALL_INVAL_PARAM);
 		}
->>>>>>> upstream_import/upstream_v2_14_1
 
 	default:
 		ERROR("%s: unhandled SMC (0x%x) (function id: %d)\n", __func__, smc_fid,

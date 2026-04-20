@@ -140,10 +140,6 @@
 #define PLAT_ARM_NS_IMAGE_BASE		(ARM_DRAM1_BASE + UL(0x8000000))
 
 #if TRANSFER_LIST
-<<<<<<< HEAD
-#define FW_HANDOFF_SIZE			0x4000
-#define FW_NS_HANDOFF_BASE		(PLAT_ARM_NS_IMAGE_BASE - FW_HANDOFF_SIZE)
-=======
 
 /* Define maximum size of sp manifest file. */
 #if defined(SPD_spmd)
@@ -174,7 +170,6 @@
 
 #else
 #define PLAT_ARM_FW_HANDOFF_SIZE	U(0)
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 /*
@@ -219,19 +214,11 @@
 #  define MAX_XLAT_TABLES		6
 # endif
 #elif !USE_ROMLIB
-<<<<<<< HEAD
-# if ENABLE_RME && defined(IMAGE_BL2)
-#  define PLAT_ARM_MMAP_ENTRIES		12
-#  define MAX_XLAT_TABLES		6
-# else
-#  define PLAT_ARM_MMAP_ENTRIES		11
-=======
 # if defined(IMAGE_BL2) && (ENABLE_RME || SPMC_AT_EL3)
 #  define PLAT_ARM_MMAP_ENTRIES		12
 #  define MAX_XLAT_TABLES		6
 # else
 #  define PLAT_ARM_MMAP_ENTRIES		12
->>>>>>> upstream_import/upstream_v2_14_1
 #  define MAX_XLAT_TABLES		5
 # endif /* (IMAGE_BL2 && ENABLE_RME) */
 #else
@@ -250,14 +237,9 @@ defined(IMAGE_BL2) && MEASURED_BOOT
  * In case of PSA Crypto API, few algorithms like ECDSA needs bigger BL1 RW
  * area.
  */
-<<<<<<< HEAD
-#if TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_RSA_AND_ECDSA || PSA_CRYPTO
-#define PLAT_ARM_MAX_BL1_RW_SIZE	UL(0xC000)
-=======
 #if TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_RSA_AND_ECDSA || PSA_CRYPTO || \
 FVP_TRUSTED_SRAM_SIZE == 512
 #define PLAT_ARM_MAX_BL1_RW_SIZE	UL(0xD000)
->>>>>>> upstream_import/upstream_v2_14_1
 #else
 #define PLAT_ARM_MAX_BL1_RW_SIZE	UL(0xB000)
 #endif
@@ -280,18 +262,6 @@ FVP_TRUSTED_SRAM_SIZE == 512
  * Set the maximum size of BL2 to be close to half of the Trusted SRAM.
  * Maximum size of BL2 increases as Trusted SRAM size increases.
  */
-<<<<<<< HEAD
-#if CRYPTO_SUPPORT
-#if (TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_RSA_AND_ECDSA) || COT_DESC_IN_DTB
-# define PLAT_ARM_MAX_BL2_SIZE	((PLAT_ARM_TRUSTED_SRAM_SIZE / 2) - \
-				 (2 * PAGE_SIZE) - \
-				 FVP_BL2_ROMLIB_OPTIMIZATION)
-#else
-# define PLAT_ARM_MAX_BL2_SIZE	((PLAT_ARM_TRUSTED_SRAM_SIZE / 2) - \
-				 (3 * PAGE_SIZE) - \
-				 FVP_BL2_ROMLIB_OPTIMIZATION)
-#endif
-=======
 #if (defined(TF_MBEDTLS_KEY_ALG_ID) && \
      (TF_MBEDTLS_KEY_ALG_ID == TF_MBEDTLS_RSA_AND_ECDSA)) || \
     (TRUSTED_BOARD_BOOT && COT_DESC_IN_DTB)
@@ -302,7 +272,6 @@ FVP_TRUSTED_SRAM_SIZE == 512
 # define PLAT_ARM_MAX_BL2_SIZE	((PLAT_ARM_TRUSTED_SRAM_SIZE / 2) - \
 				 (3 * PAGE_SIZE) - \
 				 FVP_BL2_ROMLIB_OPTIMIZATION)
->>>>>>> upstream_import/upstream_v2_14_1
 #elif ARM_BL31_IN_DRAM
 /* When ARM_BL31_IN_DRAM is set, BL2 can use almost all of Trusted SRAM. */
 # define PLAT_ARM_MAX_BL2_SIZE	(UL(0x1F000) - FVP_BL2_ROMLIB_OPTIMIZATION)
@@ -328,11 +297,6 @@ FVP_TRUSTED_SRAM_SIZE == 512
  * BL2 and BL1-RW.
  * Size of the BL31 PROGBITS increases as the SRAM size increases.
  */
-<<<<<<< HEAD
-#define PLAT_ARM_MAX_BL31_SIZE		(PLAT_ARM_TRUSTED_SRAM_SIZE - \
-					 ARM_SHARED_RAM_SIZE - \
-					 ARM_FW_CONFIGS_SIZE - ARM_L0_GPT_SIZE)
-=======
 #if TRANSFER_LIST
 #define PLAT_ARM_MAX_BL31_SIZE                              \
 	(PLAT_ARM_TRUSTED_SRAM_SIZE - ARM_SHARED_RAM_SIZE - \
@@ -342,7 +306,6 @@ FVP_TRUSTED_SRAM_SIZE == 512
 					 ARM_SHARED_RAM_SIZE - \
 					 ARM_FW_CONFIGS_SIZE - ARM_L0_GPT_SIZE)
 #endif /* TRANSFER_LIST */
->>>>>>> upstream_import/upstream_v2_14_1
 #endif /* RESET_TO_BL31 */
 
 #ifndef __aarch64__
@@ -561,13 +524,6 @@ FVP_TRUSTED_SRAM_SIZE == 512
  * TODO: calculate maximum EventLog size using the calculation:
  * Maximum size of Event Log * Number of images
  */
-<<<<<<< HEAD
-#if ENABLE_RME && (defined(SPD_tspd) || defined(SPD_opteed) || defined(SPD_spmd))
-/* Account for additional measurements of secure partitions and SPM. */
-#define	PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x800)
-#else
-#define	PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x400)
-=======
 #if (defined(SPD_spmd)) || (ENABLE_RME && (defined(SPD_tspd) || defined(SPD_opteed)))
 /*
  * Account for additional measurements of secure partitions and SPM.
@@ -578,7 +534,6 @@ FVP_TRUSTED_SRAM_SIZE == 512
 #define PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x200)
 #else
 #define PLAT_ARM_EVENT_LOG_MAX_SIZE		UL(0x400)
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 /*

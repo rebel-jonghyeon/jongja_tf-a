@@ -19,10 +19,7 @@
 #include "apusys.h"
 #include "apusys_power.h"
 #include "apusys_rv.h"
-<<<<<<< HEAD
-=======
 #include "apusys_rv_pwr_ctrl.h"
->>>>>>> upstream_import/upstream_v2_14_1
 #include <mtk_mmap_pool.h>
 
 static spinlock_t apu_lock;

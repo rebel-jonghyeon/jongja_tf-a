@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2020-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2020-2026, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -32,19 +28,7 @@
 	wa_cve_2022_23960_bhb_vector_table NEOVERSE_N2_BHB_LOOP_COUNT, neoverse_n2
 #endif /* WORKAROUND_CVE_2022_23960 */
 
-<<<<<<< HEAD
-/*
- * ERRATA_DSU_2313941:
- * The errata is defined in dsu_helpers.S and applies to Neoverse N2.
- * Henceforth creating symbolic names to the already existing errata
- * workaround functions to get them registered under the Errata Framework.
- */
-.equ check_erratum_neoverse_n2_2313941, check_errata_dsu_2313941
-.equ erratum_neoverse_n2_2313941_wa, errata_dsu_2313941_wa
-add_erratum_entry neoverse_n2, ERRATUM(2313941), ERRATA_DSU_2313941, APPLY_AT_RESET
-=======
 cpu_reset_prologue neoverse_n2
->>>>>>> upstream_import/upstream_v2_14_1
 
 workaround_reset_start neoverse_n2, ERRATUM(2002655), ERRATA_N2_2002655
 	/* Apply instruction patching sequence */
@@ -68,43 +52,6 @@ workaround_reset_end neoverse_n2, ERRATUM(2002655)
 
 check_erratum_ls neoverse_n2, ERRATUM(2002655), CPU_REV(0, 0)
 
-<<<<<<< HEAD
-workaround_reset_start neoverse_n2, ERRATUM(2025414), ERRATA_N2_2025414
-	sysreg_bit_set NEOVERSE_N2_CPUECTLR_EL1, NEOVERSE_N2_CPUECTLR_EL1_PFSTIDIS_BIT
-workaround_reset_end neoverse_n2, ERRATUM(2025414)
-
-check_erratum_ls neoverse_n2, ERRATUM(2025414), CPU_REV(0, 0)
-
-workaround_reset_start neoverse_n2, ERRATUM(2067956), ERRATA_N2_2067956
-	sysreg_bit_set NEOVERSE_N2_CPUACTLR_EL1, NEOVERSE_N2_CPUACTLR_EL1_BIT_46
-workaround_reset_end neoverse_n2, ERRATUM(2067956)
-
-check_erratum_ls neoverse_n2, ERRATUM(2067956), CPU_REV(0, 0)
-
-workaround_runtime_start neoverse_n2, ERRATUM(2009478), ERRATA_N2_2009478
-	/* Stash ERRSELR_EL1 in x2 */
-	mrs     x2, ERRSELR_EL1
-
-	/* Select error record 0 and clear ED bit */
-	msr     ERRSELR_EL1, xzr
-	mrs     x1, ERXCTLR_EL1
-	bfi     x1, xzr, #ERXCTLR_ED_SHIFT, #1
-	msr     ERXCTLR_EL1, x1
-
-	/* Restore ERRSELR_EL1 from x2 */
-	msr     ERRSELR_EL1, x2
-workaround_runtime_end neoverse_n2, ERRATUM(2009478), NO_ISB
-
-check_erratum_ls neoverse_n2, ERRATUM(2009478), CPU_REV(0, 0)
-
-workaround_reset_start neoverse_n2, ERRATUM(2138953), ERRATA_N2_2138953
-	/* Apply instruction patching sequence */
-	mrs	x1, NEOVERSE_N2_CPUECTLR2_EL1
-	mov	x0, #NEOVERSE_N2_CPUECTLR2_EL1_PF_MODE_CNSRV
-	bfi	x1, x0, #CPUECTLR2_EL1_PF_MODE_LSB, #CPUECTLR2_EL1_PF_MODE_WIDTH
-	msr	NEOVERSE_N2_CPUECTLR2_EL1, x1
-workaround_reset_end neoverse_n2, ERRATUM(2138953)
-=======
 workaround_runtime_start neoverse_n2, ERRATUM(2009478), ERRATA_N2_2009478
 	/* Stash ERRSELR_EL1 in x2 */
 	mrs     x2, ERRSELR_EL1
@@ -136,7 +83,6 @@ check_erratum_ls neoverse_n2, ERRATUM(2067956), CPU_REV(0, 0)
 workaround_runtime_start neoverse_n2, ERRATUM(2138953), ERRATA_N2_2138953
 	sysreg_bit_set NEOVERSE_N2_CPUACTLR2_EL1, BIT(29)
 workaround_runtime_end neoverse_n2, ERRATUM(2138953)
->>>>>>> upstream_import/upstream_v2_14_1
 
 check_erratum_ls neoverse_n2, ERRATUM(2138953), CPU_REV(0, 3)
 
@@ -161,10 +107,6 @@ workaround_reset_start neoverse_n2, ERRATUM(2138956), ERRATA_N2_2138956
 workaround_reset_end neoverse_n2, ERRATUM(2138956)
 
 check_erratum_ls neoverse_n2, ERRATUM(2138956), CPU_REV(0, 0)
-<<<<<<< HEAD
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 workaround_reset_start neoverse_n2, ERRATUM(2138958), ERRATA_N2_2138958
 	/* Apply instruction patching sequence */
@@ -206,16 +148,6 @@ workaround_reset_start neoverse_n2, ERRATUM(2280757), ERRATA_N2_2280757
 workaround_reset_end neoverse_n2, ERRATUM(2280757)
 
 check_erratum_ls neoverse_n2, ERRATUM(2280757), CPU_REV(0, 0)
-<<<<<<< HEAD
-
-workaround_runtime_start neoverse_n2, ERRATUM(2326639), ERRATA_N2_2326639
-	/* Set bit 36 in ACTLR2_EL1 */
-	sysreg_bit_set NEOVERSE_N2_CPUACTLR2_EL1, NEOVERSE_N2_CPUACTLR2_EL1_BIT_36
-workaround_runtime_end neoverse_n2, ERRATUM(2326639)
-
-check_erratum_ls neoverse_n2, ERRATUM(2326639), CPU_REV(0, 0)
-
-=======
 
 workaround_reset_start neoverse_n2, ERRATUM(2313941), ERRATA_DSU_2313941
 	errata_dsu_2313941_wa_impl
@@ -254,7 +186,6 @@ workaround_reset_end neoverse_n2, ERRATUM(2346952)
 
 check_erratum_ls neoverse_n2, ERRATUM(2346952), CPU_REV(0, 2)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start neoverse_n2, ERRATUM(2376738), ERRATA_N2_2376738
 	/* Set CPUACTLR2_EL1[0] to 1 to force PLDW/PFRM
 	 * ST to behave like PLD/PFRM LD and not cause
@@ -294,8 +225,6 @@ workaround_reset_end neoverse_n2, ERRATUM(2779511)
 
 check_erratum_ls neoverse_n2, ERRATUM(2779511), CPU_REV(0, 2)
 
-<<<<<<< HEAD
-=======
 workaround_runtime_start neoverse_n2, ERRATUM(3324339), ERRATA_N2_3324339
 	speculation_barrier
 workaround_runtime_end neoverse_n2, ERRATUM(3324339)
@@ -318,7 +247,6 @@ workaround_reset_end neoverse_n2, ERRATUM(4302970)
 
 check_erratum_ls neoverse_n2, ERRATUM(4302970), CPU_REV(0, 3)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start neoverse_n2, CVE(2022,23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
 	/*
@@ -330,8 +258,6 @@ workaround_reset_start neoverse_n2, CVE(2022,23960), WORKAROUND_CVE_2022_23960
 workaround_reset_end neoverse_n2, CVE(2022,23960)
 
 check_erratum_chosen neoverse_n2, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-<<<<<<< HEAD
-=======
 
 /* Disable hardware page aggregation. Enables mitigation for `CVE-2024-5660` */
 workaround_reset_start neoverse_n2, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
@@ -362,7 +288,6 @@ func neoverse_n2_impl_defined_el3_handler
 	b	wa_cve_2025_0647_do_cpp_wa
 endfunc neoverse_n2_impl_defined_el3_handler
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* -------------------------------------------
 	 * The CPU Ops reset function for Neoverse N2.
@@ -385,15 +310,9 @@ cpu_reset_func_start neoverse_n2
 
 #if ENABLE_FEAT_AMU
 	/* Make sure accesses from EL0/EL1 and EL2 are not trapped to EL3 */
-<<<<<<< HEAD
-	sysreg_bit_set cptr_el3, TAM_BIT
-	/* Make sure accesses from EL0/EL1 are not trapped to EL2 */
-	sysreg_bit_set cptr_el2, TAM_BIT
-=======
 	sysreg_bit_clear cptr_el3, TAM_BIT
 	/* Make sure accesses from EL0/EL1 are not trapped to EL2 */
 	sysreg_bit_clear cptr_el2, TAM_BIT
->>>>>>> upstream_import/upstream_v2_14_1
 	/* No need to enable the counters as this would be done at el3 exit */
 #endif
 
@@ -401,12 +320,6 @@ cpu_reset_func_start neoverse_n2
 	/* Some systems may have External LLC, core needs to be made aware */
 	sysreg_bit_set NEOVERSE_N2_CPUECTLR_EL1, NEOVERSE_N2_CPUECTLR_EL1_EXTLLC_BIT
 #endif
-<<<<<<< HEAD
-cpu_reset_func_end neoverse_n2
-
-func neoverse_n2_core_pwr_dwn
-
-=======
 #if NEOVERSE_N2_PREFETCHER_DISABLE
 	/* Disable region prefetcher for L2 cache perf measurement */
 	apply_erratum neoverse_n2, ERRATUM(2138953), ERRATA_N2_2138953
@@ -415,7 +328,6 @@ func neoverse_n2_core_pwr_dwn
 cpu_reset_func_end neoverse_n2
 
 func neoverse_n2_core_pwr_dwn
->>>>>>> upstream_import/upstream_v2_14_1
 	apply_erratum neoverse_n2, ERRATUM(2009478), ERRATA_N2_2009478
 	apply_erratum neoverse_n2, ERRATUM(2326639), ERRATA_N2_2326639, NO_GET_CPU_REV
 
@@ -426,21 +338,12 @@ func neoverse_n2_core_pwr_dwn
 	 */
 	sysreg_bit_set NEOVERSE_N2_CPUPWRCTLR_EL1, NEOVERSE_N2_CORE_PWRDN_EN_BIT
 
-<<<<<<< HEAD
-	apply_erratum neoverse_n2, ERRATUM(2743089), ERRATA_N2_2743089
-=======
 	apply_erratum neoverse_n2, ERRATUM(2743089), ERRATA_N2_2743089, NO_GET_CPU_REV
->>>>>>> upstream_import/upstream_v2_14_1
 
 	isb
 	ret
 endfunc neoverse_n2_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim neoverse_n2
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides Neoverse N2 specific
 	 * register information for crash reporting.

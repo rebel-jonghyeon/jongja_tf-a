@@ -315,11 +315,7 @@ int mailbox_read_response_async(unsigned int *job_id, uint32_t *header,
 				return MBOX_RET_ERROR;
 			}
 
-<<<<<<< HEAD
-			memcpy((uint8_t *) response,
-=======
 			memcpy_s((uint8_t *) response, *resp_len * MBOX_WORD_BYTE,
->>>>>>> upstream_import/upstream_v2_14_1
 				(uint8_t *) mailbox_resp_ctr.payload->data,
 				*resp_len * MBOX_WORD_BYTE);
 		}
@@ -813,8 +809,6 @@ int mailbox_seu_err_status(uint32_t *resp_buf, unsigned int resp_buf_len)
 				CMD_CASUAL, resp_buf,
 				&resp_buf_len);
 }
-<<<<<<< HEAD
-=======
 
 int mailbox_safe_inject_seu_err(uint32_t *arg, unsigned int len)
 {
@@ -1511,4 +1505,3 @@ void mailbox_init_v3(void)
 	mbox_svc.curr_di = -1;
 }
 #endif /* #if SIP_SVC_V3 */
->>>>>>> upstream_import/upstream_v2_14_1

@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2022-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  * Copyright (c) 2022, Linaro.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -102,12 +98,6 @@ void bl2_plat_mboot_finish(void)
 	flush_dcache_range(ns_log_addr, event_log_cur_size);
 
 	event_log_dump((uint8_t *)event_log, event_log_cur_size);
-}
-
-int plat_mboot_measure_key(const void *pk_oid, const void *pk_ptr,
-			   size_t pk_len)
-{
-	return 0;
 }
 
 int plat_mboot_measure_key(const void *pk_oid, const void *pk_ptr,

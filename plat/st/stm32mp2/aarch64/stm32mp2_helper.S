@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2023, STMicroelectronics - All Rights Reserved
-=======
  * Copyright (c) 2023-2024, STMicroelectronics - All Rights Reserved
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -18,10 +14,7 @@
 	.globl	platform_mem_init
 	.globl	plat_secondary_cold_boot_setup
 	.globl	plat_is_my_cpu_primary
-<<<<<<< HEAD
-=======
 	.globl	plat_my_core_pos
->>>>>>> upstream_import/upstream_v2_14_1
 	.globl	plat_crash_console_init
 	.globl	plat_crash_console_flush
 	.globl	plat_crash_console_putc
@@ -40,11 +33,6 @@ endfunc platform_mem_init
 	 */
 func plat_secondary_cold_boot_setup
 	dsb	sy
-<<<<<<< HEAD
-	wfi
-	/* This shouldn't be reached */
-	b	.
-=======
 1:
 	wfi
 	/*
@@ -53,7 +41,6 @@ func plat_secondary_cold_boot_setup
 	 * Put back the core in wfi.
 	 */
 	b	1b
->>>>>>> upstream_import/upstream_v2_14_1
 endfunc plat_secondary_cold_boot_setup
 
 	/* ----------------------------------------------
@@ -69,8 +56,6 @@ func plat_is_my_cpu_primary
 	ret
 endfunc plat_is_my_cpu_primary
 
-<<<<<<< HEAD
-=======
 	/* -----------------------------------------------------------
 	 *  unsigned int plat_stm32mp_get_core_pos(u_register_t mpidr)
 	 *  Helper function to calculate the core position.
@@ -96,7 +81,6 @@ func plat_my_core_pos
 	b	plat_stm32mp_get_core_pos
 endfunc plat_my_core_pos
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * int plat_crash_console_init(void)
 	 *
@@ -106,21 +90,6 @@ endfunc plat_my_core_pos
 func plat_crash_console_init
 	/* Reset UART peripheral */
 	mov_imm	x1, (RCC_BASE + DEBUG_UART_RST_REG)
-<<<<<<< HEAD
-	ldr	x2, =DEBUG_UART_RST_BIT
-	ldr	x0, [x1]
-	orr	x0, x0, x2
-	str	x0, [x1]
-1:
-	ldr	x0, [x1]
-	ands	x2, x0, x2
-	beq	1b
-	bic	x2, x2, #DEBUG_UART_RST_BIT
-	str	x2, [x1]
-2:
-	ldr	x0, [x1]
-	ands	x2, x0, x2
-=======
 	ldr	w2, =DEBUG_UART_RST_BIT
 	ldr	w0, [x1]
 	orr	w0, w0, w2
@@ -134,7 +103,6 @@ func plat_crash_console_init
 2:
 	ldr	w0, [x1]
 	tst	w0, #DEBUG_UART_RST_BIT
->>>>>>> upstream_import/upstream_v2_14_1
 	bne	2b
 	/* Enable GPIOs for UART TX */
 	mov_imm	x1, (RCC_BASE + DEBUG_UART_TX_GPIO_BANK_CLK_REG)

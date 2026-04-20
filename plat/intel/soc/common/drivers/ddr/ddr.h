@@ -10,8 +10,6 @@
 #include <lib/mmio.h>
 #include "socfpga_handoff.h"
 
-<<<<<<< HEAD
-=======
 enum ddr_type {
 	DDR_TYPE_LPDDR4_0,
 	DDR_TYPE_LPDDR4_1,
@@ -34,7 +32,6 @@ enum region_size {
 typedef unsigned long long phys_addr_t;
 typedef unsigned long long phys_size_t;
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* MACRO DEFINATION */
 #define IO96B_0_REG_BASE				0x18400000
 #define IO96B_1_REG_BASE				0x18800000
@@ -111,8 +108,6 @@ typedef unsigned long long phys_size_t;
 
 #define IOSSM_MB_WRITE(addr, data)			mmio_write_32(addr, data)
 
-<<<<<<< HEAD
-=======
 /* DDR4 Register */
 #define DDR4_PWRCTL_OFFSET				0x30
 #define DDR4_SBRCTL_OFFSET				0x0F24
@@ -141,7 +136,6 @@ typedef unsigned long long phys_size_t;
 #define DDR4_SBRCTL_SCRUB_WRITE				BIT(2)
 #define DDR4_SBRSTAT_SCRUB_DONE				BIT(1)
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* FUNCTION DEFINATION */
 int ddr_calibration_check(void);
 
@@ -165,13 +159,10 @@ void ddr_enable_firewall(void);
 
 bool is_ddr_init_in_progress(void);
 
-<<<<<<< HEAD
-=======
 int ddr_zerofill_scrubber(phys_addr_t umctl2_base, enum ddr_type umctl2_type);
 
 int ddr_config_scrubber(phys_addr_t umctl2_base, enum ddr_type umctl2_type);
 
 int poll_idle_status(uint32_t addr, uint32_t mask, uint32_t match, uint32_t delay_ms);
 
->>>>>>> upstream_import/upstream_v2_14_1
 #endif

@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -32,18 +28,6 @@
 	wa_cve_2022_23960_bhb_vector_table NEOVERSE_N1_BHB_LOOP_COUNT, neoverse_n1
 #endif /* WORKAROUND_CVE_2022_23960 */
 
-<<<<<<< HEAD
-/*
- * ERRATA_DSU_936184:
- * The errata is defined in dsu_helpers.S and applies to Neoverse N1.
- * Henceforth creating symbolic names to the already existing errata
- * workaround functions to get them registered under the Errata Framework.
- */
-.equ check_erratum_neoverse_n1_936184, check_errata_dsu_936184
-.equ erratum_neoverse_n1_936184_wa, errata_dsu_936184_wa
-add_erratum_entry neoverse_n1, ERRATUM(936184), ERRATA_DSU_936184, APPLY_AT_RESET
-
-=======
 cpu_reset_prologue neoverse_n1
 
 workaround_reset_start neoverse_n1, ERRATUM(936184), ERRATA_DSU_936184
@@ -57,7 +41,6 @@ check_erratum_custom_start neoverse_n1, ERRATUM(936184)
 	ret
 check_erratum_custom_end neoverse_n1, ERRATUM(936184)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start neoverse_n1, ERRATUM(1043202), ERRATA_N1_1043202
 	/* Apply instruction patching sequence */
 	ldr	x0, =0x0
@@ -133,11 +116,7 @@ workaround_reset_end neoverse_n1, ERRATUM(1315703)
 
 check_erratum_ls neoverse_n1, ERRATUM(1315703), CPU_REV(3, 0)
 
-<<<<<<< HEAD
-workaround_reset_start neoverse_n1, ERRATUM(1542419), ERRATA_N1_1542419
-=======
 workaround_reset_start neoverse_n1, ERRATUM(1542419), ERRATA_N1_1542419, SPLIT_WA
->>>>>>> upstream_import/upstream_v2_14_1
 	/* Apply instruction patching sequence */
 	ldr	x0, =0x0
 	msr	CPUPSELR_EL3, x0
@@ -195,15 +174,12 @@ workaround_runtime_end neoverse_n1, ERRATUM(2743102)
 
 check_erratum_ls neoverse_n1, ERRATUM(2743102), CPU_REV(4, 1)
 
-<<<<<<< HEAD
-=======
 workaround_runtime_start  neoverse_n1, ERRATUM(3324349), ERRATA_N1_3324349
 	speculation_barrier
 workaround_runtime_end neoverse_n1, ERRATUM(3324349)
 
 check_erratum_ls neoverse_n1, ERRATUM(3324349), CPU_REV(4, 1)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start neoverse_n1, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
 	/*
@@ -277,11 +253,6 @@ func neoverse_n1_core_pwr_dwn
 	ret
 endfunc neoverse_n1_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim neoverse_n1
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 /*
  * Handle trap of EL0 IC IVAU instructions to EL3 by executing a TLB
  * inner-shareable invalidation to an arbitrary address followed by a DSB.

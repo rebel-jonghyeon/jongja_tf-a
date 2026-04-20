@@ -4,10 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-<<<<<<< HEAD
-=======
 #include <errno.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <arch.h>
 #include <common/debug.h>
 #include <common/desc_image_load.h>
@@ -116,8 +113,6 @@ entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
 
 	return ep_info;
 }
-<<<<<<< HEAD
-=======
 
 /*
  * Clock divider/multiplier configuration struct.
@@ -205,4 +200,3 @@ unsigned int plat_get_syscnt_freq2(void)
 		return plat_get_pll_rate(PLAT_CLK_MPLL);
 	}
 }
->>>>>>> upstream_import/upstream_v2_14_1

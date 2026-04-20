@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2021, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -130,9 +126,9 @@
  * MT_SHAREABILITY_OSH: For outer shareable domain
  * MT_SHAREABILITY_NSH: For non shareable domain
  */
-#define MT_SHAREABILITY_ISH	(U(3) << MT_SHAREABILITY_SHIFT)
+#define MT_SHAREABILITY_ISH	(U(1) << MT_SHAREABILITY_SHIFT)
 #define MT_SHAREABILITY_OSH	(U(2) << MT_SHAREABILITY_SHIFT)
-#define MT_SHAREABILITY_NSH	(U(0) << MT_SHAREABILITY_SHIFT)
+#define MT_SHAREABILITY_NSH	(U(3) << MT_SHAREABILITY_SHIFT)
 
 /* Compound attributes for most common usages */
 #define MT_CODE			(MT_MEMORY | MT_RO | MT_EXECUTE)

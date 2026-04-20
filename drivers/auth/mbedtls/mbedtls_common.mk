@@ -24,21 +24,10 @@ ifneq (${MBEDTLS_MAJOR}, 3)
 endif
 
 # Specify mbed TLS configuration file
-<<<<<<< HEAD
-ifeq (${MBEDTLS_MAJOR}, 2)
-	MBEDTLS_CONFIG_FILE	?=	"<drivers/auth/mbedtls/mbedtls_config-2.h>"
-else ifeq (${MBEDTLS_MAJOR}, 3)
-	ifeq (${PSA_CRYPTO},1)
-		MBEDTLS_CONFIG_FILE     ?=      "<drivers/auth/mbedtls/psa_mbedtls_config.h>"
-	else
-		MBEDTLS_CONFIG_FILE	?=	"<drivers/auth/mbedtls/mbedtls_config-3.h>"
-	endif
-=======
 ifeq (${PSA_CRYPTO},1)
   MBEDTLS_CONFIG_FILE    ?=    "<drivers/auth/mbedtls/default_psa_mbedtls_config.h>"
 else
   MBEDTLS_CONFIG_FILE    ?=    "<drivers/auth/mbedtls/default_mbedtls_config.h>"
->>>>>>> upstream_import/upstream_v2_14_1
 endif
 
 $(eval $(call add_define,MBEDTLS_CONFIG_FILE))
@@ -90,24 +79,10 @@ LIBMBEDTLS_SRCS         += $(addprefix ${MBEDTLS_DIR}/library/,    	\
 					)
 endif
 
-<<<<<<< HEAD
-ifeq (${PSA_CRYPTO},1)
-LIBMBEDTLS_SRCS         += $(addprefix ${MBEDTLS_DIR}/library/,    	\
-					psa_crypto.c                   	\
-					psa_crypto_client.c            	\
-					psa_crypto_driver_wrappers.c   	\
-					psa_crypto_hash.c              	\
-					psa_crypto_rsa.c               	\
-					psa_crypto_ecp.c               	\
-					psa_crypto_slot_management.c   	\
-					)
-endif
-=======
 # This is a temporary workaround due to changes in the locations of helper
 # function declarations in Mbed-TLS version 3.6.4
 # TODO: remove this once the related Mbedt-TLS issue is resolved
 LIBMBEDTLS_CFLAGS	+=	-Wno-error=redundant-decls
->>>>>>> upstream_import/upstream_v2_14_1
 
 # The platform may define the variable 'TF_MBEDTLS_KEY_ALG' to select the key
 # algorithm to use. If the variable is not defined, select it based on

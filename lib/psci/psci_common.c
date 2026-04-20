@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -484,11 +480,7 @@ void psci_get_target_local_pwr_states(unsigned int cpu_idx, unsigned int end_pwr
  * enter. This function will be called after coordination of requested power
  * states has been done for each power level.
  *****************************************************************************/
-<<<<<<< HEAD
-void psci_set_target_local_pwr_states(unsigned int end_pwrlvl,
-=======
 void psci_set_target_local_pwr_states(unsigned int cpu_idx, unsigned int end_pwrlvl,
->>>>>>> upstream_import/upstream_v2_14_1
 				      const psci_power_state_t *target_state)
 {
 	unsigned int parent_idx, lvl;
@@ -1020,9 +1012,6 @@ void psci_warmboot_entrypoint(unsigned int cpu_idx)
 	unsigned int parent_nodes[PLAT_MAX_PWR_LVL] = {0};
 	psci_power_state_t state_info = { {PSCI_LOCAL_STATE_RUN} };
 
-	/* Init registers that never change for the lifetime of TF-A */
-	cm_manage_extensions_el3();
-
 	/*
 	 * Verify that we have been explicitly turned ON or resumed from
 	 * suspend.
@@ -1081,13 +1070,6 @@ void psci_warmboot_entrypoint(unsigned int cpu_idx)
 	 */
 	entry_point_info_t *ep = get_cpu_data(warmboot_ep_info);
 	cm_init_my_context(ep);
-
-	/*
-	 * Generic management: Now we just need to retrieve the
-	 * information that we had stashed away during the cpu_on
-	 * call to set this cpu on its way.
-	 */
-	cm_prepare_el3_exit_ns();
 
 	/*
 	 * Generic management: Now we just need to retrieve the

@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2022-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -45,8 +42,6 @@
 #define AGX5_PWRMGR_CPU_PWRSTAT1				0x24
 #define AGX5_PWRMGR_CPU_PWRSTAT2				0x2c
 #define AGX5_PWRMGR_CPU_PWRSTAT3				0x34
-<<<<<<< HEAD
-=======
 #define AGX5_PWRMGR_CPU_RUN_PCH(x)				((x) & 0x1)
 #define AGX5_PWRMGR_CPU_POLL_COUNT				10
 #define AGX5_PWRMGR_CPU_DELAY_10_US				10
@@ -56,7 +51,6 @@
  */
 #define AGX5_PWRMGR_CPU_SINGLE_FSM_STATE(x)			(((x) & 0x3fc) >> 2)
 #define AGX5_PWRMGR_CPU_PROG_CPU_ON_STATE			0x10
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* APS */
 #define AGX5_PWRMGR_APS_FWENCTL					0x38
@@ -93,11 +87,5 @@
 #define AGX5_PWRMGR_PSS_STAT_BUSY_E_BUSY			0x0
 #define AGX5_PWRMGR_PSS_STAT_BUSY(x)				(((x) & 0x000000FF) >> 0)
 
-<<<<<<< HEAD
-int pss_sram_power_off(handoff *hoff_ptr);
-int wait_verify_fsm(uint16_t timeout, uint32_t peripheral_handoff);
-
-=======
 void config_pwrmgr_handoff(handoff *hoff_ptr);
->>>>>>> upstream_import/upstream_v2_14_1
 #endif

@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -219,8 +215,6 @@ static EVP_PKEY *key_load_pkcs11(const char *uri)
 	EVP_PKEY *pkey;
 	ENGINE *e;
 
-<<<<<<< HEAD
-=======
 #if !USING_OPENSSL3
 	if (!OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CONFIG, NULL)) {
 		fprintf(stderr, "Failed to init SSL\n");
@@ -228,7 +222,6 @@ static EVP_PKEY *key_load_pkcs11(const char *uri)
 	}
 #endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 	ENGINE_load_builtin_engines();
 	e = ENGINE_by_id("pkcs11");
 	if (!e) {
@@ -256,39 +249,6 @@ err:
 	ENGINE_free(e);
 	return NULL;
 
-<<<<<<< HEAD
-}
-
-unsigned int key_load(key_t *key)
-{
-	if (key->fn == NULL) {
-		VERBOSE("Key not specified\n");
-		return KEY_ERR_FILENAME;
-	}
-
-	if (strncmp(key->fn, "pkcs11:", 7) == 0) {
-		/* Load key through pkcs11 */
-		key->key = key_load_pkcs11(key->fn);
-	} else {
-		/* Load key from file */
-		FILE *fp = fopen(key->fn, "r");
-		if (fp == NULL) {
-			WARN("Cannot open file %s\n", key->fn);
-			return KEY_ERR_OPEN;
-		}
-
-		key->key = PEM_read_PrivateKey(fp, NULL, NULL, NULL);
-		fclose(fp);
-	}
-
-	if (key->key == NULL) {
-		ERROR("Cannot load key from %s\n", key->fn);
-		return KEY_ERR_LOAD;
-	}
-
-	return KEY_ERR_NONE;
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 unsigned int key_load(cert_key_t *key)

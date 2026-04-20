@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,7 +10,6 @@
 #include <tpm_event_log.h>
 #endif
 #include <plat/arm/common/plat_arm.h>
-#include <tools_share/zero_oid.h>
 
 #include <drivers/auth/crypto_mod.h>
 #include <drivers/measured_boot/metadata.h>
@@ -41,41 +36,7 @@ const event_log_metadata_t fvp_event_log_metadata[] = {
 	{ TB_FW_CONFIG_ID, MBOOT_TB_FW_CONFIG_STRING, PCR_0 },
 	{ BL2_IMAGE_ID, MBOOT_BL2_IMAGE_STRING, PCR_0 },
 
-<<<<<<< HEAD
-	{ EVLOG_INVALID_ID, NULL, (unsigned int)(-1) }	/* Terminator */
-};
-
-/* FVP table with platform specific image IDs and metadata. Intentionally not a
- * const struct, some members might set by bootloaders during trusted boot.
- */
-struct rss_mboot_metadata fvp_rss_mboot_metadata[] = {
-	{
-		.id = FW_CONFIG_ID,
-		.slot = U(6),
-		.signer_id_size = SIGNER_ID_MIN_SIZE,
-		.sw_type = RSS_MBOOT_FW_CONFIG_STRING,
-		.pk_oid = ZERO_OID,
-		.lock_measurement = true },
-	{
-		.id = TB_FW_CONFIG_ID,
-		.slot = U(7),
-		.signer_id_size = SIGNER_ID_MIN_SIZE,
-		.sw_type = RSS_MBOOT_TB_FW_CONFIG_STRING,
-		.pk_oid = ZERO_OID,
-		.lock_measurement = true },
-	{
-		.id = BL2_IMAGE_ID,
-		.slot = U(8),
-		.signer_id_size = SIGNER_ID_MIN_SIZE,
-		.sw_type = RSS_MBOOT_BL2_STRING,
-		.pk_oid = ZERO_OID,
-		.lock_measurement = true },
-
-	{
-		.id = RSS_MBOOT_INVALID_ID }
-=======
 	{ EVLOG_INVALID_ID, NULL, (unsigned int)(-1) } /* Terminator */
->>>>>>> upstream_import/upstream_v2_14_1
 };
 
 void bl1_plat_mboot_init(void)
@@ -83,9 +44,6 @@ void bl1_plat_mboot_init(void)
 	size_t event_log_max_size;
 	int rc;
 
-<<<<<<< HEAD
-	rss_measured_boot_init(fvp_rss_mboot_metadata);
-=======
 #if TRANSFER_LIST
 	event_log_max_size = PLAT_ARM_EVENT_LOG_MAX_SIZE;
 
@@ -108,7 +66,6 @@ void bl1_plat_mboot_init(void)
 		ERROR("Failed to write event log header (%d).\n", rc);
 		panic();
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 void bl1_plat_mboot_finish(void)

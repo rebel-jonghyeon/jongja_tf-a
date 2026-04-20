@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2021-2026, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -35,69 +31,6 @@
 	wa_cve_2022_23960_bhb_vector_table CORTEX_X3_BHB_LOOP_COUNT, cortex_x3
 #endif /* WORKAROUND_CVE_2022_23960 */
 
-<<<<<<< HEAD
-workaround_reset_start cortex_x3, ERRATUM(2070301), ERRATA_X3_2070301
-	sysreg_bitfield_insert CORTEX_X3_CPUECTLR2_EL1, CORTEX_X3_CPUECTLR2_EL1_PF_MODE_CNSRV, \
-	CORTEX_X3_CPUECTLR2_EL1_PF_MODE_LSB, CORTEX_X3_CPUECTLR2_EL1_PF_MODE_WIDTH
-workaround_reset_end cortex_x3, ERRATUM(2070301)
-
-check_erratum_ls cortex_x3, ERRATUM(2070301), CPU_REV(1, 2)
-
-workaround_runtime_start cortex_x3, ERRATUM(2313909), ERRATA_X3_2313909
-	sysreg_bit_set	CORTEX_X3_CPUACTLR2_EL1, CORTEX_X3_CPUACTLR2_EL1_BIT_36
-workaround_runtime_end cortex_x3, ERRATUM(2313909), NO_ISB
-
-check_erratum_ls cortex_x3, ERRATUM(2313909), CPU_REV(1, 0)
-
-workaround_reset_start cortex_x3, ERRATUM(2615812), ERRATA_X3_2615812
-	/* Disable retention control for WFI and WFE. */
-	mrs	x0, CORTEX_X3_CPUPWRCTLR_EL1
-	bfi	x0, xzr, #CORTEX_X3_CPUPWRCTLR_EL1_WFI_RET_CTRL_BITS_SHIFT, #3
-	bfi	x0, xzr, #CORTEX_X3_CPUPWRCTLR_EL1_WFE_RET_CTRL_BITS_SHIFT, #3
-	msr	CORTEX_X3_CPUPWRCTLR_EL1, x0
-workaround_reset_end cortex_x3, ERRATUM(2615812)
-
-check_erratum_ls cortex_x3, ERRATUM(2615812), CPU_REV(1, 1)
-
-workaround_reset_start cortex_x3, ERRATUM(2742421), ERRATA_X3_2742421
-	/* Set CPUACTLR5_EL1[56:55] to 2'b01 */
-	sysreg_bit_set CORTEX_X3_CPUACTLR5_EL1, CORTEX_X3_CPUACTLR5_EL1_BIT_55
-	sysreg_bit_clear CORTEX_X3_CPUACTLR5_EL1, CORTEX_X3_CPUACTLR5_EL1_BIT_56
-workaround_reset_end cortex_x3, ERRATUM(2742421)
-
-check_erratum_ls cortex_x3, ERRATUM(2742421), CPU_REV(1, 1)
-
-workaround_reset_start cortex_x3, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-#if IMAGE_BL31
-	override_vector_table wa_cve_vbar_cortex_x3
-#endif /* IMAGE_BL31 */
-workaround_reset_end cortex_x3, CVE(2022, 23960)
-
-check_erratum_chosen cortex_x3, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
-
-cpu_reset_func_start cortex_x3
-	/* Disable speculative loads */
-	msr	SSBS, xzr
-cpu_reset_func_end cortex_x3
-
-	/* ----------------------------------------------------
-	 * HW will do the cache maintenance while powering down
-	 * ----------------------------------------------------
-	 */
-func cortex_x3_core_pwr_dwn
-apply_erratum cortex_x3, ERRATUM(2313909), ERRATA_X3_2313909
-	/* ---------------------------------------------------
-	 * Enable CPU power down bit in power control register
-	 * ---------------------------------------------------
-	 */
-	sysreg_bit_set CORTEX_X3_CPUPWRCTLR_EL1, CORTEX_X3_CPUPWRCTLR_EL1_CORE_PWRDN_BIT
-	isb
-	ret
-endfunc cortex_x3_core_pwr_dwn
-
-errata_report_shim cortex_x3
-
-=======
 cpu_reset_prologue cortex_x3
 
 workaround_reset_start cortex_x3, ERRATUM(2266875), ERRATA_X3_2266875
@@ -272,7 +205,6 @@ func cortex_x3_core_pwr_dwn
 	ret
 endfunc cortex_x3_core_pwr_dwn
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides Cortex-X3-
 	 * specific register information for crash

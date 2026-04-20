@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, ARM Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  * Copyright (c) 2021, NVIDIA Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -35,8 +31,6 @@
 #include "spm_common.h"
 #include "spm_mm_private.h"
 #include "spm_shim_private.h"
-<<<<<<< HEAD
-=======
 
 #if HOB_LIST && TRANSFER_LIST
 static struct efi_hob_handoff_info_table *build_sp_boot_hob_list(
@@ -123,7 +117,6 @@ static struct efi_hob_handoff_info_table *build_sp_boot_hob_list(
 	return hob_table;
 }
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* Setup context of the Secure Partition */
 void spm_sp_setup(sp_context_t *sp_ctx)

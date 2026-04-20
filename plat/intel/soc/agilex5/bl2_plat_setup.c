@@ -1,12 +1,7 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2019-2021, ARM Limited and Contributors. All rights reserved.
- * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
-=======
  * Copyright (c) 2019-2025, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
  * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -25,39 +20,27 @@
 #include <lib/xlat_tables/xlat_tables_v2.h>
 
 #include "agilex5_clock_manager.h"
-<<<<<<< HEAD
-#include "agilex5_memory_controller.h"
-#include "agilex5_mmc.h"
-#include "agilex5_pinmux.h"
-=======
 #include "agilex5_ddr.h"
 #include "agilex5_memory_controller.h"
 #include "agilex5_mmc.h"
 #include "agilex5_pinmux.h"
 #include "agilex5_power_manager.h"
->>>>>>> upstream_import/upstream_v2_14_1
 #include "agilex5_system_manager.h"
 #include "ccu/ncore_ccu.h"
 #include "combophy/combophy.h"
 #include "nand/nand.h"
 #include "qspi/cadence_qspi.h"
 #include "sdmmc/sdmmc.h"
-<<<<<<< HEAD
-=======
 /* TODO: DTB not available */
 // #include "socfpga_dt.h"
->>>>>>> upstream_import/upstream_v2_14_1
 #include "socfpga_emac.h"
 #include "socfpga_f2sdram_manager.h"
 #include "socfpga_handoff.h"
 #include "socfpga_mailbox.h"
 #include "socfpga_private.h"
 #include "socfpga_reset_manager.h"
-<<<<<<< HEAD
-=======
 #include "socfpga_ros.h"
 #include "socfpga_vab.h"
->>>>>>> upstream_import/upstream_v2_14_1
 #include "wdt/watchdog.h"
 
 
@@ -65,11 +48,7 @@
 static struct mmc_device_info mmc_info;
 
 /* Declare cadence idmac descriptor */
-<<<<<<< HEAD
-extern struct cdns_idmac_desc cdns_desc[8] __aligned(32);
-=======
 extern struct cdns_idmac_desc cdns_desc[CONFIG_CDNS_DESC_COUNT] __aligned(8);
->>>>>>> upstream_import/upstream_v2_14_1
 
 const mmap_region_t agilex_plat_mmap[] = {
 	MAP_REGION_FLAT(DRAM_BASE, DRAM_SIZE,
@@ -91,30 +70,6 @@ const mmap_region_t agilex_plat_mmap[] = {
 
 boot_source_type boot_source = BOOT_SOURCE;
 
-<<<<<<< HEAD
-void bl2_el3_early_platform_setup(u_register_t x0, u_register_t x1,
-				u_register_t x2, u_register_t x4)
-{
-	static console_t console;
-
-	handoff reverse_handoff_ptr = { 0 };
-
-	generic_delay_timer_init();
-	config_clkmgr_handoff(&reverse_handoff_ptr);
-	mailbox_init();
-	enable_nonsecure_access();
-
-	deassert_peripheral_reset();
-	if (combo_phy_init(&reverse_handoff_ptr) != 0) {
-		ERROR("Combo Phy initialization failed\n");
-	}
-
-	console_16550_register(PLAT_INTEL_UART_BASE, PLAT_UART_CLOCK,
-	PLAT_BAUDRATE, &console);
-
-	/* Store magic number */
-	mmio_write_32(L2_RESET_DONE_REG, PLAT_L2_RESET_REQ);
-=======
 void bl2_el3_early_platform_setup(u_register_t x0 __unused,
 				  u_register_t x1 __unused,
 				  u_register_t x2 __unused,
@@ -210,20 +165,10 @@ void bl2_el3_early_platform_setup(u_register_t x0 __unused,
 	reg_val |= SYSMGR_USB3_MISC0_PORT_OVR_CURR_PIPE_PWR; /* set pipe power present bit */
 	mmio_write_32(SOCFPGA_SYSMGR(USB3_MISC_CTRL_REG0), reg_val);
 	VERBOSE("USB3_MISC_CTRL_REG0 = 0x%X\n", mmio_read_32(SOCFPGA_SYSMGR(USB3_MISC_CTRL_REG0)));
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 void bl2_el3_plat_arch_setup(void)
 {
-<<<<<<< HEAD
-	handoff reverse_handoff_ptr;
-
-	struct cdns_sdmmc_params params = EMMC_INIT_PARAMS((uintptr_t) &cdns_desc, get_mmc_clk());
-
-	mmc_info.mmc_dev_type = MMC_DEVICE_TYPE;
-	mmc_info.ocr_voltage = OCR_3_3_3_4 | OCR_3_2_3_3;
-
-=======
 	unsigned long offset = 0;
 
 	struct cdns_sdmmc_params params = EMMC_INIT_PARAMS((uintptr_t) &cdns_desc,
@@ -235,35 +180,11 @@ void bl2_el3_plat_arch_setup(void)
 
 	INFO("SDMMC/NAND clock is %u\n", clkmgr_get_rate(CLKMGR_SDMMC_CLK_ID));
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/* Request ownership and direct access to QSPI */
 	mailbox_hps_qspi_enable();
 
 	switch (boot_source) {
 	case BOOT_SOURCE_SDMMC:
-<<<<<<< HEAD
-		NOTICE("SDMMC boot\n");
-		sdmmc_init(&reverse_handoff_ptr, &params, &mmc_info);
-		socfpga_io_setup(boot_source);
-		break;
-
-	case BOOT_SOURCE_QSPI:
-		NOTICE("QSPI boot\n");
-		cad_qspi_init(0, QSPI_CONFIG_CPHA, QSPI_CONFIG_CPOL,
-			QSPI_CONFIG_CSDA, QSPI_CONFIG_CSDADS,
-			QSPI_CONFIG_CSEOT, QSPI_CONFIG_CSSOT, 0);
-		socfpga_io_setup(boot_source);
-		break;
-
-	case BOOT_SOURCE_NAND:
-		NOTICE("NAND boot\n");
-		nand_init(&reverse_handoff_ptr);
-		socfpga_io_setup(boot_source);
-		break;
-
-	default:
-		ERROR("Unsupported boot source\n");
-=======
 		NOTICE("SOCFPGA: SDMMC boot\n");
 		cdns_mmc_init(&params, &mmc_info);
 		socfpga_io_setup(boot_source, PLAT_SDMMC_DATA_BASE);
@@ -288,7 +209,6 @@ void bl2_el3_plat_arch_setup(void)
 
 	default:
 		ERROR("SOCFPGA: Unsupported boot source\n");
->>>>>>> upstream_import/upstream_v2_14_1
 		panic();
 		break;
 	}
@@ -321,8 +241,6 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 
 	assert(bl_mem_params);
 
-<<<<<<< HEAD
-=======
 #if SOCFPGA_SECURE_VAB_AUTH
 	/*
 	 * VAB Authentication start here.
@@ -337,7 +255,6 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	}
 #endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 	switch (image_id) {
 	case BL33_IMAGE_ID:
 		bl_mem_params->ep_info.args.arg0 = 0xffff & read_mpidr();

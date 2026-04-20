@@ -14,11 +14,6 @@
 #define JEDEC_ST_BKID U(0x0)
 #define JEDEC_ST_MFID U(0x20)
 
-<<<<<<< HEAD
-/* FWU configuration (max supported value is 15) */
-#define FWU_MAX_TRIAL_REBOOT		U(3)
-
-=======
 #define STM32MP_CHIP_SEC_CLOSED		U(0x34D9CCC5)
 #define STM32MP_CHIP_SEC_OPEN		U(0xA764D182)
 
@@ -31,7 +26,6 @@
 /* Needed by STM32CubeProgrammer support */
 #define DWL_BUFFER_SIZE			U(0x01000000)
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* Functions to save and get boot context address given by ROM code */
 void stm32mp_save_boot_ctx_address(uintptr_t address);
 uintptr_t stm32mp_get_boot_ctx_address(void);

@@ -1,11 +1,7 @@
 /*
  * Copyright (c) 2018-2022, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
-=======
  * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -61,11 +57,7 @@
 /*******************************************************************************
  * IRQ constants
  ******************************************************************************/
-<<<<<<< HEAD
-#define VERSAL_IRQ_SEC_PHY_TIMER		U(29)
-=======
 #define VERSAL_IRQ_SEC_PHY_TIMER		29U
->>>>>>> upstream_import/upstream_v2_14_1
 #define ARM_IRQ_SEC_PHY_TIMER	29
 
 /*******************************************************************************
@@ -82,12 +74,6 @@
 #define VERSAL_UART0_BASE		U(0xFF000000)
 #define VERSAL_UART1_BASE		U(0xFF010000)
 
-<<<<<<< HEAD
-#if CONSOLE_IS(pl011) || CONSOLE_IS(dcc)
-# define UART_BASE	VERSAL_UART0_BASE
-#elif CONSOLE_IS(pl011_1)
-# define UART_BASE	VERSAL_UART1_BASE
-=======
 #if CONSOLE_IS(pl011) || CONSOLE_IS(dtb)
 # define UART_BASE	VERSAL_UART0_BASE
 # define UART_TYPE	CONSOLE_PL011
@@ -99,37 +85,10 @@
 # define UART_TYPE	CONSOLE_DCC
 #elif CONSOLE_IS(none)
 # define UART_TYPE	CONSOLE_NONE
->>>>>>> upstream_import/upstream_v2_14_1
 #else
 # error "invalid VERSAL_CONSOLE"
 #endif
 
-<<<<<<< HEAD
-/*******************************************************************************
- * Platform related constants
- ******************************************************************************/
-#if VERSAL_PLATFORM_IS(versal_virt)
-# define PLATFORM_NAME		"Versal Virt"
-# define UART_CLOCK	25000000
-# define UART_BAUDRATE	115200
-# define VERSAL_CPU_CLOCK	2720000
-#elif VERSAL_PLATFORM_IS(silicon)
-# define PLATFORM_NAME		"Versal Silicon"
-# define UART_CLOCK	100000000
-# define UART_BAUDRATE	115200
-# define VERSAL_CPU_CLOCK	100000000
-#elif VERSAL_PLATFORM_IS(spp_itr6)
-# define PLATFORM_NAME		"SPP ITR6"
-# define UART_CLOCK	25000000
-# define UART_BAUDRATE	115200
-# define VERSAL_CPU_CLOCK	2720000
-#elif VERSAL_PLATFORM_IS(emu_itr6)
-# define PLATFORM_NAME		"EMU ITR6"
-# define UART_CLOCK	212000
-# define UART_BAUDRATE	9600
-# define VERSAL_CPU_CLOCK	212000
-#endif
-=======
 /* Runtime console */
 #if defined(CONSOLE_RUNTIME)
 #if RT_CONSOLE_IS(pl011) || RT_CONSOLE_IS(dtb)
@@ -150,7 +109,6 @@
  * Platform related constants
  ******************************************************************************/
 #define UART_BAUDRATE  115200
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* Access control register defines */
 #define ACTLR_EL3_L2ACTLR_BIT	(1U << 6)

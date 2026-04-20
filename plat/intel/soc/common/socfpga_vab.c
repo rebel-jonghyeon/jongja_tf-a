@@ -1,10 +1,7 @@
 /*
  * Copyright (c) 2019, ARM Limited and Contributors. All rights reserved.
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,35 +9,23 @@
 #include <assert.h>
 #include <errno.h>
 
-<<<<<<< HEAD
-#include <arch_helpers.h>
-#include <common/debug.h>
-=======
 #include "../lib/sha/sha.h"
 
 #include <arch_helpers.h>
 #include <common/bl_common.h>
 #include <common/debug.h>
 #include <common/desc_image_load.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <common/tbbr/tbbr_img_def.h>
 #include <drivers/delay_timer.h>
 #include <lib/mmio.h>
 #include <lib/utils.h>
-<<<<<<< HEAD
-=======
 #include <plat/common/platform.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <tools_share/firmware_image_package.h>
 
 #include "socfpga_mailbox.h"
 #include "socfpga_vab.h"
 
-<<<<<<< HEAD
-static size_t get_img_size(uint8_t *img_buf, size_t img_buf_sz)
-=======
 size_t get_img_size(uint8_t *img_buf, size_t img_buf_sz)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	uint8_t *img_buf_end = img_buf + img_buf_sz;
 	uint32_t cert_sz = get_unaligned_le32(img_buf_end - sizeof(uint32_t));
@@ -56,11 +41,6 @@ size_t get_img_size(uint8_t *img_buf, size_t img_buf_sz)
 	return 0;
 }
 
-<<<<<<< HEAD
-
-
-int socfpga_vendor_authentication(void **p_image, size_t *p_size)
-=======
 int socfpga_vab_init(unsigned int image_id)
 {
 	int ret = 0;
@@ -88,7 +68,6 @@ int socfpga_vab_init(unsigned int image_id)
 }
 
 int socfpga_vab_authentication(void **p_image, size_t *p_size)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	int retry_count = 20;
 	uint8_t hash384[FCS_SHA384_WORD_SIZE];
@@ -97,88 +76,47 @@ int socfpga_vab_authentication(void **p_image, size_t *p_size)
 	uint8_t *cert_hash_ptr, *mbox_relocate_data_addr;
 	uint32_t resp = 0, resp_len = 1;
 	int ret = 0;
-<<<<<<< HEAD
-=======
 	uint8_t u8_buf_static[MBOX_DATA_MAX_LEN];
 
 	mbox_relocate_data_addr = u8_buf_static;
->>>>>>> upstream_import/upstream_v2_14_1
 
 	img_addr = (uintptr_t)*p_image;
 	img_sz = get_img_size((uint8_t *)img_addr, *p_size);
 
 	if (!img_sz) {
-<<<<<<< HEAD
-		NOTICE("VAB certificate not found in image!\n");
-		return -ENOVABIMG;
-	}
-
-	if (!IS_BYTE_ALIGNED(img_sz, sizeof(uint32_t))) {
-		NOTICE("Image size (%d bytes) not aliged to 4 bytes!\n", img_sz);
-=======
 		ERROR("VAB certificate not found in image!\n");
 		return -ENOVABCERT;
 	}
 
 	if (!IS_BYTE_ALIGNED(img_sz, sizeof(uint32_t))) {
 		ERROR("Image size (%d bytes) not aliged to 4 bytes!\n", img_sz);
->>>>>>> upstream_import/upstream_v2_14_1
 		return -EIMGERR;
 	}
 
 	/* Generate HASH384 from the image */
-<<<<<<< HEAD
-	/* TODO: This part need to cross check !!!!!! */
-	sha384_csum_wd((uint8_t *)img_addr, img_sz, hash384, CHUNKSZ_PER_WD_RESET);
-	cert_hash_ptr = (uint8_t *)(img_addr + img_sz +
-	VAB_CERT_MAGIC_OFFSET + VAB_CERT_FIT_SHA384_OFFSET);
-=======
 	sha384_start((uint8_t *)img_addr, img_sz, hash384, CHUNKSZ_PER_WD_RESET);
 	cert_hash_ptr = (uint8_t *)(img_addr + img_sz + VAB_CERT_MAGIC_OFFSET +
 								VAB_CERT_FIT_SHA384_OFFSET);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/*
 	 * Compare the SHA384 found in certificate against the SHA384
 	 * calculated from image
 	 */
 	if (memcmp(hash384, cert_hash_ptr, FCS_SHA384_WORD_SIZE)) {
-<<<<<<< HEAD
-		NOTICE("SHA384 does not match!\n");
-		return -EKEYREJECTED;
-	}
-
-
-=======
 		ERROR("SHA384 does not match!\n");
 		return -EKEYREJECTED;
 	}
 
->>>>>>> upstream_import/upstream_v2_14_1
 	mbox_data_addr = img_addr + img_sz - sizeof(uint32_t);
 	/* Size in word (32bits) */
 	mbox_data_sz = (BYTE_ALIGN(*p_size - img_sz, sizeof(uint32_t))) >> 2;
 
-<<<<<<< HEAD
-	NOTICE("mbox_data_addr = %lx    mbox_data_sz = %d\n", mbox_data_addr, mbox_data_sz);
-
-	/* TODO: This part need to cross check !!!!!! */
-	// mbox_relocate_data_addr = (uint8_t *)malloc(mbox_data_sz * sizeof(uint32_t));
-	// if (!mbox_relocate_data_addr) {
-		// NOTICE("Cannot allocate memory for VAB certificate relocation!\n");
-		// return -ENOMEM;
-	// }
-
-	memcpy(mbox_relocate_data_addr, (uint8_t *)mbox_data_addr, mbox_data_sz * sizeof(uint32_t));
-	*(uint32_t *)mbox_relocate_data_addr = 0;
-=======
 	VERBOSE("mbox_data_addr = %lx    mbox_data_sz = %d\n", mbox_data_addr, mbox_data_sz);
 
 	memcpy_s(mbox_relocate_data_addr, (mbox_data_sz * sizeof(uint32_t)) / MBOX_WORD_BYTE,
 		(uint8_t *)mbox_data_addr, (mbox_data_sz * sizeof(uint32_t)) / MBOX_WORD_BYTE);
 
 	*((unsigned int *)mbox_relocate_data_addr) = 0;
->>>>>>> upstream_import/upstream_v2_14_1
 
 	do {
 		/* Invoke SMC call to ATF to send the VAB certificate to SDM */
@@ -197,10 +135,6 @@ int socfpga_vab_authentication(void **p_image, size_t *p_size)
 	/* Free the relocate certificate memory space */
 	zeromem((void *)&mbox_relocate_data_addr, sizeof(uint32_t));
 
-<<<<<<< HEAD
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* Exclude the size of the VAB certificate from image size */
 	*p_size = img_sz;
 
@@ -212,24 +146,6 @@ int socfpga_vab_authentication(void **p_image, size_t *p_size)
 		 /* 0x85 = Not allowed under current security setting */
 		if (ret == MBOX_RESP_ERR(0x85)) {
 			/* SDM bypass authentication */
-<<<<<<< HEAD
-			NOTICE("Image Authentication bypassed at address\n");
-			return 0;
-		}
-		NOTICE("VAB certificate authentication failed in SDM\n");
-		/* 0x1FF = The device is busy */
-		if (ret == MBOX_RESP_ERR(0x1FF)) {
-			NOTICE("Operation timed out\n");
-			return -ETIMEOUT;
-		} else if (ret == MBOX_WRONG_ID) {
-			NOTICE("No such process\n");
-			return -EPROCESS;
-		}
-	} else {
-		/* If Certificate Process Status has error */
-		if (resp) {
-			NOTICE("VAB certificate execution format error\n");
-=======
 			ERROR("Image Authentication bypassed at address\n");
 			return 0;
 		}
@@ -247,29 +163,10 @@ int socfpga_vab_authentication(void **p_image, size_t *p_size)
 		/* If Certificate Process Status has error */
 		if (resp) {
 			ERROR("VAB certificate execution format error\n");
->>>>>>> upstream_import/upstream_v2_14_1
 			return -EIMGERR;
 		}
 	}
 
-<<<<<<< HEAD
-	NOTICE("Image Authentication bypassed at address\n");
-	return ret;
-
-}
-
-static uint32_t get_unaligned_le32(const void *p)
-{
-	/* TODO: Temp for testing */
-	//return le32_to_cpup((__le32 *)p);
-	return 0;
-}
-
-void sha384_csum_wd(const unsigned char *input, unsigned int ilen,
-		unsigned char *output, unsigned int chunk_sz)
-{
-	/* TODO: Update sha384 start, update and finish */
-=======
 	NOTICE("%s 0x%lx (%d bytes)\n", "Image Authentication passed at address", img_addr, img_sz);
 	return ret;
 }
@@ -277,5 +174,4 @@ void sha384_csum_wd(const unsigned char *input, unsigned int ilen,
 uint32_t get_unaligned_le32(const void *p)
 {
 	return le32_to_cpue((uint32_t *)p);
->>>>>>> upstream_import/upstream_v2_14_1
 }

@@ -22,10 +22,7 @@
 #define TI_SCI_MSG_WAKE_REASON		0x0003
 #define TI_SCI_MSG_GOODBYE		0x0004
 #define TI_SCI_MSG_SYS_RESET		0x0005
-<<<<<<< HEAD:plat/ti/k3/common/drivers/ti_sci/ti_sci_protocol.h
-=======
 #define TI_SCI_MSG_BOOT_NOTIFICATION	0x000A
->>>>>>> upstream_import/upstream_v2_14_1:drivers/ti/ti_sci/ti_sci_protocol.h
 #define TI_SCI_MSG_QUERY_FW_CAPS	0x0022
 
 /* Device requests */
@@ -150,10 +147,7 @@ struct ti_sci_msg_req_reboot {
  *		MSG_FLAG_CAPS_LPM_MCU_ONLY: MCU only LPM
  *		MSG_FLAG_CAPS_LPM_STANDBY: Standby LPM
  *		MSG_FLAG_CAPS_LPM_PARTIAL_IO: Partial IO in LPM
-<<<<<<< HEAD:plat/ti/k3/common/drivers/ti_sci/ti_sci_protocol.h
-=======
  *		MSG_FLAG_CAPS_LPM_DM_MANAGED: LPM can be managed by DM
->>>>>>> upstream_import/upstream_v2_14_1:drivers/ti/ti_sci/ti_sci_protocol.h
  *
  * Response to a generic message with message type TI_SCI_MSG_QUERY_FW_CAPS
  * providing currently available SOC/firmware capabilities. SoC that don't
@@ -166,10 +160,7 @@ struct ti_sci_msg_resp_query_fw_caps {
 #define MSG_FLAG_CAPS_LPM_MCU_ONLY	TI_SCI_MSG_FLAG(2)
 #define MSG_FLAG_CAPS_LPM_STANDBY	TI_SCI_MSG_FLAG(3)
 #define MSG_FLAG_CAPS_LPM_PARTIAL_IO	TI_SCI_MSG_FLAG(4)
-<<<<<<< HEAD:plat/ti/k3/common/drivers/ti_sci/ti_sci_protocol.h
-=======
 #define MSG_FLAG_CAPS_LPM_DM_MANAGED	TI_SCI_MSG_FLAG(5)
->>>>>>> upstream_import/upstream_v2_14_1:drivers/ti/ti_sci/ti_sci_protocol.h
 	uint64_t fw_caps;
 } __packed;
 

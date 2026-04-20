@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -26,21 +22,6 @@
  */
 bool xlat_arch_is_granule_size_supported(size_t size)
 {
-<<<<<<< HEAD
-	unsigned int tgranx;
-
-	if (size == PAGE_SIZE_4KB) {
-		tgranx = read_id_aa64mmfr0_el0_tgran4_field();
-		/* MSB of TGRAN4 field will be '1' for unsupported feature */
-		return (tgranx < 8U);
-	} else if (size == PAGE_SIZE_16KB) {
-		tgranx = read_id_aa64mmfr0_el0_tgran16_field();
-		return (tgranx >= ID_AA64MMFR0_EL1_TGRAN16_SUPPORTED);
-	} else if (size == PAGE_SIZE_64KB) {
-		tgranx = read_id_aa64mmfr0_el0_tgran64_field();
-		/* MSB of TGRAN64 field will be '1' for unsupported feature */
-		return (tgranx < 8U);
-=======
 	if (size == PAGE_SIZE_4KB) {
 		/* MSB of TGRAN4 field will be '1' for unsupported feature */
 		return is_feat_tgran4K_present();
@@ -49,7 +30,6 @@ bool xlat_arch_is_granule_size_supported(size_t size)
 	} else if (size == PAGE_SIZE_64KB) {
 		/* MSB of TGRAN64 field will be '1' for unsupported feature */
 		return is_feat_tgran64K_present();
->>>>>>> upstream_import/upstream_v2_14_1
 	} else {
 		return false;
 	}
@@ -334,13 +314,5 @@ void setup_mmu_cfg(uint64_t *params, unsigned int flags,
 
 	params[MMU_CFG_MAIR] = mair;
 	params[MMU_CFG_TCR] = tcr;
-	params[MMU_CFG_TTBR0] = ttbr0;
-}
-
-void touch_dummy_mmu_cfg(uint64_t *params, const uint64_t *base_table)
-{
-	uint64_t ttbr0;
-
-	ttbr0 = (uint64_t)base_table;
 	params[MMU_CFG_TTBR0] = ttbr0;
 }

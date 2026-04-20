@@ -52,10 +52,7 @@ typedef struct spmd_spm_core_context {
 	cpu_context_t cpu_ctx;
 	spmc_state_t state;
 	bool secure_interrupt_ongoing;
-<<<<<<< HEAD
-=======
 	bool psci_operation_ongoing;
->>>>>>> upstream_import/upstream_v2_14_1
 #if ENABLE_SPMD_LP
 	uint8_t spmd_lp_sync_req_ongoing;
 #endif

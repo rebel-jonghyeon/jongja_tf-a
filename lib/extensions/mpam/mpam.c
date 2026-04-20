@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2018-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2018-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,28 +11,14 @@
 #include <arch_helpers.h>
 #include <lib/extensions/mpam.h>
 
-<<<<<<< HEAD
-void mpam_enable(cpu_context_t *context)
-{
-	u_register_t mpam3_el3;
-
-	mpam3_el3 = read_ctx_reg(get_el3state_ctx(context), CTX_MPAM3_EL3);
-
-=======
 void mpam_enable_per_world(per_world_context_t *per_world_ctx)
 {
 	u_register_t mpam3_el3;
 
->>>>>>> upstream_import/upstream_v2_14_1
 	/*
 	 * Enable MPAM, and disable trapping to EL3 when lower ELs access their
 	 * own MPAM registers
 	 */
-<<<<<<< HEAD
-	mpam3_el3 = (mpam3_el3 | MPAM3_EL3_MPAMEN_BIT) &
-				~(MPAM3_EL3_TRAPLOWER_BIT);
-	write_ctx_reg(get_el3state_ctx(context), CTX_MPAM3_EL3, mpam3_el3);
-=======
 	mpam3_el3 = per_world_ctx->ctx_mpam3_el3;
 	mpam3_el3 = (mpam3_el3 | MPAM3_EL3_MPAMEN_BIT) &
 				~(MPAM3_EL3_TRAPLOWER_BIT);
@@ -68,7 +50,6 @@ void mpam_init_el3(void)
 
 		write_mpambw3_el3(mpambw3_el3);
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /*
@@ -83,8 +64,6 @@ void mpam_init_el2_unused(void)
 		write_mpamhcr_el2(0ULL);
 	}
 
-<<<<<<< HEAD
-=======
 	if (is_feat_mpam_pe_bw_ctrl_supported()) {
 		u_register_t mpambw2_el2;
 
@@ -109,5 +88,4 @@ void mpam_init_el2_unused(void)
 
 		write_mpambw2_el2(mpambw2_el2);
 	}
->>>>>>> upstream_import/upstream_v2_14_1
 }

@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -68,25 +64,13 @@ func cortex_a72_disable_ext_debug
 	ret
 endfunc cortex_a72_disable_ext_debug
 
-<<<<<<< HEAD
-func check_smccc_arch_workaround_3
-=======
 check_erratum_custom_start cortex_a72, ERRATUM(ARCH_WORKAROUND_3)
->>>>>>> upstream_import/upstream_v2_14_1
 	cpu_check_csv2	x0, 1f
 	mov	x0, #ERRATA_APPLIES
 	ret
 1:
 	mov	x0, #ERRATA_NOT_APPLIES
 	ret
-<<<<<<< HEAD
-endfunc check_smccc_arch_workaround_3
-
-workaround_reset_start cortex_a72, ERRATUM(859971), ERRATA_A72_859971
-	sysreg_bit_set CORTEX_A72_CPUACTLR_EL1, CORTEX_A72_CPUACTLR_EL1_DIS_INSTR_PREFETCH
-workaround_reset_end cortex_a72, ERRATUM(859971)
-
-=======
 check_erratum_custom_end cortex_a72, ERRATUM(ARCH_WORKAROUND_3)
 
 /* Erratum entry and check function for SMCCC_ARCH_WORKAROUND_3 */
@@ -96,17 +80,12 @@ workaround_reset_start cortex_a72, ERRATUM(859971), ERRATA_A72_859971
 	sysreg_bit_set CORTEX_A72_CPUACTLR_EL1, CORTEX_A72_CPUACTLR_EL1_DIS_INSTR_PREFETCH
 workaround_reset_end cortex_a72, ERRATUM(859971)
 
->>>>>>> upstream_import/upstream_v2_14_1
 check_erratum_ls cortex_a72, ERRATUM(859971), CPU_REV(0, 3)
 
 /* Due to the nature of the errata it is applied unconditionally when chosen */
 check_erratum_chosen cortex_a72, ERRATUM(1319367), ERRATA_A72_1319367
 /* erratum workaround is interleaved with generic code */
-<<<<<<< HEAD
-add_erratum_entry cortex_a72, ERRATUM(1319367), ERRATA_A72_1319367, NO_APPLY_AT_RESET
-=======
 add_erratum_entry cortex_a72, ERRATUM(1319367), ERRATA_A72_1319367
->>>>>>> upstream_import/upstream_v2_14_1
 
 workaround_reset_start cortex_a72, CVE(2017, 5715), WORKAROUND_CVE_2017_5715
 #if IMAGE_BL31
@@ -273,11 +252,6 @@ func cortex_a72_cluster_pwr_dwn
 	b	cortex_a72_disable_ext_debug
 endfunc cortex_a72_cluster_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_a72
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	/* ---------------------------------------------
 	 * This function provides cortex_a72 specific
 	 * register information for crash reporting.
@@ -301,11 +275,5 @@ endfunc cortex_a72_cpu_reg_dump
 
 declare_cpu_ops cortex_a72, CORTEX_A72_MIDR, \
 	cortex_a72_reset_func, \
-<<<<<<< HEAD
-	check_erratum_cortex_a72_5715, \
-	CPU_NO_EXTRA2_FUNC, \
-	check_smccc_arch_workaround_3, \
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 	cortex_a72_core_pwr_dwn, \
 	cortex_a72_cluster_pwr_dwn

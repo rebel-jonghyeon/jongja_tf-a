@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -25,10 +21,7 @@
 #include <drivers/arm/gic.h>
 #include <drivers/console.h>
 #include <lib/bootmarker_capture.h>
-<<<<<<< HEAD
-=======
 #include <lib/el3_runtime/context_debug.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <lib/el3_runtime/context_mgmt.h>
 #include <lib/extensions/pauth.h>
 #include <lib/gpt_rme/gpt_rme.h>
@@ -38,27 +31,14 @@
 #include <plat/common/platform.h>
 #include <services/std_svc.h>
 
-enum bl31_boot_sequence {
-	NOT_STARTED,
-	JUMP_TO_RTOS,
-};
-
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_REGISTER_SERVICE_SMC(rt_instr_svc, PMF_RT_INSTR_SVC_ID,
-<<<<<<< HEAD
-							 RT_INSTR_TOTAL_IDS, PMF_STORE_ENABLE)
-=======
 		RT_INSTR_TOTAL_IDS, PMF_STORE_ENABLE)
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_REGISTER_SERVICE(bl_svc, PMF_RT_INSTR_SVC_ID,
-<<<<<<< HEAD
-						 BL_TOTAL_IDS, PMF_DUMP_ENABLE)
-=======
 		BL_TOTAL_IDS, PMF_DUMP_ENABLE)
->>>>>>> upstream_import/upstream_v2_14_1
 #endif
 
 /*******************************************************************************
@@ -87,7 +67,7 @@ static uint32_t next_image_type = (uint32_t)NON_SECURE;
  * Flag to know whether an unsupported MPID has been detected. To avoid having it
  * landing on the .bss section, it is initialized to a non-zero value, this way
  * we avoid potential WAW hazards during system bring up.
- **/
+ * */
 volatile uint32_t unsupported_mpid_flag = 1;
 #endif
 
@@ -115,30 +95,6 @@ static void __init bl31_lib_init(void)
 }
 
 /*******************************************************************************
-<<<<<<< HEAD
- * Setup function for BL31.
- ******************************************************************************/
-void bl31_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2,
-				u_register_t arg3)
-{
-	/* Perform early platform-specific setup */
-	bl31_early_platform_setup2(arg0, arg1, arg2, arg3);
-
-	/* Perform late platform-specific setup */
-	bl31_plat_arch_setup();
-
-#if CTX_INCLUDE_PAUTH_REGS
-	/*
-	 * Assert that the ARMv8.3-PAuth registers are present or an access
-	 * fault will be triggered when they are being saved or restored.
-	 */
-	assert(is_armv8_3_pauth_present());
-#endif /* CTX_INCLUDE_PAUTH_REGS */
-}
-
-/*******************************************************************************
-=======
->>>>>>> upstream_import/upstream_v2_14_1
  * BL31 is responsible for setting up the runtime services for the primary cpu
  * before passing control to the bootloader or an Operating System. This
  * function calls runtime_svc_init() which initializes all registered runtime
@@ -149,16 +105,6 @@ void bl31_setup(u_register_t arg0, u_register_t arg1, u_register_t arg2,
 void __no_pauth bl31_main(u_register_t arg0, u_register_t arg1, u_register_t arg2,
 		u_register_t arg3)
 {
-<<<<<<< HEAD
-	/* Init registers that never change for the lifetime of TF-A */
-	cm_manage_extensions_el3();
-
-	/* Init per-world context registers for non-secure world */
-	manage_extensions_nonsecure_per_world();
-
-	NOTICE("BL31: %s\n", version_string);
-	NOTICE("BL31: %s\n", build_message);
-=======
 	unsigned int core_pos = plat_my_core_pos();
 
 	/* Enable early console if EARLY_CONSOLE flag is enabled */
@@ -169,15 +115,12 @@ void __no_pauth bl31_main(u_register_t arg0, u_register_t arg1, u_register_t arg
 
 	/* Perform late platform-specific setup */
 	bl31_plat_arch_setup();
->>>>>>> upstream_import/upstream_v2_14_1
 
 #if FEATURE_DETECTION
 	/* Detect if features enabled during compilation are supported by PE. */
 	detect_arch_features(core_pos);
 #endif /* FEATURE_DETECTION */
 
-<<<<<<< HEAD
-=======
 	/* Prints context_memory allocated for all the security states */
 	report_ctx_memory_usage();
 
@@ -190,7 +133,6 @@ void __no_pauth bl31_main(u_register_t arg0, u_register_t arg1, u_register_t arg
 	NOTICE("BL31: %s\n", build_version_string);
 	NOTICE("BL31: %s\n", build_message);
 
->>>>>>> upstream_import/upstream_v2_14_1
 #if ENABLE_RUNTIME_INSTRUMENTATION
 	PMF_CAPTURE_TIMESTAMP(bl_svc, BL31_ENTRY, PMF_CACHE_MAINT);
 #endif
@@ -246,7 +188,7 @@ void __no_pauth bl31_main(u_register_t arg0, u_register_t arg1, u_register_t arg
 	/*
 	 * If SPD had registered an init hook, invoke it.
 	 */
-	if (bl32_init) {
+	if (bl32_init != NULL) {
 		INFO("BL31: Initializing BL32\n");
 
 		console_flush();
@@ -262,7 +204,7 @@ void __no_pauth bl31_main(u_register_t arg0, u_register_t arg1, u_register_t arg
 	 * in R-EL2.
 	 */
 #if ENABLE_RME
-	if (rmm_init) {
+	if (rmm_init != NULL) {
 		INFO("BL31: Initializing RMM\n");
 
 		console_flush();
@@ -284,19 +226,9 @@ void __no_pauth bl31_main(u_register_t arg0, u_register_t arg1, u_register_t arg
 	 * Perform any platform specific runtime setup prior to cold boot exit
 	 * from BL31
 	 */
-#if (__TARGET_CP == 0)
-	BOOT_LOG(CP0, CP0_BL31, JUMP_TO_RTOS);
-#else
-	BOOT_LOG(CP1, CP1_BL31, JUMP_TO_RTOS);
-#endif
 	bl31_plat_runtime_setup();
 
 #if ENABLE_RUNTIME_INSTRUMENTATION
-<<<<<<< HEAD
-	PMF_CAPTURE_TIMESTAMP(bl_svc, BL31_EXIT, PMF_CACHE_MAINT);
-	console_flush();
-#endif
-=======
 	console_flush();
 	PMF_CAPTURE_TIMESTAMP(bl_svc, BL31_EXIT, PMF_CACHE_MAINT);
 #endif
@@ -357,7 +289,6 @@ void __no_pauth bl31_warmboot(void)
 #endif
 
 	psci_warmboot_entrypoint(core_pos);
->>>>>>> upstream_import/upstream_v2_14_1
 }
 
 /*******************************************************************************
@@ -405,18 +336,18 @@ void __init bl31_prepare_next_image_entry(void)
 
 	/* Program EL3 registers to enable entry into the next EL */
 	next_image_info = bl31_plat_get_next_image_ep_info(image_type);
-	assert(next_image_info);
+	assert(next_image_info != NULL);
 	assert(image_type == GET_SECURITY_STATE(next_image_info->h.attr));
 
 	INFO("BL31: Preparing for EL3 exit to %s world\n",
-		 (image_type == SECURE) ? "secure" : "normal");
+		(image_type == SECURE) ? "secure" : "normal");
 	print_entry_point_info(next_image_info);
 	cm_init_my_context(next_image_info);
 
 	/*
-	 * If we are entering the Non-secure world, use
-	 * 'cm_prepare_el3_exit_ns' to exit.
-	 */
+	* If we are entering the Non-secure world, use
+	* 'cm_prepare_el3_exit_ns' to exit.
+	*/
 	if (image_type == NON_SECURE) {
 		cm_prepare_el3_exit_ns();
 	} else {

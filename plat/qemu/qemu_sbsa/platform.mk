@@ -25,8 +25,6 @@ include plat/qemu/common/common.mk
 # Enable new version of image loading on QEMU platforms
 LOAD_IMAGE_V2		:=	1
 
-<<<<<<< HEAD
-=======
 ifeq (${SPD},opteed)
 add-lib-optee 		:= 	yes
 endif
@@ -42,16 +40,10 @@ ifeq ($(add-lib-optee),yes)
 BL2_SOURCES		+=	lib/optee/optee_utils.c
 endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 ifeq ($(NEED_BL32),yes)
 $(eval $(call add_define,QEMU_LOAD_BL32))
 endif
 
-<<<<<<< HEAD
-BL2_SOURCES		+=	$(LIBFDT_SRCS)
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 # Include GICv3 driver files
 include drivers/arm/gic/v3/gicv3.mk
 
@@ -59,10 +51,7 @@ QEMU_GIC_SOURCES	:=	${GICV3_SOURCES}				\
 				plat/common/plat_gicv3.c
 
 BL31_SOURCES		+=	${PLAT_QEMU_PATH}/sbsa_gic.c 			\
-<<<<<<< HEAD
-=======
 				${PLAT_QEMU_PATH}/sbsa_platform.c		\
->>>>>>> upstream_import/upstream_v2_14_1
 				${PLAT_QEMU_PATH}/sbsa_pm.c			\
 				${PLAT_QEMU_PATH}/sbsa_sip_svc.c		\
 				${PLAT_QEMU_PATH}/sbsa_topology.c
@@ -73,8 +62,6 @@ ifeq (${SPM_MM},1)
 	BL31_SOURCES		+=	${PLAT_QEMU_COMMON_PATH}/qemu_spm.c
 endif
 
-<<<<<<< HEAD
-=======
 ifeq (${SPD},spmd)
 BL31_SOURCES		+=	plat/common/plat_spmd_manifest.c	\
 				common/uuid.c				\
@@ -113,7 +100,6 @@ QEMU_TOS_FW_CONFIG	:=	${BUILD_PLAT}/fdts/$(notdir $(basename ${QEMU_TOS_FW_CONFI
 $(eval $(call TOOL_ADD_PAYLOAD,${QEMU_TOS_FW_CONFIG},--tos-fw-config,${QEMU_TOS_FW_CONFIG}))
 endif
 
->>>>>>> upstream_import/upstream_v2_14_1
 # Use known base for UEFI if not given from command line
 # By default BL33 is at FLASH1 base
 PRELOADED_BL33_BASE	?= 0x10000000

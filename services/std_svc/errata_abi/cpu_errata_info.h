@@ -16,28 +16,16 @@
 #include <cortex_a78.h>
 #include <cortex_a78_ae.h>
 #include <cortex_a78c.h>
-<<<<<<< HEAD
-#include <cortex_a715.h>
-#include <cortex_x1.h>
-#include <cortex_x2.h>
-#include <cortex_x3.h>
-#include <neoverse_n1.h>
-=======
 #include <cortex_x2.h>
 #include <cortex_x3.h>
 #include <cortex_x4.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <neoverse_n2.h>
 #include <neoverse_v1.h>
 #include <neoverse_v2.h>
 #endif
 
-<<<<<<< HEAD
-#define MAX_ERRATA_ENTRIES	32
-=======
 /* Max number of platform based errata with no workaround in EL3 */
 #define MAX_PLAT_CPU_ERRATA_ENTRIES	2
->>>>>>> upstream_import/upstream_v2_14_1
 
 #define ERRATA_LIST_END		(MAX_PLAT_CPU_ERRATA_ENTRIES - 1)
 

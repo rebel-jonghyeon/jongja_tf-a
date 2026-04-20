@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2022-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,11 +9,7 @@
 #include <arch_helpers.h>
 #include <lib/extensions/brbe.h>
 
-<<<<<<< HEAD
-void brbe_init_el3(void)
-=======
 void brbe_enable(cpu_context_t *ctx)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	el3_state_t *state = get_el3state_ctx(ctx);
 	u_register_t mdcr_el3_val = read_ctx_reg(state, CTX_MDCR_EL3);

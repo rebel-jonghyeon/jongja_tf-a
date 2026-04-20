@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2016-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2016-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -152,17 +148,6 @@ static void enable_extensions_nonsecure(bool el2_unused)
 	if (is_feat_trf_supported()) {
 		trf_init_el3();
 	}
-<<<<<<< HEAD
-
-	/*
-	 * Also applies to PMU < v3. The PMU is only disabled for EL3 and Secure
-	 * state execution. This does not affect lower NS ELs.
-	 */
-	pmuv3_init_el3();
-#endif /*  IMAGE_BL32 */
-}
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 	if (is_feat_pmuv3_present()) {
 		pmuv3_init_el3();

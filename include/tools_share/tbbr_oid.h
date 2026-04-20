@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -174,15 +170,12 @@
 #define SOC_FW_CONFIG_KEY_OID			SOC_FW_CONTENT_CERT_PK_OID
 #define HW_CONFIG_KEY_OID			ZERO_OID
 
-<<<<<<< HEAD
-=======
 #define SCP_BL2_IMAGE_KEY_OID			SCP_FW_CONTENT_CERT_PK_OID
 #define BL32_IMAGE_KEY_OID			TRUSTED_OS_FW_CONTENT_CERT_PK_OID
 #define TOS_FW_CONFIG_KEY_OID			TRUSTED_OS_FW_CONTENT_CERT_PK_OID
 #define BL33_IMAGE_KEY_OID			NON_TRUSTED_FW_CONTENT_CERT_PK_OID
 #define NT_FW_CONFIG_KEY_OID			NON_TRUSTED_FW_CONTENT_CERT_PK_OID
 
->>>>>>> upstream_import/upstream_v2_14_1
 #ifdef PLAT_DEF_OID
 #include <platform_oid.h>
 #endif

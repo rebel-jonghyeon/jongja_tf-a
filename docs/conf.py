@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-<<<<<<< HEAD
-# Copyright (c) 2019-2023, Arm Limited. All rights reserved.
-=======
 # Copyright (c) 2019-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -18,13 +14,8 @@
 
 project = "Trusted Firmware-A"
 author = "Trusted Firmware-A contributors"
-<<<<<<< HEAD
-version = "2.9.0"
-release = "2.9.0"
-=======
 version = "2.14.1"
 release = "2.14.1"
->>>>>>> upstream_import/upstream_v2_14_1
 
 # -- General configuration ---------------------------------------------------
 

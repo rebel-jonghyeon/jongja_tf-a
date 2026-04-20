@@ -18,10 +18,7 @@
 #include <lib/mmio.h>
 #include <lib/spinlock.h>
 #include <plat/common/platform.h>
-<<<<<<< HEAD
-=======
 #include <plat_pm_common.h>
->>>>>>> upstream_import/upstream_v2_14_1
 
 #include <plat_private.h>
 #include "pm_client.h"
@@ -273,11 +270,7 @@ exit_label:
  * @x4: Arguments.
  * @cookie: Unused.
  * @handle: Pointer to caller's context structure.
-<<<<<<< HEAD
- * @flags: SECURE_FLAG or NON_SECURE_FLAG.
-=======
  * @flags: SECURE or NON_SECURE
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * Determines that smc_fid is valid and supported PM SMC Function ID from the
  * list of pm_api_ids, otherwise completes the request with
@@ -453,13 +446,8 @@ uint64_t pm_smc_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2, uint64_t x3,
 	{
 		uint32_t value = 0U;
 
-<<<<<<< HEAD
-		ret = pm_clock_getdivider(pm_arg[0], &value);
-		SMC_RET1(handle, (uint64_t)ret | ((uint64_t)value) << 32);
-=======
 		ret = pm_clock_getdivider(pm_arg[0], &value, security_flag);
 		SMC_RET1(handle, ((uint64_t)ret | (((uint64_t)value) << 32)));
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	case PM_CLOCK_SETPARENT:

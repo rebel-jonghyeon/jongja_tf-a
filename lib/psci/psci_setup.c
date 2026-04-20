@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2020, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -17,10 +13,7 @@
 #include <context.h>
 #include <lib/cpus/errata.h>
 #include <lib/el3_runtime/context_mgmt.h>
-<<<<<<< HEAD
-=======
 #include <lib/per_cpu/per_cpu.h>
->>>>>>> upstream_import/upstream_v2_14_1
 #include <plat/common/platform.h>
 
 #include "psci_private.h"

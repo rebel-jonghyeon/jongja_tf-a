@@ -190,8 +190,6 @@
 
 #define ID_REG_FIELD_MASK			ULL(0xf)
 
-<<<<<<< HEAD
-=======
 /*******************************************************************************
  * PFR0_EL1 - Definitions for AArch32 Processor Feature Register 0
  ******************************************************************************/
@@ -212,7 +210,6 @@
  ******************************************************************************/
 #define ID_DFR1_EL1				S3_0_C0_C3_5
 
->>>>>>> upstream_import/upstream_v2_14_1
 /* ID_AA64PFR0_EL1 definitions */
 #define ID_AA64PFR0_EL0_SHIFT			U(0)
 #define ID_AA64PFR0_EL1_SHIFT			U(4)
@@ -284,19 +281,12 @@
 #define ID_AA64DFR0_TRACEFILT_SHIFT	U(40)
 #define ID_AA64DFR0_TRACEFILT_MASK	U(0xf)
 #define ID_AA64DFR0_TRACEFILT_LENGTH	U(4)
-<<<<<<< HEAD
-=======
 #define TRACEFILT_IMPLEMENTED		ULL(1)
 
->>>>>>> upstream_import/upstream_v2_14_1
 #define ID_AA64DFR0_PMUVER_LENGTH	U(4)
 #define ID_AA64DFR0_PMUVER_SHIFT	U(8)
 #define ID_AA64DFR0_PMUVER_MASK		U(0xf)
 #define ID_AA64DFR0_PMUVER_PMUV3	U(1)
-<<<<<<< HEAD
-#define ID_AA64DFR0_PMUVER_PMUV3P7	U(7)
-#define ID_AA64DFR0_PMUVER_IMP_DEF	U(0xf)
-=======
 #define ID_AA64DFR0_PMUVER_PMUV3P9	U(9)
 #define ID_AA64DFR0_PMUVER_IMP_DEF	U(0xf)
 
@@ -304,7 +294,6 @@
 #define ID_AA64DFR0_SEBEP_SHIFT		U(24)
 #define ID_AA64DFR0_SEBEP_MASK		ULL(0xf)
 #define SEBEP_IMPLEMENTED		ULL(1)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* ID_AA64DFR0_EL1.PMS definitions (for ARMv8.2+) */
 #define ID_AA64DFR0_PMS_SHIFT		U(32)
@@ -320,13 +309,8 @@
 /* ID_AA64DFR0_EL1.MTPMU definitions (for ARMv8.6+) */
 #define ID_AA64DFR0_MTPMU_SHIFT		U(48)
 #define ID_AA64DFR0_MTPMU_MASK		ULL(0xf)
-<<<<<<< HEAD
-#define ID_AA64DFR0_MTPMU_SUPPORTED	ULL(1)
-#define ID_AA64DFR0_MTPMU_DISABLED	ULL(15)
-=======
 #define MTPMU_IMPLEMENTED		ULL(1)
 #define MTPMU_NOT_IMPLEMENTED		ULL(15)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* ID_AA64DFR0_EL1.BRBE definitions */
 #define ID_AA64DFR0_BRBE_SHIFT		U(52)
@@ -382,9 +366,6 @@
 
 #define MOPS_IMPLEMENTED		ULL(0x1)
 
-/* ID_AA64PFR2_EL1 definitions */
-#define ID_AA64PFR2_EL1			S3_0_C0_C4_2
-
 #define ID_AA64ISAR2_GPA3_SHIFT		U(8)
 #define ID_AA64ISAR2_GPA3_MASK		ULL(0xf)
 
@@ -430,25 +411,13 @@
 
 #define ID_AA64MMFR0_EL1_TGRAN4_SHIFT		U(28)
 #define ID_AA64MMFR0_EL1_TGRAN4_MASK		ULL(0xf)
-<<<<<<< HEAD
-#define ID_AA64MMFR0_EL1_TGRAN4_SUPPORTED	ULL(0x0)
-#define ID_AA64MMFR0_EL1_TGRAN4_52B_SUPPORTED	ULL(0x1)
-#define ID_AA64MMFR0_EL1_TGRAN4_NOT_SUPPORTED	ULL(0xf)
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 #define ID_AA64MMFR0_EL1_TGRAN64_SHIFT		U(24)
 #define ID_AA64MMFR0_EL1_TGRAN64_MASK		ULL(0xf)
 
 #define ID_AA64MMFR0_EL1_TGRAN16_SHIFT		U(20)
 #define ID_AA64MMFR0_EL1_TGRAN16_MASK		ULL(0xf)
-<<<<<<< HEAD
-#define ID_AA64MMFR0_EL1_TGRAN16_SUPPORTED	ULL(0x1)
-#define ID_AA64MMFR0_EL1_TGRAN16_NOT_SUPPORTED	ULL(0x0)
-#define ID_AA64MMFR0_EL1_TGRAN16_52B_SUPPORTED	ULL(0x2)
-=======
 #define TGRAN16_IMPLEMENTED			ULL(0x1)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* ID_AA64MMFR1_EL1 definitions */
 #define ID_AA64MMFR1_EL1_TWED_SHIFT		U(32)
@@ -585,16 +554,6 @@
 
 #define FPMR_IMPLEMENTED			ULL(0x1)
 
-/* ID_AA64PFR2_EL1 definitions */
-#define ID_AA64PFR2_EL1_MTEPERM_SHIFT		U(0)
-#define ID_AA64PFR2_EL1_MTEPERM_MASK		ULL(0xf)
-
-#define ID_AA64PFR2_EL1_MTESTOREONLY_SHIFT	U(4)
-#define ID_AA64PFR2_EL1_MTESTOREONLY_MASK	ULL(0xf)
-
-#define ID_AA64PFR2_EL1_MTEFAR_SHIFT		U(8)
-#define ID_AA64PFR2_EL1_MTEFAR_MASK		ULL(0xf)
-
 #define VDISR_EL2				S3_4_C12_C1_1
 #define VSESR_EL2				S3_4_C5_C2_3
 
@@ -616,11 +575,6 @@
 #define ID_AA64PFR1_EL1_SME_SHIFT		U(24)
 #define ID_AA64PFR1_EL1_SME_MASK		ULL(0xf)
 #define ID_AA64PFR1_EL1_SME_WIDTH		U(4)
-<<<<<<< HEAD
-#define ID_AA64PFR1_EL1_SME_NOT_SUPPORTED	ULL(0x0)
-#define ID_AA64PFR1_EL1_SME_SUPPORTED		ULL(0x1)
-#define ID_AA64PFR1_EL1_SME2_SUPPORTED		ULL(0x2)
-=======
 #define SME_IMPLEMENTED				ULL(0x1)
 #define SME2_IMPLEMENTED			ULL(0x2)
 #define SME_NOT_IMPLEMENTED			ULL(0x0)
@@ -629,7 +583,6 @@
 #define ID_AA64PFR2_EL1				S3_0_C0_C4_2
 #define ID_AA64PFR2_EL1_GCIE_SHIFT		12
 #define ID_AA64PFR2_EL1_GCIE_MASK		ULL(0xf)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* ID_PFR1_EL1 definitions */
 #define ID_PFR1_VIRTEXT_SHIFT	U(12)
@@ -816,17 +769,11 @@
 #define MDCR_MPMX_BIT		(ULL(1) << 35)
 #define MDCR_MCCD_BIT		(ULL(1) << 34)
 #define MDCR_SBRBE_SHIFT	U(32)
-<<<<<<< HEAD
-#define MDCR_SBRBE_MASK		ULL(0x3)
-#define MDCR_NSTB(x)		((x) << 24)
-#define MDCR_NSTB_EL1		ULL(0x3)
-=======
 #define MDCR_SBRBE(x)		((x) << MDCR_SBRBE_SHIFT)
 #define MDCR_SBRBE_ALL		ULL(0x3)
 #define MDCR_SBRBE_NS		ULL(0x1)
 #define MDCR_NSTB_EN_BIT	(ULL(1) << 24)
 #define MDCR_NSTB_SS_BIT	(ULL(1) << 25)
->>>>>>> upstream_import/upstream_v2_14_1
 #define MDCR_NSTBE_BIT		(ULL(1) << 26)
 #define MDCR_MTPME_BIT		(ULL(1) << 28)
 #define MDCR_TDCC_BIT		(ULL(1) << 27)
@@ -841,42 +788,13 @@
 #define MDCR_SPD32_LEGACY	ULL(0x0)
 #define MDCR_SPD32_DISABLE	ULL(0x2)
 #define MDCR_SPD32_ENABLE	ULL(0x3)
-<<<<<<< HEAD
-#define MDCR_NSPB(x)		((x) << 12)
-#define MDCR_NSPB_EL1		ULL(0x3)
-=======
 #define MDCR_NSPB_SS_BIT	(ULL(1) << 13)
 #define MDCR_NSPB_EN_BIT	(ULL(1) << 12)
->>>>>>> upstream_import/upstream_v2_14_1
 #define MDCR_NSPBE_BIT		(ULL(1) << 11)
 #define MDCR_TDOSA_BIT		(ULL(1) << 10)
 #define MDCR_TDA_BIT		(ULL(1) << 9)
 #define MDCR_EnPM2_BIT		(ULL(1) << 7)
 #define MDCR_TPM_BIT		(ULL(1) << 6)
-<<<<<<< HEAD
-#define MDCR_EL3_RESET_VAL	MDCR_MTPME_BIT
-
-/* MDCR_EL2 definitions */
-#define MDCR_EL2_MTPME		(U(1) << 28)
-#define MDCR_EL2_HLP_BIT	(U(1) << 26)
-#define MDCR_EL2_E2TB(x)	((x) << 24)
-#define MDCR_EL2_E2TB_EL1	U(0x3)
-#define MDCR_EL2_HCCD_BIT	(U(1) << 23)
-#define MDCR_EL2_TTRF		(U(1) << 19)
-#define MDCR_EL2_HPMD_BIT	(U(1) << 17)
-#define MDCR_EL2_TPMS		(U(1) << 14)
-#define MDCR_EL2_E2PB(x)	((x) << 12)
-#define MDCR_EL2_E2PB_EL1	U(0x3)
-#define MDCR_EL2_TDRA_BIT	(U(1) << 11)
-#define MDCR_EL2_TDOSA_BIT	(U(1) << 10)
-#define MDCR_EL2_TDA_BIT	(U(1) << 9)
-#define MDCR_EL2_TDE_BIT	(U(1) << 8)
-#define MDCR_EL2_HPME_BIT	(U(1) << 7)
-#define MDCR_EL2_TPM_BIT	(U(1) << 6)
-#define MDCR_EL2_TPMCR_BIT	(U(1) << 5)
-#define MDCR_EL2_HPMN_MASK	U(0x1f)
-#define MDCR_EL2_RESET_VAL	U(0x0)
-=======
 #define MDCR_RLTE_BIT		(ULL(1) << 0)
 #define MDCR_EL3_RESET_VAL	MDCR_MTPME_BIT
 
@@ -900,7 +818,6 @@
 #define MDCR_EL2_TPMCR_BIT	(ULL(1) << 5)
 #define MDCR_EL2_HPMN_MASK	ULL(0x1f)
 #define MDCR_EL2_RESET_VAL	ULL(0x0)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* HSTR_EL2 definitions */
 #define HSTR_EL2_RESET_VAL	U(0x0)
@@ -1700,16 +1617,6 @@
 
 /*******************************************************************************
  * FEAT_FGT - Definitions for Fine-Grained Trap registers
-<<<<<<< HEAD
- ******************************************************************************/
-#define HFGITR_EL2_INIT_VAL	ULL(0x180000000000000)
-#define HFGRTR_EL2_INIT_VAL	ULL(0xC4000000000000)
-#define HFGWTR_EL2_INIT_VAL	ULL(0xC4000000000000)
-
-/*******************************************************************************
- * FEAT_TCR2 - Extended Translation Control Register
-=======
->>>>>>> upstream_import/upstream_v2_14_1
  ******************************************************************************/
 #define HFGITR_EL2_INIT_VAL	ULL(0x180000000000000)
 #define HFGRTR_EL2_INIT_VAL	ULL(0xC4000000000000)
@@ -1790,12 +1697,9 @@
 #define DSU_CLUSTER_PWR_ON	1
 #define DSU_CLUSTER_PWR_MASK	U(1)
 #define DSU_CLUSTER_MEM_RET	BIT(1)
-<<<<<<< HEAD
-=======
 
 /* CLUSTERPMMDCR register definitions */
 #define CLUSTERPMMDCR_SPME	U(1)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*******************************************************************************
  * Definitions for CPU Power/Performance Management registers

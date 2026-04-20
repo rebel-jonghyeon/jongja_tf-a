@@ -1,10 +1,6 @@
 /*
  * Copyright (c) 2013-2018, Arm Limited and Contributors. All rights reserved.
-<<<<<<< HEAD
- * Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
-=======
  * Copyright (c) 2022-2025, Advanced Micro Devices, Inc. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */

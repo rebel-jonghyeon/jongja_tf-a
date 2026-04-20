@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2017-2024, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -610,11 +606,6 @@ func cortex_a57_cluster_pwr_dwn
 	b	cortex_a57_disable_ext_debug
 endfunc cortex_a57_cluster_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_a57
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 declare_cpu_ops cortex_a57, CORTEX_A57_MIDR, \
 	cortex_a57_reset_func, \
 	cortex_a57_core_pwr_dwn, \

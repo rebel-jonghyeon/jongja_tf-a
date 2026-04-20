@@ -1,25 +1,16 @@
 #
 # Copyright (c) 2019-2020, ARM Limited and Contributors. All rights reserved.
 # Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
 # Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
 include lib/xlat_tables_v2/xlat_tables.mk
-<<<<<<< HEAD
-PLAT_INCLUDES		:=	\
-			-Iplat/intel/soc/agilex5/include/		\
-			-Iplat/intel/soc/common/drivers/		\
-=======
 include lib/libfdt/libfdt.mk
 PLAT_INCLUDES		:=	\
 			-Iplat/intel/soc/agilex5/include/		\
 			-Iplat/intel/soc/common/drivers/		\
 			-Iplat/intel/soc/common/lib/sha/		\
->>>>>>> upstream_import/upstream_v2_14_1
 			-Iplat/intel/soc/common/include/
 
 # GIC-600 configuration
@@ -32,10 +23,7 @@ AGX5_GICv3_SOURCES	:=	\
 
 PLAT_BL_COMMON_SOURCES	:=	\
 			${AGX5_GICv3_SOURCES}				\
-<<<<<<< HEAD
-=======
 			common/fdt_wrappers.c				\
->>>>>>> upstream_import/upstream_v2_14_1
 			drivers/cadence/combo_phy/cdns_combo_phy.c	\
 			drivers/cadence/emmc/cdns_sdmmc.c	\
 			drivers/cadence/nand/cdns_nand.c	\
@@ -49,14 +37,10 @@ PLAT_BL_COMMON_SOURCES	:=	\
 			plat/intel/soc/common/drivers/sdmmc/sdmmc.c			\
 			plat/intel/soc/common/drivers/ddr/ddr.c			\
 			plat/intel/soc/common/drivers/nand/nand.c			\
-<<<<<<< HEAD
-			plat/intel/soc/common/socfpga_delay_timer.c
-=======
 			plat/intel/soc/common/lib/sha/sha.c				\
 			plat/intel/soc/common/lib/utils/alignment_utils.c \
 			plat/intel/soc/common/socfpga_delay_timer.c	\
 			plat/intel/soc/common/socfpga_dt.c
->>>>>>> upstream_import/upstream_v2_14_1
 
 BL2_SOURCES		+=	\
 		common/desc_image_load.c				\
@@ -78,15 +62,6 @@ BL2_SOURCES		+=	\
 		lib/cpus/aarch64/cortex_a76.S				\
 		plat/intel/soc/agilex5/soc/agilex5_clock_manager.c	\
 		plat/intel/soc/agilex5/soc/agilex5_memory_controller.c	\
-<<<<<<< HEAD
-		plat/intel/soc/agilex5/soc/agilex5_mmc.c			\
-		plat/intel/soc/agilex5/soc/agilex5_pinmux.c		\
-		plat/intel/soc/agilex5/soc/agilex5_power_manager.c	\
-		plat/intel/soc/common/bl2_plat_mem_params_desc.c	\
-		plat/intel/soc/common/socfpga_image_load.c		\
-		plat/intel/soc/common/socfpga_storage.c			\
-		plat/intel/soc/common/socfpga_vab.c				\
-=======
 		plat/intel/soc/agilex5/soc/agilex5_mmc.c		\
 		plat/intel/soc/agilex5/soc/agilex5_pinmux.c		\
 		plat/intel/soc/agilex5/soc/agilex5_power_manager.c	\
@@ -97,7 +72,6 @@ BL2_SOURCES		+=	\
 		plat/intel/soc/common/socfpga_ros.c			\
 		plat/intel/soc/common/socfpga_storage.c			\
 		plat/intel/soc/common/socfpga_vab.c			\
->>>>>>> upstream_import/upstream_v2_14_1
 		plat/intel/soc/common/soc/socfpga_emac.c		\
 		plat/intel/soc/common/soc/socfpga_firewall.c		\
 		plat/intel/soc/common/soc/socfpga_handoff.c		\
@@ -119,11 +93,8 @@ BL31_SOURCES	+=	\
 		lib/cpus/aarch64/cortex_a76.S				\
 		plat/common/plat_psci_common.c				\
 		plat/intel/soc/agilex5/bl31_plat_setup.c		\
-<<<<<<< HEAD
-=======
 		plat/intel/soc/agilex5/soc/agilex5_cache.S		\
 		plat/intel/soc/agilex5/soc/agilex5_clock_manager.c	\
->>>>>>> upstream_import/upstream_v2_14_1
 		plat/intel/soc/agilex5/soc/agilex5_power_manager.c	\
 		plat/intel/soc/common/socfpga_psci.c			\
 		plat/intel/soc/common/socfpga_sip_svc.c			\
@@ -132,10 +103,7 @@ BL31_SOURCES	+=	\
 		plat/intel/soc/common/sip/socfpga_sip_ecc.c		\
 		plat/intel/soc/common/sip/socfpga_sip_fcs.c		\
 		plat/intel/soc/common/soc/socfpga_mailbox.c		\
-<<<<<<< HEAD
-=======
 		plat/intel/soc/common/soc/socfpga_system_manager.c	\
->>>>>>> upstream_import/upstream_v2_14_1
 		plat/intel/soc/common/soc/socfpga_reset_manager.c
 
 # Configs for A76 and A55
@@ -144,13 +112,6 @@ USE_COHERENT_MEM := 0
 CTX_INCLUDE_AARCH32_REGS := 0
 ERRATA_A55_1530923 := 1
 
-<<<<<<< HEAD
-$(eval $(call add_define,ARM_PRELOADED_DTB_BASE))
-
-PROGRAMMABLE_RESET_ADDRESS	:= 0
-RESET_TO_BL2			:= 1
-BL2_INV_DCACHE			:= 0
-=======
 # Don't have the Linux kernel as a BL33 image by default
 ARM_LINUX_KERNEL_AS_BL33	:=	0
 $(eval $(call assert_boolean,ARM_LINUX_KERNEL_AS_BL33))
@@ -188,4 +149,3 @@ BL2_INV_DCACHE			:= 0
 DEFINES += -DVERSION_MAJOR=${VERSION_MAJOR}
 DEFINES += -DVERSION_MINOR=${VERSION_MINOR}
 DEFINES += -DVERSION_PATCH=${VERSION_PATCH}
->>>>>>> upstream_import/upstream_v2_14_1

@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2024-2025, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -79,9 +76,6 @@
 /* SEU Commands */
 #define MBOX_CMD_SEU_ERR_READ				0x3C
 #define MBOX_CMD_SAFE_INJECT_SEU_ERR			0x41
-
-/* SEU Commands */
-#define MBOX_CMD_SEU_ERR_READ				0x3C
 
 /* RSU Commands */
 #define MBOX_GET_SUBPARTITION_TABLE			0x5A
@@ -230,11 +224,6 @@
 #define RSU_VERSION_ACMF_MASK				0xff00
 
 /* Config Status Macros */
-<<<<<<< HEAD
-#define CONFIG_STATUS_WORD_SIZE			16U
-#define CONFIG_STATUS_FW_VER_OFFSET		1
-#define CONFIG_STATUS_FW_VER_MASK		0x00FFFFFF
-=======
 #define CONFIG_STATUS_WORD_SIZE				16U
 #define CONFIG_STATUS_FW_VER_OFFSET			1
 #define CONFIG_STATUS_FW_VER_MASK			0x00FFFFFF
@@ -249,7 +238,6 @@
 #define MBOX_IS_4K_ALIGNED(x)				((x) & MBOX_4K_ALIGNED_MASK)
 #define MBOX_IS_WORD_ALIGNED(x)				(!((x) & 0x3))
 #define MBOX_QSPI_RW_MAX_WORDS				(0x1000)
->>>>>>> upstream_import/upstream_v2_14_1
 
 /* Data structure */
 
@@ -307,8 +295,6 @@ int mailbox_hps_stage_notify(uint32_t execution_stage);
 int mailbox_hwmon_readtemp(uint32_t chan, uint32_t *resp_buf);
 int mailbox_hwmon_readvolt(uint32_t chan, uint32_t *resp_buf);
 int mailbox_seu_err_status(uint32_t *resp_buf, uint32_t resp_buf_len);
-<<<<<<< HEAD
-=======
 int mailbox_safe_inject_seu_err(uint32_t *arg, unsigned int len);
 
 int mailbox_send_fpga_config_comp(void);
@@ -415,6 +401,5 @@ int mailbox_response_poll_on_intr_v3(uint8_t *client_id, uint8_t *job_id,
 				     uint64_t *bitmap);
 
 #endif		/* #if SIP_SVC_V3 */
->>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* SOCFPGA_MBOX_H */

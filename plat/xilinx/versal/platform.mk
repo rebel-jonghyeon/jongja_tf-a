@@ -64,15 +64,6 @@ endif
 # enable assert() for release/debug builds
 ENABLE_ASSERTIONS := 1
 
-ifdef XILINX_OF_BOARD_DTB_ADDR
-$(eval $(call add_define,XILINX_OF_BOARD_DTB_ADDR))
-endif
-
-PLAT_XLAT_TABLES_DYNAMIC := 0
-ifeq (${PLAT_XLAT_TABLES_DYNAMIC},1)
-$(eval $(call add_define,PLAT_XLAT_TABLES_DYNAMIC))
-endif
-
 PLAT_INCLUDES		:=	-Iinclude/plat/arm/common/			\
 				-Iplat/xilinx/common/include/			\
 				-Iplat/xilinx/common/ipi_mailbox_service/	\
@@ -126,10 +117,7 @@ BL31_SOURCES		+=	drivers/arm/cci/cci.c				\
 				plat/xilinx/common/ipi.c			\
 				plat/xilinx/common/plat_fdt.c			\
 				plat/xilinx/common/plat_console.c               \
-<<<<<<< HEAD
-=======
 				plat/xilinx/common/plat_clkfunc.c               \
->>>>>>> upstream_import/upstream_v2_14_1
 				plat/xilinx/common/plat_startup.c		\
 				plat/xilinx/common/ipi_mailbox_service/ipi_mailbox_svc.c \
 				plat/xilinx/common/pm_service/pm_ipi.c		\

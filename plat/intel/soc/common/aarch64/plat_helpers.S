@@ -1,10 +1,7 @@
 /*
  * Copyright (c) 2019-2023, ARM Limited and Contributors. All rights reserved.
-<<<<<<< HEAD
-=======
  * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
  * Copyright (c) 2024, Altera Corporation. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -102,20 +99,6 @@ endfunc plat_my_core_pos
 
 func warm_reset_req
 #if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX5
-<<<<<<< HEAD
-	bl	plat_is_my_cpu_primary
-	cbnz	x0, warm_reset
-warm_reset:
-	mov_imm x1, PLAT_SEC_ENTRY
-	str	xzr, [x1]
-	mrs	x1, rmr_el3
-	orr	x1, x1, #0x02
-	msr	rmr_el3, x1
-	isb
-	dsb	sy
-#else
-	str	xzr, [x4]
-=======
 	/* Clear the markup before going for warm reset */
 	bic	x2, x2, #BS_REG_MAGIC_KEYS_MASK
 	/* Check if the address is 64 bit aligned or not */
@@ -145,7 +128,6 @@ unaligned_store:
 #endif
 
 continue_warm_reset:
->>>>>>> upstream_import/upstream_v2_14_1
 	bl	plat_is_my_cpu_primary
 	cbz	x0, cpu_in_wfi
 	mov_imm x1, PLAT_SEC_ENTRY
@@ -158,24 +140,8 @@ continue_warm_reset:
 cpu_in_wfi:
 	wfi
 	b	cpu_in_wfi
-#endif
 endfunc warm_reset_req
 
-<<<<<<< HEAD
-/* TODO: Zephyr warm reset test */
-#if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX5
-func plat_get_my_entrypoint
-	ldr	x4, =L2_RESET_DONE_REG
-	ldr	x5, [x4]
-	ldr	x1, =PLAT_L2_RESET_REQ
-	cmp	x1, x5
-	b.eq	zephyr_reset_req
-	mov_imm	x1, PLAT_SEC_ENTRY
-	ldr	x0, [x1]
-	ret
-zephyr_reset_req:
-	ldr	x0, =0x00
-=======
 #if PLATFORM_MODEL == PLAT_SOCFPGA_AGILEX5
 func plat_get_my_entrypoint
 	ldr	x4, =L2_RESET_DONE_REG
@@ -230,7 +196,6 @@ smp_request:
 	 */
 	ldr	x1, =PLAT_SEC_ENTRY
 	ldr	x0, [x1]
->>>>>>> upstream_import/upstream_v2_14_1
 	ret
 endfunc plat_get_my_entrypoint
 #else

@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
-=======
  * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -360,11 +356,8 @@ static const struct plat_try_images_ops try_img_ops = {
 static void boot_fmc2_nand(boot_api_context_t *boot_context)
 {
 	int io_result __maybe_unused;
-<<<<<<< HEAD
-=======
 
 	plat_setup_try_img_ops(&try_img_ops);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	io_result = stm32_fmc2_init();
 	assert(io_result == 0);
@@ -386,11 +379,8 @@ static void boot_fmc2_nand(boot_api_context_t *boot_context)
 static void boot_spi_nand(boot_api_context_t *boot_context)
 {
 	int io_result __maybe_unused;
-<<<<<<< HEAD
-=======
 
 	plat_setup_try_img_ops(&try_img_ops);
->>>>>>> upstream_import/upstream_v2_14_1
 
 	io_result = stm32_qspi_init();
 	assert(io_result == 0);
@@ -439,11 +429,7 @@ static void stm32cubeprogrammer_uart(uint8_t phase, uintptr_t base, size_t len)
 static void stm32cubeprogrammer_usb(uint8_t phase, uintptr_t base, size_t len)
 {
 	int ret __maybe_unused;
-<<<<<<< HEAD
-	struct usb_handle *pdev;
-=======
 	static struct usb_handle *pdev;
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* Init USB on platform */
 	if (pdev == NULL) {
@@ -689,11 +675,7 @@ int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 	return rc;
 }
 
-<<<<<<< HEAD
-#if (STM32MP_SDMMC || STM32MP_EMMC || STM32MP_SPI_NOR) && PSA_FWU_SUPPORT
-=======
 #if PSA_FWU_SUPPORT
->>>>>>> upstream_import/upstream_v2_14_1
 /*
  * In each boot in non-trial mode, we set the BKP register to
  * FWU_MAX_TRIAL_REBOOT, and return the active_index from metadata.
@@ -759,14 +741,9 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
 	unsigned int i;
 	uint32_t boot_idx;
 	const partition_entry_t *entry __maybe_unused;
-<<<<<<< HEAD
-	const uuid_t *img_type_uuid;
-	const uuid_t *img_uuid __maybe_unused;
-=======
 	const struct fwu_image_entry *img_entry;
 	const void *img_type_guid;
 	const void *img_guid;
->>>>>>> upstream_import/upstream_v2_14_1
 	io_block_spec_t *image_spec;
 	const uint16_t boot_itf = stm32mp_get_boot_itf_selected();
 
@@ -776,19 +753,11 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
 
 	img_entry = (void *)&metadata->fw_desc.img_entry;
 	for (i = 0U; i < NR_OF_IMAGES_IN_FW_BANK; i++) {
-<<<<<<< HEAD
-		img_type_uuid = &metadata->img_entry[i].img_type_uuid;
-
-		img_uuid = &metadata->img_entry[i].img_props[boot_idx].img_uuid;
-
-		image_spec = stm32_get_image_spec(img_type_uuid);
-=======
 		img_type_guid = &img_entry[i].img_type_guid;
 
 		img_guid = &img_entry[i].img_bank_info[boot_idx].img_guid;
 
 		image_spec = stm32_get_image_spec(img_type_guid);
->>>>>>> upstream_import/upstream_v2_14_1
 		if (image_spec == NULL) {
 			ERROR("Unable to get image spec for the image in the metadata\n");
 			panic();
@@ -798,11 +767,7 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
 #if (STM32MP_SDMMC || STM32MP_EMMC)
 		case BOOT_API_CTX_BOOT_INTERFACE_SEL_FLASH_SD:
 		case BOOT_API_CTX_BOOT_INTERFACE_SEL_FLASH_EMMC:
-<<<<<<< HEAD
-			entry = get_partition_entry_by_uuid(img_uuid);
-=======
 			entry = get_partition_entry_by_guid(img_guid);
->>>>>>> upstream_import/upstream_v2_14_1
 			if (entry == NULL) {
 				ERROR("No partition with the uuid mentioned in metadata\n");
 				panic();
@@ -814,15 +779,9 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
 #endif
 #if STM32MP_SPI_NOR
 		case BOOT_API_CTX_BOOT_INTERFACE_SEL_FLASH_NOR_SPI:
-<<<<<<< HEAD
-			if (guidcmp(img_uuid, &STM32MP_NOR_FIP_A_GUID) == 0) {
-				image_spec->offset = STM32MP_NOR_FIP_A_OFFSET;
-			} else if (guidcmp(img_uuid, &STM32MP_NOR_FIP_B_GUID) == 0) {
-=======
 			if (guidcmp(img_guid, &STM32MP_NOR_FIP_A_GUID) == 0) {
 				image_spec->offset = STM32MP_NOR_FIP_A_OFFSET;
 			} else if (guidcmp(img_guid, &STM32MP_NOR_FIP_B_GUID) == 0) {
->>>>>>> upstream_import/upstream_v2_14_1
 				image_spec->offset = STM32MP_NOR_FIP_B_OFFSET;
 			} else {
 				ERROR("Invalid uuid mentioned in metadata\n");
@@ -830,8 +789,6 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
 			}
 			break;
 #endif
-<<<<<<< HEAD
-=======
 #if (STM32MP_RAW_NAND || STM32MP_SPI_NAND)
 		case BOOT_API_CTX_BOOT_INTERFACE_SEL_FLASH_NAND_FMC:
 		case BOOT_API_CTX_BOOT_INTERFACE_SEL_FLASH_NAND_SPI:
@@ -845,7 +802,6 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
 			}
 			break;
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 		default:
 			panic();
 			break;
@@ -853,15 +809,9 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
 	}
 }
 
-<<<<<<< HEAD
-static int plat_set_image_source(unsigned int image_id,
-				 uintptr_t *handle,
-				 uintptr_t *image_spec)
-=======
 static int set_metadata_image_source(unsigned int image_id,
 				     uintptr_t *handle,
 				     uintptr_t *image_spec)
->>>>>>> upstream_import/upstream_v2_14_1
 {
 	struct plat_io_policy *policy;
 	io_block_spec_t *spec __maybe_unused;
@@ -904,8 +854,6 @@ static int set_metadata_image_source(unsigned int image_id,
 		spec->length = sizeof(struct fwu_metadata);
 		break;
 #endif
-<<<<<<< HEAD
-=======
 
 #if (STM32MP_RAW_NAND || STM32MP_SPI_NAND)
 	case BOOT_API_CTX_BOOT_INTERFACE_SEL_FLASH_NAND_FMC:
@@ -919,7 +867,6 @@ static int set_metadata_image_source(unsigned int image_id,
 		spec->length = sizeof(struct fwu_metadata);
 		break;
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 	default:
 		panic();
 		break;
@@ -938,12 +885,6 @@ int plat_fwu_set_metadata_image_source(unsigned int image_id,
 	assert((image_id == FWU_METADATA_IMAGE_ID) ||
 	       (image_id == BKUP_FWU_METADATA_IMAGE_ID));
 
-<<<<<<< HEAD
-	return plat_set_image_source(image_id, handle, image_spec);
-}
-#endif /* (STM32MP_SDMMC || STM32MP_EMMC || STM32MP_SPI_NOR) && PSA_FWU_SUPPORT */
-=======
 	return set_metadata_image_source(image_id, handle, image_spec);
 }
 #endif /* PSA_FWU_SUPPORT */
->>>>>>> upstream_import/upstream_v2_14_1

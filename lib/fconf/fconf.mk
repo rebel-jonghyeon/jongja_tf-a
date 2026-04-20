@@ -1,9 +1,5 @@
 #
-<<<<<<< HEAD
-# Copyright (c) 2019-2021, Arm Limited. All rights reserved.
-=======
 # Copyright (c) 2019-2024, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #

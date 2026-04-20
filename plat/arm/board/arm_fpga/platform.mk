@@ -41,10 +41,6 @@ ENABLE_FEAT_CSV2_2		:= 2
 ENABLE_FEAT_ECV			:= 2
 ENABLE_FEAT_FGT			:= 2
 ENABLE_FEAT_HCX			:= 2
-<<<<<<< HEAD
-ENABLE_SYS_REG_TRACE_FOR_NS	:= 2
-ENABLE_TRF_FOR_NS		:= 2
-=======
 ENABLE_FEAT_MTE2		:= 2
 ENABLE_FEAT_TCR2		:= 2
 ENABLE_SYS_REG_TRACE_FOR_NS	:= 2
@@ -52,7 +48,6 @@ ENABLE_TRF_FOR_NS		:= 2
 ENABLE_SME_FOR_NS		:= 2
 ENABLE_SME2_FOR_NS		:= 2
 ENABLE_FEAT_LS64_ACCDATA	:= 2
->>>>>>> upstream_import/upstream_v2_14_1
 
 # Treating this as a memory-constrained port for now
 USE_COHERENT_MEM	:=	0
@@ -83,20 +78,11 @@ else
 				lib/cpus/aarch64/cortex_a720.S			\
 				lib/cpus/aarch64/cortex_x3.S 			\
 				lib/cpus/aarch64/cortex_x4.S			\
-<<<<<<< HEAD
-				lib/cpus/aarch64/neoverse_n_common.S		\
-				lib/cpus/aarch64/neoverse_n1.S			\
-				lib/cpus/aarch64/neoverse_n2.S			\
-				lib/cpus/aarch64/neoverse_v1.S			\
-				lib/cpus/aarch64/cortex_chaberton.S		\
-				lib/cpus/aarch64/cortex_blackhawk.S
-=======
 				lib/cpus/aarch64/neoverse_n1.S			\
 				lib/cpus/aarch64/neoverse_n2.S			\
 				lib/cpus/aarch64/neoverse_v1.S			\
 				lib/cpus/aarch64/cortex_a725.S		\
 				lib/cpus/aarch64/cortex_x925.S
->>>>>>> upstream_import/upstream_v2_14_1
 
 # AArch64/AArch32 cores
 	FPGA_CPU_LIBS	+=	lib/cpus/aarch64/cortex_a55.S	\

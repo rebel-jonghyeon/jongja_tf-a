@@ -15,12 +15,7 @@
  * Initialize a new dcc console instance and register it with the console
  * framework.
  */
-<<<<<<< HEAD
-int console_dcc_register(void);
-void console_dcc_unregister(void);
-=======
 int console_dcc_register(console_t *console);
 void console_dcc_unregister(console_t *console);
->>>>>>> upstream_import/upstream_v2_14_1
 
 #endif /* DCC_H */

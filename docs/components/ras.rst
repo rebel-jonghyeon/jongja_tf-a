@@ -72,8 +72,6 @@ During entry to EL3 from lower EL, if there is any pending async EAs they are ei
 reflected back to lower EL (KFH) or handled in EL3 itself (FFH).
 
 |Image 1|
-<<<<<<< HEAD
-=======
 
 Limitation in KFH Mode
 ----------------------
@@ -103,7 +101,6 @@ eliminating the need for panic handling in this scenario.
 
 This planned enhancement will improve robustness and correctness of asynchronous error handling
 in KFH mode.
->>>>>>> upstream_import/upstream_v2_14_1
 
 TF-A build options
 ==================

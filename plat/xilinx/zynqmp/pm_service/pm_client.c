@@ -172,11 +172,8 @@ static enum pm_node_id irq_to_pm_node(uint32_t irq)
 /**
  * pm_client_set_wakeup_sources - Set all slaves with enabled interrupts as wake
  *                                sources in the PMU firmware.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  */
 static void pm_client_set_wakeup_sources(uint32_t flag)
@@ -253,32 +250,9 @@ const struct pm_proc *pm_get_proc(uint32_t cpuid)
 }
 
 /**
-<<<<<<< HEAD
- * pm_get_proc_by_node() - returns pointer to the proc structure.
- * @nid: node id of the processor.
- *
- * Return: pointer to a proc structure if proc is found, otherwise NULL.
- *
- */
-const struct pm_proc *pm_get_proc_by_node(enum pm_node_id nid)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(pm_procs_all); i++) {
-		if (nid == pm_procs_all[i].node_id) {
-			return &pm_procs_all[i];
-		}
-	}
-	return NULL;
-}
-
-/**
  * pm_get_cpuid() - get the local cpu ID for a global node ID.
  * @nid: node id of the processor.
  *
-=======
- * pm_get_cpuid() - get the local cpu ID for a global node ID.
- * @nid: node id of the processor.
- *
->>>>>>> upstream_import/upstream_v2_14_1
  * Return: the cpu ID (starting from 0) for the subsystem.
  *
  */
@@ -302,11 +276,8 @@ const struct pm_proc *primary_proc = &pm_procs_all[0];
  * pm_client_suspend() - Client-specific suspend actions.
  * @proc: processor which need to suspend.
  * @state: desired suspend state.
-<<<<<<< HEAD
-=======
  * @flag: 0 - Call from secure source.
  *	  1 - Call from non-secure source.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * This function should contain any PU-specific actions
  * required prior to sending suspend request to PMU
@@ -328,42 +299,12 @@ void pm_client_suspend(const struct pm_proc *proc, uint32_t state, uint32_t flag
 }
 
 /**
-<<<<<<< HEAD
- * pm_client_abort_suspend() - Client-specific abort-suspend actions.
- *
- * This function should contain any PU-specific actions
- * required for aborting a prior suspend request.
- *
- */
-void pm_client_abort_suspend(void)
-{
-	/* Enable interrupts at processor level (for current cpu) */
-	gicv2_cpuif_enable();
-
-	bakery_lock_get(&pm_client_secure_lock);
-
-	/* Clear powerdown request */
-	mmio_write_32(APU_PWRCTL,
-		 mmio_read_32(APU_PWRCTL) & ~primary_proc->pwrdn_mask);
-
-	bakery_lock_release(&pm_client_secure_lock);
-}
-
-/**
  * pm_client_wakeup() - Client-specific wakeup actions.
  * @proc: Processor which need to wakeup.
  *
  * This function should contain any PU-specific actions
  * required for waking up another APU core.
  *
-=======
- * pm_client_wakeup() - Client-specific wakeup actions.
- * @proc: Processor which need to wakeup.
- *
- * This function should contain any PU-specific actions
- * required for waking up another APU core.
- *
->>>>>>> upstream_import/upstream_v2_14_1
  */
 void pm_client_wakeup(const struct pm_proc *proc)
 {

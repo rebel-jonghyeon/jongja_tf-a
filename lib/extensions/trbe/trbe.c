@@ -1,9 +1,5 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2021-2023, Arm Limited. All rights reserved.
-=======
  * Copyright (c) 2021-2025, Arm Limited. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -54,50 +50,6 @@ void trbe_enable_ns(cpu_context_t *ctx)
 	write_ctx_reg(state, CTX_MDCR_EL3, mdcr_el3_val);
 }
 
-<<<<<<< HEAD
-void trbe_init_el3(void)
-{
-	u_register_t val;
-
-	/*
-	 * MDCR_EL3.NSTBE = 0b0
-	 *  Trace Buffer owning Security state is Non-secure state. If FEAT_RME
-	 *  is not implemented, this field is RES0.
-	 *
-	 * MDCR_EL3.NSTB = 0b11
-	 *  Allow access of trace buffer control registers from NS-EL1 and
-	 *  NS-EL2, tracing is prohibited in Secure and Realm state (if
-	 *  implemented).
-	 */
-	val = read_mdcr_el3();
-	val |= MDCR_NSTB(MDCR_NSTB_EL1);
-	val &= ~(MDCR_NSTBE_BIT);
-	write_mdcr_el3(val);
-}
-
-void trbe_init_el2_unused(void)
-{
-	/*
-	 * MDCR_EL2.E2TB: Set to zero so that the trace Buffer
-	 *  owning exception level is NS-EL1 and, tracing is
-	 *  prohibited at NS-EL2. These bits are RES0 when
-	 *  FEAT_TRBE is not implemented.
-	 */
-	write_mdcr_el2(read_mdcr_el2() & ~MDCR_EL2_E2TB(MDCR_EL2_E2TB_EL1));
-}
-
-static void *trbe_drain_trace_buffers_hook(const void *arg __unused)
-{
-	if (is_feat_trbe_supported()) {
-		/*
-		 * Before switching from normal world to secure world
-		 * the trace buffers need to be drained out to memory. This is
-		 * required to avoid an invalid memory access when TTBR is switched
-		 * for entry to S-EL1.
-		 */
-		tsb_csync();
-		dsbnsh();
-=======
 static void trbe_disable_all(cpu_context_t *ctx, bool ns)
 {
 	el3_state_t *state = get_el3state_ctx(ctx);
@@ -111,7 +63,6 @@ static void trbe_disable_all(cpu_context_t *ctx, bool ns)
 		mdcr_el3_val &= ~MDCR_NSTB_SS_BIT;
 	} else {
 		mdcr_el3_val |= MDCR_NSTB_SS_BIT;
->>>>>>> upstream_import/upstream_v2_14_1
 	}
 
 	write_ctx_reg(state, CTX_MDCR_EL3, mdcr_el3_val);

@@ -98,14 +98,6 @@
 /* Return error codes from RMI SMCs */
 #define RMI_SUCCESS			0
 #define RMI_ERROR_INPUT			1
-<<<<<<< HEAD
-
-/* Acceptable SHA sizes for Challenge object */
-#define SHA256_DIGEST_SIZE	32U
-#define SHA384_DIGEST_SIZE	48U
-#define SHA512_DIGEST_SIZE	64U
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 /*
  * Retrieve Realm attestation key from EL3. Only P-384 ECC curve key is
@@ -301,11 +293,7 @@ typedef struct rp_ide_key_info {
  * Increase this when a bug is fixed, or a feature is added without
  * breaking compatibility.
  */
-<<<<<<< HEAD
-#define RMM_EL3_IFC_VERSION_MINOR	(U(2))
-=======
 #define RMM_EL3_IFC_VERSION_MINOR	(U(8))
->>>>>>> upstream_import/upstream_v2_14_1
 
 #define RMM_EL3_INTERFACE_VERSION				\
 	(((RMM_EL3_IFC_VERSION_MAJOR << 16) & 0x7FFFF) |	\

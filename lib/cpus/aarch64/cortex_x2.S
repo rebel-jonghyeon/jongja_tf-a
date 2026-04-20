@@ -32,8 +32,6 @@
 	wa_cve_2022_23960_bhb_vector_table CORTEX_X2_BHB_LOOP_COUNT, cortex_x2
 #endif /* WORKAROUND_CVE_2022_23960 */
 
-<<<<<<< HEAD
-=======
 cpu_reset_prologue cortex_x2
 
 workaround_reset_start cortex_x2, ERRATUM(1901946), ERRATA_X2_1901946
@@ -91,7 +89,6 @@ workaround_reset_end cortex_x2, ERRATUM(1934260)
 
 check_erratum_range cortex_x2, ERRATUM(1934260), CPU_REV(1, 0), CPU_REV(1, 0)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_x2, ERRATUM(2002765), ERRATA_X2_2002765
 	ldr	x0, =0x6
 	msr	S3_6_C15_C8_0, x0 /* CPUPSELR_EL3 */
@@ -110,16 +107,6 @@ workaround_reset_start cortex_x2, ERRATUM(2017096), ERRATA_X2_2017096
 workaround_reset_end cortex_x2, ERRATUM(2017096)
 
 check_erratum_ls cortex_x2, ERRATUM(2017096), CPU_REV(2, 0)
-<<<<<<< HEAD
-
-workaround_reset_start cortex_x2, ERRATUM(2058056), ERRATA_X2_2058056
-	sysreg_bitfield_insert CORTEX_X2_CPUECTLR2_EL1, CORTEX_X2_CPUECTLR2_EL1_PF_MODE_CNSRV, \
-	CORTEX_X2_CPUECTLR2_EL1_PF_MODE_SHIFT, CORTEX_X2_CPUECTLR2_EL1_PF_MODE_WIDTH
-workaround_reset_end cortex_x2, ERRATUM(2058056)
-
-check_erratum_ls cortex_x2, ERRATUM(2058056), CPU_REV(2, 1)
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 workaround_reset_start cortex_x2, ERRATUM(2081180), ERRATA_X2_2081180
 	/* Apply instruction patching sequence */
@@ -150,15 +137,12 @@ workaround_reset_end cortex_x2, ERRATUM(2083908)
 
 check_erratum_range cortex_x2, ERRATUM(2083908), CPU_REV(2, 0), CPU_REV(2, 0)
 
-<<<<<<< HEAD
-=======
 workaround_reset_start cortex_x2, ERRATUM(2136059), ERRATA_X2_2136059
 	sysreg_bit_set CORTEX_X2_CPUACTLR5_EL1, BIT(44)
 workaround_reset_end cortex_x2, ERRATUM(2136059)
 
 check_erratum_ls cortex_x2, ERRATUM(2136059), CPU_REV(2, 0)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_x2, ERRATUM(2147715), ERRATA_X2_2147715
 	/* Apply the workaround by setting bit 22 in CPUACTLR_EL1. */
 	sysreg_bit_set CORTEX_X2_CPUACTLR_EL1, CORTEX_X2_CPUACTLR_EL1_BIT_22
@@ -181,15 +165,12 @@ workaround_reset_start cortex_x2, ERRATUM(2216384), ERRATA_X2_2216384
 workaround_reset_end cortex_x2, ERRATUM(2216384)
 
 check_erratum_ls cortex_x2, ERRATUM(2216384), CPU_REV(2, 0)
-<<<<<<< HEAD
-=======
 
 workaround_reset_start cortex_x2, ERRATUM(2267065), ERRATA_X2_2267065
 	sysreg_bit_set CORTEX_X2_CPUACTLR_EL1, BIT(22)
 workaround_reset_end cortex_x2, ERRATUM(2267065)
 
 check_erratum_ls cortex_x2, ERRATUM(2267065), CPU_REV(2, 0)
->>>>>>> upstream_import/upstream_v2_14_1
 
 workaround_reset_start cortex_x2, ERRATUM(2282622), ERRATA_X2_2282622
 	/* Apply the workaround */
@@ -197,9 +178,6 @@ workaround_reset_start cortex_x2, ERRATUM(2282622), ERRATA_X2_2282622
 workaround_reset_end cortex_x2, ERRATUM(2282622)
 
 check_erratum_ls cortex_x2, ERRATUM(2282622), CPU_REV(2, 1)
-<<<<<<< HEAD
-
-=======
 
 workaround_runtime_start cortex_x2, ERRATUM(2291219), ERRATA_X2_2291219
 	/*
@@ -220,23 +198,12 @@ check_erratum_custom_start cortex_x2, ERRATUM(2313941)
 	ret
 check_erratum_custom_end cortex_x2, ERRATUM(2313941)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_x2, ERRATUM(2371105), ERRATA_X2_2371105
 	/* Set bit 40 in CPUACTLR2_EL1 */
 	sysreg_bit_set CORTEX_X2_CPUACTLR2_EL1, CORTEX_X2_CPUACTLR2_EL1_BIT_40
 workaround_reset_end cortex_x2, ERRATUM(2371105)
 
 check_erratum_ls cortex_x2, ERRATUM(2371105), CPU_REV(2, 0)
-<<<<<<< HEAD
-
-workaround_reset_start cortex_x2, ERRATUM(2768515), ERRATA_X2_2768515
-	/* dsb before isb of power down sequence */
-	dsb	sy
-workaround_reset_end cortex_x2, ERRATUM(2768515)
-
-check_erratum_ls cortex_x2, ERRATUM(2768515), CPU_REV(2, 1)
-
-=======
 
 workaround_reset_start cortex_x2, ERRATUM(2742423), ERRATA_X2_2742423
 	/* Set CPUACTLR5_EL1[56:55] to 2'b01 */
@@ -281,7 +248,6 @@ workaround_reset_end cortex_x2, ERRATUM(4302969)
 
 check_erratum_ls cortex_x2, ERRATUM(4302969), CPU_REV(2, 1)
 
->>>>>>> upstream_import/upstream_v2_14_1
 workaround_reset_start cortex_x2, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 #if IMAGE_BL31
 	/*
@@ -294,17 +260,6 @@ workaround_reset_end cortex_x2, CVE(2022, 23960)
 
 check_erratum_chosen cortex_x2, CVE(2022, 23960), WORKAROUND_CVE_2022_23960
 
-<<<<<<< HEAD
-/*
- * ERRATA_DSU_2313941 :
- * The errata is defined in dsu_helpers.S but applies to cortex_x2
- * as well. Henceforth creating symbolic names to the already existing errata
- * workaround functions to get them registered under the Errata Framework.
- */
-.equ check_erratum_cortex_x2_2313941, check_errata_dsu_2313941
-.equ erratum_cortex_x2_2313941_wa, errata_dsu_2313941_wa
-add_erratum_entry cortex_x2, ERRATUM(2313941), ERRATA_DSU_2313941, APPLY_AT_RESET
-=======
 /* Disable hardware page aggregation. Enables mitigation for `CVE-2024-5660` */
 workaround_reset_start cortex_x2, CVE(2024, 5660), WORKAROUND_CVE_2024_5660
 	sysreg_bit_set CORTEX_X2_CPUECTLR_EL1, BIT(46)
@@ -334,7 +289,6 @@ func cortex_x2_impl_defined_el3_handler
 	b	wa_cve_2025_0647_do_cpp_wa
 endfunc cortex_x2_impl_defined_el3_handler
 #endif
->>>>>>> upstream_import/upstream_v2_14_1
 
 	/* ----------------------------------------------------
 	 * HW will do the cache maintenance while powering down
@@ -349,34 +303,17 @@ func cortex_x2_core_pwr_dwn
 	 */
 	sysreg_bit_set CORTEX_X2_CPUPWRCTLR_EL1, CORTEX_X2_CPUPWRCTLR_EL1_CORE_PWRDN_BIT
 
-<<<<<<< HEAD
-#if ERRATA_X2_2768515
-	mov	x15, x30
-	bl	cpu_get_rev_var
-	bl	erratum_cortex_x2_2768515_wa
-	mov	x30, x15
-#endif /* ERRATA_X2_2768515 */
-=======
 	apply_erratum cortex_x2, ERRATUM(2768515), ERRATA_X2_2768515
->>>>>>> upstream_import/upstream_v2_14_1
 	isb
 	ret
 endfunc cortex_x2_core_pwr_dwn
 
-<<<<<<< HEAD
-errata_report_shim cortex_x2
-
-cpu_reset_func_start cortex_x2
-	/* Disable speculative loads */
-	msr	SSBS, xzr
-=======
 cpu_reset_func_start cortex_x2
 	/* Disable speculative loads */
 	msr	SSBS, xzr
 	apply_erratum cortex_x2, ERRATUM(3324338), ERRATA_X2_3324338
 
 	enable_mpmm
->>>>>>> upstream_import/upstream_v2_14_1
 cpu_reset_func_end cortex_x2
 
 	/* ---------------------------------------------

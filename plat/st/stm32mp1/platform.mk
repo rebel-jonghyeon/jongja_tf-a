@@ -66,14 +66,6 @@ STM32MP_DDR_32BIT_INTERFACE:=	1
 # STM32 image header version v1.0
 STM32_HEADER_VERSION_MAJOR:=	1
 STM32_HEADER_VERSION_MINOR:=	0
-<<<<<<< HEAD
-
-# Add OP-TEE reserved shared memory area in mapping
-STM32MP15_OPTEE_RSV_SHM	:=	0
-$(eval $(call add_defines,STM32MP15_OPTEE_RSV_SHM))
-
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 STM32MP_CRYPTO_ROM_LIB :=	1
 
 # Decryption support
@@ -276,11 +268,8 @@ endif
 BL2_SOURCES		+=	drivers/st/ddr/stm32mp1_ddr.c				\
 				drivers/st/ddr/stm32mp1_ram.c
 
-<<<<<<< HEAD
-=======
 BL2_SOURCES		+=	plat/st/stm32mp1/plat_ddr.c
 
->>>>>>> upstream_import/upstream_v2_14_1
 ifeq ($(AARCH32_SP),sp_min)
 # Create DTB file for BL32
 ${BUILD_PLAT}/fdts/%-bl32.dts: fdts/%.dts fdts/${BL32_DTSI} | $$(@D)/

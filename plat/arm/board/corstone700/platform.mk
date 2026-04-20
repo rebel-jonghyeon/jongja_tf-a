@@ -1,9 +1,5 @@
 #
-<<<<<<< HEAD
-# Copyright (c) 2019-2023, Arm Limited and Contributors. All rights reserved.
-=======
 # Copyright (c) 2019-2025, Arm Limited and Contributors. All rights reserved.
->>>>>>> upstream_import/upstream_v2_14_1
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -32,12 +28,6 @@ NEED_BL32		:=	yes
 ifeq (${AARCH32_SP},none)
     $(error Variable AARCH32_SP has to be set for AArch32)
 endif
-<<<<<<< HEAD
-
-# Include GICv2 driver files
-include drivers/arm/gic/v2/gicv2.mk
-=======
->>>>>>> upstream_import/upstream_v2_14_1
 
 USE_GIC_DRIVER		:=	2
 
